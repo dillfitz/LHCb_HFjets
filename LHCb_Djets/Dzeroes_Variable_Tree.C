@@ -1,3 +1,5 @@
+/// This loop script is to create a Tree (Root File) from a TChain of D0 jets LHC Run 2 data  (2016-2018) that stores variables of interest (4 momentum vectors, transverse momentum, rapidities, pseudorapidities, and phi of D0's and daughters, and impact parameters chi-squared primary vertex fits of D0's ////
+
 #define Dzeroes_Variable_Tree_cxx
 #include "Dzeroes_Variable_Tree.h"
 //#include "DjetTree.C"
@@ -21,9 +23,13 @@ void Dzeroes_Variable_Tree::Loop() {
     double jet_px, jet_py, jet_pz, jet_e;
     double pi_px, pi_py, pi_pz, pi_e;
     double K_px, K_py, K_pz, K_e;
+    
+    double D_px, D_py, D_pz, D_e;
+    double D_m, D_pt, D_eta, D_phi;
 
     double dphi;
     double D0_ipchi2;
+//    int Jet_mcjet_FLAV;
 
 //    double dPx, dPy, dPz, dE, dPt, dM, dPhi, jPhi;
 
@@ -37,15 +43,6 @@ void Dzeroes_Variable_Tree::Loop() {
     Djet_tree->Branch("jet_eta", &jet_eta);
     Djet_tree->Branch("jet_rap", &jet_rap);
 
-//    Djet_tree->Branch("dPx", &dPx);
-//    Djet_tree->Branch("dPy", &dPy);
-//    Djet_tree->Branch("dPz", &dPz);
-//    Djet_tree->Branch("dE", &dE);
-//    Djet_tree->Branch("dPt", &dPt);
-//    Djet_tree->Branch("dM", &dM);
-//    Djet_tree->Branch("dPhi", &dPhi);
-//    Djet_tree->Branch("jPhi", &jPhi);
-
     Djet_tree->Branch("pi_px", &pi_px);
     Djet_tree->Branch("pi_py", &pi_py);
     Djet_tree->Branch("pi_pz", &pi_pz);
@@ -55,9 +52,19 @@ void Dzeroes_Variable_Tree::Loop() {
     Djet_tree->Branch("K_py", &K_py);
     Djet_tree->Branch("K_pz", &K_pz);
     Djet_tree->Branch("K_e", &K_e);
+    
+    Djet_tree->Branch("D_px", &D_px);
+    Djet_tree->Branch("D_py", &D_py);
+    Djet_tree->Branch("D_pz", &D_pz);
+    Djet_tree->Branch("D_e", &D_e);
+    Djet_tree->Branch("D_pt", &D_pt);
+    Djet_tree->Branch("D_m", &D_m);
+    Djet_tree->Branch("D_eta", &D_eta);
+    Djet_tree->Branch("D_phi", &D_phi);
 
     Djet_tree->Branch("dphi", &dphi);
     Djet_tree->Branch("D0_ipchi2", &D0_ipchi2);
+//    Djet_tree->Branch("Jet_mcjet_FLAV", &Jet_mcjet_FLAV);
 
     if (fChain == 0) {
         return;
@@ -121,98 +128,77 @@ void Dzeroes_Variable_Tree::Loop() {
 //        if (Jet_Dtr_nrecodtr==2)
 //        { if ( ( Jet_Dtr_ID[0] == 22) || ( Jet_Dtr_ID[1] == 22) ) continue;}
 
-        double leading_pT = 0;
-        double cand_jetpt, testjet_phi;
-        int n_maxpT_cand, n_maxpT_entry;
+        /////// B a c k   to    B a c k   C u t  ///// one of the goals: to try and decrease contribution to Heavy flavor from gluon splits g->cc(bar) etc. 
+        double cand_jetpt;
 
         dphi = 3.1415;
         vector < double > jetpts;
         bool JetFound = false;
+        double jetradius =0.5;
+        
+        double leading_pT = 0;
+        int n_maxpT_cand = -999;
+        int n_maxpT_entry = -999;
+        int n_HFpt_entry = -999;
+        int HF_counter = 0;
+        double last_HFjet = 0;
+        double last_HFpt = 0;
+        double testjet_phi, testjet_px, testjet_py, testjet_pz, testjet_e;
+        int ncand = nCandidate;
 
         if (totCandidates > 1) {
             for (int icand = 0; icand < totCandidates; icand++) {
-                GetEntry(jentry + icand - nCandidate);
-
-                jet4P.SetPxPyPzE(Jet_PX / 1000., Jet_PY / 1000., Jet_PZ / 1000., Jet_PE / 1000.);
-                pi4P.SetPxPyPzE(pi_PX / 1000., pi_PY / 1000., pi_PZ / 1000., pi_PE / 1000.);
-
-                Kmeson4P.SetPxPyPzE(K_PX / 1000., K_PY / 1000., K_PZ / 1000., K_PE / 1000.);
+                GetEntry(jentry + icand - ncand);
+                
+                jet4P.SetPxPyPzE(Jet_PX/1000., Jet_PY/1000., Jet_PZ/1000., Jet_PE/1000.);
+                pi4P.SetPxPyPzE(pi_PX/1000., pi_PY/1000., pi_PZ/1000., pi_PE/1000.);
+                Kmeson4P.SetPxPyPzE(K_PX/1000., K_PY/1000., K_PZ/1000., K_PE/1000.);
+                
+                jet4P.SetPxPyPzE(Jet_PX/1000., Jet_PY/1000., Jet_PZ/1000., Jet_PE/1000.);
+                
                 HFmeson = pi4P + Kmeson4P;
-
-                for (int j = 0; j < jetpts.size(); j++) {
-                    if (fabs(jet4P.Pt() - jetpts[j]) < 1e-3) {
-                        JetFound = true;
+                
+                bool hasHF = HFmeson.DeltaR(jet4P) < jetradius;
+                
+                double cand_jetpt = jet4P.Pt();
+                // cout<<"Has HF"<<endl;
+                if(!hasHF){
+                    if(cand_jetpt > leading_pT){
+                        // cout<<leading_pT<<", "<<cand_jetpt<<endl;
+                        leading_pT = cand_jetpt;
+                        n_maxpT_cand = nCandidate;
+                        n_maxpT_entry = jentry+icand-ncand;
+                        // cout<<n_maxpT_entry<<endl;
                     }
                 }
-
-                if (JetFound) {
-                    continue;
-                } else {
-                    jetpts.push_back(jet4P.Pt());
-                }
-
-                if (HFmeson.DeltaR(jet4P) < 0.5) {
-                    continue;
-                }                                            //<0.5 for b-jets
-
-//                if ((Jet_PT/1000.) < (15.) ) {continue;}
-//
-//                if ((Jet_Eta)<2.5 || Jet_Eta>4.0) {continue;}
-
-                cand_jetpt = jet4P.Pt();
-
-                if (cand_jetpt > leading_pT) {
-                    leading_pT = cand_jetpt;
-                    n_maxpT_cand = nCandidate;
-                    n_maxpT_entry = jentry + icand - nCandidate;
+                else{
+                    HF_counter++;
+                    if(HFmeson.Pt() > last_HFpt) n_HFpt_entry = jentry+icand-ncand;
+                    
+                    // cout<<"n_HFpt_entry = "<<n_HFpt_entry<<endl;
+                    // cout<<HF_counter<<endl;
+                    last_HFjet = jet4P.Pt();
+                    last_HFpt = HFmeson.Pt();
                 }
             }
-
             GetEntry(n_maxpT_entry);
-
-            jet4P.SetPxPyPzE(Jet_PX / 1000., Jet_PY / 1000., Jet_PZ / 1000., Jet_PE / 1000.);
-
+            jet4P.SetPxPyPzE(Jet_PX/1000.,
+                             Jet_PY/1000.,
+                             Jet_PZ/1000.,
+                             Jet_PE/1000.);
             testjet_phi = jet4P.Phi();
         }
 
         GetEntry(jentry);
 
-        jet4P.SetPxPyPzE(Jet_PX / 1000., Jet_PY / 1000., Jet_PZ / 1000., Jet_PE / 1000.);
-        pi4P.SetPxPyPzE(pi_PX / 1000., pi_PY / 1000., pi_PZ / 1000., pi_PE / 1000.);
+        jet4P.SetPxPyPzE(Jet_PX/1000., Jet_PY/1000., Jet_PZ/1000., Jet_PE/1000.);
+        pi4P.SetPxPyPzE(pi_PX/1000., pi_PY/1000., pi_PZ/1000., pi_PE/1000.);
         Kmeson4P.SetPxPyPzE(K_PX / 1000., K_PY / 1000., K_PZ / 1000., K_PE / 1000.);
         HFmeson = pi4P + Kmeson4P;
 
         if (totCandidates > 1) {
             dphi = checkphi(fabs(checkphi((HFmeson.Phi()) - checkphi(testjet_phi))));
         }
-
-//        for (int j=0; j<Jet_Dtr_nrecodtr; ++j)
-//        {
-//            if ( abs( Jet_Dtr_ID[j] ) == 421)  //here
-//            {
-//                //cout << Jet_PT << endl;
-//                TLorentzVector d4vec(Jet_Dtr_PX[j]/1000.,
-//                                     Jet_Dtr_PY[j]/1000.,
-//                                     Jet_Dtr_PZ[j]/1000.,
-//                                     Jet_Dtr_E[j]/1000.);
-//
-//                TVector3 d3vec(dPx, dPy, dPz);
-//                TVector3 jet3vec(Jet_PX/1000., Jet_PY/1000., Jet_PZ/1000.);
-//
-//                dPhi = d3vec.Phi();
-//                dPt = Jet_Dtr_PT[j]/1000.;
-//
-//                dPx = d4vec.Px();
-//                dPy = d4vec.Py();
-//                dPz = d4vec.Pz();
-//                dE = d4vec.E();
-//                dM = d4vec.M();
-//
-//                jPhi = jet3vec.Phi();
-//
-//            } // if PDG = 421 Loop
-//
-//        } // Jet Daugthers Loops
 
         jet_pt = jet4P.Pt();
         jet_eta = jet4P.Eta();
@@ -232,6 +218,15 @@ void Dzeroes_Variable_Tree::Loop() {
         K_pz = Kmeson4P.Pz();
         K_e = Kmeson4P.E();
 
+        D_px = HFmeson.Px();
+        D_py = HFmeson.Py();
+        D_pz = HFmeson.Pz();
+        D_e = HFmeson.E();
+        D_pt = HFmeson.Pt();
+        D_m = HFmeson.M();
+        D_eta = HFmeson.Eta();
+        D_phi = HFmeson.Phi();
+        
         D0_ipchi2 = D0_IPCHI2_OWNPV;
 
         events++;
@@ -243,6 +238,7 @@ void Dzeroes_Variable_Tree::Loop() {
     cout << "jetpt = " << cut_jetpt << endl;
     cout << "jeteta = " << cut_jeteta << endl;
     cout << "Dinjet = " << cut_Dinjet << endl;
+//    cout << "Number of HF =" << HF_counter << endl;
 
     outfile->Write();
     outfile->Close();
