@@ -7,7 +7,7 @@
 #include <TTree.h>
 #include <TH1D.h>
 #include <TRandom3.h>
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Settings.h"
+#include "Settings.h"
 //#include "fastjet/ClusterSequence.hh"
 //#include "fastjet/contrib/SoftDrop.hh"
 // #include "/afs/cern.ch/work/i/ichahrou/RooUnfold/src/RooUnfoldBayes.h"
