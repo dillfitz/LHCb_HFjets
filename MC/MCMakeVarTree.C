@@ -13,7 +13,7 @@
 #include <TCanvas.h>
 #include <vector>
 //#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Header.h"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 //#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldResponse.h"
 //#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldBayes.h"
 //#include "../Helpers.h"
@@ -155,7 +155,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     // cout <<"Choose number of events (-1: All Events, or enter integer): ";
     // cin>> NumEvts;
 
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+    extension_RootFilesMC = TString("");
 
     TFile f(extension_RootFilesMC + extension + ".root", "RECREATE");
     
@@ -730,7 +730,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     // gStyle->SetLineWidth(3);
     gStyle->SetOptStat(0);
     
-    TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/BjetsMC/");
+    TString plotextension = TString("../../plots/BjetsMC/");
     auto* c1 = new TCanvas();
     
     NormalizeHist(h1_z_truth);
@@ -786,7 +786,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     c1->Modified();
     c1->Update();
     c1->Draw();
-    c1->SaveAs(plotextension + str_Mag + "z_zb_zg_z.pdf");
+    c1->SaveAs(plotextension + str_Mag + "_zb_zg_z.pdf");
     
 
     cout << "Total number of events processed = " << events << endl;
