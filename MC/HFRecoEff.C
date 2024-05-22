@@ -126,8 +126,10 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     str_charged = "_charge";
   TString str_tree;
     
-  TString extension_read, extension_RootFilesMC, extension;
+  TString extension_read, extension_RootFilesMC, extension, extension_RootFilesData;
+    
   extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+    extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
 
   TString  extension_eff,  extension_prefix;
     
@@ -149,12 +151,12 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     TH2D *h2_denom_efficiency_HFptnTracks = (TH2D *)file_eff->Get("denom_efficiency_HFptnTracks");
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
-  TString extension_mass("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");
+  TString extension_mass(extension_RootFilesData + "massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
   if (DoRecSelEff)
     extension_mass = "recselsys_" + extension_mass;
   if (DoSignalSys)
     extension_mass = "sys_" + extension_mass;
-  TFile f_massfit("hists/" + extension_mass, "READ");
+  TFile f_massfit( extension_mass, "READ");
   TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
   TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
@@ -248,31 +250,30 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
 //  JetDefinition jet_def(cambridge_algorithm, jetradius);
 
   // TClonesArray *arr = new TClonesArray("TLorentzVector");
+    float HF_px, HF_py, HF_pz, HF_e;
+    float Jpsi_px, Jpsi_py, Jpsi_pz, Jpsi_e;
+    float K_px, K_py, K_pz, K_e;
+    float mum_px, mum_py, mum_pz, mum_e;
+    float mup_px, mup_py, mup_pz, mup_e;
+    float tr_jet_px, tr_jet_py, tr_jet_pz, tr_jet_e;
+    float dtf_mass, dtf_chi2ndf, dtf_ctau, K_PIDK;
+    int eventNumber, nTracks, NumHFHads;
+    bool Hasbbbar;
 
-  float HF_px, HF_py, HF_pz, HF_e;
-  float Jpsi_px, Jpsi_py, Jpsi_pz, Jpsi_e;
-  float K_px, K_py, K_pz, K_e;
-  float mum_px, mum_py, mum_pz, mum_e;
-  float mup_px, mup_py, mup_pz, mup_e;
-  float tr_jet_px, tr_jet_py, tr_jet_pz, tr_jet_e;
-  float dtf_mass, dtf_chi2ndf, dtf_ctau, K_PIDK;
-  int eventNumber, nTracks;
-  bool Hasbbbar;
-  float mup_TRCHI2DOF, mup_IPCHI2, mup_TRGHOSTPROB;
-  float mum_TRCHI2DOF, mum_IPCHI2, mum_TRGHOSTPROB;
-  float K_TRCHI2DOF, K_IPCHI2, K_TRGHOSTPROB;
-  bool K_ISLONG, mup_ISMUON, mum_ISMUON;
+      bool mup_L0, mum_L0;
+      bool jpsi_L0, jpsi_Hlt1, jpsi_Hlt2;
+      bool Trig, TIS, TOS;
+      
+      // Not needed -- Obsolete/Irrelevant Variables
+      float mup_TRCHI2DOF, mup_IPCHI2, mup_TRGHOSTPROB;
+      float mum_TRCHI2DOF, mum_IPCHI2, mum_TRGHOSTPROB;
+      float K_TRCHI2DOF, K_IPCHI2, K_TRGHOSTPROB;
+      bool K_ISLONG, mup_ISMUON, mum_ISMUON;
+      float Jpsi_TRCHI2DOF, Jpsi_IPCHI2, Jpsi_TRGHOSTPROB, Jpsi_AMAXDOCA, Jpsi_BPVDIRA, Jpsi_BPVVDCHI2, Jpsi_VTXCHI2;
+      float Bu_TRCHI2DOF, Bu_IPCHI2, Bu_TRGHOSTPROB, Bu_AMAXDOCA, Bu_BPVDIRA, Bu_BPVIPCHI2, Bu_VTXCHI2;
 
-  float Jpsi_TRCHI2DOF, Jpsi_IPCHI2, Jpsi_TRGHOSTPROB, Jpsi_AMAXDOCA, Jpsi_BPVDIRA, Jpsi_BPVVDCHI2, Jpsi_VTXCHI2;
-  float Bu_TRCHI2DOF, Bu_IPCHI2, Bu_TRGHOSTPROB, Bu_AMAXDOCA, Bu_BPVDIRA, Bu_BPVIPCHI2, Bu_VTXCHI2;
-
+    
   HFRecoTree->SetBranchAddress("eventNumber", &eventNumber);
-  HFRecoTree->SetBranchAddress("nTracks", &nTracks);
-
-  HFRecoTree->SetBranchAddress("HF_px", &HF_px);
-  HFRecoTree->SetBranchAddress("HF_py", &HF_py);
-  HFRecoTree->SetBranchAddress("HF_pz", &HF_pz);
-  HFRecoTree->SetBranchAddress("HF_pe", &HF_e);
 
   HFRecoTree->SetBranchAddress("mup_px", &mup_px);
   HFRecoTree->SetBranchAddress("mup_py", &mup_py);
@@ -296,6 +297,11 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   HFRecoTree->SetBranchAddress("K_pz", &K_pz);
   HFRecoTree->SetBranchAddress("K_pe", &K_e);
   HFRecoTree->SetBranchAddress("K_ISLONG", &K_ISLONG);
+    
+  HFRecoTree->SetBranchAddress("HF_px", &HF_px);
+  HFRecoTree->SetBranchAddress("HF_py", &HF_py);
+  HFRecoTree->SetBranchAddress("HF_pz", &HF_pz);
+  HFRecoTree->SetBranchAddress("HF_pe", &HF_e);
 
   HFRecoTree->SetBranchAddress("tr_jet_px", &tr_jet_px);
   HFRecoTree->SetBranchAddress("tr_jet_py", &tr_jet_py);
@@ -306,36 +312,43 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   HFRecoTree->SetBranchAddress("dtf_chi2ndf", &dtf_chi2ndf);
   HFRecoTree->SetBranchAddress("dtf_ctau", &dtf_ctau);
   HFRecoTree->SetBranchAddress("K_PIDK", &K_PIDK);
+  HFRecoTree->SetBranchAddress("nTracks", &nTracks);
   HFRecoTree->SetBranchAddress("Hasbbbar", &Hasbbbar);
+  HFRecoTree->SetBranchAddress("NumHFHads", &NumHFHads);
+    
+  HFRecoTree->SetBranchAddress("mup_L0", &mup_L0);
+  HFRecoTree->SetBranchAddress("mum_L0", &mum_L0);
+  HFRecoTree->SetBranchAddress("jpsi_L0", &jpsi_L0);
+  HFRecoTree->SetBranchAddress("jpsi_Hlt1", &jpsi_Hlt1);
+  HFRecoTree->SetBranchAddress("jpsi_Hlt2", &jpsi_Hlt2);
+  HFRecoTree->SetBranchAddress("Trig", &Trig);
+  HFRecoTree->SetBranchAddress("TIS", &TIS);
+  HFRecoTree->SetBranchAddress("TOS", &TOS);
 
-  HFRecoTree->SetBranchAddress("mup_TRCHI2DOF", &mup_TRCHI2DOF);
-  HFRecoTree->SetBranchAddress("mup_IPCHI2", &mup_IPCHI2);
-  HFRecoTree->SetBranchAddress("mup_TRGHOSTPROB", &mup_TRGHOSTPROB);
-
-  HFRecoTree->SetBranchAddress("mum_TRCHI2DOF", &mum_TRCHI2DOF);
-  HFRecoTree->SetBranchAddress("mum_IPCHI2", &mum_IPCHI2);
-  HFRecoTree->SetBranchAddress("mum_TRGHOSTPROB", &mum_TRGHOSTPROB);
-
-  HFRecoTree->SetBranchAddress("K_TRCHI2DOF", &K_TRCHI2DOF);
-  HFRecoTree->SetBranchAddress("K_IPCHI2", &K_IPCHI2);
-  HFRecoTree->SetBranchAddress("K_TRGHOSTPROB", &K_TRGHOSTPROB);
-
-  HFRecoTree->SetBranchAddress("Jpsi_TRCHI2DOF", &Jpsi_TRCHI2DOF);
-  HFRecoTree->SetBranchAddress("Jpsi_IPCHI2", &Jpsi_IPCHI2);
-  HFRecoTree->SetBranchAddress("Jpsi_TRGHOSTPROB", &Jpsi_TRGHOSTPROB);
-  HFRecoTree->SetBranchAddress("Jpsi_AMAXDOCA", &Jpsi_AMAXDOCA);
-  HFRecoTree->SetBranchAddress("Jpsi_BPVDIRA", &Jpsi_BPVDIRA);
-  HFRecoTree->SetBranchAddress("Jpsi_BPVVDCHI2", &Jpsi_BPVVDCHI2);
-  HFRecoTree->SetBranchAddress("Jpsi_VTXCHI2", &Jpsi_VTXCHI2);
-
-  HFRecoTree->SetBranchAddress("Bu_TRCHI2DOF", &Bu_TRCHI2DOF);
-  HFRecoTree->SetBranchAddress("Bu_IPCHI2", &Bu_IPCHI2);
-  HFRecoTree->SetBranchAddress("Bu_TRGHOSTPROB", &Bu_TRGHOSTPROB);
-  HFRecoTree->SetBranchAddress("Bu_AMAXDOCA", &Bu_AMAXDOCA);
-  HFRecoTree->SetBranchAddress("Bu_BPVDIRA", &Bu_BPVDIRA);
-  HFRecoTree->SetBranchAddress("Bu_BPVIPCHI2", &Bu_BPVIPCHI2);
-  HFRecoTree->SetBranchAddress("Bu_VTXCHI2", &Bu_VTXCHI2);
-
+//  HFRecoTree->SetBranchAddress("mup_TRCHI2DOF", &mup_TRCHI2DOF);
+//  HFRecoTree->SetBranchAddress("mup_IPCHI2", &mup_IPCHI2);
+//  HFRecoTree->SetBranchAddress("mup_TRGHOSTPROB", &mup_TRGHOSTPROB);
+//  HFRecoTree->SetBranchAddress("mum_TRCHI2DOF", &mum_TRCHI2DOF);
+//  HFRecoTree->SetBranchAddress("mum_IPCHI2", &mum_IPCHI2);
+//  HFRecoTree->SetBranchAddress("mum_TRGHOSTPROB", &mum_TRGHOSTPROB);
+//  HFRecoTree->SetBranchAddress("K_TRCHI2DOF", &K_TRCHI2DOF);
+//  HFRecoTree->SetBranchAddress("K_IPCHI2", &K_IPCHI2);
+//  HFRecoTree->SetBranchAddress("K_TRGHOSTPROB", &K_TRGHOSTPROB);
+//  HFRecoTree->SetBranchAddress("Jpsi_TRCHI2DOF", &Jpsi_TRCHI2DOF);
+//  HFRecoTree->SetBranchAddress("Jpsi_IPCHI2", &Jpsi_IPCHI2);
+//  HFRecoTree->SetBranchAddress("Jpsi_TRGHOSTPROB", &Jpsi_TRGHOSTPROB);
+//  HFRecoTree->SetBranchAddress("Jpsi_AMAXDOCA", &Jpsi_AMAXDOCA);
+//  HFRecoTree->SetBranchAddress("Jpsi_BPVDIRA", &Jpsi_BPVDIRA);
+//  HFRecoTree->SetBranchAddress("Jpsi_BPVVDCHI2", &Jpsi_BPVVDCHI2);
+//  HFRecoTree->SetBranchAddress("Jpsi_VTXCHI2", &Jpsi_VTXCHI2);
+//  HFRecoTree->SetBranchAddress("Bu_TRCHI2DOF", &Bu_TRCHI2DOF);
+//  HFRecoTree->SetBranchAddress("Bu_IPCHI2", &Bu_IPCHI2);
+//  HFRecoTree->SetBranchAddress("Bu_TRGHOSTPROB", &Bu_TRGHOSTPROB);
+//  HFRecoTree->SetBranchAddress("Bu_AMAXDOCA", &Bu_AMAXDOCA);
+//  HFRecoTree->SetBranchAddress("Bu_BPVDIRA", &Bu_BPVDIRA);
+//  HFRecoTree->SetBranchAddress("Bu_BPVIPCHI2", &Bu_BPVIPCHI2);
+//  HFRecoTree->SetBranchAddress("Bu_VTXCHI2", &Bu_VTXCHI2);
+ 
   //
   // Event loop
   //
@@ -373,12 +386,14 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     Jpsi.SetPxPyPzE(Jpsi_px, Jpsi_py, Jpsi_pz, Jpsi_e);
       
     float JpsiMass = 3.0969; // GeV
+//    bool DTF_cond = (dtf_chi2ndf < 9) && (dtf_ctau > 0.3);
     bool DTF_cond = (dtf_chi2ndf < 9) && (dtf_ctau > 0.3);
-//    bool DTF_cond = (dtf_chi2ndf < 8) && (dtf_ctau > 0.4);
     bool PID_cond = (K_PIDK > 0);
 
     float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
     float MassLow = h1_MassMin != NULL ? h1_MassMin->GetBinContent(h1_MassMin->FindBin(HFmeson.Pt())) : 5.24;
+      
+//      if (h1_MassMax == NULL){cout << "No Mass file "<< endl;}
 //      float MassHigh =  5.31;
 //      float MassLow =  5.24;
     bool mass_cond = (dtf_mass > MassLow && dtf_mass < MassHigh);
@@ -393,17 +408,19 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
 //     bool Bu_mom_cuts = (Bu_VTXCHI2 < 45);
 
     // cout << Jpsi_AMAXDOCA << ", " << Jpsi_BPVDIRA << ", " << Bu_BPVIPCHI2 << ", " << Bu_VTXCHI2 << endl;
-    // if (!K_cuts)
-    //   continue;
-    // if (!mum_cuts || !mup_cuts)
-    //   continue;
-    // if (!Jpsi_cuts)
-    //   continue;
-    // if (!Jpsi_mom_cuts)
-    //   continue;
-    // if (!Bu_mom_cuts)
-    //   continue;
-
+//     if (!K_cuts)
+//       continue;
+//     if (!mum_cuts || !mup_cuts)
+//       continue;
+//     if (!Jpsi_cuts)
+//       continue;
+//     if (!Jpsi_mom_cuts)
+//       continue;
+//     if (!Bu_mom_cuts)
+//       continue;
+      
+    if (!TOS)
+        continue;
     if (!mass_cond)
       continue;
     if (DTF_cut && !DTF_cond)
@@ -426,6 +443,7 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     h1_HF_eta_reco->Fill(HFmeson.Eta());
     h1_HF_mass_reco->Fill(HFmeson.M());
     h1_HF_dtfmass_reco->Fill(dtf_mass);
+      
     h1_num_efficiency_HFpt->Fill(HFmeson.Pt());
     // h2_num_efficiency_HFpteta->Fill(HFmeson.Pt(), HFmeson.Eta());
     h2_num_efficiency_HFpteta->Fill(HFmeson.Pt(), HFmeson.Rapidity());

@@ -3,7 +3,9 @@
 // #include "AnalyzeDijetData_withsubsets.h"
 // #include "LundPlaneData.h"
 
-#include "./MC_03032024/BjetTree.C"  //Truth
+//#include "./MC_03032024/BjetTree.C"  //Truth
+#include "./MC_04102024/BjetTree.C"
+//#include "./MC_0502024/BjetTree.C"  //Truth
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
@@ -340,7 +342,9 @@ void MakeVarTree(int NumEvts_user = -1,
     bool mup_L0, mum_L0;
     bool jpsi_L0, jpsi_Hlt1, jpsi_Hlt2;
     bool Trig, TIS, TOS;
-    // TLorentzVector
+    bool isSingle_matchedtr_Bjet;
+    bool isPhoton_matchedtr_Bjet;
+    
     TTree *BTree = new TTree("BTree", "B-jets Tree Variables");
 
     BTree->Branch("eventNumber", &eventNumber);
@@ -548,7 +552,8 @@ void MakeVarTree(int NumEvts_user = -1,
     BTree->Branch("tr_jt", &tr_jt);
     BTree->Branch("tr_r", &tr_r);
     
-    // TClonesArray *arr = new TClonesArray("TLorentzVector");
+    BTree->Branch("isSingle_matchedtr_Bjet", &isSingle_matchedtr_Bjet);
+    BTree->Branch("isPhoton_matchedtr_Bjet", &isPhoton_matchedtr_Bjet);
 
     //
     // Event loop
@@ -571,6 +576,9 @@ void MakeVarTree(int NumEvts_user = -1,
     int ManyJets = 0;
     int NumTwoHFInJet = 0;
     int NumTwoCand = 0;
+    int Num_Single_matchedtr_Bjet =0;
+    int Num_Photon_matchedtr_Bjet =0;
+    
     int N_num = 0;
     int N_denom = 0;
     int N_purity_num(0), N_purity_denom(0);
@@ -579,6 +587,7 @@ void MakeVarTree(int NumEvts_user = -1,
     int ev_min = 0;
     int NumSame = 0;
     int ev_notrig(0), ev_L0(0), ev_Hlt1(0), ev_Hlt2(0);
+    
     TRandom3 *myUniform = new TRandom3();
     TRandom3 *myRNG = new TRandom3();
 
@@ -620,18 +629,23 @@ void MakeVarTree(int NumEvts_user = -1,
             }
         }
         
+        isSingle_matchedtr_Bjet = false;
+        isPhoton_matchedtr_Bjet = false;
+        
         if (!isData)
         {
             if (Tree.Jet_mcjet_nmcdtrs < 2 )
             {
-                continue;
+                isSingle_matchedtr_Bjet = true;
+                Num_Single_matchedtr_Bjet ++;
             }
             
             if (Tree.Jet_mcjet_nmcdtrs == 2 )
             {
                 if (Tree.Jet_mcjet_dtrID[0] == 22 || Tree.Jet_mcjet_dtrID[1] == 22)
                 {
-                    continue;
+                    isPhoton_matchedtr_Bjet = true;
+                    Num_Photon_matchedtr_Bjet++;
                 }
             }
         }

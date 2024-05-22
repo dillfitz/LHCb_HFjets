@@ -6,7 +6,8 @@
 //#include "./MC_10192023/BjetMCTree.C"  //Truth
 //#include "./MC_08152023/BjetMCTree.C"  //Truth
 //#include "./MC_10162023/BjetMCTree.C"  //Truth
-#include "./MC_03032024/BjetMCTree.C"  //Truth
+//#include "./MC_03032024/BjetMCTree.C"  //Truth
+#include "./MC_04102024/BjetMCTree.C"  //Truth
 
 #include <iostream>
 #include <TCanvas.h>
@@ -196,6 +197,8 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
 
     bool hasRecoHF;
     bool Hasbbbar;
+    bool isSingle_tr_Bjet;
+    bool isPhoton_tr_Bjet;
 
     // TLorentzVector
     TTree *BTree = new TTree("BTree", "B-jets Tree Variables");
@@ -244,18 +247,18 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     BTree->Branch("meas_HF_e", &meas_HF_e);
     BTree->Branch("meas_HF_pt", &meas_HF_pt);
 
-  BTree->Branch("meas_mum_px", &meas_mum_px);
-  BTree->Branch("meas_mum_py", &meas_mum_py);
-  BTree->Branch("meas_mum_pz", &meas_mum_pz);
-  BTree->Branch("meas_mum_e", &meas_mum_e);
-  BTree->Branch("meas_mup_px", &meas_mup_px);
-  BTree->Branch("meas_mup_py", &meas_mup_py);
-  BTree->Branch("meas_mup_pz", &meas_mup_pz);
-  BTree->Branch("meas_mup_e", &meas_mup_e);
-  BTree->Branch("meas_K_px", &meas_K_px);
-  BTree->Branch("meas_K_py", &meas_K_py);
-  BTree->Branch("meas_K_pz", &meas_K_pz);
-  BTree->Branch("meas_K_e", &meas_K_e);
+      BTree->Branch("meas_mum_px", &meas_mum_px);
+      BTree->Branch("meas_mum_py", &meas_mum_py);
+      BTree->Branch("meas_mum_pz", &meas_mum_pz);
+      BTree->Branch("meas_mum_e", &meas_mum_e);
+      BTree->Branch("meas_mup_px", &meas_mup_px);
+      BTree->Branch("meas_mup_py", &meas_mup_py);
+      BTree->Branch("meas_mup_pz", &meas_mup_pz);
+      BTree->Branch("meas_mup_e", &meas_mup_e);
+      BTree->Branch("meas_K_px", &meas_K_px);
+      BTree->Branch("meas_K_py", &meas_K_py);
+      BTree->Branch("meas_K_pz", &meas_K_pz);
+      BTree->Branch("meas_K_e", &meas_K_e);
 
     BTree->Branch("GluonTag", &GluonTag);
     BTree->Branch("nTracks", &nTracks);
@@ -263,6 +266,8 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     BTree->Branch("NumHFHads", &NumHFHads);
     BTree->Branch("NumDtrRecoHF", &NumDtrRecoHF);
     BTree->Branch("hasRecoHF", &hasRecoHF);
+    BTree->Branch("isSingle_tr_Bjet", &isSingle_tr_Bjet);
+    BTree->Branch("isPhoton_tr_Bjet", &isPhoton_tr_Bjet);
 
     BTree->Branch("truth_z", &truth_z);
     BTree->Branch("truth_jt", &truth_jt);
@@ -300,6 +305,8 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     int cut_eta = 0;
     int cut_pt = 0;
     int cut_HFdR = 0;
+    int Num_Single_tr_Bjet = 0;
+    int Num_Photon_tr_Bjet = 0;
 
 //    double jetradius = 0.5;
 
@@ -312,11 +319,15 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
             cout << "Executing event " << ev << endl;
         }
 
+
         if (ev != 0) {
-            if (Tree.eventNumber != last_eventNum) {
-                maxjetpT_found = false;
+            
+            
+            if (last_eventNum == Tree.eventNumber) {
+                continue;
             }
         }
+        events++;
 
         
         TLorentzVector HFjet, recojet, meas_HFjet, HFmeson, mup, mum, Kmeson, Jpsi;
@@ -375,16 +386,20 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
 
         //  if(HFjet.Eta() < etaMin || HFjet.Eta() > etaMax) cout<<HFjet.Eta()<<",";
         
+        isSingle_tr_Bjet = false;
         if (Tree.MCJet_Dtr_nmcdtrs < 2 )
         {
-            continue;
+            isSingle_tr_Bjet = true;
+            Num_Single_tr_Bjet++;
         }
             
+        isPhoton_tr_Bjet = false;
         if (Tree.MCJet_Dtr_nmcdtrs == 2 )
         {
             if (Tree.MCJet_Dtr_ID[0] == 22 || Tree.MCJet_Dtr_ID[1] == 22)
             {
-                continue;
+                isPhoton_tr_Bjet = true;
+                Num_Photon_tr_Bjet++;
             }
         }
         
@@ -405,8 +420,6 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
             Hasbbbar = true; //
 //            GluonTag = true;
         }
-        
-
 //
         
         ///// Experimenting with Stripping Line cuts //// //
@@ -654,14 +667,14 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
         
         nTracks = Tree.nTracks; 
 
-        if (last_eventNum == Tree.eventNumber) {
-            continue;
-        }
+//        if (last_eventNum == Tree.eventNumber) {
+//            continue;
+//        }
 
         last_eventNum = Tree.eventNumber;
         eventNumber = Tree.eventNumber;
 
-        events++;
+//        events++;
 
         BTree->Fill();
     }
@@ -779,6 +792,8 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     cout << "Total number of events processed = " << events << endl;
     cout << "NumRecoHF = " << NumRecoHF << endl;
     cout << "NumHFHads = " << NumHFHads << endl;
+    cout << "Num Single Bjets = " << Num_Single_tr_Bjet << endl;
+    cout << "Num Photon + B jets = " << Num_Photon_tr_Bjet << endl;
 
     cout << "Events blocked: " << endl;
     cout << "npvs = " << cut_npvs << endl;

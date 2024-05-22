@@ -3,8 +3,10 @@
 // #include "AnalyzeDijetData_withsubsets.h"
 // #include "LundPlaneData.h"
 
-#include "./MC_03032024/BMCDecayTree.C"
-#include "./MC_03032024/BDecayTree.C"
+//#include "./MC_03032024/BMCDecayTree.C"
+//#include "./MC_03032024/BDecayTree.C"
+#include "./MC_04102024/BMCDecayTree.C"
+#include "./MC_04102024/BDecayTree.C"
 
 #include <TCanvas.h>
 #include <vector>
@@ -150,16 +152,18 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
   float dtf_mass, dtf_chi2ndf, dtf_ctau, K_PIDK;
   int eventNumber, nTracks, NumHFHads;
   bool Hasbbbar;
-    
-  float mup_TRCHI2DOF, mup_IPCHI2, mup_TRGHOSTPROB;
-  float mum_TRCHI2DOF, mum_IPCHI2, mum_TRGHOSTPROB;
-  float K_TRCHI2DOF, K_IPCHI2, K_TRGHOSTPROB;
-    
-  bool K_ISLONG, mup_ISMUON, mum_ISMUON;
 
-  float Jpsi_TRCHI2DOF, Jpsi_IPCHI2, Jpsi_TRGHOSTPROB, Jpsi_AMAXDOCA, Jpsi_BPVDIRA, Jpsi_BPVVDCHI2, Jpsi_VTXCHI2;
+    bool mup_L0, mum_L0;
+    bool jpsi_L0, jpsi_Hlt1, jpsi_Hlt2;
+    bool Trig, TIS, TOS;
     
-  float Bu_TRCHI2DOF, Bu_IPCHI2, Bu_TRGHOSTPROB, Bu_AMAXDOCA, Bu_BPVDIRA, Bu_BPVIPCHI2, Bu_VTXCHI2;
+    // Not needed -- Obsolete/Irrelevant Variables
+    float mup_TRCHI2DOF, mup_IPCHI2, mup_TRGHOSTPROB;
+    float mum_TRCHI2DOF, mum_IPCHI2, mum_TRGHOSTPROB;
+    float K_TRCHI2DOF, K_IPCHI2, K_TRGHOSTPROB;
+    bool K_ISLONG, mup_ISMUON, mum_ISMUON;
+    float Jpsi_TRCHI2DOF, Jpsi_IPCHI2, Jpsi_TRGHOSTPROB, Jpsi_AMAXDOCA, Jpsi_BPVDIRA, Jpsi_BPVVDCHI2, Jpsi_VTXCHI2;
+    float Bu_TRCHI2DOF, Bu_IPCHI2, Bu_TRGHOSTPROB, Bu_AMAXDOCA, Bu_BPVDIRA, Bu_BPVIPCHI2, Bu_VTXCHI2;
 
   TTree *HFRecoTree = new TTree("HFRecoTree", "HFReco Tree Variables");
 
@@ -205,36 +209,40 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
   HFRecoTree->Branch("nTracks", &nTracks);
   HFRecoTree->Branch("Hasbbbar", &Hasbbbar);
   HFRecoTree->Branch("NumHFHads", &NumHFHads);
+    
+    HFRecoTree->Branch("mup_L0", &mup_L0);
+    HFRecoTree->Branch("mum_L0", &mum_L0);
+    HFRecoTree->Branch("jpsi_L0", &jpsi_L0);
+    HFRecoTree->Branch("jpsi_Hlt1", &jpsi_Hlt1);
+    HFRecoTree->Branch("jpsi_Hlt2", &jpsi_Hlt2);
+    HFRecoTree->Branch("Trig", &Trig);
+    HFRecoTree->Branch("TIS", &TIS);
+    HFRecoTree->Branch("TOS", &TOS);
 
-  HFRecoTree->Branch("mup_TRCHI2DOF", &mup_TRCHI2DOF);
-  HFRecoTree->Branch("mup_IPCHI2", &mup_IPCHI2);
-  HFRecoTree->Branch("mup_TRGHOSTPROB", &mup_TRGHOSTPROB);
-
-  HFRecoTree->Branch("mum_TRCHI2DOF", &mum_TRCHI2DOF);
-  HFRecoTree->Branch("mum_IPCHI2", &mum_IPCHI2);
-  HFRecoTree->Branch("mum_TRGHOSTPROB", &mum_TRGHOSTPROB);
-
-  HFRecoTree->Branch("K_TRCHI2DOF", &K_TRCHI2DOF);
-  HFRecoTree->Branch("K_IPCHI2", &K_IPCHI2);
-  HFRecoTree->Branch("K_TRGHOSTPROB", &K_TRGHOSTPROB);
-
-  HFRecoTree->Branch("Jpsi_TRCHI2DOF", &Jpsi_TRCHI2DOF);
-  HFRecoTree->Branch("Jpsi_IPCHI2", &Jpsi_IPCHI2);
-  HFRecoTree->Branch("Jpsi_TRGHOSTPROB", &Jpsi_TRGHOSTPROB);
-  HFRecoTree->Branch("Jpsi_AMAXDOCA", &Jpsi_AMAXDOCA);
-  HFRecoTree->Branch("Jpsi_BPVDIRA", &Jpsi_BPVDIRA);
-  HFRecoTree->Branch("Jpsi_BPVVDCHI2", &Jpsi_BPVVDCHI2);
-  HFRecoTree->Branch("Jpsi_VTXCHI2", &Jpsi_VTXCHI2);
-
-  HFRecoTree->Branch("Bu_TRCHI2DOF", &Bu_TRCHI2DOF);
-  HFRecoTree->Branch("Bu_IPCHI2", &Bu_IPCHI2);
-  HFRecoTree->Branch("Bu_TRGHOSTPROB", &Bu_TRGHOSTPROB);
-  HFRecoTree->Branch("Bu_AMAXDOCA", &Bu_AMAXDOCA);
-  HFRecoTree->Branch("Bu_BPVDIRA", &Bu_BPVDIRA);
-  HFRecoTree->Branch("Bu_BPVIPCHI2", &Bu_BPVIPCHI2);
-  HFRecoTree->Branch("Bu_VTXCHI2", &Bu_VTXCHI2);
-
-  // TClonesArray *arr = new TClonesArray("TLorentzVector");
+//  HFRecoTree->Branch("mup_TRCHI2DOF", &mup_TRCHI2DOF);
+//  HFRecoTree->Branch("mup_IPCHI2", &mup_IPCHI2);
+//  HFRecoTree->Branch("mup_TRGHOSTPROB", &mup_TRGHOSTPROB);
+//  HFRecoTree->Branch("mum_TRCHI2DOF", &mum_TRCHI2DOF);
+//  HFRecoTree->Branch("mum_IPCHI2", &mum_IPCHI2);
+//  HFRecoTree->Branch("mum_TRGHOSTPROB", &mum_TRGHOSTPROB);
+//  HFRecoTree->Branch("K_TRCHI2DOF", &K_TRCHI2DOF);
+//  HFRecoTree->Branch("K_IPCHI2", &K_IPCHI2);
+//  HFRecoTree->Branch("K_TRGHOSTPROB", &K_TRGHOSTPROB);
+//  HFRecoTree->Branch("Jpsi_TRCHI2DOF", &Jpsi_TRCHI2DOF);
+//  HFRecoTree->Branch("Jpsi_IPCHI2", &Jpsi_IPCHI2);
+//  HFRecoTree->Branch("Jpsi_TRGHOSTPROB", &Jpsi_TRGHOSTPROB);
+//  HFRecoTree->Branch("Jpsi_AMAXDOCA", &Jpsi_AMAXDOCA);
+//  HFRecoTree->Branch("Jpsi_BPVDIRA", &Jpsi_BPVDIRA);
+//  HFRecoTree->Branch("Jpsi_BPVVDCHI2", &Jpsi_BPVVDCHI2);
+//  HFRecoTree->Branch("Jpsi_VTXCHI2", &Jpsi_VTXCHI2);
+//  HFRecoTree->Branch("Bu_TRCHI2DOF", &Bu_TRCHI2DOF);
+//  HFRecoTree->Branch("Bu_IPCHI2", &Bu_IPCHI2);
+//  HFRecoTree->Branch("Bu_TRGHOSTPROB", &Bu_TRGHOSTPROB);
+//  HFRecoTree->Branch("Bu_AMAXDOCA", &Bu_AMAXDOCA);
+//  HFRecoTree->Branch("Bu_BPVDIRA", &Bu_BPVDIRA);
+//  HFRecoTree->Branch("Bu_BPVIPCHI2", &Bu_BPVIPCHI2);
+//  HFRecoTree->Branch("Bu_VTXCHI2", &Bu_VTXCHI2);
+    
 
   //
   // Event loop
@@ -330,6 +338,10 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
     Jpsi = mup + mum;
     // HFmeson = mup + mum + Kmeson;
 
+    jpsi_L0 = Tree.Jpsi_L0MuonDecision_TOS || Tree.Jpsi_L0DiMuonDecision_TOS;
+    mup_L0 = Tree.mup_L0MuonDecision_TOS || Tree.mup_L0DiMuonDecision_TOS;
+    mum_L0 = Tree.mum_L0MuonDecision_TOS || Tree.mum_L0DiMuonDecision_TOS;
+      
     dtf_mass = Tree.Bu_ConsBu_M[0] / 1000.;
     bool PID_cond = (Tree.K_PIDK > 0);
     bool mass_cond = (dtf_mass > 5.24 && dtf_mass < 5.31);
@@ -340,12 +352,13 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
     Hasbbbar = false;
     FromJet = tr_jet_pt > 12.5 && tr_jet_rap > etaMin && tr_jet_rap < etaMax;
 
+
     // if (HFmeson.Pt() < 2)
     //   continue;
     // if (!mass_cond)
     //   continue;
-    // if (!eta_cond)
-    //   continue;
+//     if (!eta_cond)
+//       continue;
 
     if (!FromJet)
       continue;
@@ -416,44 +429,78 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
     dtf_chi2ndf = Tree.Bu_ConsBu_chi2[0] / Tree.Bu_ConsBu_nDOF[0];
     dtf_ctau = Tree.Bu_ConsBu_ctau[0];
 
-    mup_TRCHI2DOF = Tree.mup_TRCHI2DOF;
-    mup_IPCHI2 = Tree.mup_IPCHI2;
-    mup_TRGHOSTPROB = Tree.mup_TRGHOSTPROB;
-    mup_ISMUON = Tree.mup_isMuon;
+      jpsi_Hlt1 = Tree.Jpsi_Hlt1DiMuonHighMassDecision_TOS;
+      jpsi_Hlt2 = Tree.Jpsi_Hlt2DiMuonJPsiHighPTDecision_TOS;
+      TIS = (Tree.Jpsi_L0Global_TIS && Tree.Jpsi_Hlt1Global_TIS && Tree.Jpsi_Hlt2Global_TIS);
+      TOS = jpsi_L0 && jpsi_Hlt1 && jpsi_Hlt2;
+      
+      nTracks = Tree.nTracks;
 
-    mum_TRCHI2DOF = Tree.mum_TRCHI2DOF;
-    mum_IPCHI2 = Tree.mum_IPCHI2;
-    mum_TRGHOSTPROB = Tree.mum_TRGHOSTPROB;
-    mum_ISMUON = Tree.mum_isMuon;
-
-    K_TRCHI2DOF = Tree.K_TRCHI2DOF;
-    K_IPCHI2 = Tree.K_IPCHI2;
-    K_TRGHOSTPROB = Tree.K_TRGHOSTPROB;
-    K_ISLONG = (Tree.K_TRACK_Type == 3);
-
-    Jpsi_TRCHI2DOF = Tree.Jpsi_TRCHI2DOF;
-    Jpsi_IPCHI2 = Tree.Jpsi_IPCHI2;
-    Jpsi_TRGHOSTPROB = Tree.Jpsi_TRGHOSTPROB;
-    Jpsi_AMAXDOCA = Tree.Jpsi_AMAXDOCA;
-    Jpsi_BPVDIRA = Tree.Jpsi_BPVDIRA;
-    Jpsi_BPVVDCHI2 = Tree.Jpsi_BPVVDCHI2;
-    Jpsi_VTXCHI2 = Tree.Jpsi_VTXCHI2;
-
-    Bu_TRCHI2DOF = Tree.Bu_TRCHI2DOF;
-    Bu_IPCHI2 = Tree.Bu_IPCHI2;
-    Bu_TRGHOSTPROB = Tree.Bu_TRGHOSTPROB;
-    Bu_AMAXDOCA = Tree.Bu_AMAXDOCA;
-    Bu_BPVDIRA = Tree.Bu_BPVDIRA;
-    Bu_BPVIPCHI2 = Tree.Bu_BPVIPCHI2;
-    Bu_VTXCHI2 = Tree.Bu_VTXCHI2;
+//    mup_TRCHI2DOF = Tree.mup_TRCHI2DOF;
+//      mup_IPCHI2 = Tree.mup_IPCHI2;
+//    mup_TRGHOSTPROB = Tree.mup_TRGHOSTPROB;
+//    mup_ISMUON = Tree.mup_isMuon;
+//
+//    mum_TRCHI2DOF = Tree.mum_TRCHI2DOF;
+//    mum_IPCHI2 = Tree.mum_IPCHI2;
+//    mum_TRGHOSTPROB = Tree.mum_TRGHOSTPROB;
+//    mum_ISMUON = Tree.mum_isMuon;
+//
+//    K_TRCHI2DOF = Tree.K_TRCHI2DOF;
+//    K_IPCHI2 = Tree.K_IPCHI2;
+//    K_TRGHOSTPROB = Tree.K_TRGHOSTPROB;
+//    K_ISLONG = (Tree.K_TRACK_Type == 3);
+//
+//    Jpsi_TRCHI2DOF = Tree.Jpsi_TRCHI2DOF;
+//    Jpsi_IPCHI2 = Tree.Jpsi_IPCHI2;
+//    Jpsi_TRGHOSTPROB = Tree.Jpsi_TRGHOSTPROB;
+//    Jpsi_AMAXDOCA = Tree.Jpsi_AMAXDOCA;
+//    Jpsi_BPVDIRA = Tree.Jpsi_BPVDIRA;
+//    Jpsi_BPVVDCHI2 = Tree.Jpsi_BPVVDCHI2;
+//    Jpsi_VTXCHI2 = Tree.Jpsi_VTXCHI2;
+//
+//    Bu_TRCHI2DOF = Tree.Bu_TRCHI2DOF;
+//    Bu_IPCHI2 = Tree.Bu_IPCHI2;
+//    Bu_TRGHOSTPROB = Tree.Bu_TRGHOSTPROB;
+//    Bu_AMAXDOCA = Tree.Bu_AMAXDOCA;
+//    Bu_BPVDIRA = Tree.Bu_BPVDIRA;
+//    Bu_BPVIPCHI2 = Tree.Bu_BPVIPCHI2;
+//    Bu_VTXCHI2 = Tree.Bu_VTXCHI2;
+      
+//      mup_TRCHI2DOF = Tree.mup_TRACK_CHI2NDOF;
+//      mup_IPCHI2 = Tree.mup_TRACK_PCHI2;
+//      mup_TRGHOSTPROB = Tree.mup_TRACK_GhostProb;
+//      mup_ISMUON = Tree.mup_isMuon;
+//
+//      mum_TRCHI2DOF = Tree.mum_TRACK_CHI2NDOF;
+//      mum_IPCHI2 = Tree.mum_TRACK_PCHI2;
+//      mum_TRGHOSTPROB = Tree.mum_TRACK_GhostProb;
+//      mum_ISMUON = Tree.mum_isMuon;
+//
+//      K_TRCHI2DOF = Tree.K_TRACK_CHI2NDOF;
+//      K_IPCHI2 = Tree.K_TRACK_PCHI2;
+//      K_TRGHOSTPROB = Tree.K_TRACK_GhostProb;
+//      K_ISLONG = (Tree.K_TRACK_Type == 3);
+////      Jpsi_TRCHI2DOF = Tree.Jpsi_TRACK_CHI2NDOF;
+////      Jpsi_IPCHI2 = Tree.Jpsi_PCHI2;
+////      Jpsi_TRGHOSTPROB = Tree.Jpsi_TRACK_GhostProb;
+//      Jpsi_BPVDIRA = Tree.Jpsi_DIRA_OWNPV;
+//      Jpsi_BPVVDCHI2 = Tree.Jpsi_IPCHI2_OWNPV;
+////      Jpsi_AMAXDOCA = Tree.Jpsi_AMAXDOCA;
+////      Jpsi_VTXCHI2 = Tree.Jpsi_VTXCHI2;
+////      Bu_TRCHI2DOF = Tree.Bu_TRACK_CHI2NDOF;
+////      Bu_IPCHI2 = Tree.Bu_PCHI2;
+////      Bu_TRGHOSTPROB = Tree.Bu_TRACK_GhostProb;
+////      Bu_AMAXDOCA = Tree.Bu_AMAXDOCA;
+//      Bu_BPVDIRA = Tree.Bu_DIRA_OWNPV;
+//      Bu_BPVIPCHI2 = Tree.Bu_IPCHI2_OWNPV;
+////      Bu_VTXCHI2 = Tree.Bu_VTXCHI2;
 
     // cout << endl;
     // cout << Jpsi_BPVDIRA << ", " << Tree.Jpsi_DIRA_OWNPV << endl;
     // cout << Jpsi_BPVVDCHI2 << ", " << Tree.Jpsi_FDCHI2_OWNPV << endl;
     // cout << Jpsi_VTXCHI2 << ", " << Tree.Jpsi_FDCHI2_ORIVX << endl;
     // cout << Tree.K_TRACK_Type << endl;
-
-    nTracks = Tree.nTracks;
 
     NumHFHads = Tree.Bu_MCJet_NumHFHads;
     last_eventNum = Tree.eventNumber;

@@ -209,6 +209,10 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     // }
   }
 
+    TH2D *h2_ptz = new TH2D("ptz", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr = new TH2D("ptr", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    
     TH3D *h3_ptzjt = new TH3D("ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -255,12 +259,20 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH2D *h2_truthreco_jt = new TH2D("truthreco_jt", ";Reco jT; Truth jT", jtbinsize, jt_binedges, jtbinsize, jt_binedges);
     TH2D *h2_truthreco_r = new TH2D("truthreco_r", ";Reco r; Truth r", rbinsize, r_binedges, rbinsize, r_binedges);
     
+    TH1D *h1_ratio_z0 = new TH1D("ratio_z0", ";truth z / reco z;", 30, 0, 2);
+    TH1D *h1_ratio_jt0 = new TH1D("ratio_z0", ";truth jt / reco jt;", 30, 0, 2);
+    TH1D *h1_ratio_r0 = new TH1D("ratio_z0", ";truth r / reco r;", 30, 0, 2);
+    TH1D *h1_ratio_z1 = new TH1D("ratio_z1", ";reco z / truth z;", 30, 0, 2);
+    TH1D *h1_ratio_jt1 = new TH1D("ratio_z1", ";reco jt / truth jt;", 30, 0, 2);
+    TH1D *h1_ratio_r1 = new TH1D("ratio_z1", ";reco r / truth r;", 30, 0, 2);
+    
   TH1D *h1_jet_flav = new TH1D("Jet_Flav", "", 7, -0.5, 6.5);
   TH1D *h1_jet_pt = new TH1D("Jet_pT", "", ptbinsize, pt_binedges);
   TH1D *h1_jet_eta = new TH1D("Jet_eta", "", 12, etaMin, etaMax);
   TH1D *h1_jet_rap = new TH1D("Jet_rap", "", 12, etaMin, etaMax);
   TH1D *h1_jet_phi = new TH1D("Jet_phi", "", 20, -3.14, 3.14);
-  TH1D *h1_jet_ptbalance = new TH1D("jet_ptbalance", "", 20, 0, 2);
+  TH1D *h1_jet_ptbalance0 = new TH1D("jet_ptbalance0", "", 20, 0, 2);
+    TH1D *h1_jet_ptbalance1 = new TH1D("jet_ptbalance1", "", 20, 0, 2);
 
   TH2D *h2_jetpteta = new TH2D("h2_jetpteta", "", ptbinsize, pt_binedges, etabinsize, eta_binedges);
 
@@ -594,7 +606,9 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     h1_Jpsi_pt->Fill(Jpsi.Pt());
     h1_Jpsi_rap->Fill(Jpsi.Rapidity());
 
-    h1_jet_ptbalance->Fill(jet_pt / meas_jet_pt);
+    h1_jet_ptbalance0->Fill(jet_pt / meas_jet_pt); //// Truth over Reco is the standard....
+    h1_jet_ptbalance1->Fill(meas_jet_pt/ jet_pt );
+      
     h1_HFjet_ptbalance->Fill(jet_pt / HFmeson.Pt());
 
 
@@ -633,7 +647,14 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     h1_meas_z->Fill(frag_meas_z);
     h1_meas_jt->Fill(frag_meas_jt);
     h1_meas_r->Fill(frag_meas_r);
-
+      
+      h1_ratio_z0->Fill(frag_z / frag_meas_z);
+      h1_ratio_z1->Fill(frag_meas_z/ frag_z);
+      h1_ratio_jt0->Fill( frag_jt / frag_meas_jt );
+      h1_ratio_jt1->Fill(frag_meas_jt/ frag_jt);
+      h1_ratio_r0->Fill( frag_r / frag_meas_r );
+      h1_ratio_r1->Fill(frag_meas_r/ frag_r);
+      
     // cout << frag_z << ", " << HFjet.Pt();
     h2_frag_z_jetpt->Fill(frag_z, HFjet.Pt());
     if (Hasbbbar)
@@ -644,6 +665,10 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     //   cout<<"("<<HFjet.Px()<<", "<<HFjet.Py()<<","<<HFjet.Pz()<<")"<<endl;
     //   cout<<ndtrs<<endl;
     // }
+      
+      h2_ptz->Fill(frag_z, jet_pt);
+      h2_ptjt->Fill(frag_jt, jet_pt);
+      h2_ptr->Fill(frag_r, jet_pt);
       
      h3_ptzjt->Fill(frag_z, frag_jt, jet_pt);
      h3_ptzr->Fill(frag_z, frag_r, jet_pt);
@@ -1301,6 +1326,115 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     ccan[ican]->Print(plotfilePDF.Data());
   }
 
+    
+    ++ican;
+    sprintf(buf, "ccan%d", ican);
+    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+    ccan[ican]->SetFillColor(10);
+    gPad->SetLeftMargin(0.16);
+    gPad->SetBottomMargin(0.06);
+    gPad->SetRightMargin(0.15);
+    ccan[ican]->cd();
+    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
+    
+    ccan[ican]->cd(1);
+    /// "crystalball" parameters: [alpha], [N], [Sigma], [mean]
+    TF1 *fitFunc = new TF1("fitFunc", "crystalball", 0.0, 2.0);
+    fitFunc->SetParameters(1.0, 1.0, 0.5, 1.5, 2.0);
+    
+    SetTruthStyle(h1_ratio_z0);
+    SetRecoStyle(h1_ratio_z1);
+    
+    h1_ratio_z0->Fit(fitFunc, "RQ");
+    
+    h1_ratio_z0->SetStats(0);
+    h1_ratio_z0->SetXTitle("z balance");
+    h1_ratio_z0->Draw("P E SAME");
+    fitFunc->Draw("P E SAME");
+    h1_ratio_z1->SetStats(0);
+    h1_ratio_z1->SetXTitle("z balance");
+    h1_ratio_z1->Draw("P E SAME");
+    
+    auto legend_zbalance = new TLegend(0.2, 0.6, 0.4, 0.9);
+    legend_zbalance ->SetTextSize(0.04);
+    legend_zbalance ->SetBorderSize(0);
+    legend_zbalance ->SetFillStyle(0);
+    legend_zbalance ->SetFillColor(3);
+    legend_zbalance->AddEntry(h1_ratio_z0, "z_{True}/z_{Reco}");
+    legend_zbalance->AddEntry(h1_ratio_z1, "z_{Reco}/z_{Truth}");
+    legend_zbalance->Draw("SAME");
+
+    ccan[ican]->cd(2);
+    SetTruthStyle(h1_ratio_jt0);
+    SetRecoStyle(h1_ratio_jt1);
+    h1_ratio_jt0->SetStats(0);
+    h1_ratio_jt0->SetXTitle("jt balance");
+    h1_ratio_jt0->Draw("P E SAME");
+    h1_ratio_jt1->SetStats(0);
+    h1_ratio_jt1->SetXTitle(" jt balance");
+    h1_ratio_jt1->Draw("P E SAME");
+    
+    auto legend_jtbalance = new TLegend(0.6, 0.6, 0.9, 0.9);
+    legend_jtbalance ->SetTextSize(0.04);
+    legend_jtbalance ->SetBorderSize(0);
+    legend_jtbalance ->SetFillStyle(0);
+    legend_jtbalance ->SetFillColor(3);
+    legend_jtbalance->AddEntry(h1_ratio_jt0, "j_{T; Truth}/j_{T; Reco}");
+    legend_jtbalance->AddEntry(h1_ratio_jt1, "j_{T; Reco}/j_{T; Truth}");
+    legend_jtbalance->Draw("SAME");
+
+
+    ccan[ican]->cd(3);
+    SetTruthStyle(h1_ratio_r0);
+    SetRecoStyle(h1_ratio_r1);
+    h1_ratio_r0->SetStats(0);
+    h1_ratio_r0->SetXTitle(" r balance");
+    h1_ratio_r0->Draw("P E SAME");
+    h1_ratio_r1->SetStats(0);
+    h1_ratio_r1->SetXTitle(" r balance");
+    h1_ratio_r1->Draw("P E SAME");
+    
+    auto legend_rbalance = new TLegend(0.7, 0.6, 0.9, 0.9);
+    legend_rbalance ->SetTextSize(0.04);
+    legend_rbalance ->SetBorderSize(0);
+    legend_rbalance ->SetFillStyle(0);
+    legend_rbalance ->SetFillColor(3);
+    legend_rbalance->AddEntry(h1_ratio_r0, "r_{Truth}/r_{Reco}");
+    legend_rbalance->AddEntry(h1_ratio_r1, "r_{Reco}/r_{Truth}");
+    legend_rbalance->Draw("SAME");
+    
+    ccan[ican]->cd(4);
+    SetTruthStyle(h1_jet_ptbalance0);
+    SetRecoStyle(h1_jet_ptbalance1);
+    h1_jet_ptbalance0->SetStats(0);
+    h1_jet_ptbalance0->SetXTitle(" pt balance");
+    h1_jet_ptbalance0->Draw("P E SAME");
+    h1_jet_ptbalance1->SetStats(0);
+    h1_jet_ptbalance1->SetXTitle(" pt balance");
+    h1_jet_ptbalance1->Draw("P E SAME");
+    
+    auto legend_ptbalance = new TLegend(0.6, 0.6, 0.9, 0.9);
+    legend_ptbalance ->SetTextSize(0.04);
+    legend_ptbalance ->SetBorderSize(0);
+    legend_ptbalance ->SetFillStyle(0);
+    legend_ptbalance ->SetFillColor(3);
+    legend_ptbalance->AddEntry(h1_jet_ptbalance0, "p_{T; Truth}/p_{T; Reco}");
+    legend_ptbalance->AddEntry(h1_jet_ptbalance1, "p_{T; Reco}/p_{T; Truth}");
+    legend_ptbalance->Draw("SAME");
+
+
+    ccan[ican]->cd();
+    ccan[ican]->Update();
+    if (ican == 0)
+    {
+      ccan[ican]->Print(plotfileO.Data());
+    }
+    else
+    {
+      ccan[ican]->Print(plotfilePDF.Data());
+    }
+
+    
   //
   ++ican;
   sprintf(buf, "ccan%d", ican);

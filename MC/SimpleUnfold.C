@@ -41,7 +41,8 @@ void SimpleUnfold(int NumEvts = -1,
                   bool DoTrackPt = false,
                   bool DoGhostCut = false,
                   bool DoRecSelEff = false,
-                  bool SubtractGS = false)
+                  bool DoSignalSys = false,
+                  bool SubtractGS = false )
 {
     
     // gROOT->ProcessLine(".L ZjetLuC");
@@ -191,9 +192,10 @@ void SimpleUnfold(int NumEvts = -1,
     // cout <<"Choose number of events (-1: All Events, or enter integer): ";
     // cin>> NumEvts;
     
-    TString extension_read, extension_eff, extension_RootFilesMC;
+    TString extension_read, extension_eff, extension_RootFilesMC, extension_RootFilesData;
     
     extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+      extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
     
     extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
     extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
@@ -293,13 +295,17 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_dRztheta_ratio;
     
 //    /////////////////// Mass Fit Parameters /////////////////////////////////
-//    TString extension_mass("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");
-//    if (DoRecSelEff)
-//        extension_mass = "recselsys_" + extension_mass;
-//    TFile f_massfit(extension_RootFilesMC  + extension_mass, "READ");
-//    TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
-//    TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
-//    TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
+    TString extension_mass(extension_RootFilesData + "massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
+    if (DoRecSelEff)
+      extension_mass = "recselsys_" + extension_mass;
+    if (DoSignalSys)
+      extension_mass = "sys_" + extension_mass;
+    TFile f_massfit( extension_mass, "READ");
+    TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
+    TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
+    TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
+    TH1D *h1_BkgScaleNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
+    TH1D *h1_BkgScaleFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
     
     // h2_HFptrap_ratio = (TH2D *)file_reco_weights.Get("h2_HFptrap_ratio");
     // h3_HFptjetptrap_ratio = (TH3D *)file_reco_weights.Get("h3_HFptjetptrap_ratio");
@@ -877,13 +883,13 @@ void SimpleUnfold(int NumEvts = -1,
         // float MassLow = MassMu - 3 * MassSigma;
         // float MassLow = 5.24;
         // float MassHigh = 5.31;
-        //        float bkg_weight = h1_BkgScale != NULL ? h1_BkgScale->GetBinContent(h1_BkgScale->FindBin(HFmeson.Pt())) : 1.0;
-        //        float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
-        //        float MassLow = h1_MassMin != NULL ? h1_MassMin->GetBinContent(h1_MassMin->FindBin(HFmeson.Pt())) : 5.24;
+         float bkg_weight = h1_BkgScale != NULL ? h1_BkgScale->GetBinContent(h1_BkgScale->FindBin(HFmeson.Pt())) : 1.0;
+          float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
+           float MassLow = h1_MassMin != NULL ? h1_MassMin->GetBinContent(h1_MassMin->FindBin(HFmeson.Pt())) : 5.24;
         
-        float bkg_weight = 1.0;
-        float MassHigh = 5.31;
-        float MassLow =  5.24;
+//        float bkg_weight = 1.0;
+//        float MassHigh = 5.31;
+//        float MassLow =  5.24;
         
         float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
         float frag_r = HFmeson.DeltaR(HFjet, true);
@@ -1979,7 +1985,7 @@ void SimpleUnfold(int NumEvts = -1,
         h1_HFeff_jetpt->Draw("PE SAME");
 
     
-    auto legendeff_HFrecojet = new TLegend(0.5, 0.7, 0.8, 0.9);
+    auto legendeff_HFrecojet = new TLegend(0.5, 0.6, 0.8, 0.8);
     legendeff_HFrecojet->SetTextSize(0.03);
     legendeff_HFrecojet->SetBorderSize(0);
     legendeff_HFrecojet->SetFillStyle(0);
@@ -2089,13 +2095,13 @@ void SimpleUnfold(int NumEvts = -1,
         SetTruthStyle(h1_HFeff_HFpt);
         h1_HFeff_HFpt->Draw("PE SAME");
     
-        auto legend_diffeff = new TLegend(0.6, 0.7, 0.8, 0.9);
+        auto legend_diffeff = new TLegend(0.5, 0.5, 0.8, 0.8);
     legend_diffeff->SetBorderSize(0);
     legend_diffeff->SetFillStyle(0);
     legend_diffeff->SetFillColor(3);
     legend_diffeff->AddEntry(h1_efficiency_recoJet_HFpt, "Jet Reco. Efficiency");
     legend_diffeff->AddEntry(h1_HFeff_HFpt, "HF Reco. Efficiency");
-    legend_diffeff->AddEntry(h1_efficiency_HFpt, "Reco. Efficiency");
+    legend_diffeff->AddEntry(h1_efficiency_HFpt, "HF Jet Reco. Efficiency");
     
     legend_diffeff->Draw("SAME");
         
