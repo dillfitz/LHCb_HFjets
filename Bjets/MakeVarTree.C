@@ -204,23 +204,25 @@ void MakeVarTree(int NumEvts_user = -1,
     h3_pideff_K_P_ETA_nTracks = (TH3D *)file_pideffK.Get("eff_Brunel_DLLK>0");
     h3_pideff_Mu_P_ETA_nTracks = (TH3D *)file_pideffMu.Get("eff_IsMuon&Brunel_DLLmu>0");
 
-//    //////////////////////////////////////////////////
-//    ///              Trigger
-//    ////////////////////////////////////////////////
-//    TString extension_trig_MC, extension_trig_Data;
-//    TH2D *h2_trigeff_Data;
-//    TH2D *h2_trigeff_MC;
-//
-//    extension_trig_MC = "jpsieff_reco_ev_-1_b_91599";
-//    extension_trig_Data = "jpsieff_data_ev_-1_b_91599";
-//
-//    TFile file_trigeffMC("hists/" + extension_trig_MC + ".root", "READ");
-//    TFile file_trigeffData("hists/" + extension_trig_Data + ".root", "READ");
-//
-//    h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
-//    h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
-//    TH2D *h2_trigeff_ratio = (TH2D *)h2_trigeff_Data->Clone("h2_trigeff_ratio");
-//    h2_trigeff_ratio->Divide(h2_trigeff_MC);
+    //////////////////////////////////////////////////
+    ///              Trigger
+    ////////////////////////////////////////////////
+    TString extension_trig_MC, extension_trig_Data, extension_RootFilesTrig;
+    extension_RootFilesTrig = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/TrigEff/");
+    
+    TH2D *h2_trigeff_Data;
+    TH2D *h2_trigeff_MC;
+
+    extension_trig_MC = "jpsieff_reco_ev_-1_b_91599";
+    extension_trig_Data = "jpsieff_data_ev_-1_b_91599";
+
+    TFile file_trigeffMC(extension_RootFilesTrig+ extension_trig_MC + ".root", "READ");
+    TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data + ".root", "READ");
+
+    h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
+    h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
+    TH2D *h2_trigeff_ratio = (TH2D *)h2_trigeff_Data->Clone("h2_trigeff_ratio");
+    h2_trigeff_ratio->Divide(h2_trigeff_MC);
 
     BjetTree Tree(0, dataset, isData);
 //    BjetTree Tree_DiMuon(0, 11511, isData);
@@ -1353,18 +1355,18 @@ void MakeVarTree(int NumEvts_user = -1,
         bdt_pt = Tree.Jet_BDTTag_pt[0] / 1000.;
         bdt_z = Tree.Jet_BDTTag_z[0];
 
-//        if (isData && h2_trigeff_Data != NULL)
-//        {
-//            trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_Data->GetYaxis()->FindBin(Jpsi.Rapidity()));
-//            trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_MC->GetYaxis()->FindBin(Jpsi.Rapidity()));
-//            trigeff_ratio = trigeff_Data / trigeff_MC;
-//            if (std::isnan(trigeff_ratio) || std::isinf(trigeff_ratio))
-//                trigeff_ratio = trigeff_Data = trigeff_MC = 1.0;
-//        }
-//        else
-//        {
-//            trigeff_Data = trigeff_MC = trigeff_ratio = 1.0;
-//        }
+        if (isData && h2_trigeff_Data != NULL)
+        {
+            trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_Data->GetYaxis()->FindBin(Jpsi.Rapidity()));
+            trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_MC->GetYaxis()->FindBin(Jpsi.Rapidity()));
+            trigeff_ratio = trigeff_Data / trigeff_MC;
+            if (std::isnan(trigeff_ratio) || std::isinf(trigeff_ratio))
+                trigeff_ratio = trigeff_Data = trigeff_MC = 1.0;
+        }
+        else
+        {
+            trigeff_Data = trigeff_MC = trigeff_ratio = 1.0;
+        }
 
         if (isData && h3_pideff_K_P_ETA_nTracks != NULL && h2_ratio_trkeff_P_ETA != NULL)
         {
@@ -1432,9 +1434,13 @@ void MakeVarTree(int NumEvts_user = -1,
         {
             pideff_K = pideff_mum = pideff_mup = trkeff_K = trkeff_mup = trkeff_mum = 1.0;
         }
-        // cout << trkeff_K << ", " << trkeff_mum << ", " << trkeff_mup << endl;
-        // cout << pideff_K << ", " << pideff_mum << ", " << pideff_mup << endl;
-        // cout << trigeff_ratio << endl;
+        
+//        cout << " ------------------------------------------------ " << endl;
+//         cout << "Trk Eff (K, mum, mup):" << trkeff_K << ", " << trkeff_mum << ", " << trkeff_mup << endl;
+//         cout << "PID Eff (K, mum, mup):" << pideff_K << ", " << pideff_mum << ", " << pideff_mup << endl;
+//         cout << "Trig Eff (K, mum, mup):" << trigeff_ratio << endl;
+//          cout << " ------------------------------------------------ " << endl;
+
 
         if (hasHFhadron_matched)
             isTrueBjet = true;
