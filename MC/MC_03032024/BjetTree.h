@@ -1889,7 +1889,7 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("Jets/DecayTree","");
-      TString data_dir = "/Users/josearias18/Desktop/QCDc2/pythia/Data/";
+      TString data_dir = "../../data/";
       int year = (dataset / 10000) % 10;
       int JetMeth = (dataset / 1000) % 10;
       int flavor = (dataset / 100) % 10;
@@ -2172,9 +2172,9 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
 
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_2016_Sim09l_MD_02102024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 61591)
@@ -2191,9 +2191,9 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
                    {
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02172024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 61599)
@@ -2231,12 +2231,12 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
                    {
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02172024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_03032024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_04052024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 71591)
@@ -2249,12 +2249,12 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
                    else
                    {
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_03032024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_04052024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 71599)
@@ -2286,12 +2286,12 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
                    else
                    {
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_03032024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_04052024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 81591)
@@ -2305,12 +2305,12 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
                    else
                    {
                       // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_03032024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_04052024_full.root/Jets/DecayTree");
 
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_04052024_full.root/Jets/DecayTree");
+                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_04052024_full.root/Jets/DecayTree");
                    }
                 }
                 else if (dataset == 81599)

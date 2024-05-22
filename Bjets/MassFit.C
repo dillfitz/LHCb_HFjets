@@ -12,7 +12,7 @@
 //#include "Settings.h"
 //#include "../Helpers.h"
 //#include "../LundGen.hh"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 using namespace RooFit;
 
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
@@ -112,8 +112,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     TString extension, extension_reco, extension_misid;
     TString extension_read, extension_RootFilesMC, extension_RootFilesData;
     
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
-    extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+    extension_RootFilesData = TString("../../root_files/Bjets/");
     
     extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
     
@@ -379,7 +379,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     TString plotfileO;
     TString plotfileC;
     // TString OutputFileBase    = outbase+outinfo;
-    TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/Bjets/");
+    TString plotextension = TString("../../plots/Bjets/");
     rootfile = extension_RootFilesMC + extension + TString(".root");
     plotfile = plotextension + extension + TString(".ps");
     

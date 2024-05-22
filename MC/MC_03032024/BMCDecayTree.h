@@ -427,7 +427,7 @@ BMCDecayTree::BMCDecayTree(TTree *tree = 0, int dataset = 93539, bool isData = t
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain *chain = new TChain("MCDecay/MCDecayTree", "");
-      TString data_dir = "/Users/josearias18/Desktop/QCDc2/pythia/Data/";
+      TString data_dir = "../../data/";
       
       if (dataset == 93599)
       {
