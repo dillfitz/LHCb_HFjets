@@ -12,7 +12,7 @@
 //#include "../Helpers.h"
 //#include "fastjet/ClusterSequence.hh"
 //#include "../LundGen.hh"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 #include <TF1.h>
 #include <TLatex.h>
 #include <THStack.h>
@@ -190,10 +190,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // cout <<"Choose number of events (-1: All Events, or enter integer): ";
   // cin>> NumEvts;
     
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
-    extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+    extension_RootFilesData = TString("../../root_files/Bjets/");
     
-    eff_path = TString( "/Users/josearias18/Desktop/QCDc2/pythia/Effs/");
+    eff_path = TString( "../../Effs/");
     
   float minimum_dR = 0.1;
 
@@ -1629,7 +1629,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TString plotfileO;
     TString plotfileC;
     // TString OutputFileBase    = outbase+outinfo;
-    TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/Bjets/");
+    TString plotextension = TString("../../plots/Bjets/");
     rootfile = extension_RootFilesMC + extension + TString(".root");
     plotfile = plotextension + extension + TString(".ps");
     

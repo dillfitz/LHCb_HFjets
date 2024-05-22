@@ -10,7 +10,7 @@
 #include <vector>
 #include <iostream>
 //#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Bjets/LHCbStyle.C"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 
 using namespace std;
 
@@ -126,10 +126,10 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     str_charged = "_charge";
   TString str_tree;
     
-  TString extension_read, extension_RootFilesMC, extension, extension_RootFilesData;
-    
-  extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
-    extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
+
+  TString extension_read, extension_RootFilesMC, extension;
+  extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+  extension_RootFilesData = TString("../../root_files/Bjets/");  
 
   TString  extension_eff,  extension_prefix;
     
@@ -571,7 +571,7 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   TString plotfileO;
   TString plotfileC;
   // TString OutputFileBase	= outbase+outinfo;
-  TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/BjetsMC/");
+  TString plotextension = TString("../../plots/BjetsMC/");
     rootfile = extension_RootFilesMC + extension + TString(".root");
     plotfile = plotextension + extension + TString(".ps");
 

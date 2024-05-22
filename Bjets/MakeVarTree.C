@@ -13,7 +13,7 @@
 //#include "fastjet/contrib/SoftDrop.hh"
 //// #include "../RooHelpers.h"
 //#include "../LundGen.hh"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 
 using namespace std;
 
@@ -165,7 +165,7 @@ void MakeVarTree(int NumEvts_user = -1,
     TString extension_pideffMu, extension_pideffK, extension_trackeff, extension_trackeff_Data, extension_trackeff_MC;
     TString extension_trackeff_Muon;
     TString eff_path;
-    eff_path = TString( "/Users/josearias18/Desktop/QCDc2/pythia/Effs/");
+    eff_path = TString( "../../Effs/");
    
 
     TH3D *h3_pideff_K_P_ETA_nTracks;
@@ -237,8 +237,8 @@ void MakeVarTree(int NumEvts_user = -1,
 
     cout << "Executing CAJetAlgo" << endl;
 
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
-    extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+    extension_RootFilesData = TString("../../root_files/Bjets/");
 
     TFile *file_eff;
     TH2D *h2_trk_eff;

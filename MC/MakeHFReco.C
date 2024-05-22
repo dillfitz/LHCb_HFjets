@@ -4,15 +4,15 @@
 // #include "LundPlaneData.h"
 
 //#include "./MC_03032024/BMCDecayTree.C"
-//#include "./MC_03032024/BDecayTree.C"
 #include "./MC_04102024/BMCDecayTree.C"
 #include "./MC_04102024/BDecayTree.C"
+
 
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
 //#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Bjets/LHCbStyle.C"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 
 using namespace std;
 
@@ -109,7 +109,7 @@ void MakeHFReco(int NumEvts_user = -1, int dataset = 1510,
   TString str_tree;
   
   TString extension_read, extension_RootFilesMC, extension;
-  extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+  extension_RootFilesMC = TString("../../root_files/BjetsMC/");
 
   TString  extension_eff;
   extension = TString("tree_HFeff_") + str_level + Form("_ev_%d", NumEvts) + str_Mag + str_flavor + Form("_%d", dataset);

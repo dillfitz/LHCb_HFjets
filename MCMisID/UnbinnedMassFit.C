@@ -11,7 +11,7 @@
 #include "TH1.h"
 //#include "Settings.h"
 
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Settings.h"
+#include "../Reference/Settings.h"
 
 using namespace RooFit;
 
@@ -94,7 +94,7 @@ void UnbinnedMassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true
   extension = TString("massfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
   // Setup Tree
 
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
   extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
 
@@ -293,7 +293,7 @@ void UnbinnedMassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true
   c->cd(2);
   xframe->Draw("SAME");
   leg1->Draw("SAME");
- TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/BjetsMC/");
+ TString plotextension = TString("../../plots/BjetsMC/");
   c->SaveAs(plotextension + extension + TString(".pdf"));
 
   f.Write();

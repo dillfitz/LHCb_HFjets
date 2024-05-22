@@ -12,7 +12,7 @@
 //#include "Settings.h"
 //#include "../Helpers.h"
 // #include "../LundGen.hh"
-#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Helpers.h"
+#include "../Reference/Helpers.h"
 #include <TF1.h>
 #include <TLatex.h>
 #include <THStack.h>
@@ -23,9 +23,9 @@
 #include <TLegend.h>
 #include <TEfficiency.h>
 //#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfold.h"
-#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldBayes.h"
+//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldBayes.h"
 
-#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldResponse.h"
+//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldResponse.h"
 
 
  using namespace std;
@@ -194,8 +194,10 @@ void SimpleUnfold(int NumEvts = -1,
     
     TString extension_read, extension_eff, extension_RootFilesMC, extension_RootFilesData;
     
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
-      extension_RootFilesData = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/Bjets/");
+
+
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+    extension_RootFilesData = TString("../../root_files/Bjets/");    
     
     extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
     extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
@@ -1610,7 +1612,7 @@ void SimpleUnfold(int NumEvts = -1,
         TString plotfileO;
         TString plotfileC;
         // TString OutputFileBase    = outbase+outinfo;
-        TString plotextension = TString("/Users/josearias18/Desktop/QCDc2/pythia/Plots/BjetsMC/");
+        TString plotextension = TString("../../plots/BjetsMC/");
         rootfile = extension_RootFilesMC + extension + TString(".root");
         plotfile = plotextension + extension + TString(".ps");
         

@@ -709,11 +709,8 @@ BjetMCTree::BjetMCTree(TTree *tree = 0, int dataset = 93539, bool isData = false
       }
       else
       {
-        // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-        // chain->Add(data_dir + "truth_BuPsiK_in_jet_13TeV_nojetid.root/mcjettuple/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_04052024_full.root/MCJets/MCJetTree");
-
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_04052024_full.root/MCJets/MCJetTree");
@@ -726,11 +723,8 @@ BjetMCTree::BjetMCTree(TTree *tree = 0, int dataset = 93539, bool isData = false
       }
       else
       {
-        // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-        // chain->Add(data_dir + "truth_BuPsiK_in_jet_13TeV_nojetid.root/mcjettuple/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_04052024_full.root/MCJets/MCJetTree");
-
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_04052024_full.root/MCJets/MCJetTree");
@@ -758,12 +752,8 @@ BjetMCTree::BjetMCTree(TTree *tree = 0, int dataset = 93539, bool isData = false
       }
       else
       {
-        // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-        // chain->Add(data_dir + "truth_BuPsiK_in_jet_13TeV_nojetid.root/mcjettuple/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_04052024_full.root/MCJets/MCJetTree");
-
-
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_04052024_full.root/MCJets/MCJetTree");
@@ -776,11 +766,9 @@ BjetMCTree::BjetMCTree(TTree *tree = 0, int dataset = 93539, bool isData = false
       }
       else
       {
-        // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-        // chain->Add(data_dir + "truth_BuPsiK_in_jet_13TeV_nojetid.root/mcjettuple/MCJetTree");
+
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_04052024_full.root/MCJets/MCJetTree");
-
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_04052024_full.root/MCJets/MCJetTree");
         chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_04052024_full.root/MCJets/MCJetTree");

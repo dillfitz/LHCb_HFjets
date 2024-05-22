@@ -4,7 +4,7 @@
 // #include "LundPlaneData.h"
 
 #include "MisIDTree.C"
-#include "MisIDMCTree.C"
+//#include "MisIDMCTree.C"
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
@@ -122,7 +122,7 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 1510, bool isData = true,
   TString str_tree;
     
  TString extension_read, extension_RootFilesMC, extension;
-    extension_RootFilesMC = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/BjetsMC/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
 
   extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
 
