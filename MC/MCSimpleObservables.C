@@ -197,7 +197,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     int loc = i;
     // for (int j = 0; j < HFetabinsize; j++)
     // {
-    TH3D *h3_ptzjt_tmp = new TH3D(Form("ptzr%d", loc), "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt_tmp = new TH3D(Form("ptzjt%d", loc), "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     vec_h3_ptzjt.push_back(h3_ptzjt_tmp);
 
     TH3D *h3_ptzr_tmp = new TH3D(Form("ptzr%d", loc), "", zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
@@ -260,11 +260,11 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH2D *h2_truthreco_r = new TH2D("truthreco_r", ";Reco r; Truth r", rbinsize, r_binedges, rbinsize, r_binedges);
     
     TH1D *h1_ratio_z0 = new TH1D("ratio_z0", ";truth z / reco z;", 30, 0, 2);
-    TH1D *h1_ratio_jt0 = new TH1D("ratio_z0", ";truth jt / reco jt;", 30, 0, 2);
-    TH1D *h1_ratio_r0 = new TH1D("ratio_z0", ";truth r / reco r;", 30, 0, 2);
+    TH1D *h1_ratio_jt0 = new TH1D("ratio_jt0", ";truth jt / reco jt;", 30, 0, 2);
+    TH1D *h1_ratio_r0 = new TH1D("ratio_r0", ";truth r / reco r;", 30, 0, 2);
     TH1D *h1_ratio_z1 = new TH1D("ratio_z1", ";reco z / truth z;", 30, 0, 2);
-    TH1D *h1_ratio_jt1 = new TH1D("ratio_z1", ";reco jt / truth jt;", 30, 0, 2);
-    TH1D *h1_ratio_r1 = new TH1D("ratio_z1", ";reco r / truth r;", 30, 0, 2);
+    TH1D *h1_ratio_jt1 = new TH1D("ratio_jt1", ";reco jt / truth jt;", 30, 0, 2);
+    TH1D *h1_ratio_r1 = new TH1D("ratio_r1", ";reco r / truth r;", 30, 0, 2);
     
   TH1D *h1_jet_flav = new TH1D("Jet_Flav", "", 7, -0.5, 6.5);
   TH1D *h1_jet_pt = new TH1D("Jet_pT", "", ptbinsize, pt_binedges);

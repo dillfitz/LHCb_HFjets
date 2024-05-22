@@ -1889,7 +1889,7 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
       // The following code should be used if you want this class to access a chain
       // of trees.
       TChain * chain = new TChain("Jets/DecayTree","");
-      TString data_dir = "/Users/josearias18/Desktop/QCDc2/pythia/Data/";
+      TString data_dir = "../../data/";
       int year = (dataset / 10000) % 10;
       int JetMeth = (dataset / 1000) % 10;
       int flavor = (dataset / 100) % 10;

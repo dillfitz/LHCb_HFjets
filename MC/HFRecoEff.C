@@ -127,7 +127,7 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   TString str_tree;
     
 
-  TString extension_read, extension_RootFilesMC, extension;
+  TString extension_read, extension_RootFilesMC, extension, extension_RootFilesData;
   extension_RootFilesMC = TString("../../root_files/BjetsMC/");
   extension_RootFilesData = TString("../../root_files/Bjets/");  
 

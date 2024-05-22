@@ -208,7 +208,7 @@ void MakeVarTree(int NumEvts_user = -1,
     ///              Trigger
     ////////////////////////////////////////////////
     TString extension_trig_MC, extension_trig_Data, extension_RootFilesTrig;
-    extension_RootFilesTrig = TString("/Users/josearias18/Desktop/QCDc2/pythia/Root_Files/TrigEff/");
+    extension_RootFilesTrig = TString("../../root_files/TrigEff/");
     
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
