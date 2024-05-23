@@ -155,7 +155,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     // cout <<"Choose number of events (-1: All Events, or enter integer): ";
     // cin>> NumEvts;
 
-    extension_RootFilesMC = TString("");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
 
     TFile f(extension_RootFilesMC + extension + ".root", "RECREATE");
     
