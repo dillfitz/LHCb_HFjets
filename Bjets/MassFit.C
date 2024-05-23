@@ -110,10 +110,10 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         str_charged = "_charge";
 
     TString extension, extension_reco, extension_misid;
-    TString extension_read, extension_RootFilesMC, extension_RootFilesData;
+    TString extension_read, extension_RootFilesMC, extension_RootFiles;
     
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
-    extension_RootFilesData = TString("../../root_files/Bjets/");
+    extension_RootFiles = isData ? TString("../../root_files/Bjets/") : TString("../../root_files/BjetsMC/");
     
     extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
     
@@ -134,7 +134,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     
 //    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
 //
-//    TFile fread(extension_RootFilesData + extension_read + ".root", "READ");
+//    TFile fread(extension_RootFiles + extension_read + ".root", "READ");
 
     TChain *BTree = new TChain("BTree", "B-jets Tree Variables");
     vector<int> vec_datasets;
@@ -156,13 +156,13 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
                 str_Mag = "_MU";
             extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
 
-            BTree->Add(extension_RootFilesData + extension_read + ".root/BTree");
+            BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
         }
     }
     else
     {
         extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
-        BTree->Add(extension_RootFilesData + extension_read + ".root/BTree");
+        BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
     }
     if (NumEvts > BTree->GetEntries())
         NumEvts = BTree->GetEntries();
@@ -236,7 +236,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     vector<TH1D *> h1_mass_HFpt;
     vector<float> vec_bkg_frac, vec_res_frac, vec_bkg_yield, vec_sig_yield;
 
-    TFile f(extension_RootFilesData  + extension + ".root", "RECREATE");
+    TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
 
     int nBins = 80;
     float binsize;

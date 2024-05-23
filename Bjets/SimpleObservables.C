@@ -175,12 +175,12 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // str_trees[2] = "B0KPiJet/DecayTree";
   // str_trees[3] = "Jets/DecayTree";
   TString str_tree;
-  TString  extension_RootFilesMC, extension_RootFilesData;
+  TString  extension_RootFilesMC, extension_RootFiles;
   TString  extension_read, extension_wspace, extension_eff;
-    TString eff_path;
+  TString eff_path;
 
-   TString extension_unfold, extension_prefix, extension_trackeff;
-   TString extension;
+  TString extension_unfold, extension_prefix, extension_trackeff;
+  TString extension;
 
   extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
 
@@ -190,10 +190,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // cout <<"Choose number of events (-1: All Events, or enter integer): ";
   // cin>> NumEvts;
     
-    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
-    extension_RootFilesData = TString("../../root_files/Bjets/");
+  extension_RootFilesMC = TString("../../root_files/BjetsMC/");
+  extension_RootFiles = isData ?  TString("../../root_files/Bjets/") : extension_RootFilesMC;
     
-    eff_path = TString( "../../Effs/");
+  eff_path = TString( "../../Effs/");
     
   float minimum_dR = 0.1;
 
@@ -244,7 +244,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // TFile file_reco_weights("hists/MC_DATA_WEIGHTS.root", "READ");
   TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset_closure), "READ");
     
-    TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
+  TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
 
   //
   TH2D *h2_HFptrap_ratio;
@@ -300,10 +300,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-    TString extension_mass("/massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
+    TString extension_mass = isData ? TString("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root") : TString("massfit_reco_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
+    std::cout << "extension_mass : " << extension_mass << std::endl;
   if (DoRecSelEff)
-    extension_mass = "recselsys_" + extension_mass;
-  TFile f_massfit( extension_RootFilesData  + extension_mass, "READ");
+    extension_mass = "recselsys_/" + extension_mass;
+  TFile f_massfit( extension_RootFiles  + extension_mass, "READ");
   TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
   TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
@@ -336,7 +337,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //        extension_read = extension_prefix + extension_read;
         extension_read =  extension_read;
 
-     BTree->Add(extension_RootFilesData + extension_read + ".root/BTree");
+     BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
     }
   }
   else
@@ -345,7 +346,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (!DoRecSelEff)
 //      extension_read = extension_prefix + extension_read;
       extension_read = extension_read;
-      BTree->Add(extension_RootFilesData + extension_read + ".root/BTree");
+      BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
   }
 
   cout << BTree->GetTreeNumber() << endl;
@@ -355,7 +356,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     NumEvts = BTree->GetEntries();
   cout << BTree->GetEntries() << endl;
 
-  TFile f(extension_RootFilesData  + extension + ".root", "RECREATE");
+  TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
 
   // TH2D *h2_lundplane_b = new TH2D("B_LundPlane", "B-meson Lund Plane", 50, 0, 8, 50, -8, 8);
   // TH2D *h2_lundplane_c = new TH2D("D_LundPlane", "D-meson Lund Plane", 50, 0, 8, 50, -8, 8);
@@ -1629,7 +1630,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TString plotfileO;
     TString plotfileC;
     // TString OutputFileBase    = outbase+outinfo;
-    TString plotextension = TString("../../plots/Bjets/");
+    TString plotextension = isData ? TString("../../plots/Bjets/") : TString("../../plots/BjetsMC/");
     rootfile = extension_RootFilesMC + extension + TString(".root");
     plotfile = plotextension + extension + TString(".ps");
     
