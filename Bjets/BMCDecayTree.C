@@ -1,14 +1,14 @@
-#define MisIDMCTree_cxx
-#include "MisIDMCTree.h"
+#define BMCDecayTree_cxx
+#include "BMCDecayTree.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 
-void MisIDMCTree::Loop()
+void BMCDecayTree::Loop()
 {
 //   In a ROOT session, you can do:
-//      root> .L MisIDMCTree.C
-//      root> MisIDMCTree t
+//      root> .L BMCDecayTree.C
+//      root> BMCDecayTree t
 //      root> t.GetEntry(12); // Fill t data members with entry number 12
 //      root> t.Show();       // Show values of entry 12
 //      root> t.Show(16);     // Read and show values of entry 16

@@ -1758,52 +1758,11 @@ MisIDTree::MisIDTree(TTree *tree = 0, int dataset = 93539, bool isData = true) :
       // of trees.
       TChain *chain = new TChain("Jets/DecayTree", "");
       TString data_dir = "../../data/";
-      if (dataset == 93599)
-      {
-         cout << "Got all data" << endl;
-         if (isData)
-         {
-            chain->Add(data_dir + "Bjet_b_2016_MD_09082022_url333_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2016_MD_09082022_url333_800_1429.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2016_MU_09082022_url334_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2016_MU_09082022_url334_800_1299.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2017_MD_09082022_url335_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2017_MD_09082022_url335_800_882.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2017_MU_09082022_url336_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2017_MU_09082022_url336_800_846.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2018_MD_09082022_url337_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2018_MD_09082022_url337_800_988.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2018_MU_09082022_url338_0_800.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_b_2018_MU_09082022_url338_800_1042.root/Jets/DecayTree");
-         }
-         else
-         {
-            // chain->Add("/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/BuPsiK_in_jet_13TeV.root/BJetsHlt/DecayTree");
-            //  chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-            //  chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09b_MD_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09b_MU_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09g_MU_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim10a_MD_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09g_MD_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09k_MD_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim10a_MU_10242022_full.root/Jets/DecayTree");
-            chain->Add(data_dir + "Bjet_MC_Sim09k_MU_10242022_full.root/Jets/DecayTree");
-
-            // chain->Add(data_dir + "Zhadron_MC_Sim09_2016_MU_08112022_full.root");
-         }
-      }
-      else if (dataset == 90599)
+      if (dataset == 91599)
       {
 
-         chain->Add(data_dir + "BjetMisID_MC_nojetid_Sim09l_MU_12122022_full.root/Jets/DecayTree");
-         chain->Add(data_dir + "BjetMisID_MC_nojetid_Sim09l_MD_12122022_full.root/Jets/DecayTree");
-      }
-      else if (dataset == 91599)
-      {
-
-         chain->Add(data_dir + "BjetMisID_MC_nojetid_DTF_Sim09l_MD_02182024_full.root/Jets/DecayTree");
-         chain->Add(data_dir + "BjetMisID_MC_nojetid_DTF_Sim09l_MU_02182024_full.root/Jets/DecayTree");
+         chain->Add(data_dir + "BjetMisID_MC_nojetid_DTF_Sim09l_MD_05202024_full.root/Jets/DecayTree");
+         chain->Add(data_dir + "BjetMisID_MC_nojetid_DTF_Sim09l_MU_05202024_full.root/Jets/DecayTree");
       }
 //      else if (dataset == 92599)
 //      {

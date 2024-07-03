@@ -1875,1038 +1875,284 @@ BjetTree::BjetTree(TTree *tree, int dataset, bool isData) : fChain(0)
    {
 
 #ifdef SINGLE_TREE
-      // The following code should be used if you want this class to access
-      // a single tree instead of a chain
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("Memory Directory");
-      if (!f || !f->IsOpen()) 
-      {
-         f = new TFile("Memory Directory");
-      }
-      f->GetObject("Jets/DecayTree",tree);
+        // The following code should be used if you want this class to access
+        // a single tree instead of a chain
+        TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("Memory Directory");
+        if (!f || !f->IsOpen()) 
+        {
+            f = new TFile("Memory Directory");
+        }
+        f->GetObject("Jets/DecayTree",tree);
 
 #else // SINGLE_TREE
 
-      // The following code should be used if you want this class to access a chain
-      // of trees.
-      TChain * chain = new TChain("Jets/DecayTree","");
-      TString data_dir = "../../data/";
-      int year = (dataset / 10000) % 10;
-      int JetMeth = (dataset / 1000) % 10;
-      int flavor = (dataset / 100) % 10;
-      int ptRange = (dataset / 10) % 10;
-      int Mag = (dataset / 1) % 10;
+        // The following code should be used if you want this class to access a chain
+        // of trees.
+        TChain * chain = new TChain("Jets/DecayTree","");
+        TString data_dir = "../../data/";
+        int year = (dataset / 10000) % 10;
+        int JetMeth = (dataset / 1000) % 10;
+        int flavor = (dataset / 100) % 10;
+        int ptRange = (dataset / 10) % 10;
+        int Mag = (dataset / 1) % 10;
        
-      if (dataset == 93599)
-      {
-          if (isData)
-          {
-              chain->Add(data_dir + "Bjet_b_2016_MD_09082022_url333_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2016_MD_09082022_url333_800_1429.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2016_MU_09082022_url334_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2016_MU_09082022_url334_800_1299.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2017_MD_09082022_url335_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2017_MD_09082022_url335_800_882.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2017_MU_09082022_url336_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2017_MU_09082022_url336_800_846.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2018_MD_09082022_url337_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2018_MD_09082022_url337_800_988.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2018_MU_09082022_url338_0_800.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_b_2018_MU_09082022_url338_800_1042.root/Jets/DecayTree");
-          }
-          else
-          {
-              // chain->Add("/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/BuPsiK_in_jet_13TeV.root/BJetsHlt/DecayTree");
-              //  chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-              //  chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09b_MD_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09b_MU_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09g_MU_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim10a_MD_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09g_MD_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09k_MD_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim10a_MU_10242022_full.root/Jets/DecayTree");
-              chain->Add(data_dir + "Bjet_MC_Sim09k_MU_10242022_full.root/Jets/DecayTree");
-
-              // chain->Add(data_dir + "Zhadron_MC_Sim09_2016_MU_08112022_full.root");
-          }
-      }
-      else if (dataset == 93509)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09b_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09b_MD_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 93519)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09g_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09g_MD_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 93529)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09k_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09k_MD_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 93539)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim10a_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim10a_MD_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 93590)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MU_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09b_MD_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim10a_MD_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09g_MD_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09k_MD_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 93591)
-                {
-                   // chain->Add(data_dir + "Bjet_MC_Sim09_2016_MD_09292022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09b_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim10a_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09g_MU_10242022_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_MC_Sim09k_MU_10242022_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 90599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2016_MD_10222023_url981_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2016_MD_10222023_url981_800_1433.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2016_MU_10222023_url983_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2016_MU_10222023_url983_800_1327.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2017_MD_10222023_url984_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2017_MD_10222023_url984_800_887.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2017_MU_10222023_url985_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2017_MU_10222023_url985_800_851.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2018_MD_10222023_url986_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2018_MD_10222023_url986_800_994.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2018_MU_10222023_url987_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_BHAD_nojetid_DTF_2018_MU_10222023_url987_800_1043.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09k_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09k_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2016_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2016_MD_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MD_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                       ///////// THIS IS THE NEWEST MONTE CARLO ////////
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                       
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                       
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_03032024_full.root/Jets/DecayTree");
-
-
-                   }
-                }
-                else if (dataset == 91590)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2016_MD_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MD_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91591)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2016_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MU_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91519)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_800_1003.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_05222023_url637_0_725.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_800_897.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_10162023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91529)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_800_1003.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_05222023_url637_0_725.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_800_897.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_10162023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91539)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_05222023_url635_800_1003.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_05222023_url637_0_725.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_05222023_url639_800_897.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_10162023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_10162023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 61590)
-                {
-                   if (isData)
-                   {
-
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MD_04102024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2016_MD_02292024.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_800_1000.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MD_12192023_url1159_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MD_12192023_url1159_800_1023.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02172024_full.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_2016_Sim09l_MD_02102024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 61591)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MU_04102024.root/Jets/DecayTree");
-
-
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_12192023_url1160_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_12192023_url1160_800_973.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02172024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 61599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_betas_2016_MU_02122024.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_800_1000.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 71590)
-                {
-                   if (isData)
-                   {
-                       
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_04102024.root/Jets/DecayTree");
-
-
-                      // chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MD_02142024.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_betas_2017_MD_02122024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MD_12192023_url1161_0_721.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02172024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_03032024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 71591)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_04102024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_12192023_url1162_0_701.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_03032024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 71599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 81590)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MD_04102024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1163_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1163_800_826.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_03032024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 81591)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MU_04102024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1164_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1164_800_876.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02172024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_03032024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_03032024_full.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 81599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 62590)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2016_MD_02122024.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_800_1000.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 62591)
-                {
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2016_MU_02122024.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_12192023_url1160_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_12192023_url1160_800_973.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 62599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_betas_2016_MU_02122024.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_betas_2016_MD_02122024_url1245_800_1000.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 72590)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2017_MD_02122024.root/Jets/DecayTree");
-
-                      // chain->Add(data_dir + "Bjet_betas_2017_MD_02122024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MD_12192023_url1161_0_721.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 72591)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2017_MU_02122024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_12192023_url1162_0_701.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 72599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2017_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 82590)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2018_MD_02122024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1163_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1163_800_826.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 82591)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2018_MU_02122024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1164_0_800.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_12192023_url1164_800_876.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 82599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MU_Data.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_2018_MD_Data.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02192024_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02192024_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 92599)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MD_10072023_url895_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MD_10072023_url895_800_1048.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_10082023_url896_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2016_MU_10082023_url896_800_1003.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MD_10082023_url897_0_746.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2017_MU_10072023_url898_0_727.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_10072023_url899_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MD_10072023_url899_800_844.root/Jets/DecayTree");
-
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_10082023_url900_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_Dimuon_nojetid_DTF_2018_MU_10082023_url900_800_898.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_Sim09k_MD_03172023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_Sim09k_MU_03172023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90590)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_800_1426.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_800_877.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_800_989.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MD_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MD_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09k_MD_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90500)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_800_1426.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_800_877.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_800_989.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90510)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_800_1426.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_800_877.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_800_989.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90520)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_800_1426.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_800_877.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_800_989.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09k_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90530)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MD_11252022_url423_800_1426.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MD_11252022_url425_800_877.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MD_11252022_url427_800_989.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90591)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09k_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MU_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90501)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MU_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90511)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MU_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90521)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09k_MU_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90531)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MU_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90509)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09b_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90519)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim09g_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91529)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09k_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09k_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09k_MU_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09k_MD_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09k_MU_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09k_MD_06092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91539)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09l_MU_06062023_isMC.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2018_Sim09l_MD_06062023_isMC.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90549)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MU_02092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MC_nojetid_Sim10a_MD_02092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 90559)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MU_06072023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim09l_MD_06072023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 91569)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2016_MU_11252022_url424_800_1315.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2017_MU_11252022_url426_800_847.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_0_800.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_nojetid_2018_MU_11252022_url428_800_1040.root/Jets/DecayTree");
-                   }
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim10a_MD_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2016_Sim10a_MU_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim10a_MD_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim10a_MU_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim10a_MD_06092023_full.root/Jets/DecayTree");
-                      chain->Add(data_dir + "Bjet_MCReco_nojetid_DFT_2017_Sim10a_MU_06092023_full.root/Jets/DecayTree");
-                   }
-                }
-                else if (dataset == 33533)
-                {
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-                   chain->Add(data_dir + "Bjet_nojetid_2016_MD_05042023_url589_0_800.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_nojetid_2016_MD_05042023_url589_800_1424.root/Jets/DecayTree");
-                }
-                else if (dataset == 11511)
-                {
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-                   chain->Add(data_dir + "Bjet_Data_dimuon_DTF_2016_MD_05042023_full.root/Jets/DecayTree");
-                   chain->Add(data_dir + "Bjet_Data_dimuon_DTF_2016_MD_05042023_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 99599)
-                {
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Bu2JpsiK/";
-
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_2017_MU_02112024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_2018_MD_02192024_full.root/Jets/DecayTree");
-                   }
-
-                   // chain->Add(data_dir + "BuPsiK_in_jet_13TeV_nojetid_dtf.root/Jets/DecayTree");
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_Random_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_12072023_full.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_12072023_full.root/Jets/DecayTree");
-                   }
-
-                   // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_11202023_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 99519)
-                {
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Run2_BuJpsiK/";
-                   // data_dir = "/afs/cern.ch/work/i/ichahrou/DeadCone/DaVinci/Bu2JpsiK/";
-
-                   if (isData)
-                   {
-
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_2017_MU_02112024.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_Dimuon_2018_MD_02192024_full.root/Jets/DecayTree");
-                   }
-
-                   // chain->Add(data_dir + "BuPsiK_in_jet_13TeV_nojetid_dtf.root/Jets/DecayTree");
-                   else
-                   {
-                      chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_HighPT_2016_Sim09k_MU_02192024_full.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_12072023_full.root/Jets/DecayTree");
-                      // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_12072023_full.root/Jets/DecayTree");
-                   }
-
-                   // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_11202023_full.root/Jets/DecayTree");
-                }
-
-                else if (dataset == 60510)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2016_MD_01232024.root/Jets/DecayTree");
-                   }
-                   // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_11202023_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 60520)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_plusmumu_Data_2016_MD_01232024.root/Jets/DecayTree");
-                   }
-                   // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_11202023_full.root/Jets/DecayTree");
-                }
-                else if (dataset == 60530)
-                {
-                   if (isData)
-                   {
-                      chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_Random_2016_MD_01232024.root/Jets/DecayTree");
-                   }
-                   // chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_11202023_full.root/Jets/DecayTree");
-                }
+        if (dataset == 61590)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MD_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 61591)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 61599)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 71590)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MD_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 71591)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 71599)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/Jets/DecayTree");              
+            }
+        }
+        else if (dataset == 81590)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MD_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 81591)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 81599)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MU_05182024.root/Jets/DecayTree");
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/Jets/DecayTree");              
+            }
+        }
+        else if (dataset == 91599)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MU_05182024.root/Jets/DecayTree"); 
+                  
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_05182024.root/Jets/DecayTree"); 
+                 
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MD_05182024.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MU_05182024.root/Jets/DecayTree");                   
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/Jets/DecayTree"); 
+
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/Jets/DecayTree");   
+            }      
+        }
+        else if (dataset == 91590)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MD_05182024.root/Jets/DecayTree");  
+                
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MD_05182024.root/Jets/DecayTree");
+                 
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MD_05182024.root/Jets/DecayTree");
+
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/Jets/DecayTree");
+            }
+        }
+        else if (dataset == 91591)
+        {
+            if (isData)
+            {
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2016_MU_05182024.root/Jets/DecayTree"); 
+                  
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2017_MU_05182024.root/Jets/DecayTree"); 
+                 
+                chain->Add(data_dir + "Bjet_Jpsi2MuMu_Data_HighPT_2018_MU_05182024.root/Jets/DecayTree");              
+            }
+            else
+            {
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/Jets/DecayTree");
+        
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/Jets/DecayTree");         
+    
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/Jets/DecayTree");
+                chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/Jets/DecayTree");   
+            }             
+        }            
        
-       tree = chain;
+        tree = chain;
 
 #endif // SINGLE_TREE
 
-   }
-   Init(tree);
+    }
+    Init(tree);
 }
 
 BjetTree::~BjetTree()

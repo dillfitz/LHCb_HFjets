@@ -53,6 +53,7 @@ int maxPVs = 6;
 float etaMin = 2.5;
 float etaMax = 4.;
 float LambdaQCD = 0.2;
+float pTLow = 7.;
 float ptMin = 20.;
 //float ptMin = 15.0;
 float ptMax = 100.;
@@ -167,9 +168,9 @@ double eta_binedges[etabinsize + 1] = { 2.2, 2.5, 2.65, 2.9, 3.3, 4.0, 4.5 };
 double HFeta_binedges[HFetabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
 double Jpsieta_binedges[Jpsietabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
 
-double pt_binedges[ptbinsize + 1] = {12.5, 15, 20, 30, 50, 100.};
-double custompt_binedges[customptbinsize +1] = {12.5, 15, 20, 30, 50, 100};
-double finept_binedges[fineptbinsize +1] = {12.5, 15, 20, 30, 40, 50, 60, 70, 80, 100, 200};
+double pt_binedges[ptbinsize + 1] = {pTLow, 15, 20, 30, 50, 100.};
+double custompt_binedges[customptbinsize +1] = {pTLow, 15, 20, 30, 50, 100};
+double finept_binedges[fineptbinsize +1] = {pTLow, 15, 20, 30, 40, 50, 60, 70, 80, 100, 200};
 
   // ptbinsize = 6
 // double pt_binedges[ptbinsize+1] = {15, 20, 40, 60, 80, 100, 120, 140, ptMax, 200};

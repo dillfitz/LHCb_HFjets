@@ -199,8 +199,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
   // extension_eff = TString("hists/efficiency_truth") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_flavor + Form("_%d", dataset);
-  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", 91599);
-  extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", 91599);
+  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
 
   if (DoJES == 1)
     extension_prefix = TString("JESPos_");
@@ -242,9 +242,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // TFile fread(dir_deadcone + "hists/" + extension_read + ".root", "READ");
   // TFile fwspace(dir_deadcone + "hists/" + extension_wspace + ".root", "READ");
   // TFile file_reco_weights("hists/MC_DATA_WEIGHTS.root", "READ");
-  TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset_closure), "READ");
+  TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
     
-  TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
+  //TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
 
   //
   TH2D *h2_HFptrap_ratio;
@@ -292,15 +292,18 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_HFeff_HFpteta = (TH2D *)file_decay->Get("efficiency_HFpteta");
   TH2D *h2_HFeff_HFptjetpt = (TH2D *)file_decay->Get("efficiency_HFptjetpt");
     
-  TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
-  TH2D *h2_ptjt_truth =(TH2D *)file_truth->Get("ptjt");
-  TH2D *h2_ptr_truth = (TH2D *)file_truth->Get("ptr");
+  //TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
+  //TH2D *h2_ptjt_truth =(TH2D *)file_truth->Get("ptjt");
+  //TH2D *h2_ptr_truth = (TH2D *)file_truth->Get("ptr");
 
   // h2_SVTag_eff_z->Smooth();
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-    TString extension_mass = isData ? TString("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root") : TString("massfit_reco_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
+    TString datastr = TString("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
+    TString recostr = TString("massfit_reco_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
+    TString extension_mass = isData ? datastr : recostr;
+    
     std::cout << "extension_mass : " << extension_mass << std::endl;
   if (DoRecSelEff)
     extension_mass = "recselsys_/" + extension_mass;
@@ -368,6 +371,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   //   z_binedges[i] = z_min + i*(z_max - z_min)/ktbinsize;
   // }
   vector<TH3D *> vec_h3_ptzjt, vec_h3_ptzr, vec_h3_ptjtr;
+  vector<TH1D *> vec_jetpt;
   for (int i = 0; i < ptHFbinsize; i++)
   {
     int loc = i;
@@ -382,6 +386,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       
       TH3D *h3_ptjtr_tmp = new TH3D(Form("ptjtr%d", loc), "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
       vec_h3_ptjtr.push_back(h3_ptjtr_tmp);
+       
+      TH1D *h1_jetpt_tmp = new TH1D(Form("jetpt%d", loc), "", ptbinsize, pt_binedges);
+      vec_jetpt.push_back(h1_jetpt_tmp);
+    
     // }
   }
     
@@ -942,8 +950,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     Kmeson.SetPxPyPzE(K_px, K_py, K_pz, K_e);
     Bfromjet.SetPxPyPzE(Bfromjet_px, Bfromjet_py, Bfromjet_pz, Bfromjet_e);
 
-//    bool pt_cond = (jet_pt > 12.5);
-    bool pt_cond = (jet_pt > 20.0);
+    bool pt_cond = (jet_pt > pTLow);
     bool rap_cond = (jet_rap > etaMin && jet_rap < etaMax);
 
     if (!TOS)
@@ -1206,6 +1213,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     }
     if (signal_cond)
     {
+    
+      for (int i = 0; i < ptHFbinsize; i++)
+      {
+        int loc = i;
+        if (HF_pt > ptHF_binedges[i] && HF_pt < ptHF_binedges[i + 1])
+        {
+          vec_jetpt[loc]->Fill(jet_pt);
+        }
+      }    
       h2_Ndtr_jetpt_neutral->Fill(Ndtr_neutral, HFjet.Pt(), event_weight);
       h2_Ndtr_jetpt_charged->Fill(Ndtr_charged, HFjet.Pt(), event_weight);
       h2_Ndtr_jetpt->Fill(Ndtr_neutral + Ndtr_charged, HFjet.Pt(), event_weight);
@@ -1450,7 +1466,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     // for (int j = 0; j < HFetabinsize; j++)
     // {
     //   int loc = i * HFetabinsize + j;
-      
+    
+    vec_jetpt[loc]->Write(Form("jetpt%d", loc));      
     vec_h3_ptzjt[loc]->Write(Form("h3_ptzjt%d", loc));
     vec_h3_ptzr[loc]->Write(Form("h3_ptzr%d", loc));
     vec_h3_ptjtr[loc]->Write(Form("h3_ptjtr%d", loc));
@@ -1777,7 +1794,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     }
     legend_zpt_raw -> Draw("SAME");
-    
+/*    
     ccan[ican]->cd(3);
     auto legend_zpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
     legend_zpt_truth ->SetTextSize(0.03);
@@ -1805,7 +1822,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     }
     legend_zpt_truth -> Draw("SAME");
-    
+  */  
     ccan[ican]->cd();
     ccan[ican]->Update();
     if (ican == 0)
