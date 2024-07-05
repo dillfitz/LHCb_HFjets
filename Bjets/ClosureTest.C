@@ -16,6 +16,9 @@ void ClosureTest(int NumEvts = -1,
                  bool SubtractGS = false)
 {
 
+  TRandom3 *myRNG = new TRandom3();
+  const int nRuns = 1;
+
   TString string_reco, string_data, string_truth, string_eff, string_unfold, extension, str_eta, str_pt, str_Nevts;
   TString str_followHard, str_ghost, str_charged, str_Mag1, str_Mag2, str_flavor, str_GS(""), str_WTA;
   TString loc_hists("../../root_files/");
@@ -67,6 +70,7 @@ void ClosureTest(int NumEvts = -1,
   cout << string_truth + TString(".root") << endl;
   cout << string_eff + TString(".root") << endl;
   cout << string_unfold + TString(".root") << endl;
+  cout << string_data + TString(".root") << endl;
   cout << extension + TString(".root") << endl;
   
   /////////////////////   Get Files /////////////////////////////////
@@ -100,8 +104,8 @@ void ClosureTest(int NumEvts = -1,
   TH1D *h1_HFpt_truth = (TH1D *)file_truth->Get("h1_HFpt");
   TH2D *h2_HFptjetpt_truth = (TH2D *)file_truth->Get("h2_HFptjetpt");
   TH2D *h2_jetpteta_truth = (TH2D *)file_truth->Get("h2_jetpteta");
-  TH1D *h1_kt_truth = (TH1D *)file_truth->Get("kt");
-  TH1D *h1_dR_truth = (TH1D *)file_truth->Get("dR");
+  //TH1D *h1_kt_truth = (TH1D *)file_truth->Get("kt");
+  //TH1D *h1_dR_truth = (TH1D *)file_truth->Get("dR");
   TVectorD *NumJets_truth = (TVectorD *)file_truth->Get("NumJets");
 
   /////////////////////   Get Purity Hists /////////////////////////////////
@@ -123,35 +127,20 @@ void ClosureTest(int NumEvts = -1,
   response_jetpt->UseOverflow();
 
   int ntoys = 5;
-
-  // unfold_zjt_bayes.SetVerbose (1);
-  // unfold_zjt_bayes.SetNToys(ntoys);
-  // unfold_zjt_bayes.IncludeSystematics(0);
-  //
-  // unfold_dR_bayes.SetNToys(ntoys);
-  // unfold_dR_bayes.IncludeSystematics(0);
-
-  // RooUnfoldErrors* errors= new RooUnfoldErrors(ntoys,&unfold_zjt_bayes,h2_zjt_truth);
-  // auto hToyErr=errors->RMSResiduals();
-  // auto hUnfErr=errors->UnfoldingError();
-
-  // RooUnfoldErrors* errors= new RooUnfoldErrors(ntoys,&unfold_dR_bayes,h1_dR_truth);
-  // auto hToyErr=errors->RMSResiduals();
-  // auto hUnfErr=errors->UnfoldingError();
-
-  // h1_jetpt_final->Multiply(h1_purity_jetpt);
+  // Multiply by purity
+  //h1_jetpt_final->Multiply(h1_purity_jetpt);
   RooUnfoldBayes unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_z);
   // RooUnfoldIds unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_kt);
   h1_jetpt_final = (TH1D *)unfold_jetpt.Hreco();
-  // h1_jetpt_final->Divide(h1_efficiency_recoJet_jetpt);
   
   cout << "Unfold successful" << endl;  
 
-  // h1_jetpt_final->Divide(h1_efficiency_jetpt);
+  // Divide by efficiency
+  //h1_jetpt_final->Divide(h1_efficiency_jetpt);
 
-  TH1D *h1_correct_jetpt = (TH1D *)h1_jetpt_final->Clone("h1_correct_jetpt");
+  TH1D *h1_jetpt_final_ratio = (TH1D *)h1_jetpt_final->Clone("h1_jetpt_final_ratio");
   // TH1D * h1_correct_jetpt = (TH1D*) h1_jetpt_reco->Clone("h1_correct_jetpt");
-  h1_correct_jetpt->Divide(h1_jetpt_truth);
+  h1_jetpt_final_ratio->Divide(h1_jetpt_truth);
 
   // h1_jetpt_final->Divide(h1_correct_jetpt);
   // h1_efficiency_recoJet_jetpt->Multiply(h1_correct_jetpt);
@@ -201,6 +190,10 @@ void ClosureTest(int NumEvts = -1,
     else
       h1_jetpt_vecfinal->Add(vec_jetpt[loc]);
   }
+  
+  TH1D *h1_jetpt_vecfinal_ratio = (TH1D *)h1_jetpt_vecfinal->Clone("h1_jetpt_vecfinal_ratio");
+  h1_jetpt_vecfinal_ratio->Divide(h1_jetpt_truth);
+  
   /////////////////////   Normalize histograms /////////////////////////////////
   
   std::cout << "Normalizing hists..." << std::endl;
@@ -208,11 +201,14 @@ void ClosureTest(int NumEvts = -1,
   int binlow_jet = h1_jetpt_truth->FindBin(ptMin);
   int binhigh_jet = h1_jetpt_truth->FindBin(ptMax);
 
+  double Njets_reco = h1_jetpt_reco->Integral(binlow_jet, binhigh_jet);
   double Njets_truth = h1_jetpt_truth->Integral(binlow_jet, binhigh_jet);
   double Njets_final = h1_jetpt_final->Integral(binlow_jet, binhigh_jet);
   double Njets_vecfinal = h1_jetpt_vecfinal->Integral(binlow_jet, binhigh_jet);
+  
+  std::cout << "Njets_reco : " << Njets_reco << " Njets_truth : " << Njets_truth << " Njets_final : " << Njets_final << " Njets_vecfinal : " << Njets_vecfinal << std::endl;
 
-  cout << "Njets vecfinal = " << Njets_vecfinal << endl;
+  //cout << "Njets vecfinal = " << Njets_vecfinal << endl;
   // NormalizeHist(h2_ptthetaErad_final);
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -229,13 +225,13 @@ void ClosureTest(int NumEvts = -1,
 
   ////////////////////////////////////////////////////////////////////////////////
 
+/*
   vector<RooUnfoldResponse *> vec_response_ptzjt;
   vector<TH3D *> vec_h3_ptzjt, vec_h3_efficiency_ptzjt, vec_h3_purity_ptzjt;
   for (int i = 0; i < ptHFbinsize; i++)
   {
     int loc = i;
     TH3D *h3_ptzjt_tmp = (TH3D *)file_reco->Get(Form("h3_ptzjt%d", loc));
-    std::cout << " made it here.. " << std::endl;
     vec_h3_ptzjt.push_back(h3_ptzjt_tmp);
 
     RooUnfoldResponse *response_ptzjt_temp = (RooUnfoldResponse *)file_unfold->Get(Form("h3_response_ptzjt%d", loc));
@@ -247,15 +243,16 @@ void ClosureTest(int NumEvts = -1,
     vec_h3_efficiency_ptzjt.push_back(h3_efficiency_ptzjt_tmp);
     vec_h3_purity_ptzjt.push_back(h3_purity_ptzjt_tmp);
   }
-
+*/
   TH2D *h2_zjt_truth = (TH2D *)file_truth->Get("zjt");
   TH3D *h3_ptzjt_truth = (TH3D *)file_truth->Get("ptzjt");
   TH3D *h3_ptzjt = (TH3D *)file_reco->Get("ptzjt");
+  TH3D *h3_ptzjt_data = (TH3D *)file_data->Get("ptzjt");  
   TH3D *h3_ptzjt_final = (TH3D *)h3_ptzjt->Clone("ptzjt_final");
   TH3D *h3_eff_ptzjt = (TH3D *)file_unfold->Get("efficiency_ptzjt");
   TH3D *h3_purity_ptzjt = (TH3D *)file_unfold->Get("purity_ptzjt");
   RooUnfoldResponse *response_ptzjt = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzjt");
-  //
+  /*
   TH3D *h3_ptzjt_vecfinal;
   for (int i = 0; i < ptHFbinsize; i++)
   {
@@ -268,7 +265,7 @@ void ClosureTest(int NumEvts = -1,
     vec_h3_ptzjt[loc]->Multiply(vec_h3_purity_ptzjt[loc]);
     ///// Update NumIters_kt to something more general /////
     RooUnfoldBayes unfold_ptzjt(vec_response_ptzjt[loc], vec_h3_ptzjt[loc], NumIters_kt);
-    // vec_h3_ptzjt[loc] = (TH3D *)unfold_ptzjt.Hreco();
+    //vec_h3_ptzjt[loc] = (TH3D *)unfold_ptzjt.Hreco();
     vec_h3_ptzjt[loc]->Divide(vec_h3_efficiency_ptzjt[loc]);
 
     cout << HF_eff << ", " << HF_pur << endl;
@@ -279,49 +276,56 @@ void ClosureTest(int NumEvts = -1,
     else
       h3_ptzjt_vecfinal->Add(vec_h3_ptzjt[loc]);
   }
-  h3_ptzjt_final->Multiply(h3_ptzjt_final, h3_purity_ptzjt);
+  */
+  // Multiply by purity  
+  //h3_ptzjt_final->Multiply(h3_ptzjt_final, h3_purity_ptzjt);
   RooUnfoldBayes unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
   // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
   h3_ptzjt_final = (TH3D *)unfold_ptzjt.Hreco();
-  h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
+  // Divide by efficiency  
+  //h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
   //
   int binlow = h3_ptzjt->GetZaxis()->FindBin(ptMin + 0.1);
   int binhigh = h3_ptzjt->GetZaxis()->FindBin(ptMax - 0.1);
-  int binlowdR = h3_ptzjt->GetXaxis()->FindBin(0.);
-  int binhighdR = h3_ptzjt->GetXaxis()->FindBin(2.1);
-  int binlowkt = h3_ptzjt->GetYaxis()->FindBin(-1.9);
-  int binhighkt = h3_ptzjt->GetYaxis()->FindBin(1.49);
+  int binlowz = h3_ptzjt->GetXaxis()->FindBin(0.0);
+  int binhighz = h3_ptzjt->GetXaxis()->FindBin(1.1);
+  int binlowjt = h3_ptzjt->GetYaxis()->FindBin(0.0);
+  int binhighjt = h3_ptzjt->GetYaxis()->FindBin(10.0);
   //
 
   h3_ptzjt_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
   h3_ptzjt_truth->GetZaxis()->SetRangeUser(ptMin, ptMax);
-  h3_ptzjt_vecfinal->GetZaxis()->SetRangeUser(ptMin, ptMax);
+  //h3_ptzjt_vecfinal->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
   h3_ptzjt->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
   //
-  TH2D *h2_ptzjt_final = (TH2D *)h3_ptzjt_final->Project3D("kt_final_yx");
-  TH2D *h2_ptzjt_vecfinal = (TH2D *)h3_ptzjt_vecfinal->Project3D("kt_vecfinal_yx");
-  TH2D *h2_ptzjt = (TH2D *)h3_ptzjt->Project3D("kt_yx");
-  TH2D *h2_ptzjt_truth = (TH2D *)h3_ptzjt_truth->Project3D("kt_truth_yx");
+  TH2D *h2_ptzjt_final = (TH2D *)h3_ptzjt_final->Project3D("zjt_final_yx");
+  //TH2D *h2_ptzjt_vecfinal = (TH2D *)h3_ptzjt_vecfinal->Project3D("zjt_vecfinal_yx");
+  TH2D *h2_ptzjt = (TH2D *)h3_ptzjt->Project3D("zjt_yx");
+  TH2D *h2_ptzjt_truth = (TH2D *)h3_ptzjt_truth->Project3D("zjt_truth_yx");
   //
-  h2_ptzjt_final->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_final->GetXaxis()->SetRange(binlowdR, binhighdR);
-  h2_ptzjt_vecfinal->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_vecfinal->GetXaxis()->SetRange(binlowdR, binhighdR);
-  h2_ptzjt_truth->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_truth->GetXaxis()->SetRange(binlowdR, binhighdR);
-
-  TH2D *h2_final_ptzjt = GetJetPtCorrectedHist(h3_ptzjt_final, h1_efficiency_recoJet_jetpt);
-  h2_final_ptzjt->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_final_ptzjt->GetXaxis()->SetRange(binlowdR, binhighdR);
+  h2_ptzjt_final->GetYaxis()->SetRange(binlowjt, binhighjt);
+  h2_ptzjt_final->GetXaxis()->SetRange(binlowz, binhighz);
+  //h2_ptzjt_vecfinal->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_ptzjt_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
+  h2_ptzjt_truth->GetYaxis()->SetRange(binlowjt, binhighjt);
+  h2_ptzjt_truth->GetXaxis()->SetRange(binlowz, binhighz);
+  
+  
+  // CHECK WHAT THIS DOES! // 
+  //TH2D *h2_final_ptzjt = GetJetPtCorrectedHist(h3_ptzjt_final, h1_efficiency_recoJet_jetpt);
+  //h2_final_ptzjt->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_final_ptzjt->GetXaxis()->SetRange(binlowz, binhighz);
   //
   // NormalizeHist(h2_ptzjt_final);
   // NormalizeHist(h2_ptzjt_vecfinal);
   // NormalizeHist(h2_ptzjt_truth);
-  h2_final_ptzjt->Scale(1. / Njets_final, "width");
+  //h2_final_ptzjt->Scale(1. / Njets_final, "width");
+  
+  // This will depend on results of 1D jet unfolding
   h2_ptzjt_final->Scale(1. / Njets_final, "width");
-  h2_ptzjt_vecfinal->Scale(1. / Njets_vecfinal, "width");
+  //h2_ptzjt_vecfinal->Scale(1. / Njets_vecfinal, "width");
   h2_ptzjt_truth->Scale(1. / Njets_truth, "width");
 
   // h2_ptzjt_vecfinal->Scale(1. / Njets_vecfinal, "width");
@@ -332,58 +336,33 @@ void ClosureTest(int NumEvts = -1,
   TH2D *h2_ptzjt_pull_final = (TH2D *)h2_ptzjt->Clone("h2_ptzjt_pull_final");
 
   TH2D *h2_ptzjt_ratio_vecfinal = (TH2D *)h2_ptzjt->Clone("h2_ptzjt_ratio_vecfinal");
-  TH2D *h2_ptzjt_pull_vecfinal = (TH2D *)h2_ptzjt->Clone("h2_ptzjt_pull_vecfinal");
-
-  // TH2D *h2_ptzjt_ratio_final = new TH2D("h2_ptzjt_ratio_final", "", dRbinsizefinal, dR_binedgesfinal, ktbinsizefinal, kt_binedgesfinal);
-  // TH2D *h2_ptzjt_pull_final = new TH2D("h2_ptzjt_pull_final", "", dRbinsizefinal, dR_binedgesfinal, ktbinsizefinal, kt_binedgesfinal);
+  //TH2D *h2_ptzjt_pull_vecfinal = (TH2D *)h2_ptzjt->Clone("h2_ptzjt_pull_vecfinal");
 
   TH2D *h2_ptzjt_pull = (TH2D *)h2_zjt_truth->Clone("ptzjt_pull");
 
   TH1D *h1_ptzjt_pulldist = new TH1D("ptzjt_pulldist", "", 20, -4.5, 4.5);
   TH1D *h1_ptzjt_pulldist_final = new TH1D("ptzjt_pulldist_final", "", 20, -4.5, 4.5);
-  TH1D *h1_ptzjt_pulldist_vecfinal = new TH1D("ptzjt_pulldist_vecfinal", "", 20, -4.5, 4.5);
-
-  // h2_ptzjt_ratio->Divide(h2_ptzjt, h2_zjt_truth);
-  // h2_ptzjt_ratio_final->Divide(h2_ptzjt_final, h2_zjt_truth);
+  //TH1D *h1_ptzjt_pulldist_vecfinal = new TH1D("ptzjt_pulldist_vecfinal", "", 20, -4.5, 4.5);
 
   h2_ptzjt_ratio->Divide(h2_ptzjt, h2_ptzjt_truth);
   h2_ptzjt_ratio_final->Divide(h2_ptzjt_final, h2_ptzjt_truth);
-  h2_ptzjt_ratio_vecfinal->Divide(h2_ptzjt_vecfinal, h2_ptzjt_truth);
+  //h2_ptzjt_ratio_vecfinal->Divide(h2_ptzjt_vecfinal, h2_ptzjt_truth);
 
-  h2_ptzjt_ratio_final->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_ratio_final->GetXaxis()->SetRange(binlowdR, binhighdR);
+  h2_ptzjt_ratio_final->GetYaxis()->SetRange(binlowjt, binhighjt);
+  h2_ptzjt_ratio_final->GetXaxis()->SetRange(binlowz, binhighz);
 
-  h2_ptzjt_pull_final->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_pull_final->GetXaxis()->SetRange(binlowdR, binhighdR);
+  h2_ptzjt_pull_final->GetYaxis()->SetRange(binlowjt, binhighjt);
+  h2_ptzjt_pull_final->GetXaxis()->SetRange(binlowz, binhighz);
 
-  h2_ptzjt_ratio_vecfinal->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_ratio_vecfinal->GetXaxis()->SetRange(binlowdR, binhighdR);
+  //h2_ptzjt_ratio_vecfinal->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_ptzjt_ratio_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
 
-  h2_ptzjt_pull_vecfinal->GetYaxis()->SetRange(binlowkt, binhighkt);
-  h2_ptzjt_pull_vecfinal->GetXaxis()->SetRange(binlowdR, binhighdR);
-
-  // for (int i = 0; i < dRbinsizefinal; i++)
-  // {
-  //   for (int j = 1; j < ktbinsizefinal + 1; j++)
-  //   {
-  //     double num = h2_ptzjt_final->GetBinContent(i + 2, j + 1);
-  //     // double num = h2_final_ptzjt->GetBinContent(i + 2, j + 1);
-  //     double denom = h2_ptzjt_truth->GetBinContent(i + 2, j + 1);
-  //     double num_err = h2_ptzjt_final->GetBinError(i + 2, j + 1);
-  //     // double num_err = h2_final_ptzjt->GetBinError(i + 2, j + 1);
-  //     double denom_err = h2_ptzjt_truth->GetBinError(i + 2, j + 1);
-  //     double tot = num / denom;
-  //     double tot_err = tot * sqrt(pow(num_err / num, 2) + pow(denom_err / denom, 2));
-  //     if (denom <= 0)
-  //       continue;
-  //     h2_ptzjt_ratio_final->SetBinContent(i + 1, j + 1 - 1, tot);
-  //     h2_ptzjt_ratio_final->SetBinError(i + 1, j + 1 - 1, tot_err);
-  //   }
-  // }
+  //h2_ptzjt_pull_vecfinal->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_ptzjt_pull_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
 
   GetPullsRatio(h2_ptzjt_ratio, h2_ptzjt_pull, h1_ptzjt_pulldist);
   GetPullsRatio(h2_ptzjt_ratio_final, h2_ptzjt_pull_final, h1_ptzjt_pulldist_final);
-  GetPullsRatio(h2_ptzjt_ratio_vecfinal, h2_ptzjt_pull_vecfinal, h1_ptzjt_pulldist_vecfinal);
+  //GetPullsRatio(h2_ptzjt_ratio_vecfinal, h2_ptzjt_pull_vecfinal, h1_ptzjt_pulldist_vecfinal);
 
   double ptzjt_pullperf1 = GetPullPerformance(h2_ptzjt_pull, 1);
   double ptzjt_pullperf2 = GetPullPerformance(h2_ptzjt_pull, 2);
@@ -391,7 +370,84 @@ void ClosureTest(int NumEvts = -1,
   double ptzjt_pullperf1_final = GetPullPerformance(h2_ptzjt_pull_final, 1);
   double ptzjt_pullperf2_final = GetPullPerformance(h2_ptzjt_pull_final, 2);
   
-  /*
+  ////////////////////////////////////
+  // Smearing the Observables
+  ///////////////////////////////////
+  TH2D *h2_ptzjt_closure_error;
+  for (int i = 0; i < nRuns; i++)
+  {
+    TH3D *h3_ptzjt_clone = (TH3D *)h3_ptzjt->Clone(Form("ptzjt_clone%d", i));
+    myRNG->SetSeed(time(0));
+    SmearObservables(h3_ptzjt_clone, h3_ptzjt_data, myRNG);
+    // Multiply by purity
+    //h3_ptzjt_clone->Multiply(h3_ptzjt_clone, h3_purity_ptzjt);
+    RooUnfoldBayes unfold_ptzjt_clone(response_ptzjt, h3_ptzjt_clone, NumIters_kt);
+    // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_clone, NumIters_kt);
+    // unfold_ptzjt_clone.SetMeasuredCov((*covMatrix_ptzjt));
+
+    h3_ptzjt_clone = (TH3D *)unfold_ptzjt_clone.Hreco();
+    // Divide by efficiency
+    //h3_ptzjt_clone->Divide(h3_ptzjt_clone, h3_eff_ptzjt);
+    h3_ptzjt_clone->GetZaxis()->SetRangeUser(ptMin, ptMax);
+
+    TH2D *h2_ptzjt_clone = (TH2D *)h3_ptzjt_clone->Project3D(Form("zjt_clone%d_yx", i));
+
+    h2_ptzjt_clone->GetYaxis()->SetRange(binlowjt, binhighjt);
+    h2_ptzjt_clone->GetXaxis()->SetRange(binlowz, binhighz);
+    h2_ptzjt_clone->Scale(1. / Njets_final, "width");
+    TH2D *h2_ptzjt_ratio_clone = (TH2D *)h2_ptzjt_clone->Clone(Form("h2_ptzjt_ratio_clone%d", i));
+    TH2D *h2_ptzjt_pull_clone = (TH2D *)h2_ptzjt_clone->Clone(Form("h2_ptzjt_pull_clone%d", i));
+    h2_ptzjt_ratio_clone->Divide(h2_ptzjt_clone, h2_ptzjt_truth);
+
+    h2_ptzjt_ratio_clone->GetYaxis()->SetRange(binlowjt, binhighjt);
+    h2_ptzjt_ratio_clone->GetXaxis()->SetRange(binlowz, binhighz);
+
+    h2_ptzjt_pull_clone->GetYaxis()->SetRange(binlowjt, binhighjt);
+    h2_ptzjt_pull_clone->GetXaxis()->SetRange(binlowz, binhighz);
+
+    if (i == 0)
+    {
+      h2_ptzjt_closure_error = (TH2D *)h2_ptzjt_ratio_clone->Clone("h2_ptzjt_closure_error");
+      h2_ptzjt_closure_error->Reset(); // Reset the histogram to zero
+    }
+    // h2_ptzjt_closure_error->Add(h2_ptzjt_ratio_clone);
+    // Loop over all bins and add in quadrature
+    for (int x = 1; x <= h2_ptzjt_ratio_clone->GetNbinsX(); ++x)
+    {
+      for (int y = 1; y <= h2_ptzjt_ratio_clone->GetNbinsY(); ++y)
+      {
+        for (int z = 1; z <= h2_ptzjt_ratio_clone->GetNbinsZ(); ++z)
+        {
+          double binContent = 1. - h2_ptzjt_ratio_clone->GetBinContent(x, y, z);
+          double sumContent = h2_ptzjt_closure_error->GetBinContent(x, y, z);
+          h2_ptzjt_closure_error->SetBinContent(x, y, z, sumContent + binContent * binContent);
+
+          double binError = 1. - h2_ptzjt_ratio_clone->GetBinError(x, y, z);
+          double sumError = h2_ptzjt_closure_error->GetBinError(x, y, z);
+          h2_ptzjt_closure_error->SetBinError(x, y, z, sumError + binError * binError);
+        }
+      }
+    }
+  }
+
+  // h2_ptzjt_closure_error->Scale(1.0 / nRuns);
+  // Take the square root of the final sum histogram to get the quadrature sum
+  for (int x = 1; x <= h2_ptzjt_closure_error->GetNbinsX(); ++x)
+  {
+    for (int y = 1; y <= h2_ptzjt_closure_error->GetNbinsY(); ++y)
+    {
+      for (int z = 1; z <= h2_ptzjt_closure_error->GetNbinsZ(); ++z)
+      {
+        double sumContent = h2_ptzjt_closure_error->GetBinContent(x, y, z);
+        h2_ptzjt_closure_error->SetBinContent(x, y, z, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+
+        double sumError = h2_ptzjt_closure_error->GetBinError(x, y, z);
+        h2_ptzjt_closure_error->SetBinError(x, y, z, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+      }
+    }
+  }
+  GetPullsRatio(h2_ptzjt_closure_error, h2_ptzjt_pull_final, h1_ptzjt_pulldist_final);
+
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -399,112 +455,222 @@ void ClosureTest(int NumEvts = -1,
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  /////////////////////   Create zdR histograms /////////////////////////////////
+  /////////////////////   Create z histograms /////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
-  TH2D *h2_zdR = (TH2D *)file_reco->Get("z_dR");
+
+/*
+  vector<RooUnfoldResponse *> vec_response_ptz;
+  vector<TH2D *> vec_h2_ptz, vec_h2_efficiency_ptz, vec_h2_purity_ptz;
+  for (int i = 0; i < ptHFbinsize; i++)
+  {
+    int loc = i;
+    TH2D *h2_ptz_tmp = (TH2D *)file_reco->Get(Form("h2_ptz%d", loc));
+    vec_h2_ptz.push_back(h2_ptz_tmp);
+
+    RooUnfoldResponse *response_ptz_temp = (RooUnfoldResponse *)file_unfold->Get(Form("h2_response_ptz%d", loc));
+    vec_response_ptz.push_back(response_ptz_temp);
+
+    TH2D *h2_efficiency_ptz_tmp = (TH2D *)file_unfold->Get(Form("h2_efficiency_ptz%d", loc));
+    TH2D *h2_purity_ptz_tmp = (TH2D *)file_unfold->Get(Form("h2_purity_ptz%d", loc));
+
+    vec_h2_efficiency_ptz.push_back(h2_efficiency_ptz_tmp);
+    vec_h2_purity_ptz.push_back(h2_purity_ptz_tmp);
+  }
+*/
+  TH1D *h1_z_truth = (TH1D *)file_truth->Get("z");
+  TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
   TH2D *h2_ptz = (TH2D *)file_reco->Get("ptz");
-
-  TH2D *h2_zdR_truth = (TH2D *)file_truth->Get("z_dR");
-  TH3D *h3_ptzdR_truth = (TH3D *)file_truth->Get("ptzdR");
-  TH3D *h3_ptzdR = (TH3D *)file_reco->Get("ptzdR");
-  TH3D *h3_ptzdR_final = (TH3D *)h3_ptzdR->Clone("ptzdR_final");
-  TH3D *h3_eff_ptzdR = (TH3D *)file_unfold->Get("efficiency_ptzdR");
-  TH3D *h3_purity_ptzdR = (TH3D *)file_unfold->Get("purity_ptzdR");
-  RooUnfoldResponse *response_ptzdR = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzdR");
-  //
-  h3_ptzdR_final->Multiply(h3_ptzdR_final, h3_purity_ptzdR);
-  RooUnfoldBayes unfold_ptzdR(response_ptzdR, h3_ptzdR_final, NumIters_z);
-  h3_ptzdR_final = (TH3D *)unfold_ptzdR.Hreco();
-  h3_ptzdR_final->Divide(h3_ptzdR_final, h3_eff_ptzdR);
-  //
-  int binlowz = h3_ptzdR->GetYaxis()->FindBin(0.8);
-  int binhighz = h3_ptzdR->GetYaxis()->FindBin(3.9);
-  //
-  h3_ptzdR_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
-  h3_ptzdR_truth->GetZaxis()->SetRangeUser(ptMin, ptMax);
-  h3_ptzdR_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
-  h3_ptzdR->GetZaxis()->SetRangeUser(ptMin, ptMax);
-
-  //
-  TH2D *h2_ptzdR_final = (TH2D *)h3_ptzdR_final->Project3D("z_final_yx");
-  TH2D *h2_ptzdR_truth = (TH2D *)h3_ptzdR_truth->Project3D("z_truth_yx");
-  TH2D *h2_ptzdR = (TH2D *)h3_ptzdR->Project3D("z_yx");
-  //
-  h2_ptzdR_final->GetYaxis()->SetRange(binlowz, binhighz);
-  h2_ptzdR_final->GetXaxis()->SetRange(binlowdR, binhighdR);
-  h2_ptzdR_truth->GetYaxis()->SetRange(binlowz, binhighz);
-  h2_ptzdR_truth->GetXaxis()->SetRange(binlowdR, binhighdR);
-  //
-  TH2D *h2_final_ptzdR = GetJetPtCorrectedHist(h3_ptzdR_final, h1_efficiency_recoJet_jetpt);
-  h2_final_ptzdR->GetYaxis()->SetRange(binlowz, binhighz);
-  h2_final_ptzdR->GetXaxis()->SetRange(binlowdR, binhighdR);
-
-  // NormalizeHist(h2_ptzdR_final);
-  // NormalizeHist(h2_final_ptzdR);
-  // NormalizeHist(h2_ptzdR_truth);
-
-  h2_final_ptzdR->Scale(1. / Njets_final, "width");
-  h2_ptzdR_final->Scale(1. / Njets_final, "width");
-  h2_ptzdR_truth->Scale(1. / Njets_truth, "width");
-
-  //
-  TH2D *h2_ptzdR_ratio = (TH2D *)h2_ptzdR->Clone("h2_ptzdR_ratio");
-  TH2D *h2_ptzdR_ratio_final = (TH2D *)h2_ptzdR->Clone("h2_ptzdR_ratio_final");
-  TH2D *h2_ptzdR_pull_final = (TH2D *)h2_ptzdR->Clone("h2_ptzdR_pull_final");
-
-  // TH2D *h2_ptzdR_ratio_final = new TH2D("h2_ptzdR_ratio_final", "", dRbinsizefinal, dR_binedgesfinal, zbinsizefinal, z_binedgesfinal);
-  // TH2D *h2_ptzdR_pull_final = new TH2D("h2_ptzdR_pull_final", "", dRbinsizefinal, dR_binedgesfinal, zbinsizefinal, z_binedgesfinal);
-
-  TH2D *h2_ptzdR_pull = (TH2D *)h2_zdR_truth->Clone("ptzdR_pull");
-
-  TH1D *h1_ptzdR_pulldist = new TH1D("ptzdR_pulldist", "", 20, -4.5, 4.5);
-  TH1D *h1_ptzdR_pulldist_final = new TH1D("ptzdR_pulldist_final", "", 20, -4.5, 4.5);
-
-  // h2_ptzdR_ratio->Divide(h2_ptzdR, h2_zdR_truth);
-  // h2_ptzdR_ratio_final->Divide(h2_ptzdR_final, h2_zdR_truth);
-
-  h2_ptzdR_ratio->Divide(h2_ptzdR, h2_ptzdR_truth);
-  h2_ptzdR_ratio_final->Divide(h2_ptzdR_final, h2_ptzdR_truth);
-
-  h2_ptzdR_ratio_final->GetYaxis()->SetRange(binlowz, binhighz);
-  h2_ptzdR_ratio_final->GetXaxis()->SetRange(binlowdR, binhighdR);
-
-  h2_ptzdR_pull_final->GetYaxis()->SetRange(binlowz, binhighz);
-  h2_ptzdR_pull_final->GetXaxis()->SetRange(binlowdR, binhighdR);
-
-  // for (int i = 0; i < dRbinsizefinal; i++)
-  // {
-  //   for (int j = 2; j < zbinsizefinal + 2; j++)
-  //   {
-  //     double num = h2_ptzdR_final->GetBinContent(i + 2, j + 1);
-  //     // double num = h2_final_ptzdR->GetBinContent(i + 2, j + 1);
-  //     double denom = h2_ptzdR_truth->GetBinContent(i + 2, j + 1);
-  //     double num_err = h2_ptzdR_final->GetBinError(i + 2, j + 1);
-  //     // double num_err = h2_final_ptzdR->GetBinError(i + 2, j + 1);
-  //     double denom_err = h2_ptzdR_truth->GetBinError(i + 2, j + 1);
-  //     double tot = num / denom;
-  //     double tot_err = tot * sqrt(pow(num_err / num, 2) + pow(denom_err / denom, 2));
-  //     if (denom <= 0)
-  //       continue;
-  //     h2_ptzdR_ratio_final->SetBinContent(i + 1, j + 1 - 2, tot);
-  //     h2_ptzdR_ratio_final->SetBinError(i + 1, j + 1 - 2, tot_err);
-  //   }
-  // }
-
-  GetPullsRatio(h2_ptzdR_ratio, h2_ptzdR_pull, h1_ptzdR_pulldist);
-  GetPullsRatio(h2_ptzdR_ratio_final, h2_ptzdR_pull_final, h1_ptzdR_pulldist_final);
-
-  double ptzdR_pullperf1 = GetPullPerformance(h2_ptzdR_pull, 1);
-  double ptzdR_pullperf2 = GetPullPerformance(h2_ptzdR_pull, 2);
-
-  double ptzdR_pullperf1_final = GetPullPerformance(h2_ptzdR_pull_final, 1);
-  double ptzdR_pullperf2_final = GetPullPerformance(h2_ptzdR_pull_final, 2);
+  TH2D *h2_ptz_data = (TH2D *)file_data->Get("ptz");  
+  TH2D *h2_ptz_final = (TH2D *)h2_ptz->Clone("ptz_final");
+  TH2D *h2_eff_ptz = (TH2D *)file_unfold->Get("efficiency_ptz");
+  TH2D *h2_purity_ptz = (TH2D *)file_unfold->Get("purity_ptz");
+  RooUnfoldResponse *response_ptz = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
   
+  /*
+  TH2D *h2_ptz_vecfinal;
+  for (int i = 0; i < ptHFbinsize; i++)
+  {
+    int loc = i;
+
+    double HF_eff = h1_efficiency_vecHFpt->GetBinContent(loc + 1);
+    double HF_pur = h1_purity_vecHFpt->GetBinContent(loc + 1);
+    vec_h2_ptz[loc]->Scale(HF_pur);
+    cout << ptHF_binedges[i] << ", " << ptHF_binedges[i + 1] << endl;
+    vec_h2_ptz[loc]->Multiply(vec_h2_purity_ptz[loc]);
+    ///// Update NumIters_kt to something more general /////
+    RooUnfoldBayes unfold_ptz(vec_response_ptz[loc], vec_h2_ptz[loc], NumIters_kt);
+    //vec_h2_ptz[loc] = (TH2D *)unfold_ptz.Hreco();
+    vec_h2_ptz[loc]->Divide(vec_h2_efficiency_ptz[loc]);
+
+    cout << HF_eff << ", " << HF_pur << endl;
+
+    vec_h2_ptz[loc]->Scale(1. / HF_eff);
+    if (i == 0)
+      h2_ptz_vecfinal = vec_h2_ptz[loc];
+    else
+      h2_ptz_vecfinal->Add(vec_h2_ptz[loc]);
+  }
+  */
+  
+  // Multiply by purity  
+  //h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
+  RooUnfoldBayes unfold_ptz(response_ptz, h2_ptz_final, NumIters_kt);
+
+  h2_ptz_final = (TH2D *)unfold_ptz.Hreco();
+  // Divide by efficiency  
+  //h2_ptz_final->Divide(h2_ptz_final, h2_eff_ptz);
+
+  h2_ptz_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
+  h2_ptz_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
+  //h2_ptz_vecfinal->GetYaxis()->SetRangeUser(ptMin, ptMax);
+
+  h2_ptz->GetYaxis()->SetRangeUser(ptMin, ptMax);
+
+  //
+  TH1D *h1_ptz_final = (TH1D *)h2_ptz_final->ProjectionX("z_final");
+  //TH1D *h1_ptz_vecfinal = (TH1D *)h2_ptz_vecfinal->ProjectionX("z_vecfinal");
+  TH1D *h1_ptz = (TH1D *)h2_ptz->ProjectionX("z");
+  TH1D *h1_ptz_truth = (TH1D *)h2_ptz_truth->ProjectionX("z_truth");
+  //
+  
+  h1_ptz_final->GetXaxis()->SetRange(binlowz, binhighz);
+  //h1_ptz_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
+  h1_ptz_truth->GetXaxis()->SetRange(binlowz, binhighz);
+  
+  
+  // CHECK WHAT THIS DOES! // 
+  //TH2D *h2_final_ptz = GetJetPtCorrectedHist(h3_ptz_final, h1_efficiency_recoJet_jetpt);
+  //h2_final_ptz->GetYaxis()->SetRange(binlow, binhigh);
+  //h2_final_ptz->GetXaxis()->SetRange(binlowz, binhighz);
+  //
+  // NormalizeHist(h2_ptz_final);
+  // NormalizeHist(h2_ptz_vecfinal);
+  // NormalizeHist(h2_ptz_truth);
+  //h2_final_ptz->Scale(1. / Njets_final, "width");
+  
+  // This will depend on results of 1D jet unfolding
+  h1_ptz_final->Scale(1. / Njets_final, "width");
+  //h2_ptz_vecfinal->Scale(1. / Njets_vecfinal, "width");
+  h1_ptz_truth->Scale(1. / Njets_truth, "width");
+  h1_ptz->Scale(1. / Njets_reco, "width");  
+  
+
+  TH1D *h1_ptz_ratio = (TH1D *)h1_ptz->Clone("h1_z_ratio");
+  TH1D *h1_ptz_ratio_final = (TH1D *)h1_ptz_final->Clone("h1_z_ratio_final"); 
+  //TH1D *h1_ptz_ratio_vecfinal = (TH1D *)h1_ptz_vecfinal->Clone("h1_z_ratio_vecfinal");   
+  //TH1D *h1_ptz_pull_final = (TH1D *)h1_ptz->Clone("h1_z_pull_final");
+
+  //TH2D *h2_ptz_ratio_vecfinal = (TH2D *)h2_ptz->Clone("h2_ptz_ratio_vecfinal");
+  //TH2D *h2_ptz_pull_vecfinal = (TH2D *)h2_ptz->Clone("h2_ptz_pull_vecfinal");
+
+  //TH1D *h1_ptz_pull = (TH1D *)h1_z_truth->Clone("ptz_pull");
+
+  //TH1D *h1_ptz_pulldist = new TH1D("ptz_pulldist", "", 20, -4.5, 4.5);
+  //TH1D *h1_ptz_pulldist_final = new TH1D("ptz_pulldist_final", "", 20, -4.5, 4.5);
+  //TH1D *h1_ptzjt_pulldist_vecfinal = new TH1D("ptzjt_pulldist_vecfinal", "", 20, -4.5, 4.5);
+
+  h1_ptz_ratio->Divide(h1_ptz, h1_ptz_truth);
+  h1_ptz_ratio_final->Divide(h1_ptz_final, h1_ptz_truth);
+  //h1_ptz_ratio_vecfinal->Divide(h1_ptz_vecfinal, h1_ptz_truth);  
+  //h2_ptzjt_ratio_vecfinal->Divide(h2_ptzjt_vecfinal, h2_ptzjt_truth);
+
+  h1_ptz_ratio_final->GetXaxis()->SetRange(binlowz, binhighz);
+  //h1_ptz_ratio_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
+  
+  //h1_ptz_pull_final->GetXaxis()->SetRange(binlowz, binhighz);
+
+  //h2_ptzjt_ratio_vecfinal->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_ptzjt_ratio_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
+
+  //h2_ptzjt_pull_vecfinal->GetYaxis()->SetRange(binlowjt, binhighjt);
+  //h2_ptzjt_pull_vecfinal->GetXaxis()->SetRange(binlowz, binhighz);
+
+  //GetPullsRatio(h1_ptz_ratio, h1_ptz_pull, h1_ptz_pulldist);
+  //GetPullsRatio(h1_ptz_ratio_final, h1_ptz_pull_final, h1_ptz_pulldist_final);
+  //GetPullsRatio(h2_ptzjt_ratio_vecfinal, h2_ptzjt_pull_vecfinal, h1_ptzjt_pulldist_vecfinal);
+
+  //double ptz_pullperf1 = GetPullPerformance(h2_ptz_pull, 1);
+  //double ptz_pullperf2 = GetPullPerformance(h2_ptz_pull, 2);
+
+  //double ptz_pullperf1_final = GetPullPerformance(h2_ptz_pull_final, 1);
+  //double ptz_pullperf2_final = GetPullPerformance(h2_ptz_pull_final, 2);  
+  
+  ////////////////////////////////////
+  // Smearing the Observables
+  ///////////////////////////////////
+  TH1D *h1_ptz_closure_error;
+  for (int i = 0; i < nRuns; i++)
+  {
+    TH2D *h2_ptz_clone = (TH2D *)h2_ptz->Clone(Form("ptz_clone%d", i));
+    myRNG->SetSeed(time(0));
+    SmearObservables(h2_ptz_clone, h2_ptz_data, myRNG);
+
+    // Multiply by purity
+    //h2_ptz_clone->Multiply(h2_ptz_clone, h2_purity_ptz);
+    RooUnfoldBayes unfold_ptz_clone(response_ptz, h2_ptz_clone, NumIters_kt);
+    // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_clone, NumIters_kt);
+    // unfold_ptzjt_clone.SetMeasuredCov((*covMatrix_ptzjt));
+
+    h2_ptz_clone = (TH2D *)unfold_ptz_clone.Hreco();
+    // Divide by efficiency    
+    //h2_ptz_clone->Divide(h2_ptz_clone, h2_eff_ptz);
+    h2_ptz_clone->GetYaxis()->SetRangeUser(ptMin, ptMax);
+
+    TH1D *h1_ptz_clone = (TH1D *)h2_ptz_clone->ProjectionX(Form("z_clone%d", i));
+
+    h1_ptz_clone->GetXaxis()->SetRange(binlowz, binhighz);
+    h1_ptz_clone->Scale(1. / Njets_final, "width");
+    TH1D *h1_ptz_ratio_clone = (TH1D *)h1_ptz_clone->Clone(Form("h1_ptz_ratio_clone%d", i));
+    TH1D *h1_ptz_pull_clone = (TH1D *)h1_ptz_clone->Clone(Form("h1_ptz_pull_clone%d", i));
+    h1_ptz_ratio_clone->Divide(h1_ptz_clone, h1_ptz_truth);
+
+    h1_ptz_ratio_clone->GetXaxis()->SetRange(binlowz, binhighz);
+
+    h1_ptz_pull_clone->GetXaxis()->SetRange(binlowz, binhighz);
+
+    if (i == 0)
+    {
+      h1_ptz_closure_error = (TH1D *)h1_ptz_ratio_clone->Clone("h2_ptz_closure_error");
+      h1_ptz_closure_error->Reset(); // Reset the histogram to zero
+    }
+    // h2_ptzjt_closure_error->Add(h2_ptzjt_ratio_clone);
+    // Loop over all bins and add in quadrature
+    for (int x = 1; x <= h1_ptz_ratio_clone->GetNbinsX(); ++x)
+    {
+      for (int y = 1; y <= h1_ptz_ratio_clone->GetNbinsY(); ++y)
+      {
+        double binContent = 1. - h1_ptz_ratio_clone->GetBinContent(x, y);
+        double sumContent = h1_ptz_closure_error->GetBinContent(x, y);
+        h1_ptz_closure_error->SetBinContent(x, y, sumContent + binContent * binContent);
+
+        double binError = 1. - h1_ptz_ratio_clone->GetBinError(x, y);
+        double sumError = h1_ptz_closure_error->GetBinError(x, y);
+        h1_ptz_closure_error->SetBinError(x, y, sumError + binError * binError);
+      }
+    }
+  }
+
+  // h2_ptzjt_closure_error->Scale(1.0 / nRuns);
+  // Take the square root of the final sum histogram to get the quadrature sum
+  for (int x = 1; x <= h1_ptz_closure_error->GetNbinsX(); ++x)
+  {
+    for (int y = 1; y <= h1_ptz_closure_error->GetNbinsY(); ++y)
+    {
+      double sumContent = h1_ptz_closure_error->GetBinContent(x, y);
+      h1_ptz_closure_error->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+
+      double sumError = h1_ptz_closure_error->GetBinError(x, y);
+      h1_ptz_closure_error->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+    }
+  }
+  //GetPullsRatio(h1_ptzjt_closure_error, h1_ptzjt_pull_final, h1_ptzjt_pulldist_final);
+  
+  /*
 
   cout << "===========================================================" << endl;
   cout << "For " << NumIters_kt << " iterations:" << endl;
@@ -614,7 +780,7 @@ void ClosureTest(int NumEvts = -1,
   h2_ptzjt_ratio_final->Write("ptzjt_ratio_final");
   h2_ptzdR_ratio_final->Write("ptzdR_ratio_final");
 */
-  
+  /*
   h1_jetpt_final->Write("h1_jetpt_final");
   h1_jetpt_reco->Write("h1_jetpt_reco");
   h1_jetpt_truth->Write("h1_jetpt_truth");
@@ -628,8 +794,8 @@ void ClosureTest(int NumEvts = -1,
   h1_ptzjt_pulldist->Write();
   h1_ptzjt_pulldist_final->Write();
   h1_ptzjt_pulldist_vecfinal->Write();
-    
-  //file_write->Write();
+*/    
+  file_write->Write();
   file_write->Close();
   //
 }

@@ -1027,6 +1027,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       event_eff = h3_efficiency_HFptetajetpt->GetBinContent(h3_efficiency_HFptetajetpt->GetXaxis()->FindBin(HFmeson.Pt()), h3_efficiency_HFptetajetpt->GetYaxis()->FindBin(HFmeson.Rapidity()), h3_efficiency_HFptetajetpt->GetZaxis()->FindBin(HFjet.Pt()));
       event_pur = h3_purity_HFptetajetpt->GetBinContent(h3_purity_HFptetajetpt->GetXaxis()->FindBin(HFmeson.Pt()), h3_efficiency_HFptetajetpt->GetYaxis()->FindBin(HFmeson.Rapidity()), h3_purity_HFptetajetpt->GetZaxis()->FindBin(HFjet.Pt()));
     }
+    
+    std::cout << " event_eff : " << event_eff << " event_pur : " << event_pur << std::endl;
 
     if (h2_SVTag_eff != NULL)
     {
@@ -1100,10 +1102,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //     cout << "Trig Eff (K, mum, mup):" << trigeff_ratio << endl;
 //      cout << " ------------------------------------------------ " << endl;
       
-//    event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
-      event_weight = 1.0;
+    event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
+      //event_weight = 1.0;
       
-//      cout<< "evnt weight" << event_weight << endl;
+    std::cout<< "event weight : " << event_weight << endl;
       
     if (PID_cut)
       event_weight *= (1. / (pideff_K));
@@ -1114,6 +1116,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (std::isnan(sv_weight) || std::isinf(sv_weight))
       sv_weight = 1.0;
 
+    std::cout << "PID_cut : " << PID_cut  << std::endl;
     float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
     float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
     float frag_r = HFmeson.DeltaR(HFjet, true);
@@ -1152,21 +1155,21 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       // if (nSV > 0 && sv_mass > 0.4)
       //   cout << "bkg SV!";
 
-      h1_z_comb->Fill(frag_z);
-      h1_jt_comb->Fill(frag_jt);
-      h1_r_comb->Fill(frag_r);
+      h1_z_comb->Fill(frag_z, event_weight * bkg_weight);
+      h1_jt_comb->Fill(frag_jt, event_weight * bkg_weight);
+      h1_r_comb->Fill(frag_r, event_weight * bkg_weight);
         
-      h2_zjt_comb->Fill(frag_z, frag_jt);
-      h2_zr_comb->Fill(frag_z, frag_r);
-      h2_jtr_comb->Fill(frag_jt, frag_r);
+      h2_zjt_comb->Fill(frag_z, frag_jt, event_weight * bkg_weight);
+      h2_zr_comb->Fill(frag_z, frag_r, event_weight * bkg_weight);
+      h2_jtr_comb->Fill(frag_jt, frag_r, event_weight * bkg_weight);
 
-      h2_ptz_comb->Fill(frag_z, jet_pt);
-      h2_ptjt_comb->Fill(frag_jt, jet_pt);
-      h2_ptr_comb->Fill(frag_r, jet_pt);
+      h2_ptz_comb->Fill(frag_z, jet_pt, event_weight * bkg_weight);
+      h2_ptjt_comb->Fill(frag_jt, jet_pt, event_weight * bkg_weight);
+      h2_ptr_comb->Fill(frag_r, jet_pt, event_weight * bkg_weight);
         
-      h3_ptzjt_comb->Fill(frag_z, frag_jt, jet_pt);
-      h3_ptzr_comb->Fill(frag_z, frag_jt, jet_pt);
-      h3_ptjtr_comb->Fill(frag_jt, frag_r,  jet_pt);
+      h3_ptzjt_comb->Fill(frag_z, frag_jt, jet_pt, event_weight * bkg_weight);
+      h3_ptzr_comb->Fill(frag_z, frag_jt, jet_pt, event_weight * bkg_weight);
+      h3_ptjtr_comb->Fill(frag_jt, frag_r,  jet_pt, event_weight * bkg_weight);
 
       h1_nJetDtrs_noghost_comb->Fill(ndtrs);
       h1_jet_pt_comb->Fill(jet_pt, event_weight * bkg_weight);
@@ -1205,11 +1208,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_ptjt_SV->Fill(frag_jt_SV, HFjet.Pt());
         h2_ptr_SV->Fill(frag_r_SV, HFjet.Pt());
     
-      h1_dphi_SV->Fill(dphi);
-      h1_nJetDtrs_noghost_SV->Fill(ndtrs);
-      h1_jet_pt_SV->Fill(jet_pt);
+        h1_dphi_SV->Fill(dphi);
+        h1_nJetDtrs_noghost_SV->Fill(ndtrs);
+        h1_jet_pt_SV->Fill(jet_pt);
 
-      // h1_HF_ipchi2_SV->Fill(log10(ipchi2));
+        // h1_HF_ipchi2_SV->Fill(log10(ipchi2));
     }
     if (signal_cond)
     {
@@ -1240,9 +1243,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
 //      h2_frag_z_jetpt->Fill(frag_z, HFjet.Pt());
       // if (jet_pt > ptMin)
-      h1_z->Fill(frag_z);
-      h1_jt->Fill(frag_jt);
-      h1_r->Fill(frag_r);
+      h1_z->Fill(frag_z, event_weight);
+      h1_jt->Fill(frag_jt, event_weight);
+      h1_r->Fill(frag_r, event_weight);
         
       h2_zjt->Fill(frag_z, frag_jt);
       h2_zr->Fill(frag_z, frag_r);
@@ -1328,7 +1331,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       h1_tr_jet_pt->Fill(tr_jet_pt);
     }
 
-    // if(!isBacktoBack) continue;
 
     if (signal_cond)
     {
@@ -1368,6 +1370,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
           }
         }
         
+        
+        //std::cout << "event weight : " << event_weight << std::endl;
         h3_ptzjt->Fill(frag_z, frag_jt, jet_pt, event_weight);
         h3_ptzr->Fill(frag_z, frag_r, jet_pt, event_weight);
         h3_ptjtr->Fill(frag_jt, frag_r, jet_pt, event_weight);
@@ -1377,9 +1381,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h3_ptjtr_unweight->Fill(frag_jt, frag_r, jet_pt,  event_weight);
 
 
-        h2_ptz->Fill(frag_z, jet_pt);
-        h2_ptjt->Fill(frag_jt, jet_pt);
-        h2_ptr->Fill(frag_r, jet_pt);
+        h2_ptz->Fill(frag_z, jet_pt, event_weight);
+        h2_ptjt->Fill(frag_jt, jet_pt, event_weight);
+        h2_ptr->Fill(frag_r, jet_pt, event_weight);
 
       }
   
