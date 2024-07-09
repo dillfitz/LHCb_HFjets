@@ -277,6 +277,13 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_purity_ptz = (TH2D *)file_unfold->Get("purity_ptz");
   TH2D *h2_purity_ptjt = (TH2D *)file_unfold->Get("purity_ptjt");
   TH2D *h2_purity_ptr = (TH2D *)file_unfold->Get("purity_ptr");
+  
+  TH2D *h3_efficiency_ptzjt = (TH2D *)file_unfold->Get("efficiency_ptzjt");
+  TH2D *h3_efficiency_ptzr = (TH2D *)file_unfold->Get("efficiency_ptzt");
+  TH2D *h3_efficiency_ptjtr = (TH2D *)file_unfold->Get("efficiency_ptjtr");
+  TH2D *h3_purity_ptzjt = (TH2D *)file_unfold->Get("purity_ptzjt");
+  TH2D *h3_purity_ptzr = (TH2D *)file_unfold->Get("purity_ptzr");
+  TH2D *h3_purity_ptjtr = (TH2D *)file_unfold->Get("purity_ptjtr");  
     
   RooUnfoldResponse *response_ptz = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
   RooUnfoldResponse *response_ptjt = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjt");
@@ -360,50 +367,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     NumEvts = BTree->GetEntries();
   cout << BTree->GetEntries() << endl;
 
-  TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
-
-  // TH2D *h2_lundplane_b = new TH2D("B_LundPlane", "B-meson Lund Plane", 50, 0, 8, 50, -8, 8);
-  // TH2D *h2_lundplane_c = new TH2D("D_LundPlane", "D-meson Lund Plane", 50, 0, 8, 50, -8, 8);
-  // TH2D *h2_lundplane_inc = new TH2D("L_LundPlane", "Light Lund Plane", 50, 0, 8, 50, -8, 8);
-
-  // for(int i = 0; i < ktbinsize+1; i++){
-  //   kt_binedges[i] = kT_min + i*(kT_max - kT_min)/ktbinsize;
-  //   dR_binedges[i] = dR_min + i * (dR_max - dR_min)/dRbinsize;
-  //   z_binedges[i] = z_min + i*(z_max - z_min)/ktbinsize;
-  // }
-  vector<TH3D *> vec_h3_ptzjt, vec_h3_ptzr, vec_h3_ptjtr;
-  vector<TH1D *> vec_jetpt;
-  for (int i = 0; i < ptHFbinsize; i++)
-  {
-    int loc = i;
-    // for (int j = 0; j < HFetabinsize; j++)
-    // {
-
-      TH3D *h3_ptzjt_tmp = new TH3D(Form("ptzjt%d", loc), "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-    vec_h3_ptzjt.push_back(h3_ptzjt_tmp);
-
-      TH3D *h3_ptzr_tmp = new TH3D(Form("ptzr%d", loc), "", zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
-      vec_h3_ptzr.push_back(h3_ptzr_tmp);
-      
-      TH3D *h3_ptjtr_tmp = new TH3D(Form("ptjtr%d", loc), "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
-      vec_h3_ptjtr.push_back(h3_ptjtr_tmp);
-       
-      TH1D *h1_jetpt_tmp = new TH1D(Form("jetpt%d", loc), "", ptbinsize, pt_binedges);
-      vec_jetpt.push_back(h1_jetpt_tmp);
-    
-    // }
-  }
-    
-    
-    /// -----------------------------------------------------
-  int frag_z_bins(30), frag_jt_bins(30), frag_r_bins(30);
-  float frag_z_min(0.), frag_z_max(1.05), frag_jt_min(0), frag_jt_max(10), frag_r_min(0.), frag_r_max(0.5);
-    
-    /// ------------------------------------------ SIGNAL ------------------------------------------------- ///
+    TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
     
     TH2D *h2_zjt = new TH2D("zjt", ";z; j_{T} ", zbinsize, z_binedges, jtbinsize, jt_binedges);
     TH2D *h2_zr = new TH2D("zr", ";z; r ", zbinsize, z_binedges, rbinsize, r_binedges);
-     TH2D *h2_jtr = new TH2D("jtr", "; j_{T}; r ", jtbinsize, jt_binedges, rbinsize, r_binedges);
+    TH2D *h2_jtr = new TH2D("jtr", "; j_{T}; r ", jtbinsize, jt_binedges, rbinsize, r_binedges);
     
     TH1D *h1_z = new TH1D("z", ";z", zbinsize, z_binedges);
     TH1D *h1_tr_z = new TH1D("tr_z", ";z", zbinsize, z_binedges);
@@ -489,16 +457,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH1D *h1_z_Bfromjet = new TH1D("z_Bfromjet", "", zbinsize, z_binedges);
     TH1D *h1_jt_Bfromjet = new TH1D("jt_Bfromjet", "", jtbinsize, jt_binedges);
     TH1D *h1_r_Bfromjet = new TH1D("r_Bfromjet", "", rbinsize, r_binedges);
-    
-//  TH2D *h2_tr_lundplane = new TH2D("tr_Lund_Plane", "Lund Jet Plane", 80, 2, 8, 80, -8, 4);
-//  TH2D *h2_tr_thetaErad = new TH2D("tr_Theta_Erad", "", Eradbinsize, Erad_binedges, thetabinsize, theta_binedges);
-//  TH2D *h2_tr_dRErad = new TH2D("tr_dR_Erad", "", Eradbinsize, Erad_binedges, dRbinsize, dR_binedges);
-//  TH2D *h2_tr_ktdR = new TH2D("tr_kT_dR", "", dRbinsize, dR_binedges, ktbinsize, kt_binedges);
-//  TH2D *h2_tr_zdR = new TH2D("tr_z_dR", "", dRbinsize, dR_binedges, zbinsize, z_binedges);
-//  TH2D *h2_truthreco_theta = new TH2D("truthreco_theta", "", thetabinsize, theta_binedges, thetabinsize, theta_binedges);
-//  TH2D *h2_truthreco_kT = new TH2D("truthreco_kT", "", ktbinsize, kt_binedges, ktbinsize, kt_binedges);
-//  TH2D *h2_truthreco_Erad = new TH2D("truthreco_Erad", "", Eradbinsize, Erad_binedges, Eradbinsize, Erad_binedges);
-//  TH2D *h2_truthreco_dR = new TH2D("truthreco_dR", "", dRbinsize, dR_binedges, dRbinsize, dR_binedges);
 
     
     //// ----------------------------------------------------------------------------------------------------------- ////
@@ -608,52 +566,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_sv_mass_z_falsepos = new TH2D("h2_sv_mass_z_falsepos", "", 30, 0, 4., 20, 0, 1.05);
   TH2D *h2_sv_mass_ntrks_falsepos = new TH2D("h2_sv_mass_ntrks_falsepos", "", 30, 0, 4., 10, -0.5, 9.5);
    
-    
-    //// ----------------------------------------------------------------------------------------------------------- ////
-
-//  TH2D *h2_lundplane_truepos = new TH2D("Lund_Plane_truepos", "Lund Jet Plane", 80, 2, 8, 80, -8, 4);
-//  TH2D *h2_thetaErad_truepos = new TH2D("Theta_Erad_truepos", "", Eradbinsize, Erad_binedges, thetabinsize, theta_binedges);
-//  TH2D *h2_dRErad_truepos = new TH2D("dR_Erad_truepos", "", Eradbinsize, Erad_binedges, dRbinsize, dR_binedges);
-//  TH2D *h2_ktdR_truepos = new TH2D("kT_dR_truepos", "", dRbinsize, dR_binedges, ktbinsize, kt_binedges);
-//  TH2D *h2_zdR_truepos = new TH2D("z_dR_truepos", "", dRbinsize, dR_binedges, zbinsize, z_binedges);
-//
-//  TH2D *h2_lundplane_falsepos = new TH2D("Lund_Plane_falsepos", "Lund Jet Plane", 80, 2, 8, 80, -8, 4);
-//  TH2D *h2_thetaErad_falsepos = new TH2D("Theta_Erad_falsepos", "", Eradbinsize, Erad_binedges, thetabinsize, theta_binedges);
-//  TH2D *h2_dRErad_falsepos = new TH2D("dR_Erad_falsepos", "", Eradbinsize, Erad_binedges, dRbinsize, dR_binedges);
-//  TH2D *h2_ktdR_falsepos = new TH2D("kT_dR_falsepos", "", dRbinsize, dR_binedges, ktbinsize, kt_binedges);
-//  TH2D *h2_zdR_falsepos = new TH2D("z_dR_falsepos", "", dRbinsize, dR_binedges, zbinsize, z_binedges);
-
-//  for (int i = 0; i < NumHists; i++)
-//  {
-//    TH1D *h = new TH1D(Form("Theta%d", i), "Theta Distribution", 20, 0, 0.15);
-//    TH1D *h_tr_ = new TH1D(Form("tr_Theta%d", i), "Theta Distribution", 20, 0, 0.15);
-//    TH1D *h1 = new TH1D(Form("R%d", i), "R Observable", R_bins, R_min, R_max);
-//    TH1D *h1_tr_ = new TH1D(Form("tr_R%d", i), "R Observable", R_bins, R_min, R_max);
-//    std::vector<TH1D *> vec1;
-//    // for(int j = 0; j < NumRbins; j++){
-//    //   TH1D *h1_vec = new TH1D(Form("R%d%d",i,j),"R Observable",RbinsArr[j],R_min,R_max);
-//    //   vec1.push_back(h1_vec);
-//    // }
-//    // h1_Rratios_vec.push_back(vec1);
-//
-//    // TH2D *h2 = new TH2D(Form("truthVsreco_theta%d", i), "truthVsreco Theta", 50, 0, 8);
-//    h1_thetas.push_back(h);
-//    h1_tr_thetas.push_back(h_tr_);
-//    h1_Rratios.push_back(h1);
-//    h1_tr_Rratios.push_back(h1_tr_);
-//    // h2_recomatch_theta.push_back(h2);
-//  }
-//  THStack *stack = new THStack("hs", "");
-//  THStack *stack_R = new THStack("hs_R", "");
-//  std::vector<THStack *> stack_R_vec;
-//
-//  f1_theta_Erad->SetParameter(0, mass_num);
-//  f1_kt_Erad->SetParameter(0, 2 * LambdaQCD);
-
-//  JetDefinition jet_def(cambridge_algorithm, jetradius);
-//  PseudoJet dtr1, dtr2;
-
-  // TClonesArray *arr = new TClonesArray("TLorentzVector");
 
   //
   // Event loop
@@ -661,17 +573,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   unsigned long long last_eventNum = 0;
   float last_jetpT = 0.;
   int event_counter = 0;
-
-//  vector<float> *thetas = 0;
-//  vector<float> *tr_thetas = 0;
-//  vector<float> *dRs(0), *tr_dRs(0);
-//  vector<float> *Erads(0), *tr_Erads(0);
-//  vector<float> *ktthetas(0), *tr_ktthetas(0);
-//  vector<float> *kts = 0;
-//  vector<float> *tr_kts = 0;
-//  vector<float> *raps(0), *tr_raps(0);
-//  vector<float> *phis(0), *tr_phis(0);
-//  vector<float> *zs(0), *tr_zs(0);
     
   vector<float> *dtr_pt(0), *dtr_rap(0), *dtr_id(0), *dtr_3charge(0);
   vector<float> *sv_ipchi2(0), *sv_keys(0), *sv_pids(0);
@@ -698,9 +599,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   float tr_mum_px, tr_mum_py, tr_mum_pz, tr_mum_e;
   float tr_K_px, tr_K_py, tr_K_pz, tr_K_e;
     
-    double z, jt, r;
-    double tr_z, tr_jt, tr_r;
-    double zg, jtg, rg;
+  double z, jt, r;
+  double tr_z, tr_jt, tr_r;
+  double zg, jtg, rg;
 
 
   int nsplits, ndtrs, ndtrs_noghost, NumSubJets;
@@ -980,6 +881,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     HFmeson.SetPxPyPzE(HF_px, HF_py, HF_pz, HF_e);
     Jpsi = mup + mum;
     float HF_eta = HFmeson.Eta();
+    
+    float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
+    float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
+    float frag_r = HFmeson.DeltaR(HFjet, true);
+    
 
     float event_weight = 1.0;
 
@@ -987,6 +893,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     float emission_weight = 1.0;
     float event_eff = 1.0;
     float event_pur = 1.0;
+    float event_eff_ptz = 1.0;
+    float event_pur_ptz = 1.0;
     float sv_weight = 1.0;
     float sv_eff = 1.0;
     float sv_pur = 1.0;
@@ -1029,6 +937,12 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       event_pur = h3_purity_HFptetajetpt->GetBinContent(h3_purity_HFptetajetpt->GetXaxis()->FindBin(HFmeson.Pt()), h3_efficiency_HFptetajetpt->GetYaxis()->FindBin(HFmeson.Rapidity()), h3_purity_HFptetajetpt->GetZaxis()->FindBin(HFjet.Pt()));
     }
     
+    if (h2_efficiency_ptz != NULL && h2_purity_ptz != NULL)
+    {
+      event_eff_ptz = h2_efficiency_ptz->GetBinContent(h2_efficiency_ptz->GetXaxis()->FindBin(z), h2_efficiency_ptz->GetYaxis()->FindBin(HFjet.Pt()));
+      event_pur_ptz = h2_purity_ptz->GetBinContent(h2_purity_ptz->GetXaxis()->FindBin(z), h2_efficiency_ptz->GetYaxis()->FindBin(HFjet.Pt()));
+    }
+        
     //std::cout << " event_eff : " << event_eff << " event_pur : " << event_pur << std::endl;
 
     if (h2_SVTag_eff != NULL)
@@ -1103,11 +1017,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //     cout << "Trig Eff (K, mum, mup):" << trigeff_ratio << endl;
 //      cout << " ------------------------------------------------ " << endl;
       
-    event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
-      //event_weight = 1.0;
+    //event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
+    
+    //event_weight = event_pur_ptz / (event_eff_ptz * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);    
       
-    if (PID_cut)
-      event_weight *= (1. / (pideff_K));
+    //event_weight *= (1./ trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);   
+    
+    //if (PID_cut)
+    //  event_weight *= (1. / (pideff_K));
+    
     // if (sv_weight == 0 && (nSV > 0))
     // cout << HFjet.Pt() << "," << HFmeson.Pt() << endl;
     if (std::isinf(event_weight) || std::isnan(event_weight))
@@ -1115,11 +1033,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (std::isnan(sv_weight) || std::isinf(sv_weight))
       sv_weight = 1.0;
 
-    //std::cout<< "event weight : " << event_weight << endl;
+    std::cout << "event weight : " << event_weight << std::endl;
+    std::cout << "event purity : " << event_pur << std::endl;
+    std::cout << "event_efficiency : " << event_eff << std::endl;
     //std::cout << "PID_cut : " << PID_cut  << std::endl;
-    float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
-    float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
-    float frag_r = HFmeson.DeltaR(HFjet, true);
 
     h2_jetpteta->Fill(jet_pt, jet_eta);
 
@@ -1146,30 +1063,30 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (mass_cond)
     {
       if (jet_pt > ptMin)
-        h1_z_tot->Fill(frag_z);
-        h1_jt_tot->Fill(frag_jt);
-        h1_r_tot->Fill(frag_r);
+        h1_z_tot->Fill(z);
+        h1_jt_tot->Fill(jt);
+        h1_r_tot->Fill(r);
     }
     if (bkg_cond)
     {
       // if (nSV > 0 && sv_mass > 0.4)
       //   cout << "bkg SV!";
 
-      h1_z_comb->Fill(frag_z, event_weight * bkg_weight);
-      h1_jt_comb->Fill(frag_jt, event_weight * bkg_weight);
-      h1_r_comb->Fill(frag_r, event_weight * bkg_weight);
+      h1_z_comb->Fill(z, event_weight * bkg_weight);
+      h1_jt_comb->Fill(jt, event_weight * bkg_weight);
+      h1_r_comb->Fill(r, event_weight * bkg_weight);
         
-      h2_zjt_comb->Fill(frag_z, frag_jt, event_weight * bkg_weight);
-      h2_zr_comb->Fill(frag_z, frag_r, event_weight * bkg_weight);
-      h2_jtr_comb->Fill(frag_jt, frag_r, event_weight * bkg_weight);
+      h2_zjt_comb->Fill(z, jt, event_weight * bkg_weight);
+      h2_zr_comb->Fill(z, r, event_weight * bkg_weight);
+      h2_jtr_comb->Fill(jt, r, event_weight * bkg_weight);
 
-      h2_ptz_comb->Fill(frag_z, jet_pt, event_weight * bkg_weight);
-      h2_ptjt_comb->Fill(frag_jt, jet_pt, event_weight * bkg_weight);
-      h2_ptr_comb->Fill(frag_r, jet_pt, event_weight * bkg_weight);
+      h2_ptz_comb->Fill(z, jet_pt, event_weight * bkg_weight);
+      h2_ptjt_comb->Fill(jt, jet_pt, event_weight * bkg_weight);
+      h2_ptr_comb->Fill(r, jet_pt, event_weight * bkg_weight);
         
-      h3_ptzjt_comb->Fill(frag_z, frag_jt, jet_pt, event_weight * bkg_weight);
-      h3_ptzr_comb->Fill(frag_z, frag_jt, jet_pt, event_weight * bkg_weight);
-      h3_ptjtr_comb->Fill(frag_jt, frag_r,  jet_pt, event_weight * bkg_weight);
+      h3_ptzjt_comb->Fill(z, jt, jet_pt, event_weight * bkg_weight);
+      h3_ptzr_comb->Fill(z, jt, jet_pt, event_weight * bkg_weight);
+      h3_ptjtr_comb->Fill(jt, r,  jet_pt, event_weight * bkg_weight);
 
       h1_nJetDtrs_noghost_comb->Fill(ndtrs);
       h1_jet_pt_comb->Fill(jet_pt, event_weight * bkg_weight);
@@ -1216,15 +1133,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     }
     if (signal_cond)
     {
-    
-      for (int i = 0; i < ptHFbinsize; i++)
-      {
-        int loc = i;
-        if (HF_pt > ptHF_binedges[i] && HF_pt < ptHF_binedges[i + 1])
-        {
-          vec_jetpt[loc]->Fill(jet_pt);
-        }
-      }    
+       
       h2_Ndtr_jetpt_neutral->Fill(Ndtr_neutral, HFjet.Pt(), event_weight);
       h2_Ndtr_jetpt_charged->Fill(Ndtr_charged, HFjet.Pt(), event_weight);
       h2_Ndtr_jetpt->Fill(Ndtr_neutral + Ndtr_charged, HFjet.Pt(), event_weight);
@@ -1233,23 +1142,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         {
             if (dtr_3charge->at(i) == 0 && dtr_id->at(i) != 22)
                 h1_dtr_pt->Fill(dtr_pt->at(i));
-            // if (dtr_id->at(i) == 22)
-            //   h1_dtr_pt->Fill(dtr_pt->at(i));
         }
         
-      float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
-      float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
-      float frag_r = HFmeson.DeltaR(HFjet, true);
+      h1_z->Fill(z, event_weight);
+      h1_jt->Fill(jt, event_weight);
+      h1_r->Fill(r, event_weight);
         
-//      h2_frag_z_jetpt->Fill(frag_z, HFjet.Pt());
-      // if (jet_pt > ptMin)
-      h1_z->Fill(frag_z, event_weight);
-      h1_jt->Fill(frag_jt, event_weight);
-      h1_r->Fill(frag_r, event_weight);
-        
-      h2_zjt->Fill(frag_z, frag_jt);
-      h2_zr->Fill(frag_z, frag_r);
-      h2_jtr->Fill(frag_jt, frag_r);
+      h2_zjt->Fill(z, jt);
+      h2_zr->Fill(z, r);
+      h2_jtr->Fill(jt, r);
         
       if (HFHardest)
         N_hardest++;
@@ -1322,12 +1223,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     if (isTrueBjet)
     {
-      float tr_frag_z = tr_HFmeson.Vect().Dot(tr_HFjet.Vect()) / (tr_HFjet.Vect().Mag2());
-      h1_tr_z->Fill(tr_frag_z);
-      float tr_frag_jt = tr_HFmeson.Vect().Cross(tr_HFjet.Vect()).Mag() / tr_HFjet.Vect().Mag();
-      h1_tr_jt->Fill(tr_frag_jt);
-      float tr_frag_r = tr_HFmeson.DeltaR(tr_HFjet, true);
-      h1_tr_r->Fill(tr_frag_r);
+      h1_tr_z->Fill(tr_z);
+      h1_tr_jt->Fill(tr_jt);
+      h1_tr_r->Fill(tr_r);
       h1_tr_jet_pt->Fill(tr_jet_pt);
     }
 
@@ -1348,42 +1246,21 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //        }
 //
 //        h2_lundplane->Fill(logtheta, logkt);
-
-        for (int i = 0; i < ptHFbinsize; i++)
-        {
-          int loc = i;
-          if (HF_pt > ptHF_binedges[i] && HF_pt < ptHF_binedges[i + 1])
-          {
-            // for (int j = 0; j < HFetabinsize; j++)
-            // {
-            //   int loc = i * HFetabinsize + j;
-            //   if (HF_eta > HFeta_binedges[j] && HF_eta < HFeta_binedges[j + 1])
-            //   {
-              vec_h3_ptzjt[loc]->Fill(frag_z, frag_jt, jet_pt);
-              vec_h3_ptzr[loc]->Fill(frag_z, frag_r, jet_pt);
-              vec_h3_ptjtr[loc]->Fill(frag_jt, frag_r, jet_pt);
-              
-            //     break;
-            //   }
-            // }
-            break;
-          }
-        }
         
         
         //std::cout << "event weight : " << event_weight << std::endl;
-        h3_ptzjt->Fill(frag_z, frag_jt, jet_pt, event_weight);
-        h3_ptzr->Fill(frag_z, frag_r, jet_pt, event_weight);
-        h3_ptjtr->Fill(frag_jt, frag_r, jet_pt, event_weight);
+        h3_ptzjt->Fill(z, jt, jet_pt, event_weight);
+        h3_ptzr->Fill(z, r, jet_pt, event_weight);
+        h3_ptjtr->Fill(jt, r, jet_pt, event_weight);
         
-        h3_ptzjt_unweight->Fill(frag_z, frag_jt, jet_pt, event_weight);
-        h3_ptzr_unweight->Fill(frag_z, frag_r, jet_pt, event_weight);
-        h3_ptjtr_unweight->Fill(frag_jt, frag_r, jet_pt,  event_weight);
+        h3_ptzjt_unweight->Fill(z, jt, jet_pt, event_weight);
+        h3_ptzr_unweight->Fill(z, r, jet_pt, event_weight);
+        h3_ptjtr_unweight->Fill(jt, r, jet_pt,  event_weight);
 
 
-        h2_ptz->Fill(frag_z, jet_pt, event_weight);
-        h2_ptjt->Fill(frag_jt, jet_pt, event_weight);
-        h2_ptr->Fill(frag_r, jet_pt, event_weight);
+        h2_ptz->Fill(z, jet_pt, event_weight);
+        h2_ptjt->Fill(jt, jet_pt, event_weight);
+        h2_ptr->Fill(r, jet_pt, event_weight);
 
       }
   
@@ -1450,41 +1327,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // SetFeldmanErr(h3_ptzdR);
   cout << "After sub: " << endl;
   cout << "Num Jet pt = " << h1_jet_pt->Integral() << endl;
-    cout << "Int ptzjt = " << h3_ptzjt->Integral() << endl;
-    cout << "Int ptzr = " << h3_ptzr->Integral() << endl;
-    cout << "Int ptjtr = " << h3_ptjtr->Integral() << endl;
+  cout << "Int ptzjt = " << h3_ptzjt->Integral() << endl;
+  cout << "Int ptzr = " << h3_ptzr->Integral() << endl;
+  cout << "Int ptjtr = " << h3_ptjtr->Integral() << endl;
 
-//  if (SubtractGS)
-//  {
-//    h3_ptktdR->Add(h3_ptktdR_SV, -1);
-//    h3_ptzdR->Add(h3_ptzdR_SV, -1);
-//    h3_ptthetaErad->Add(h3_ptthetaErad_SV, -1);
-//  }
-
-  // for(int i = 0; i < ptHFbinsize; i++){
-  //     vec_h3_ptktdR[i]->Write(Form("h3_ptktdR%d", i));
-  //     vec_h3_ptzdR[i]->Write(Form("h3_ptzdR%d", i));
-  // }
-  for (int i = 0; i < ptHFbinsize; i++)
-  {
-    int loc = i;
-    // for (int j = 0; j < HFetabinsize; j++)
-    // {
-    //   int loc = i * HFetabinsize + j;
-    
-    vec_jetpt[loc]->Write(Form("jetpt%d", loc));      
-    vec_h3_ptzjt[loc]->Write(Form("h3_ptzjt%d", loc));
-    vec_h3_ptzr[loc]->Write(Form("h3_ptzr%d", loc));
-    vec_h3_ptjtr[loc]->Write(Form("h3_ptjtr%d", loc));
-    // }
-  }
-
-  // float eff = h1_frag_z_tot->GetBinContent(12)/h1_frag_z_SV->GetBinContent(13);
-  // h1_frag_z_SV->Scale(4.);
-  // h1_frag_z_comb->Scale(intbkgX->getVal()/intbkg_sideband->getVal());
-  // h1_frag_z->Add(h1_frag_z_comb, -1);
-  // h1_frag_z->Add(h1_frag_z_SV, -1);
-  // cout<<"SV Tagging Efficiency = "<<1./eff<<endl;
   cout << event_counter << " events processed" << endl;
   cout << "NumJets_zdR = " << NumJets_zdR << endl;
   cout << "NumJets_ktdR = " << NumJets_ktdR << endl;
@@ -1498,12 +1344,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   cout << "Num TWO HF in Jet = " << NumTwoHFInJet << endl;
   cout << "Num More than 1 jet in event = " << NumTwoCand << endl;
 
-  // h2_ktdR->Scale(1./ (float)NumJets_ktdR);
-  // h2_zdR->Scale(1./ (float)NumJets_zdR);
-  // h2_ktdR_comb->Scale(1./ (float) NumJets_ktdR_comb);
-  // h2_zdR_comb->Scale(1./ (float) NumJets_zdR_comb);
-  // h2_ktdR_gluon->Scale(1./ (float) NumJets_ktdR_gluon);
-  // h2_zdR_gluon->Scale(1./ (float) NumJets_zdR_gluon);
 
     //////// Unfolding Attempt -- Observables ///// / /
 
@@ -1517,9 +1357,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals before ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
-    //h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
-    //h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
-    //h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
+    // Correct for purities (if event weight is off)
+    h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
+    h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
+    h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
     
     cout << " ------------------------------------------------ " << endl;
     cout << "Integrals After Pur ptz: " << h2_ptz_final->Integral() << endl;
@@ -1546,10 +1387,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after Unfold ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
-//    ///////////////////  Correct for efficiency if needed /////////////////////////////////
-//    h2_ptz_final->Divide(h2_ptz_final, h2_efficiency_ptz);
-//    h2_ptjt_final->Divide(h2_ptjt_final, h2_efficiency_ptjt);
-//    h2_ptr_final->Divide(h2_ptr_final, h2_efficiency_ptr);
+    ///////////////////  Correct for efficiency if needed /////////////////////////////////
+    h2_ptz_final->Divide(h2_ptz_final, h2_efficiency_ptz);
+    h2_ptjt_final->Divide(h2_ptjt_final, h2_efficiency_ptjt);
+    h2_ptr_final->Divide(h2_ptr_final, h2_efficiency_ptr);
 
     cout << " ------------------------------------------------ " << endl;
     cout << "Integrals after eff ptz: " << h2_ptz_final->Integral() << endl;

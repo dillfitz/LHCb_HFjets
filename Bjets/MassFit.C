@@ -522,7 +522,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooCrystalBall dcbPdf_sig2("dcbPdf_sig2", "floatSidedCB_sig2", HFMass, *mu_sig, *sigma2, *alpha1_sig, *p1_sig, *alpha2_sig, *p2_sig);
 
         // Number of signal events
-         RooRealVar *nsig1("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
+        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
+
+
 //        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0., 0., 0.);
 //        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 400., 0., 1000000.);
 

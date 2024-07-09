@@ -409,10 +409,10 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
             continue;
         }
 
-        if (HFjet.Pt() < 12.5) {
-            cut_pt++;
-            continue;
-        }
+        //f (HFjet.Pt() < pTLow) {
+         //   cut_pt++;
+         //  continue;
+        //}
        
         Hasbbbar = false;
 //        GluonTag = false;
@@ -504,9 +504,12 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
 //        if ( HFmeson.DeltaR(HFjet) > jetradius)
 //            continue;
     
-        /////    If the HF meson (from branch) is not the same as the truth Jet daughter, I dont care about such event ... ////
+        // Veto events that don't have a B meson
         if (!hasHFhadron)
-            continue;
+          continue;
+        // Veto events with dR(B, jet) > 0.5
+        if (HFmeson.DeltaR(HFjet, true) > jetradius)
+          continue;
         
         // if(NumHFHads > 1) continue;
 
@@ -666,10 +669,6 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
     meas_K_e = meas_Kmeson.E();
         
         nTracks = Tree.nTracks; 
-
-//        if (last_eventNum == Tree.eventNumber) {
-//            continue;
-//        }
 
         last_eventNum = Tree.eventNumber;
         eventNumber = Tree.eventNumber;

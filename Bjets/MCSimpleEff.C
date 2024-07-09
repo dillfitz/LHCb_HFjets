@@ -423,31 +423,6 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
    
     TH1D *h1_HFpt_reco_ext = new TH1D("HFpt_reco_ext", "", 20, 0.0, 100.);
     TH1D *h1_HFpt_truth_ext = new TH1D("HFpt_truth_ext", "", 20, 0.0, 100.);
-    
-    vector<TH1D *> vec_denom_efficiency_jetpt;
-    vector<TH2D*>  vec_h2_denom_efficiency_ptz, vec_h2_denom_efficiency_ptjt, vec_h2_denom_efficiency_ptr;
-    vector<TH3D*>  vec_h3_denom_efficiency_ptzjt, vec_h3_denom_efficiency_ptzr, vec_h3_denom_efficiency_ptjtr;    
-     
-    for (int i = 0; i < ptHFbinsize; i++)
-    {
-      int loc = i;
-      TH1D *h1_denom_efficiency_jetpt_tmp = new TH1D(Form("h1_denom_efficiency_jetpt%d", loc), "", ptbinsize, pt_binedges);
-      TH2D *h2_denom_efficiency_ptz_tmp = new TH2D(Form("denom_efficiency_ptz%d", loc), "",zbinsize, z_binedges, ptbinsize, pt_binedges);
-      TH2D *h2_denom_efficiency_ptjt_tmp = new TH2D(Form("denom_efficiency_ptjt%d", loc), "",jtbinsize, jt_binedges, ptbinsize, pt_binedges);  
-      TH2D *h2_denom_efficiency_ptr_tmp = new TH2D(Form("denom_efficiency_ptr%d", loc), "",rbinsize, r_binedges, ptbinsize, pt_binedges);
-      TH3D *h3_denom_efficiency_ptzjt_tmp = new TH3D(Form("denom_efficiency_ptzjt%d", loc), "",zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges);      
-      TH3D *h3_denom_efficiency_ptzr_tmp = new TH3D(Form("denom_efficiency_ptzr%d", loc), "",zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);   
-      TH3D *h3_denom_efficiency_ptjtr_tmp = new TH3D(Form("denom_efficiency_ptjtr%d", loc), "",jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
-                             
-      vec_denom_efficiency_jetpt.push_back(h1_denom_efficiency_jetpt_tmp);
-      vec_h2_denom_efficiency_ptz.push_back(h2_denom_efficiency_ptz_tmp);  
-      vec_h2_denom_efficiency_ptjt.push_back(h2_denom_efficiency_ptjt_tmp);
-      vec_h2_denom_efficiency_ptr.push_back(h2_denom_efficiency_ptr_tmp);   
-      vec_h3_denom_efficiency_ptzjt.push_back(h3_denom_efficiency_ptzjt_tmp);
-      vec_h3_denom_efficiency_ptzr.push_back(h3_denom_efficiency_ptzr_tmp);      
-      vec_h3_denom_efficiency_ptjtr.push_back(h3_denom_efficiency_ptjtr_tmp);                                                                                      
-    }
-    
 
     // Event loop
     
@@ -679,15 +654,7 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
             
 //            h2_denom_efficiency_fragzjetpt->Fill(HFmeson.Pt() / jet_pt, jet_pt);
             h2_denom_efficiency_HFptnTracks->Fill(HFmeson.Pt(), nTracks);
-       
             
-        if (Hasbbbar)
-        {
-//          h2_SVTag_eff_denom_z->Fill(HFmeson.Pt() / jet_pt, jet_pt);
-        
-//          h2_SVTag_eff_denom->Fill(HFmeson.Pt(), tr_jet_pt);
-          h2_SVTag_eff_denom_z->Fill(truth_z, jet_pt);
-        }
             h2_denom_efficiency_ptz->Fill(truth_z, jet_pt);
             h2_denom_efficiency_ptjt->Fill(truth_jt, jet_pt);
             h2_denom_efficiency_ptr->Fill(truth_r, jet_pt);
@@ -702,29 +669,17 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
   
             h2_denom_efficiency_zjt->Fill(truth_z, truth_jt);
             h2_denom_efficiency_zr->Fill(truth_z, truth_r);
-            h2_denom_efficiency_jtr->Fill(truth_jt, truth_r);
-            for (int i = 0; i < ptHFbinsize; i++)
-            {
-              if (HF_pt > ptHF_binedges[i] && HF_pt < ptHF_binedges[i + 1])
-              {
-                int loc = i;
-                
-                // 1D
-                vec_denom_efficiency_jetpt[loc]->Fill(jet_pt);
-                
-                // 2D
-                vec_h2_denom_efficiency_ptz[loc]->Fill(truth_z, jet_pt);      
-                vec_h2_denom_efficiency_ptjt[loc]->Fill(truth_jt, jet_pt);
-                vec_h2_denom_efficiency_ptr[loc]->Fill(truth_r, jet_pt);    
-                     
-                // 3D                                                                      
-                vec_h3_denom_efficiency_ptzjt[loc]->Fill(truth_z, truth_jt, jet_pt);
-                vec_h3_denom_efficiency_ptzr[loc]->Fill(truth_z, truth_r, jet_pt);
-                vec_h3_denom_efficiency_ptjtr[loc]->Fill(truth_jt, truth_r, jet_pt);                   
-                
-                break;
-              }
-            }
+            h2_denom_efficiency_jtr->Fill(truth_jt, truth_r);            
+       
+            
+        if (Hasbbbar)
+        {
+//          h2_SVTag_eff_denom_z->Fill(HFmeson.Pt() / jet_pt, jet_pt);
+        
+//          h2_SVTag_eff_denom->Fill(HFmeson.Pt(), tr_jet_pt);
+          h2_SVTag_eff_denom_z->Fill(truth_z, jet_pt);
+        }
+
       }
         
       ///////////////////////////////////////////////////
@@ -957,24 +912,6 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
 //     sp.GetXmin(), sp.GetXmax(), 2);
 
     /////////////////////////////////
-
-    for (int i = 0; i < ptHFbinsize; i++)
-    {
-      int loc = i;
-      
-      // 1D
-      vec_denom_efficiency_jetpt[loc]->Write(Form("denom_efficiency_jetpt%d", loc));
-      
-      // 2D
-      vec_h2_denom_efficiency_ptz[loc]->Write(Form("denom_efficiency_ptz%d", loc));      
-      vec_h2_denom_efficiency_ptjt[loc]->Write(Form("denom_efficiency_ptjt%d", loc));      
-      vec_h2_denom_efficiency_ptr[loc]->Write(Form("denom_efficiency_ptr%d", loc));         
-      
-      // 3D
-      vec_h3_denom_efficiency_ptzjt[loc]->Write(Form("denom_efficiency_ptzjt%d", loc));      
-      vec_h3_denom_efficiency_ptzr[loc]->Write(Form("denom_efficiency_ptzr%d", loc));      
-      vec_h3_denom_efficiency_ptjtr[loc]->Write(Form("denom_efficiency_ptjtr%d", loc));                   
-    }
     
     h1_efficiency_jetpt->Write("efficiency_jetpt");
     h1_denom_efficiency_HFpt->Write("h1_denom_efficiency_HFpt");

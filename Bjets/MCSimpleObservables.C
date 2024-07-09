@@ -181,34 +181,6 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
     TFile f(extension_RootFilesMC + extension + ".root", "RECREATE");
 
-  // TH2D *h2_lundplane_b = new TH2D("B_LundPlane", "B-meson Lund Plane", 50, 0, 8, 50, -8, 8);
-  // TH2D *h2_lundplane_c = new TH2D("D_LundPlane", "D-meson Lund Plane", 50, 0, 8, 50, -8, 8);
-  // TH2D *h2_lundplane_inc = new TH2D("L_LundPlane", "Light Lund Plane", 50, 0, 8, 50, -8, 8);
-
-  // for(int i = 0; i < ktbinsize+1; i++){
-  //   kt_binedges[i] = kT_min + i*(kT_max - kT_min)/ktbinsize;
-  //   dR_binedges[i] = dR_min + i * (dR_max - dR_min)/dRbinsize;
-  //   z_binedges[i] = z_min + i*(z_max - z_min)/ktbinsize;
-  // }
-
-  vector<TH3D *> vec_h3_ptzjt, vec_h3_ptzr, vec_h3_ptjtr;
-  for (int i = 0; i < ptHFbinsize; i++)
-  {
-    int loc = i;
-    // for (int j = 0; j < HFetabinsize; j++)
-    // {
-    TH3D *h3_ptzjt_tmp = new TH3D(Form("ptzjt%d", loc), "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    vec_h3_ptzjt.push_back(h3_ptzjt_tmp);
-
-    TH3D *h3_ptzr_tmp = new TH3D(Form("ptzr%d", loc), "", zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges);
-    vec_h3_ptzr.push_back(h3_ptzr_tmp);
-      
-      TH3D *h3_ptjtr_tmp = new TH3D(Form("ptjtr%d", loc), "",jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-      vec_h3_ptjtr.push_back(h3_ptjtr_tmp );
-
-    // }
-  }
-
     TH2D *h2_ptz = new TH2D("ptz", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
     TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
     TH2D *h2_ptr = new TH2D("ptr", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
@@ -603,7 +575,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
       h3_ptjtr_gluon->Fill(frag_jt_gluon, frag_r_gluon, jet_pt);
      
     }
-      
+    /*  
     double frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
     double frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
     double frag_r = HFmeson.DeltaR(HFjet, true);
@@ -611,24 +583,25 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     double frag_meas_z = meas_HFmeson.Vect().Dot(meas_HFjet.Vect()) / (meas_HFjet.Vect().Mag2());
     double frag_meas_jt = meas_HFmeson.Vect().Cross(meas_HFjet.Vect()).Mag() / meas_HFjet.Vect().Mag();
     double frag_meas_r = meas_HFmeson.DeltaR(meas_HFjet, true);
-
-    h1_z->Fill(frag_z);
-    h1_jt->Fill(frag_jt);
-    h1_r->Fill(frag_r);
+    */
+    
+    h1_z->Fill(truth_z);
+    h1_jt->Fill(truth_jt);
+    h1_r->Fill(truth_r);
       
-    h1_meas_z->Fill(frag_meas_z);
-    h1_meas_jt->Fill(frag_meas_jt);
-    h1_meas_r->Fill(frag_meas_r);
+    h1_meas_z->Fill(meas_z);
+    h1_meas_jt->Fill(meas_jt);
+    h1_meas_r->Fill(meas_r);
       
-      h1_ratio_z0->Fill(frag_z / frag_meas_z);
-      h1_ratio_z1->Fill(frag_meas_z/ frag_z);
-      h1_ratio_jt0->Fill( frag_jt / frag_meas_jt );
-      h1_ratio_jt1->Fill(frag_meas_jt/ frag_jt);
-      h1_ratio_r0->Fill( frag_r / frag_meas_r );
-      h1_ratio_r1->Fill(frag_meas_r/ frag_r);
+      h1_ratio_z0->Fill(truth_z / meas_z);
+      h1_ratio_z1->Fill(meas_z/ truth_z);
+      h1_ratio_jt0->Fill( truth_jt / meas_jt );
+      h1_ratio_jt1->Fill(meas_jt/ truth_jt);
+      h1_ratio_r0->Fill( truth_r / meas_r );
+      h1_ratio_r1->Fill(meas_r/ truth_r);
       
-    // cout << frag_z << ", " << HFjet.Pt();
-    h2_frag_z_jetpt->Fill(frag_z, HFjet.Pt());
+    // cout << truth_z << ", " << HFjet.Pt();
+    h2_frag_z_jetpt->Fill(truth_z, HFjet.Pt());
     if (Hasbbbar)
       h2_frag_z_jetpt_gluon->Fill(HFmeson.Pt() / HFjet.Pt(), HFjet.Pt());
 
@@ -638,21 +611,21 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     //   cout<<ndtrs<<endl;
     // }
       
-      h2_ptz->Fill(frag_z, jet_pt);
-      h2_ptjt->Fill(frag_jt, jet_pt);
-      h2_ptr->Fill(frag_r, jet_pt);
+      h2_ptz->Fill(truth_z, jet_pt);
+      h2_ptjt->Fill(truth_jt, jet_pt);
+      h2_ptr->Fill(truth_r, jet_pt);
       
-     h3_ptzjt->Fill(frag_z, frag_jt, jet_pt);
-     h3_ptzr->Fill(frag_z, frag_r, jet_pt);
-     h3_ptjtr->Fill(frag_jt, frag_r, jet_pt);
+     h3_ptzjt->Fill(truth_z, truth_jt, jet_pt);
+     h3_ptzr->Fill(truth_z, truth_r, jet_pt);
+     h3_ptjtr->Fill(truth_jt, truth_r, jet_pt);
       
-     h2_zjt->Fill(frag_z, frag_jt);
-     h2_zr->Fill(frag_z, frag_r);
-     h2_jtr->Fill(frag_jt, frag_r);
+     h2_zjt->Fill(truth_z, truth_jt);
+     h2_zr->Fill(truth_z, truth_r);
+     h2_jtr->Fill(truth_jt, truth_r);
       
-     h2_meas_zjt->Fill(frag_meas_z, frag_meas_jt);
-     h2_meas_zr->Fill(frag_meas_z, frag_meas_r);
-     h2_meas_jtr->Fill(frag_meas_jt, frag_meas_r);
+     h2_meas_zjt->Fill(meas_z, meas_jt);
+     h2_meas_zr->Fill(meas_z, meas_r);
+     h2_meas_jtr->Fill(meas_jt, meas_r);
 
       // 2D Truth-Reco Correspondence (219 - 224)
 //      TH2D *h2_truthreco_z = new TH2D("truthreco_z", ";Reco z; Truth z", zbinsize, z_binedges, zbinsize, z_binedges);
@@ -662,25 +635,6 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     bool hasEmission_ktdR = false;
     bool hasEmission_zdR = false;
 
-      for (int i = 0; i < ptHFbinsize; i++)
-      {
-        int loc = i;
-        if (HF_pt > ptHF_binedges[i] && HF_pt < ptHF_binedges[i + 1])
-        {
-          // for (int j = 0; j < HFetabinsize; j++)
-          // {
-          //   int loc = i * HFetabinsize + j;
-          //   if (HF_eta > HFeta_binedges[j] && HF_eta < HFeta_binedges[j + 1])
-          //   {
-          vec_h3_ptzjt[loc]->Fill(truth_z, truth_jt, jet_pt);
-          vec_h3_ptzr[loc]->Fill(truth_z, truth_r, jet_pt);
-          vec_h3_ptjtr[loc]->Fill(truth_jt, truth_r, jet_pt);
-          //     break;
-          //   }
-          // }
-          break;
-        }
-      }
   }
     
   cout << event_counter << " events processed" << endl;
@@ -703,17 +657,6 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   SetRecoStyle(h1_jetpt_GS_frac);
   SetTruthStyle(h1_jetpt_FC_frac);
 
-  for (int i = 0; i < ptHFbinsize; i++)
-  {
-    int loc = i;
-    // for (int j = 0; j < HFetabinsize; j++)
-    // {
-    // int loc = i * HFetabinsize + j;
-    vec_h3_ptzjt[loc]->Write(Form("h3_ptzjt%d", loc));
-    vec_h3_ptzr[loc]->Write(Form("h3_ptzr%d", loc));
-    vec_h3_ptjtr[loc]->Write(Form("h3_ptjtr%d", loc));
-    // }
-  }
   // h2_ktdR->Scale(1./ NumJets_ktdR);
   // h2_zdR->Scale(1./ NumJets_zdR);
 

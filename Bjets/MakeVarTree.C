@@ -629,6 +629,8 @@ void MakeVarTree(int NumEvts_user = -1,
             }
         }
         
+        // Not in Ibrahim's current code -- removing for now
+        /*
         if (!isData)
         {
             if (Tree.Jet_mcjet_nmcdtrs < 2 )
@@ -644,7 +646,7 @@ void MakeVarTree(int NumEvts_user = -1,
                 }
             }
         }
-        
+        */
         if (Tree.nPVs > 1)
             continue;
         
@@ -768,7 +770,6 @@ void MakeVarTree(int NumEvts_user = -1,
         chi2ndf_dtf = Tree.Bu_ConsBu_chi2[0] / Tree.Bu_ConsBu_nDOF[0];
         tau_dtf = Tree.Bu_ConsBu_ctau[0];
 
-        // if(mup.Pt() < 0.25 || mum.Pt() < 0.25) continue;
 
         dphi = 3.1415;
 
@@ -1026,11 +1027,13 @@ void MakeVarTree(int NumEvts_user = -1,
             continue;
         }
 
+        // This cut is not applied in Ibrahim's current code, it also seems dubioous
+        /*
         if (NumBHads > 1)
         {
             continue;
         }
-
+        */
         bool hasHFhadron_matched = false;
         NumBHads_tr = 0;
         bool hasb = false;

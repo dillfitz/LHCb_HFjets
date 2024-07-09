@@ -17,7 +17,7 @@ void ClosureTest(int NumEvts = -1,
 {
 
   TRandom3 *myRNG = new TRandom3();
-  const int nRuns = 1;
+  const int nRuns = 3;
 
   TString string_reco, string_data, string_truth, string_eff, string_unfold, extension, str_eta, str_pt, str_Nevts;
   TString str_followHard, str_ghost, str_charged, str_Mag1, str_Mag2, str_flavor, str_GS(""), str_WTA;
@@ -128,7 +128,7 @@ void ClosureTest(int NumEvts = -1,
 
   int ntoys = 5;
   // Multiply by purity
-  //h1_jetpt_final->Multiply(h1_purity_jetpt);
+  h1_jetpt_final->Multiply(h1_purity_jetpt);
   RooUnfoldBayes unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_z);
   // RooUnfoldIds unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_kt);
   h1_jetpt_final = (TH1D *)unfold_jetpt.Hreco();
@@ -136,7 +136,7 @@ void ClosureTest(int NumEvts = -1,
   cout << "Unfold successful" << endl;  
 
   // Divide by efficiency
-  //h1_jetpt_final->Divide(h1_efficiency_jetpt);
+  h1_jetpt_final->Divide(h1_efficiency_jetpt);
 
   TH1D *h1_jetpt_final_ratio = (TH1D *)h1_jetpt_final->Clone("h1_jetpt_final_ratio");
   // TH1D * h1_correct_jetpt = (TH1D*) h1_jetpt_reco->Clone("h1_correct_jetpt");
@@ -183,12 +183,12 @@ void ClosureTest(int NumEvts = -1,
   RooUnfoldResponse *response_ptzjt = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzjt");
   
   // Multiply by purity  
-  //h3_ptzjt_final->Multiply(h3_ptzjt_final, h3_purity_ptzjt);
+  h3_ptzjt_final->Multiply(h3_ptzjt_final, h3_purity_ptzjt);
   RooUnfoldBayes unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
   // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
   h3_ptzjt_final = (TH3D *)unfold_ptzjt.Hreco();
   // Divide by efficiency  
-  //h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
+  h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
   //
   int binlow = h3_ptzjt->GetZaxis()->FindBin(ptMin + 0.1);
   int binhigh = h3_ptzjt->GetZaxis()->FindBin(ptMax - 0.1);
@@ -275,14 +275,14 @@ void ClosureTest(int NumEvts = -1,
     myRNG->SetSeed(time(0));
     SmearObservables(h3_ptzjt_clone, h3_ptzjt_data, myRNG);
     // Multiply by purity
-    //h3_ptzjt_clone->Multiply(h3_ptzjt_clone, h3_purity_ptzjt);
+    h3_ptzjt_clone->Multiply(h3_ptzjt_clone, h3_purity_ptzjt);
     RooUnfoldBayes unfold_ptzjt_clone(response_ptzjt, h3_ptzjt_clone, NumIters_kt);
     // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_clone, NumIters_kt);
     // unfold_ptzjt_clone.SetMeasuredCov((*covMatrix_ptzjt));
 
     h3_ptzjt_clone = (TH3D *)unfold_ptzjt_clone.Hreco();
     // Divide by efficiency
-    //h3_ptzjt_clone->Divide(h3_ptzjt_clone, h3_eff_ptzjt);
+    h3_ptzjt_clone->Divide(h3_ptzjt_clone, h3_eff_ptzjt);
     h3_ptzjt_clone->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
     TH2D *h2_ptzjt_clone = (TH2D *)h3_ptzjt_clone->Project3D(Form("zjt_clone%d_yx", i));
@@ -368,12 +368,14 @@ void ClosureTest(int NumEvts = -1,
   RooUnfoldResponse *response_ptz = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
   
   // Multiply by purity  
-  //h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
+  h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
+  h2_purity_ptz->Write();
+  h2_eff_ptz->Write();
   RooUnfoldBayes unfold_ptz(response_ptz, h2_ptz_final, NumIters_kt);
 
   h2_ptz_final = (TH2D *)unfold_ptz.Hreco();
   // Divide by efficiency  
-  //h2_ptz_final->Divide(h2_ptz_final, h2_eff_ptz);
+  h2_ptz_final->Divide(h2_ptz_final, h2_eff_ptz);
 
   h2_ptz_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
   h2_ptz_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
@@ -415,15 +417,24 @@ void ClosureTest(int NumEvts = -1,
     TH2D *h2_ptz_clone = (TH2D *)h2_ptz->Clone(Form("ptz_clone%d", i));
     myRNG->SetSeed(time(0));
     SmearObservables(h2_ptz_clone, h2_ptz_data, myRNG);
+    
+    //std::cout << endl;
+    //std::cout << "h2ptz before corrections : " << h2_ptz_clone->GetEntries() << std::endl;
+    //std::cout << endl;    
 
     // Multiply by purity
-    //h2_ptz_clone->Multiply(h2_ptz_clone, h2_purity_ptz);
+    h2_ptz_clone->Multiply(h2_ptz_clone, h2_purity_ptz);
     
     RooUnfoldBayes unfold_ptz_clone(response_ptz, h2_ptz_clone, NumIters_kt);
     h2_ptz_clone = (TH2D *)unfold_ptz_clone.Hreco();
     
     // Divide by efficiency    
-    //h2_ptz_clone->Divide(h2_ptz_clone, h2_eff_ptz);
+    h2_ptz_clone->Divide(h2_ptz_clone, h2_eff_ptz);
+    
+    //std::cout << endl;    
+    //std::cout << "h2ptz after corrections : " << h2_ptz_clone->GetEntries() << std::endl;
+    //std::cout << endl;
+            
     h2_ptz_clone->GetYaxis()->SetRangeUser(ptMin, ptMax);
     
        
@@ -443,7 +454,10 @@ void ClosureTest(int NumEvts = -1,
     
              
     h1_z_clone->Scale(1. / Njets_final, "width");
-    
+
+    std::cout << endl;    
+    std::cout << "h1_z after norm : " << h1_z_clone->GetEntries() << std::endl;
+    std::cout << endl;    
     
     // pT bins [7-15, 15-20, 20-30, 30-50, 50-100, 100-?]    
     //h1_z_clone_20_100->Scale(1./h1_jetpt_final->Integral(3,5), "width");     
@@ -533,12 +547,12 @@ void ClosureTest(int NumEvts = -1,
   RooUnfoldResponse *response_ptjt = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjt");
   
   // Multiply by purity  
-  //h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
+  h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
   RooUnfoldBayes unfold_ptjt(response_ptjt, h2_ptjt_final, NumIters_kt);
 
   h2_ptjt_final = (TH2D *)unfold_ptjt.Hreco();
   // Divide by efficiency  
-  //h2_ptjt_final->Divide(h2_ptjt_final, h2_eff_ptjt);
+  h2_ptjt_final->Divide(h2_ptjt_final, h2_eff_ptjt);
 
   h2_ptjt_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
   h2_ptjt_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
@@ -582,11 +596,11 @@ void ClosureTest(int NumEvts = -1,
     SmearObservables(h2_ptjt_clone, h2_ptjt_data, myRNG);  
 
     // Multiply by purity
-    //h2_ptjt_clone->Multiply(h2_ptjt_clone, h2_purity_ptjt);
+    h2_ptjt_clone->Multiply(h2_ptjt_clone, h2_purity_ptjt);
     RooUnfoldBayes unfold_ptjt_clone(response_ptjt, h2_ptjt_clone, NumIters_kt);
     h2_ptjt_clone = (TH2D *)unfold_ptjt_clone.Hreco();
     // Divide by efficiency    
-    //h2_ptjt_clone->Divide(h2_ptjt_clone, h2_eff_ptjt);
+    h2_ptjt_clone->Divide(h2_ptjt_clone, h2_eff_ptjt);
     h2_ptjt_clone->GetYaxis()->SetRangeUser(ptMin, ptMax);  
        
     TH1D *h1_jt_clone = (TH1D *)h2_ptjt_clone->ProjectionX(Form("jt_clone%d", i));                        
@@ -641,12 +655,12 @@ void ClosureTest(int NumEvts = -1,
   RooUnfoldResponse *response_ptr = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptr");
   
   // Multiply by purity  
-  //h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
+  h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
   RooUnfoldBayes unfold_ptr(response_ptr, h2_ptr_final, NumIters_kt);
 
   h2_ptr_final = (TH2D *)unfold_ptr.Hreco();
   // Divide by efficiency  
-  //h2_ptr_final->Divide(h2_ptr_final, h2_eff_ptr);
+  h2_ptr_final->Divide(h2_ptr_final, h2_eff_ptr);
   
   int binlowr = h2_ptr->GetXaxis()->FindBin(0.0);
   int binhighr = h2_ptr->GetXaxis()->FindBin(0.5);  
@@ -693,13 +707,13 @@ void ClosureTest(int NumEvts = -1,
     SmearObservables(h2_ptr_clone, h2_ptr_data, myRNG);
 
     // Multiply by purity
-    //h2_ptr_clone->Multiply(h2_ptr_clone, h2_purity_ptr);
+    h2_ptr_clone->Multiply(h2_ptr_clone, h2_purity_ptr);
     
     RooUnfoldBayes unfold_ptr_clone(response_ptr, h2_ptr_clone, NumIters_kt);
     h2_ptr_clone = (TH2D *)unfold_ptr_clone.Hreco();
     
     // Divide by efficiency    
-    //h2_ptr_clone->Divide(h2_ptr_clone, h2_eff_ptr);
+    h2_ptr_clone->Divide(h2_ptr_clone, h2_eff_ptr);
     
     h2_ptr_clone->GetYaxis()->SetRangeUser(ptMin, ptMax);
          
