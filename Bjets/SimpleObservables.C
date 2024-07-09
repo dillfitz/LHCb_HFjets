@@ -174,6 +174,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // str_trees[1] = "D0KPiJet/DecayTree";
   // str_trees[2] = "B0KPiJet/DecayTree";
   // str_trees[3] = "Jets/DecayTree";
+
   TString str_tree;
   TString  extension_RootFilesMC, extension_RootFiles;
   TString  extension_read, extension_wspace, extension_eff;
@@ -244,7 +245,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // TFile file_reco_weights("hists/MC_DATA_WEIGHTS.root", "READ");
   TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
     
-  //TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
+  TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
 
   //
   TH2D *h2_HFptrap_ratio;
@@ -292,16 +293,16 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_HFeff_HFpteta = (TH2D *)file_decay->Get("efficiency_HFpteta");
   TH2D *h2_HFeff_HFptjetpt = (TH2D *)file_decay->Get("efficiency_HFptjetpt");
     
-  //TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
-  //TH2D *h2_ptjt_truth =(TH2D *)file_truth->Get("ptjt");
-  //TH2D *h2_ptr_truth = (TH2D *)file_truth->Get("ptr");
+  TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
+  TH2D *h2_ptjt_truth =(TH2D *)file_truth->Get("ptjt");
+  TH2D *h2_ptr_truth = (TH2D *)file_truth->Get("ptr");
 
   // h2_SVTag_eff_z->Smooth();
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-    TString datastr = TString("massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
-    TString recostr = TString("massfit_reco_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
+    TString datastr = TString("massfit_data_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
+    TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
     TString extension_mass = isData ? datastr : recostr;
     
     std::cout << "extension_mass : " << extension_mass << std::endl;
@@ -1028,7 +1029,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       event_pur = h3_purity_HFptetajetpt->GetBinContent(h3_purity_HFptetajetpt->GetXaxis()->FindBin(HFmeson.Pt()), h3_efficiency_HFptetajetpt->GetYaxis()->FindBin(HFmeson.Rapidity()), h3_purity_HFptetajetpt->GetZaxis()->FindBin(HFjet.Pt()));
     }
     
-    std::cout << " event_eff : " << event_eff << " event_pur : " << event_pur << std::endl;
+    //std::cout << " event_eff : " << event_eff << " event_pur : " << event_pur << std::endl;
 
     if (h2_SVTag_eff != NULL)
     {
@@ -1105,8 +1106,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
       //event_weight = 1.0;
       
-    std::cout<< "event weight : " << event_weight << endl;
-      
     if (PID_cut)
       event_weight *= (1. / (pideff_K));
     // if (sv_weight == 0 && (nSV > 0))
@@ -1116,7 +1115,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (std::isnan(sv_weight) || std::isinf(sv_weight))
       sv_weight = 1.0;
 
-    std::cout << "PID_cut : " << PID_cut  << std::endl;
+    //std::cout<< "event weight : " << event_weight << endl;
+    //std::cout << "PID_cut : " << PID_cut  << std::endl;
     float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
     float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
     float frag_r = HFmeson.DeltaR(HFjet, true);
@@ -1401,7 +1401,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //    }
       
   }
-
+/*
   ///////////////// ////////////////
   // Background Subtraction
   ////////////// ////////////////
@@ -1445,6 +1445,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       
       
   }
+*/  
   // SetFeldmanErr(h3_ptktdR);
   // SetFeldmanErr(h3_ptzdR);
   cout << "After sub: " << endl;
@@ -1516,9 +1517,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals before ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
-    h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
-    h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
-    h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
+    //h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
+    //h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
+    //h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
     
     cout << " ------------------------------------------------ " << endl;
     cout << "Integrals After Pur ptz: " << h2_ptz_final->Integral() << endl;
@@ -1798,7 +1799,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     }
     legend_zpt_raw -> Draw("SAME");
-/*    
+    
     ccan[ican]->cd(3);
     auto legend_zpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
     legend_zpt_truth ->SetTextSize(0.03);
@@ -1826,7 +1827,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     }
     legend_zpt_truth -> Draw("SAME");
-  */  
+  
     ccan[ican]->cd();
     ccan[ican]->Update();
     if (ican == 0)

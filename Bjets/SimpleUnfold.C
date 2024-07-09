@@ -297,7 +297,7 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_dRztheta_ratio;
     
 //    /////////////////// Mass Fit Parameters /////////////////////////////////
-    TString extension_mass(extension_RootFilesData + "massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root");
+    TString extension_mass( extension_RootFilesData + TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");      
     if (DoRecSelEff)
       extension_mass = "recselsys_" + extension_mass;
     if (DoSignalSys)

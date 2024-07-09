@@ -18,7 +18,7 @@ using namespace RooFit;
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
              bool UseDTF = true,
              bool DoRecSelEff = 0,
-             float ptmin_user = 12.5,
+             float ptmin_user = 7.0,
              float ptmax_user = 250)
 {
     bool MCflag = !isData;
@@ -110,10 +110,10 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         str_charged = "_charge";
 
     TString extension, extension_reco, extension_misid;
-    TString extension_read, extension_RootFilesMC, extension_RootFiles;
+    TString extension_read, extension_RootFiles, extension_RootFilesMC;
     
-    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     extension_RootFiles = isData ? TString("../../root_files/Bjets/") : TString("../../root_files/BjetsMC/");
+    extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
     extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
     
@@ -379,8 +379,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     TString plotfileO;
     TString plotfileC;
     // TString OutputFileBase    = outbase+outinfo;
-    TString plotextension = TString("../../plots/Bjets/");
-    rootfile = extension_RootFilesMC + extension + TString(".root");
+    TString plotextension = isData? TString("../../plots/Bjets/") : TString("../../plots/BjetsMC/");
+    rootfile = extension_RootFiles + extension + TString(".root");
     plotfile = plotextension + extension + TString(".ps");
     
     plotfilePDF = plotextension + extension + TString(".pdf");
@@ -428,10 +428,14 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             nBins = 80;
         binsize = (mass_high - mass_low) / (float)nBins;
 
-        TFile *file_workspace = new TFile( Form("workspace%d_", i) + extension_reco + ".root", "READ");
+        TFile *file_workspace = new TFile( extension_RootFilesMC + Form("workspace%d_", i) + extension_reco + ".root", "READ");
         
 //        TFile *file_workspace_misid = new TFile(Form("../BjetMisID/hists/workspace%d_", i) + extension_misid + ".root", "READ");
-        TFile *file_workspace_misid = new TFile(extension_RootFilesMC + "/massfit_reco_ev_-1_ptj_20100_eta_2.54.0_HF_ghost_0.5_b_91599.root", "READ");
+        // Need to create these workspaces for both misID and reco! 
+        TFile *file_workspace_misid = new TFile(extension_RootFilesMC + TString("MisID/") + extension_misid + TString(".root"), "READ");
+        
+        std::cout <<  extension_RootFilesMC << Form("workspace%d_", i) << extension_reco << ".root" << std::endl;
+        std::cout << extension_RootFilesMC << TString("MisID/") << extension_misid << TString(".root");
         
         if (file_workspace_misid == NULL)
         {
@@ -518,14 +522,14 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooCrystalBall dcbPdf_sig2("dcbPdf_sig2", "floatSidedCB_sig2", HFMass, *mu_sig, *sigma2, *alpha1_sig, *p1_sig, *alpha2_sig, *p2_sig);
 
         // Number of signal events
-         RooRealVar nsig1("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
+         RooRealVar *nsig1("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
 //        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0., 0., 0.);
 //        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 400., 0., 1000000.);
 
         // Choose if you want two CB functions as signal, or two Gaussians.
 
-          RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(nsig1));
-//        RooAddPdf sig("sig", "Signal", RooArgList(dcbPdf_sig1, dcbPdf_sig2), RooArgList(*nsig1));
+          //RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(nsig1));
+        RooAddPdf sig("sig", "Signal", RooArgList(dcbPdf_sig1, dcbPdf_sig2), RooArgList(*nsig1));
 
         //
         // RooRealVar mean_nosec("mean_nosec", "mean of gaussians", 5.279, 5.25, 5.285);
@@ -805,7 +809,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         w->import(*model);
         w->import(B_mass);
         w->Print();
-        w->writeToFile(Form("hists/workspace%d_", i) + extension + ".root");
+        w->writeToFile(Form(extension_RootFiles + "workspace%d_", i) + extension + ".root");
 
         cout << "Chi2/dof = " << chi2 << endl;
         cout << sigma_arg->getVal() << endl;

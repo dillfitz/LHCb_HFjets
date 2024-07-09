@@ -138,7 +138,7 @@ void MakeVarTree(int NumEvts_user = -1,
     // str_trees[2] = "B0KPiJet/DecayTree";
     // str_trees[3] = "Jets/DecayTree";
     TString str_tree;
-    TString extension_read, extension_RootFilesMC, extension_RootFilesData;
+    TString extension_read, extension_RootFilesMC, extension_RootFilesData, extension_RootFiles;
     TString extension, extension_eff;
     
     extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
@@ -239,6 +239,7 @@ void MakeVarTree(int NumEvts_user = -1,
 
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     extension_RootFilesData = TString("../../root_files/Bjets/");
+    extension_RootFiles = isData ? "../../root_files/Bjets/" : "../../root_files/BjetsMC/"; 
 
     TFile *file_eff;
     TH2D *h2_trk_eff;
@@ -250,8 +251,13 @@ void MakeVarTree(int NumEvts_user = -1,
     //   h2_neut_eff = (TH2D *)file_eff->Get("neut_eff_sys");
     // }
 
-    TFile f( extension_RootFilesData +  extension + ".root", "RECREATE");
+    //if (isData)
+    //  TFile f( extension_RootFilesData +  extension + ".root", "RECREATE");
+    //else
+    //   TFile f( extension_RootFilesMC +  extension + ".root", "RECREATE");   
 
+    TFile f(extension_RootFiles + extension + ".root", "RECREATE");
+    
     TH1F *h1_TIS = new TH1F("h1_TIS", "", ptJpsibinsize, ptJpsi_binedges);
     TH1F *h1_TISTOS = new TH1F("h1_TISTOS", "", ptJpsibinsize, ptJpsi_binedges);
 

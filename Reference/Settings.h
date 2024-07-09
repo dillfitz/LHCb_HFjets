@@ -117,7 +117,7 @@ const int ptbinsize = 5; //5
 const int customptbinsize = 5; //10
 const int fineptbinsize = 10;
 
-const int ptHFbinsize = 10;
+const int ptHFbinsize = 15;
 const int ptJpsibinsize = 14;
 
 const int HFetabinsize = 5;
@@ -157,7 +157,7 @@ const int r3Bins = 20;  // Good: 20
 //const int HFetabinsize = 10;
 
 //double ptHF_binedges[ptHFbinsize + 1] = {2, 5, 10, 15, 20, 25, 35, 50, 80, 150};
-double ptHF_binedges[ptHFbinsize + 1] = {0, 6, 10, 12, 14, 16, 18, 20, 25, 35, 100};
+double ptHF_binedges[ptHFbinsize + 1] = {0, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 25, 35, 100};
 double ptJpsi_binedges[ptJpsibinsize + 1] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 100};
 
 // double ptres_binedges[ptbinsize+1] = {10, 20, 30, 70, ptMax};
