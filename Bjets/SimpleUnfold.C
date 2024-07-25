@@ -270,7 +270,7 @@ void SimpleUnfold(int NumEvts = -1,
     TH1D *h1_denom_efficiency_jetrap = (TH1D *)file_eff->Get("denom_efficiency_jetrap");
     TH2D *h2_denom_efficiency_zjt = (TH2D*)file_eff->Get("denom_efficiency_zjt");
     TH2D *h2_denom_efficiency_zr = (TH2D*)file_eff->Get("denom_efficiency_zr");
-    TH2D *h2_denom_efficiency_jtr = (TH2D*)file_eff->Get("denom_efficiency_zr");
+    TH2D *h2_denom_efficiency_jtr = (TH2D*)file_eff->Get("denom_efficiency_jtr");
     TH2D *h2_denom_efficiency_ptz=(TH2D*)file_eff->Get("denom_efficiency_ptz");
     TH2D *h2_denom_efficiency_ptjt=(TH2D*)file_eff->Get("denom_efficiency_ptjt");
     TH2D *h2_denom_efficiency_ptr=(TH2D*)file_eff->Get("denom_efficiency_ptr");
@@ -1269,7 +1269,7 @@ void SimpleUnfold(int NumEvts = -1,
     
     h3_efficiency_ptzjt->Write("efficiency_ptzjt");
     h3_efficiency_ptzr->Write("efficiency_ptzr");
-    h3_efficiency_ptjtr->Write("efficiency_jtr");
+    h3_efficiency_ptjtr->Write("efficiency_ptjtr");
     
     h3_purity_ptzjt->Write("purity_ptzjt");
     h3_purity_ptzr->Write("purity_ptzr");

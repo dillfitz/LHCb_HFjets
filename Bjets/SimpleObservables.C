@@ -1033,9 +1033,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (std::isnan(sv_weight) || std::isinf(sv_weight))
       sv_weight = 1.0;
 
-    std::cout << "event weight : " << event_weight << std::endl;
-    std::cout << "event purity : " << event_pur << std::endl;
-    std::cout << "event_efficiency : " << event_eff << std::endl;
+    //std::cout << "event weight : " << event_weight << std::endl;
+    //std::cout << "event purity : " << event_pur << std::endl;
+    //std::cout << "event_efficiency : " << event_eff << std::endl;
     //std::cout << "PID_cut : " << PID_cut  << std::endl;
 
     h2_jetpteta->Fill(jet_pt, jet_eta);
@@ -1502,79 +1502,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     plotfileC = plotfilePDF + TString("]");
   // c->SaveAs("plots/"+extension+".pdf");
 
-  // c1->SaveAs(Form("plots_misc/Misc_%s"+extension+".pdf", file_name.c_str()));
-  // cout<<"...outbase   = "<<outbase.Data()<<endl;
-  // cout<<"...rootfile  = "<<rootfile.Data()<<endl;
-  // cout<<"...plotfile  = "<<plotfile.Data()<<endl;
-  //
-//  ++ican;
-//  sprintf(buf, "ccan%d", ican);
-//  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-//  ccan[ican]->SetFillColor(10);
-//  gPad->SetLeftMargin(0.16);
-//  gPad->SetBottomMargin(0.06);
-//  gPad->SetRightMargin(0.15);
-//  ccan[ican]->cd();
-//  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-//  ccan[ican]->cd(1);
-//  // h3_ptdRErad->GetYaxis()->SetRange(1, dRbinsize - 1);
-//  // h3_ptdRErad->GetXaxis()->SetRange(2, Eradbinsize - 2);
-//  // h3_ptdRErad->SetStats(0);
-//  // h3_ptdRErad->SetXTitle("E_{radiator}");
-//  // h3_ptdRErad->SetYTitle("ln(R/#Delta R)");
-//  // h3_ptdRErad->Project3D("yx")->Draw("COLZ");
-//  h3_ptdRptHF->GetYaxis()->SetRange(1, dRbinsize - 1);
-//  h3_ptdRptHF->GetXaxis()->SetRange(2, ptHFbinsize - 2);
-//  h3_ptdRptHF->SetStats(0);
-//  h3_ptdRptHF->SetXTitle("p_{T,radiator}");
-//  h3_ptdRptHF->SetYTitle("ln(R/#Delta R)");
-//  h3_ptdRptHF->Project3D("yx")->Draw("COLZ");
-  // h3_ptktdR->Project3D("yx")->Draw("COLZ");
-  // h2_lundplane->SetStats(0);
-  // h2_lundplane->SetXTitle("ln(1/#theta)");
-  // h2_lundplane->SetYTitle("ln(k_{T})");
-  // // h2_lundplane->Sethflocimum(.01);
-  // // h2_lundplane->SetMinimum(0.00001);
-  // //  gPad->SetLogz();
-  // h2_lundplane->Draw("COLZ");
-  // Tl.DrawLatex(.5, 0.75, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-  // Tl.DrawLatex(0.7, 0.8, "No cuts");
-//  ccan[ican]->cd(2);
-//  // h2_thetaErad->Scale(1./NumJets);
-//  h2_thetaErad->GetYaxis()->SetRange(2, thetabinsize - 1);
-//  h2_thetaErad->GetXaxis()->SetRange(2, Eradbinsize - 1);
-//  h2_thetaErad->SetStats(0);
-//  h2_thetaErad->SetXTitle("E_{radiator}");
-//  h2_thetaErad->SetYTitle("ln(1/#theta)");
-//
-//  Tl.DrawLatex(.2, 0.8, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-//  Tl.DrawLatex(.2, 0.72, Form("k_{T}>%.1f GeV", LambdaQCD));
-//  Tl.DrawLatex(.2, 0.64, Form("%.1f<#eta<%.1f", etaMin, etaMax));
-  
-
-
-    //  ccan[ican]->cd();
-//  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-//    
-//    Tl.DrawLatex(.5, 0.75, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-
-
-//  Tl.DrawLatex(.2, 0.8, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-//  Tl.DrawLatex(.2, 0.72, Form("k_{T}>%.1f GeV", LambdaQCD));
-//  Tl.DrawLatex(.2, 0.64, Form("%.1f<#eta<%.1f", etaMin, etaMax));
-//  Tl.DrawLatex(.5, 0.75, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-  // Tl.DrawLatex(0.7, 0.8, "No cuts");
-//  Tl.DrawLatex(.2, 0.8, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-//  Tl.DrawLatex(.2, 0.72, Form("k_{T}>%.1f GeV", LambdaQCD));
-//  Tl.DrawLatex(.2, 0.64, Form("%.1f<#eta<%.1f", etaMin, etaMax));
-//  ccan[ican]->cd(3);
-//  h2_ktdR_gluon->SetStats(0);
-//  h2_ktdR_gluon->SetXTitle("ln(R/#DeltaR)");
-//  h2_ktdR_gluon->SetYTitle("ln(k_{T})");
-  // h2_ktdR->SetMaximum(.01);
-  // h2_ktdR->SetMinimum(0.00001);
-  //  gPad->SetLogz();
-
     ++ican;
     sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -1671,6 +1598,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   
     ccan[ican]->cd();
     ccan[ican]->Update();
+
+     
     if (ican == 0)
     {
       ccan[ican]->Print(plotfileO.Data());
@@ -1679,6 +1608,208 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     {
       ccan[ican]->Print(plotfilePDF.Data());
     }
+    
+    ++ican;    
+    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+    ccan[ican]->cd();    
+    ccan[ican]->SetFillColor(10);    
+    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
+    ccan[ican]->cd(1);       
+    
+    auto legend_jtpt_final = new TLegend(0.2, 0.6, 0.45, 0.8);
+    legend_jtpt_final ->SetTextSize(0.03);
+    legend_jtpt_final ->SetBorderSize(0);
+    legend_jtpt_final ->SetFillStyle(0);
+    legend_jtpt_final ->SetFillColor(3);
+    legend_jtpt_final->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("htemp%d_ptjt_final", i), i + 1, i + 1);
+        
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+      h1_temp->SetMarkerStyle(i + 20);
+      h1_temp->SetMarkerColor(i-1 + 1);
+      h1_temp->SetLineColor(i-1 + 1);
+        
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+      h1_temp->SetMinimum(0.0);
+//      h1_temp->SetMaximum(3.5);
+ 
+      legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_jtpt_final -> Draw("SAME");
+
+    ccan[ican]->cd(2);
+    auto legend_jtpt_raw= new TLegend(0.25, 0.6, 0.5, 0.8);
+    legend_jtpt_raw ->SetTextSize(0.03);
+    legend_jtpt_raw ->SetBorderSize(0);
+    legend_jtpt_raw ->SetFillStyle(0);
+    legend_jtpt_raw ->SetFillColor(3);
+    legend_jtpt_raw ->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt_raw", i), i + 1, i + 1);
+
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+ 
+        h1_temp->SetMarkerStyle(i + 20);
+        h1_temp->SetMarkerColor(i-1 + 1);
+        h1_temp->SetLineColor(i-1 + 1);
+        
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+        h1_temp->SetMinimum(0.0);
+        h1_temp->SetMaximum(3.5);
+  
+      legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_jtpt_raw -> Draw("SAME");
+    
+    ccan[ican]->cd(3);
+    auto legend_jtpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
+    legend_jtpt_truth ->SetTextSize(0.03);
+    legend_jtpt_truth ->SetBorderSize(0);
+    legend_jtpt_truth ->SetFillStyle(0);
+    legend_jtpt_truth ->SetFillColor(3);
+    legend_jtpt_truth ->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp_truth = (TH1D *)h2_ptjt_truth->ProjectionX(Form("htemp%d_ptjt_truth", i), i + 1, i + 1);
+
+      h1_temp_truth->SetStats(0);
+      NormalizeHist(h1_temp_truth);
+ 
+        h1_temp_truth->SetMarkerStyle(i + 20);
+        h1_temp_truth->SetMarkerColor(i-1 + 1);
+        h1_temp_truth->SetLineColor(i-1 + 1);
+        
+        h1_temp_truth->Draw("P E SAME");
+        h1_temp_truth->Draw("HIST SAME");
+        h1_temp_truth->SetMinimum(0.0);
+        h1_temp_truth->SetMaximum(3.5);
+  
+      legend_jtpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_jtpt_truth -> Draw("SAME");
+ 
+    ccan[ican]->cd();
+    ccan[ican]->Update();
+
+    if (ican == 0)
+    {
+      ccan[ican]->Print(plotfileO.Data());
+    }
+    else
+    {
+      ccan[ican]->Print(plotfilePDF.Data());
+    }    
+    
+    ++ican;    
+    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+    ccan[ican]->cd();    
+    ccan[ican]->SetFillColor(10);    
+    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
+    ccan[ican]->cd(1);     
+    
+    auto legend_rpt_final = new TLegend(0.2, 0.6, 0.45, 0.8);
+    legend_rpt_final ->SetTextSize(0.03);
+    legend_rpt_final ->SetBorderSize(0);
+    legend_rpt_final ->SetFillStyle(0);
+    legend_rpt_final ->SetFillColor(3);
+    legend_rpt_final->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("htemp%d_ptr_final", i), i + 1, i + 1);
+        
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+      h1_temp->SetMarkerStyle(i + 20);
+      h1_temp->SetMarkerColor(i-1 + 1);
+      h1_temp->SetLineColor(i-1 + 1);
+        
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+      h1_temp->SetMinimum(0.0);
+//      h1_temp->SetMaximum(3.5);
+ 
+      legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_rpt_final -> Draw("SAME");
+
+    ccan[ican]->cd(2);
+    auto legend_rpt_raw= new TLegend(0.25, 0.6, 0.5, 0.8);
+    legend_rpt_raw ->SetTextSize(0.03);
+    legend_rpt_raw ->SetBorderSize(0);
+    legend_rpt_raw ->SetFillStyle(0);
+    legend_rpt_raw ->SetFillColor(3);
+    legend_rpt_raw ->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("htemp%d_ptr_raw", i), i + 1, i + 1);
+
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+ 
+        h1_temp->SetMarkerStyle(i + 20);
+        h1_temp->SetMarkerColor(i-1 + 1);
+        h1_temp->SetLineColor(i-1 + 1);
+        
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+        h1_temp->SetMinimum(0.0);
+        h1_temp->SetMaximum(3.5);
+  
+      legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_rpt_raw -> Draw("SAME");
+    
+    ccan[ican]->cd(3);
+    auto legend_rpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
+    legend_rpt_truth ->SetTextSize(0.03);
+    legend_rpt_truth ->SetBorderSize(0);
+    legend_rpt_truth ->SetFillStyle(0);
+    legend_rpt_truth ->SetFillColor(3);
+    legend_rpt_truth ->SetHeader("LHCb Unofficial","C");
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp_truth = (TH1D *)h2_ptr_truth->ProjectionX(Form("htemp%d_ptr_truth", i), i + 1, i + 1);
+
+      h1_temp_truth->SetStats(0);
+      NormalizeHist(h1_temp_truth);
+ 
+        h1_temp_truth->SetMarkerStyle(i + 20);
+        h1_temp_truth->SetMarkerColor(i-1 + 1);
+        h1_temp_truth->SetLineColor(i-1 + 1);
+        
+        h1_temp_truth->Draw("P E SAME");
+        h1_temp_truth->Draw("HIST SAME");
+        h1_temp_truth->SetMinimum(0.0);
+        h1_temp_truth->SetMaximum(3.5);
+  
+      legend_rpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_rpt_truth -> Draw("SAME");
+  
+    ccan[ican]->cd();
+    ccan[ican]->Update();
+
+    if (ican == 0)
+    {
+      ccan[ican]->Print(plotfileO.Data());
+    }
+    else
+    {
+      ccan[ican]->Print(plotfilePDF.Data());
+    }    
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
