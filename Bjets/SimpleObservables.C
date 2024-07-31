@@ -1021,7 +1021,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     
     //event_weight = event_pur_ptz / (event_eff_ptz * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);    
       
-    //event_weight *= (1./ trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);   
+    event_weight *= (1./ trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);   
     
     //if (PID_cut)
     //  event_weight *= (1. / (pideff_K));
@@ -1609,14 +1609,17 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       ccan[ican]->Print(plotfilePDF.Data());
     }
     
-    ++ican;    
+   
+    ++ican;  
+    
+    // jT pT   
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
     ccan[ican]->cd();    
     ccan[ican]->SetFillColor(10);    
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
     ccan[ican]->cd(1);       
-    
-    auto legend_jtpt_final = new TLegend(0.2, 0.6, 0.45, 0.8);
+    gPad->SetLogy();    
+    auto legend_jtpt_final = new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_jtpt_final ->SetTextSize(0.03);
     legend_jtpt_final ->SetBorderSize(0);
     legend_jtpt_final ->SetFillStyle(0);
@@ -1634,7 +1637,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
-      h1_temp->SetMinimum(0.0);
+      //h1_temp->SetMinimum(0.0);
 //      h1_temp->SetMaximum(3.5);
  
       legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
@@ -1643,7 +1646,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_jtpt_final -> Draw("SAME");
 
     ccan[ican]->cd(2);
-    auto legend_jtpt_raw= new TLegend(0.25, 0.6, 0.5, 0.8);
+    gPad->SetLogy();        
+    auto legend_jtpt_raw= new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_jtpt_raw ->SetTextSize(0.03);
     legend_jtpt_raw ->SetBorderSize(0);
     legend_jtpt_raw ->SetFillStyle(0);
@@ -1662,16 +1666,18 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
         h1_temp->Draw("P E SAME");
         h1_temp->Draw("HIST SAME");
-        h1_temp->SetMinimum(0.0);
-        h1_temp->SetMaximum(3.5);
+        //h1_temp->SetMinimum(0.0);
+        //h1_temp->SetMaximum(3.5);
   
       legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_jtpt_raw -> Draw("SAME");
     
+    
     ccan[ican]->cd(3);
-    auto legend_jtpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
+    gPad->SetLogy();        
+    auto legend_jtpt_truth = new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_jtpt_truth ->SetTextSize(0.03);
     legend_jtpt_truth ->SetBorderSize(0);
     legend_jtpt_truth ->SetFillStyle(0);
@@ -1690,13 +1696,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
         h1_temp_truth->Draw("P E SAME");
         h1_temp_truth->Draw("HIST SAME");
-        h1_temp_truth->SetMinimum(0.0);
-        h1_temp_truth->SetMaximum(3.5);
+        //h1_temp_truth->SetMinimum(0.0);
+        //h1_temp_truth->SetMaximum(3.5);
   
       legend_jtpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_jtpt_truth -> Draw("SAME");
+
  
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -1716,8 +1723,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->SetFillColor(10);    
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
     ccan[ican]->cd(1);     
-    
-    auto legend_rpt_final = new TLegend(0.2, 0.6, 0.45, 0.8);
+    gPad->SetLogy();    
+        
+    auto legend_rpt_final = new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_rpt_final ->SetTextSize(0.03);
     legend_rpt_final ->SetBorderSize(0);
     legend_rpt_final ->SetFillStyle(0);
@@ -1735,7 +1743,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
-      h1_temp->SetMinimum(0.0);
+      //h1_temp->SetMinimum(0.0);
 //      h1_temp->SetMaximum(3.5);
  
       legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
@@ -1744,7 +1752,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt_final -> Draw("SAME");
 
     ccan[ican]->cd(2);
-    auto legend_rpt_raw= new TLegend(0.25, 0.6, 0.5, 0.8);
+    gPad->SetLogy();        
+    auto legend_rpt_raw= new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_rpt_raw ->SetTextSize(0.03);
     legend_rpt_raw ->SetBorderSize(0);
     legend_rpt_raw ->SetFillStyle(0);
@@ -1763,8 +1772,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
         h1_temp->Draw("P E SAME");
         h1_temp->Draw("HIST SAME");
-        h1_temp->SetMinimum(0.0);
-        h1_temp->SetMaximum(3.5);
+        //h1_temp->SetMinimum(0.0);
+        //h1_temp->SetMaximum(3.5);
   
       legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
@@ -1772,7 +1781,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt_raw -> Draw("SAME");
     
     ccan[ican]->cd(3);
-    auto legend_rpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
+    gPad->SetLogy();        
+    auto legend_rpt_truth = new TLegend(0.45, 0.6, 0.7, 0.8);
     legend_rpt_truth ->SetTextSize(0.03);
     legend_rpt_truth ->SetBorderSize(0);
     legend_rpt_truth ->SetFillStyle(0);
@@ -1791,8 +1801,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
         h1_temp_truth->Draw("P E SAME");
         h1_temp_truth->Draw("HIST SAME");
-        h1_temp_truth->SetMinimum(0.0);
-        h1_temp_truth->SetMaximum(3.5);
+        //h1_temp_truth->SetMinimum(0.0);
+        //h1_temp_truth->SetMaximum(3.5);
   
       legend_rpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 

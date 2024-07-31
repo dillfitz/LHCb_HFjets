@@ -495,20 +495,9 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
       
         }
 
-        // if(Tree.eventNumber == 673310) cout<<"after dtrs"<<endl;
-        // cout<<HFjet.Pt()<<endl;
-        
-        /////       If Truth HF meson is not is not inside a truth HF jet, I dont care about such event... /// /
-        if (static_cast < TLorentzVector > (HFmeson).DeltaR(HFjet, kTRUE) > jetradius)
-            continue;
-//        if ( HFmeson.DeltaR(HFjet) > jetradius)
-//            continue;
     
         // Veto events that don't have a B meson
         if (!hasHFhadron)
-          continue;
-        // Veto events with dR(B, jet) > 0.5
-        if (HFmeson.DeltaR(HFjet, true) > jetradius)
           continue;
         
         // if(NumHFHads > 1) continue;
