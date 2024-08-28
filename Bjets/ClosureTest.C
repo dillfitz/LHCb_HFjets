@@ -977,7 +977,7 @@ void ClosureTest(int NumEvts = -1,
   // h2_ptzr_closure_error->Scale(1.0 / nRuns);
   // Take the square root of the final sum histogram to get the quadrature sum
   for (int x = 1; x <= h2_zr_closure_error->GetNbinsX(); ++x)
-  {NumIters_
+  {
     for (int y = 1; y <= h2_zr_closure_error->GetNbinsY(); ++y)
     {
       for (int z = 1; z <= h2_zr_closure_error->GetNbinsZ(); ++z)
@@ -1022,6 +1022,7 @@ void ClosureTest(int NumEvts = -1,
   // Multiply by purity  
   h3_ptjtr_final->Multiply(h3_ptjtr_final, h3_purity_ptjtr);
   RooUnfoldBayes unfold_ptjtr(response_ptjtr, h3_ptjtr_final, NumIters);
+
   h3_ptjtr_final = (TH3D *)unfold_ptjtr.Hreco();
   // Divide by efficiency  
   h3_ptjtr_final->Divide(h3_ptjtr_final, h3_eff_ptjtr);
@@ -1150,7 +1151,7 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_closure_error->Reset(); // Reset the histogram to zero
     }
     // h2_ptjtr_closure_error->Add(h2_ptjtr_ratio_smear);
-    // Loop over all bins and add in quadratureNumIters_
+    // Loop over all bins and add in quadrature
     for (int x = 1; x <= h2_jtr_ratio_smear->GetNbinsX(); ++x)
     {
       for (int y = 1; y <= h2_jtr_ratio_smear->GetNbinsY(); ++y)
