@@ -8,10 +8,10 @@ using namespace std;
 void ClosureTest(int NumEvts = -1,
                  int dataset1 = 91590,
                  int dataset2 = 91591,
+                 int NumIters = 2,                 
                  bool chargedJetCut = false,
                  bool WTA_cut = false,
                  double minimum_dR = 0.1,
-                 int NumIters = 1,
                  bool SubtractGS = false)
 {
 
@@ -29,6 +29,8 @@ void ClosureTest(int NumEvts = -1,
   int ptRange = (dataset1 / 10) % 10;
   int Mag1 = (dataset1 / 1) % 10;
   int Mag2 = (dataset2 / 1) % 10;
+  
+  const int fixSmear = 42;
 
   // int NumIters = 1;
   // int RegIDS = 5;
@@ -168,7 +170,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH1D *h1_jetpt_smear = (TH1D *)h1_jetpt_reco->Clone(Form("jetpt_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h1_jetpt_smear, h1_jetpt_data, myRNG);
     
     // Multiply by purity
@@ -296,7 +299,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptz_smear = (TH2D *)h2_ptz->Clone(Form("ptz_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h2_ptz_smear, h2_ptz_data, myRNG);
     
     // Multiply by purity
@@ -440,7 +444,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptjt_smear = (TH2D *)h2_ptjt->Clone(Form("ptjt_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h2_ptjt_smear, h2_ptjt_data, myRNG);  
 
     // Multiply by purity
@@ -557,7 +562,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptr_smear = (TH2D *)h2_ptr->Clone(Form("ptr_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h2_ptr_smear, h2_ptr_data, myRNG);
 
     // Multiply by purity
@@ -699,7 +705,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptzjt_smear = (TH3D *)h3_ptzjt->Clone(Form("ptzjt_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h3_ptzjt_smear, h3_ptzjt_data, myRNG);
     // Multiply by purity
     h3_ptzjt_smear->Multiply(h3_ptzjt_smear, h3_purity_ptzjt);
@@ -894,7 +901,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptzr_smear = (TH3D *)h3_ptzr->Clone(Form("ptzr_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h3_ptzr_smear, h3_ptzr_data, myRNG);
     // Multiply by purity
     h3_ptzr_smear->Multiply(h3_ptzr_smear, h3_purity_ptzr);
@@ -1091,7 +1099,8 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptjtr_smear = (TH3D *)h3_ptjtr->Clone(Form("ptjtr_smear%d", i));
-    myRNG->SetSeed(time(0));
+    //myRNG->SetSeed(time(0));
+    myRNG->SetSeed(fixSmear);
     SmearObservables(h3_ptjtr_smear, h3_ptjtr_data, myRNG);
     // Multiply by purity
     h3_ptjtr_smear->Multiply(h3_ptjtr_smear, h3_purity_ptjtr);
