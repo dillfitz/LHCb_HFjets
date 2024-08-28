@@ -11,8 +11,7 @@ void ClosureTest(int NumEvts = -1,
                  bool chargedJetCut = false,
                  bool WTA_cut = false,
                  double minimum_dR = 0.1,
-                 int NumIters_kt = 1,
-                 int NumIters_z = 1,
+                 int NumIters = 1,
                  bool SubtractGS = false)
 {
 
@@ -63,7 +62,7 @@ void ClosureTest(int NumEvts = -1,
   string_unfold = loc_hists + "BjetsMC/" + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_Mag2 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset2); 
   string_data = loc_hists + "Bjets/" + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
   
-  extension = loc_hists + "BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_iters_%d_%d", NumIters_kt, NumIters_z) + Form("_%d", dataset1) + Form("_%d", dataset2);
+  extension = loc_hists + "BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1) + Form("_%d", dataset2);
 
 
   cout << string_reco + TString(".root") << endl;
@@ -72,6 +71,7 @@ void ClosureTest(int NumEvts = -1,
   cout << string_unfold + TString(".root") << endl;
   cout << string_data + TString(".root") << endl;
   cout << extension + TString(".root") << endl;
+  
   
   /////////////////////   Get Files /////////////////////////////////
 
@@ -130,8 +130,7 @@ void ClosureTest(int NumEvts = -1,
   int ntoys = 5;
   // Multiply by purity
   h1_jetpt_final->Multiply(h1_purity_jetpt);
-  RooUnfoldBayes unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_z);
-  // RooUnfoldIds unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters_kt);
+  RooUnfoldBayes unfold_jetpt(response_jetpt, h1_jetpt_final, NumIters);
   h1_jetpt_final = (TH1D *)unfold_jetpt.Hreco();
   
   cout << "Unfold successful" << endl;  
@@ -175,7 +174,7 @@ void ClosureTest(int NumEvts = -1,
     // Multiply by purity
     h1_jetpt_smear->Multiply(h1_purity_jetpt);
       
-    RooUnfoldBayes unfold_jetpt_smear(response_jetpt, h1_jetpt_smear, NumIters_kt);      
+    RooUnfoldBayes unfold_jetpt_smear(response_jetpt, h1_jetpt_smear, NumIters);      
     h1_jetpt_smear = (TH1D *)unfold_jetpt_smear.Hreco();
 
     // Divide by efficiency
@@ -248,7 +247,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
-  RooUnfoldBayes unfold_ptz(response_ptz, h2_ptz_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptz(response_ptz, h2_ptz_final, NumIters);
 
   h2_ptz_final = (TH2D *)unfold_ptz.Hreco();
   // Divide by efficiency  
@@ -303,7 +302,7 @@ void ClosureTest(int NumEvts = -1,
     // Multiply by purity
     h2_ptz_smear->Multiply(h2_ptz_smear, h2_purity_ptz);
     
-    RooUnfoldBayes unfold_ptz_smear(response_ptz, h2_ptz_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptz_smear(response_ptz, h2_ptz_smear, NumIters);
     h2_ptz_smear = (TH2D *)unfold_ptz_smear.Hreco();
     
     // Divide by efficiency    
@@ -320,12 +319,6 @@ void ClosureTest(int NumEvts = -1,
     h1_z_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h1_z_smear->GetXaxis()->SetTitle("z");
     
-    //h1_z_smear_20_100->GetXaxis()->SetRange(binlowz, binhighz);  
-    //h1_z_smear_20_100->GetYaxis()->SetTitle("z");    
-    
-    //h1_z_truth_20_100->GetXaxis()->SetRange(binlowz, binhighz);
-    //h1_z_truth_20_100->GetYaxis()->SetTitle("z");   
-    
              
     h1_z_smear->Scale(1. / Njets_final, "width");
 
@@ -337,23 +330,19 @@ void ClosureTest(int NumEvts = -1,
     //h1_z_smear_20_100->Scale(1./h1_jetpt_final->Integral(3,5), "width");     
     //h1_z_truth_20_100->Scale(1./h1_jetpt_truth->Integral(3,5), "width");         
     
-    
     TRatioPlot *z_ratio_smear = new TRatioPlot(h1_z_smear, h1_z_truth);
 
+    z_ratio_smear->SetH1DrawOpt("E");
+    z_ratio_smear->SetH2DrawOpt("E"); 
+    h1_z_truth->SetLineColor(kRed);       
+    
+    z_ratio_smear->Write(Form("z_ratio_smear%d", i));    
+    z_ratio_smear->GetUpperPad()->cd();
     TLegend *leg_z = new TLegend(0.8, 0.8, 1.0, 1.0);
     leg_z->AddEntry(h1_z_smear, "l");
     leg_z->AddEntry(h1_z_truth,"l");
-    //z_ratio_smear->Draw();
-    TPad *p = z_ratio_smear->GetUpperPad();    
-    TLegend *leg = p->BuildLegend();
     leg_z->Draw();
-    p->Modified(); p->Update();      
     
-    z_ratio_smear->Write(Form("z_ratio_smear%d", i));    
-
- 
-    
-
     //TRatioPlot *z_ratio_smear_20_100 = new TRatioPlot(h1_z_smear_20_100, h1_z_truth_20_100);       
     //z_ratio_smear_20_100->Write(Form("z_ratio_smear_%d_20_100", i));    
   
@@ -369,32 +358,14 @@ void ClosureTest(int NumEvts = -1,
         h1_z_ptbinned[j-2]->GetXaxis()->SetTitle("z");
         h1_z_truth_ptbinned[j-2]->GetXaxis()->SetTitle("z");
         
-        h1_z_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
-        h1_z_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
+        h1_z_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1), "width");
+        h1_z_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1), "width");
         h1_z_ptbinned_ratio[j-2] = new TRatioPlot(h1_z_ptbinned[j-2], h1_z_truth_ptbinned[j-2]);
+        h1_z_ptbinned_ratio[j-2]->SetH1DrawOpt("E");
+        h1_z_ptbinned_ratio[j-2]->SetH2DrawOpt("E");
+        h1_z_truth_ptbinned[j-2]->SetLineColor(kRed);
         h1_z_ptbinned_ratio[j-2]->Write(Form("z_ratio_smear%d_pt%d", i,j));                 
     }
-/*
-    TH1D *h1_ptz_ratio_smear = (TH1D *)h1_ptz_smear->Clone(Form("z_ratio_smear%d", i));
-    TH1D *h1_ptz_ratio_smear_20_100 = (TH1D *)h1_ptz_smear_20_100->Clone(Form("z_ratio_smear%d_20_100", i));   
-    TH1D *h1_ptz_ratio_smear_20_30 = (TH1D *)h1_ptz_smear_20_30->Clone(Form("z_ratio_smear%d_20_30", i));  
-    TH1D *h1_ptz_ratio_smear_30_50 = (TH1D *)h1_ptz_smear_30_50->Clone(Form("z_ratio_smear%d_30_50", i));  
-    TH1D *h1_ptz_ratio_smear_50_100 = (TH1D *)h1_ptz_smear_50_100->Clone(Form("z_ratio_smear%d_50_100", i));                 
-    TH1D *h1_ptz_pull_smear = (TH1D *)h1_ptz_smear->Clone(Form("z_pull_smear%d", i));
-    
-    
-    h1_ptz_ratio_smear->Divide(h1_ptz_smear, h1_ptz_truth);
-    h1_ptz_ratio_smear_20_100->Divide(h1_ptz_smear_20_100, h1_ptz_truth_20_100);   
-    h1_ptz_ratio_smear_20_100->Divide(h1_ptz_smear_20_30, h1_ptz_truth_20_30); 
-    h1_ptz_ratio_smear_20_100->Divide(h1_ptz_smear_30_50, h1_ptz_truth_30_50); 
-    h1_ptz_ratio_smear_20_100->Divide(h1_ptz_smear_50_100, h1_ptz_truth_50_100);              
-
-    h1_ptz_ratio_smear->GetXaxis()->SetRange(binlowz, binhighz);
-    h1_ptz_ratio_smear_20_100->GetXaxis()->SetRange(binlowz, binhighz);
-    h1_ptz_ratio_smear_20_30->GetXaxis()->SetRange(binlowz, binhighz);
-    h1_ptz_ratio_smear_30_50->GetXaxis()->SetRange(binlowz, binhighz);
-    h1_ptz_ratio_smear_50_100->GetXaxis()->SetRange(binlowz, binhighz);            
-*/
   }
   
   ////////////////////////////////////////////////////////////////////////////////
@@ -422,7 +393,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h2_ptjt_final->Multiply(h2_ptjt_final, h2_purity_ptjt);
-  RooUnfoldBayes unfold_ptjt(response_ptjt, h2_ptjt_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptjt(response_ptjt, h2_ptjt_final, NumIters);
 
   h2_ptjt_final = (TH2D *)unfold_ptjt.Hreco();
   // Divide by efficiency  
@@ -474,7 +445,7 @@ void ClosureTest(int NumEvts = -1,
 
     // Multiply by purity
     h2_ptjt_smear->Multiply(h2_ptjt_smear, h2_purity_ptjt);
-    RooUnfoldBayes unfold_ptjt_smear(response_ptjt, h2_ptjt_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptjt_smear(response_ptjt, h2_ptjt_smear, NumIters);
     h2_ptjt_smear = (TH2D *)unfold_ptjt_smear.Hreco();
     // Divide by efficiency    
     h2_ptjt_smear->Divide(h2_ptjt_smear, h2_eff_ptjt);
@@ -486,7 +457,10 @@ void ClosureTest(int NumEvts = -1,
     h1_jt_smear->Scale(1. / Njets_final, "width");     
    
     TRatioPlot *jt_ratio_smear = new TRatioPlot(h1_jt_smear, h1_jt_truth);          
-    jt_ratio_smear->Write(Form("jt_ratio_smear_%d", i));
+    jt_ratio_smear->SetH1DrawOpt("E");
+    jt_ratio_smear->SetH2DrawOpt("E"); 
+    h1_jt_truth->SetLineColor(kRed);         
+    jt_ratio_smear->Write(Form("jt_ratio_smear%d", i));
 
     // pT bins [7-15, 15-20, 20-30, 30-50, 50-100, 100-?]        
     TH1D *h1_jt_ptbinned[ptbinsize-2], *h1_jt_truth_ptbinned[ptbinsize-2];
@@ -500,9 +474,12 @@ void ClosureTest(int NumEvts = -1,
         h1_jt_ptbinned[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)");
         h1_jt_truth_ptbinned[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)");
         
-        h1_jt_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
-        h1_jt_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
+        h1_jt_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1), "width");
+        h1_jt_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1), "width");
         h1_jt_ptbinned_ratio[j-2] = new TRatioPlot(h1_jt_ptbinned[j-2], h1_jt_truth_ptbinned[j-2]);
+        h1_jt_ptbinned_ratio[j-2]->SetH1DrawOpt("E");
+        h1_jt_ptbinned_ratio[j-2]->SetH2DrawOpt("E");
+        h1_jt_truth_ptbinned[j-2]->SetLineColor(kRed);        
         h1_jt_ptbinned_ratio[j-2]->Write(Form("jt_ratio_smear%d_pt%d", i,j));                 
     }      
     
@@ -533,7 +510,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h2_ptr_final->Multiply(h2_ptr_final, h2_purity_ptr);
-  RooUnfoldBayes unfold_ptr(response_ptr, h2_ptr_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptr(response_ptr, h2_ptr_final, NumIters);
 
   h2_ptr_final = (TH2D *)unfold_ptr.Hreco();
   // Divide by efficiency  
@@ -586,7 +563,7 @@ void ClosureTest(int NumEvts = -1,
     // Multiply by purity
     h2_ptr_smear->Multiply(h2_ptr_smear, h2_purity_ptr);
     
-    RooUnfoldBayes unfold_ptr_smear(response_ptr, h2_ptr_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptr_smear(response_ptr, h2_ptr_smear, NumIters);
     h2_ptr_smear = (TH2D *)unfold_ptr_smear.Hreco();
     
     // Divide by efficiency    
@@ -600,6 +577,9 @@ void ClosureTest(int NumEvts = -1,
     h1_r_smear->GetXaxis()->SetTitle("r");    
     h1_r_smear->Scale(1. / Njets_final, "width");   
     TRatioPlot *r_ratio_smear = new TRatioPlot(h1_r_smear, h1_r_truth);     
+    r_ratio_smear->SetH1DrawOpt("E");
+    r_ratio_smear->SetH2DrawOpt("E"); 
+    h1_r_truth->SetLineColor(kRed);         
     r_ratio_smear->Write(Form("r_ratio_smear%d", i));
     
     // pT bins [7-15, 15-20, 20-30, 30-50, 50-100, 100-?]        
@@ -614,9 +594,12 @@ void ClosureTest(int NumEvts = -1,
         h1_r_ptbinned[j-2]->GetXaxis()->SetTitle("r");
         h1_r_truth_ptbinned[j-2]->GetXaxis()->SetTitle("r");
         
-        h1_r_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
-        h1_r_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
+        h1_r_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1), "width");
+        h1_r_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1), "width");
         h1_r_ptbinned_ratio[j-2] = new TRatioPlot(h1_r_ptbinned[j-2], h1_r_truth_ptbinned[j-2]);
+        h1_r_ptbinned_ratio[j-2]->SetH1DrawOpt("E");
+        h1_r_ptbinned_ratio[j-2]->SetH2DrawOpt("E");
+        h1_r_truth_ptbinned[j-2]->SetLineColor(kRed);        
         h1_r_ptbinned_ratio[j-2]->Write(Form("r_ratio_smear%d_pt%d", i,j));                 
     }         
   }  
@@ -646,8 +629,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h3_ptzjt_final->Multiply(h3_ptzjt_final, h3_purity_ptzjt);
-  RooUnfoldBayes unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
-  // RooUnfoldIds unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptzjt(response_ptzjt, h3_ptzjt_final, NumIters);
   h3_ptzjt_final = (TH3D *)unfold_ptzjt.Hreco();
   // Divide by efficiency  
   h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
@@ -721,7 +703,7 @@ void ClosureTest(int NumEvts = -1,
     SmearObservables(h3_ptzjt_smear, h3_ptzjt_data, myRNG);
     // Multiply by purity
     h3_ptzjt_smear->Multiply(h3_ptzjt_smear, h3_purity_ptzjt);
-    RooUnfoldBayes unfold_ptzjt_smear(response_ptzjt, h3_ptzjt_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptzjt_smear(response_ptzjt, h3_ptzjt_smear, NumIters);
 
     h3_ptzjt_smear = (TH3D *)unfold_ptzjt_smear.Hreco();
     // Divide by efficiency
@@ -733,7 +715,7 @@ void ClosureTest(int NumEvts = -1,
     h2_zjt_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
     h2_zjt_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h2_zjt_smear->Scale(1. / Njets_final, "width");
-    TH2D *h2_zjt_ratio_smear = (TH2D *)h2_zjt_smear->Clone(Form("h2_zjt_ratio_smear%d", i));
+    TH2D *h2_zjt_ratio_smear = (TH2D *)h2_zjt_smear->Clone(Form("zjt_ratio_smear%d", i));
     //TH2D *h2_zjt_pull_smear = (TH2D *)h2_zjt_smear->Clone(Form("h2_zjt_pull_smear%d", i));
     h2_zjt_ratio_smear->Divide(h2_zjt_smear, h2_zjt_truth); 
 
@@ -844,8 +826,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h3_ptzr_final->Multiply(h3_ptzr_final, h3_purity_ptzr);
-  RooUnfoldBayes unfold_ptzr(response_ptzr, h3_ptzr_final, NumIters_kt);
-  // RooUnfoldIds unfold_ptzr(response_ptzr, h3_ptzr_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptzr(response_ptzr, h3_ptzr_final, NumIters);
   h3_ptzr_final = (TH3D *)unfold_ptzr.Hreco();
   // Divide by efficiency  
   h3_ptzr_final->Divide(h3_ptzr_final, h3_eff_ptzr);
@@ -917,7 +898,7 @@ void ClosureTest(int NumEvts = -1,
     SmearObservables(h3_ptzr_smear, h3_ptzr_data, myRNG);
     // Multiply by purity
     h3_ptzr_smear->Multiply(h3_ptzr_smear, h3_purity_ptzr);
-    RooUnfoldBayes unfold_ptzr_smear(response_ptzr, h3_ptzr_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptzr_smear(response_ptzr, h3_ptzr_smear, NumIters);
 
     h3_ptzr_smear = (TH3D *)unfold_ptzr_smear.Hreco();
     // Divide by efficiency
@@ -929,7 +910,7 @@ void ClosureTest(int NumEvts = -1,
     h2_zr_smear->GetYaxis()->SetRange(binlowr, binhighr);
     h2_zr_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h2_zr_smear->Scale(1. / Njets_final, "width");
-    TH2D *h2_zr_ratio_smear = (TH2D *)h2_zr_smear->Clone(Form("h2_zr_ratio_smear%d", i));
+    TH2D *h2_zr_ratio_smear = (TH2D *)h2_zr_smear->Clone(Form("zr_ratio_smear%d", i));
     //TH2D *h2_zr_pull_smear = (TH2D *)h2_zr_smear->Clone(Form("h2_zr_pull_smear%d", i));
     h2_zr_ratio_smear->Divide(h2_zr_smear, h2_zr_truth); 
 
@@ -996,7 +977,7 @@ void ClosureTest(int NumEvts = -1,
   // h2_ptzr_closure_error->Scale(1.0 / nRuns);
   // Take the square root of the final sum histogram to get the quadrature sum
   for (int x = 1; x <= h2_zr_closure_error->GetNbinsX(); ++x)
-  {
+  {NumIters_
     for (int y = 1; y <= h2_zr_closure_error->GetNbinsY(); ++y)
     {
       for (int z = 1; z <= h2_zr_closure_error->GetNbinsZ(); ++z)
@@ -1040,8 +1021,7 @@ void ClosureTest(int NumEvts = -1,
   
   // Multiply by purity  
   h3_ptjtr_final->Multiply(h3_ptjtr_final, h3_purity_ptjtr);
-  RooUnfoldBayes unfold_ptjtr(response_ptjtr, h3_ptjtr_final, NumIters_kt);
-  // RooUnfoldIds unfold_ptjtr(response_ptjtr, h3_ptjtr_final, NumIters_kt);
+  RooUnfoldBayes unfold_ptjtr(response_ptjtr, h3_ptjtr_final, NumIters);
   h3_ptjtr_final = (TH3D *)unfold_ptjtr.Hreco();
   // Divide by efficiency  
   h3_ptjtr_final->Divide(h3_ptjtr_final, h3_eff_ptjtr);
@@ -1114,7 +1094,7 @@ void ClosureTest(int NumEvts = -1,
     SmearObservables(h3_ptjtr_smear, h3_ptjtr_data, myRNG);
     // Multiply by purity
     h3_ptjtr_smear->Multiply(h3_ptjtr_smear, h3_purity_ptjtr);
-    RooUnfoldBayes unfold_ptjtr_smear(response_ptjtr, h3_ptjtr_smear, NumIters_kt);
+    RooUnfoldBayes unfold_ptjtr_smear(response_ptjtr, h3_ptjtr_smear, NumIters);
 
     h3_ptjtr_smear = (TH3D *)unfold_ptjtr_smear.Hreco();
     // Divide by efficiency
@@ -1126,7 +1106,7 @@ void ClosureTest(int NumEvts = -1,
     h2_jtr_smear->GetYaxis()->SetRange(binlowr, binhighr);
     h2_jtr_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
     h2_jtr_smear->Scale(1. / Njets_final, "width");
-    TH2D *h2_jtr_ratio_smear = (TH2D *)h2_jtr_smear->Clone(Form("h2_jtr_ratio_smear%d", i));
+    TH2D *h2_jtr_ratio_smear = (TH2D *)h2_jtr_smear->Clone(Form("jtr_ratio_smear%d", i));
     //TH2D *h2_jtr_pull_smear = (TH2D *)h2_jtr_smear->Clone(Form("h2_jtr_pull_smear%d", i));
     h2_jtr_ratio_smear->Divide(h2_jtr_smear, h2_jtr_truth); 
 
@@ -1170,7 +1150,7 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_closure_error->Reset(); // Reset the histogram to zero
     }
     // h2_ptjtr_closure_error->Add(h2_ptjtr_ratio_smear);
-    // Loop over all bins and add in quadrature
+    // Loop over all bins and add in quadratureNumIters_
     for (int x = 1; x <= h2_jtr_ratio_smear->GetNbinsX(); ++x)
     {
       for (int y = 1; y <= h2_jtr_ratio_smear->GetNbinsY(); ++y)

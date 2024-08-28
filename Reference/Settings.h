@@ -130,10 +130,14 @@ const int neut_pbinsize = 9;
 const int ptbinsize_JES = 4;
 const int nTracksbinsize = 5;
 
-const int zbinsize = 21; // N bins = len(binedges) - 1
-const int jtbinsize = 20;
-const int rbinsize = 25 ;
-//const int rbinsize = 20 ;
+//const int zbinsize = 21; // N bins = len(binedges) - 1
+//const int jtbinsize = 20;
+//const int rbinsize = 25 ;
+
+const int zbinsize = 16;
+const int jtbinsize = 19;
+const int rbinsize = 12;
+
 const int zbinsize50100 = 11; // N bins = len(binedges) - 1
 const int jtbinsize50100 = 16;
 const int rbinsize50100 = 16 ;
@@ -181,10 +185,15 @@ double p_binedges[pbinsize + 1] = {2, 3, 4, 5, 7.5, 10, 12.5, 15, 20, 25, 30, 40
 double neut_p_binedges[pbinsize + 1] = {2, 4, 10, 20, 40, 80, 160, 320, 640, 1280};
 double nTrack_binedges[nTracksbinsize + 1] = {0, 100, 200, 300, 400, 500};
 
-double z_binedges[zbinsize + 1] = {0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.1};
-double jt_binedges[jtbinsize + 1 ] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0};
-double r_binedges[rbinsize +1 ] = {0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.22, 0.24, 0.26, 0.28, 0.3, 0.32, 0.34, 0.36,
-                                    0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5 };
+// 21, 20, 25
+//double z_binedges[zbinsize + 1] = {0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.1};
+//double jt_binedges[jtbinsize + 1 ] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0};
+//double r_binedges[rbinsize +1 ] = {0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.22, 0.24, 0.26, 0.28, 0.3, 0.32, 0.34, 0.36, 0.38, 0.4, 0.42, 0.44, 0.46, 0.48, 0.5 };
+
+// 11, 10, 10
+double z_binedges[zbinsize + 1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65,  0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.1};
+double jt_binedges[jtbinsize + 1 ] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+double r_binedges[rbinsize +1 ] = {0.0, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
 
 double z_50100binedges[zbinsize50100 + 1] = {0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1};
 

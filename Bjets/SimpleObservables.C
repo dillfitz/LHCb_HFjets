@@ -1522,17 +1522,17 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 2; i < ptbinsize; i++)
     {
-      TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("htemp%d_ptz_final", i), i + 1, i + 1);
+      TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("htemp%d_ptz_final", i), i + 1, i + 1);;
         
       h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
+      NormalizeHist(h1_temp);    
       h1_temp->SetMarkerStyle(i + 20);
       h1_temp->SetMarkerColor(i-1 + 1);
       h1_temp->SetLineColor(i-1 + 1);
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
-      h1_temp->SetMinimum(0.0);
+      //h1_temp->SetMinimum(0.0);
 //      h1_temp->SetMaximum(3.5);
  
       legend_zpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
@@ -1553,15 +1553,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
- 
         h1_temp->SetMarkerStyle(i + 20);
         h1_temp->SetMarkerColor(i-1 + 1);
         h1_temp->SetLineColor(i-1 + 1);
         
         h1_temp->Draw("P E SAME");
         h1_temp->Draw("HIST SAME");
-        h1_temp->SetMinimum(0.0);
-        h1_temp->SetMaximum(3.5);
+        //h1_temp->SetMinimum(0.0);
+        //h1_temp->SetMaximum(3.5);
   
       legend_zpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
@@ -1581,15 +1580,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
       h1_temp_truth->SetStats(0);
       NormalizeHist(h1_temp_truth);
- 
         h1_temp_truth->SetMarkerStyle(i + 20);
         h1_temp_truth->SetMarkerColor(i-1 + 1);
         h1_temp_truth->SetLineColor(i-1 + 1);
         
         h1_temp_truth->Draw("P E SAME");
         h1_temp_truth->Draw("HIST SAME");
-        h1_temp_truth->SetMinimum(0.0);
-        h1_temp_truth->SetMaximum(3.5);
+        //h1_temp_truth->SetMinimum(0.0);
+        //h1_temp_truth->SetMaximum(3.5);
   
       legend_zpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
@@ -1619,7 +1617,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
     ccan[ican]->cd(1);       
     gPad->SetLogy();    
-    auto legend_jtpt_final = new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_jtpt_final = new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_jtpt_final ->SetTextSize(0.03);
     legend_jtpt_final ->SetBorderSize(0);
     legend_jtpt_final ->SetFillStyle(0);
@@ -1631,6 +1629,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
+      //h1_temp->Scale(1./h1_temp->Integral("width"));
       h1_temp->SetMarkerStyle(i + 20);
       h1_temp->SetMarkerColor(i-1 + 1);
       h1_temp->SetLineColor(i-1 + 1);
@@ -1647,7 +1646,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     ccan[ican]->cd(2);
     gPad->SetLogy();        
-    auto legend_jtpt_raw= new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_jtpt_raw= new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_jtpt_raw ->SetTextSize(0.03);
     legend_jtpt_raw ->SetBorderSize(0);
     legend_jtpt_raw ->SetFillStyle(0);
@@ -1677,7 +1676,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     
     ccan[ican]->cd(3);
     gPad->SetLogy();        
-    auto legend_jtpt_truth = new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_jtpt_truth = new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_jtpt_truth ->SetTextSize(0.03);
     legend_jtpt_truth ->SetBorderSize(0);
     legend_jtpt_truth ->SetFillStyle(0);
@@ -1725,7 +1724,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->cd(1);     
     gPad->SetLogy();    
         
-    auto legend_rpt_final = new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_rpt_final = new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_rpt_final ->SetTextSize(0.03);
     legend_rpt_final ->SetBorderSize(0);
     legend_rpt_final ->SetFillStyle(0);
@@ -1753,7 +1752,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     ccan[ican]->cd(2);
     gPad->SetLogy();        
-    auto legend_rpt_raw= new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_rpt_raw= new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_rpt_raw ->SetTextSize(0.03);
     legend_rpt_raw ->SetBorderSize(0);
     legend_rpt_raw ->SetFillStyle(0);
@@ -1782,7 +1781,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     
     ccan[ican]->cd(3);
     gPad->SetLogy();        
-    auto legend_rpt_truth = new TLegend(0.45, 0.6, 0.7, 0.8);
+    auto legend_rpt_truth = new TLegend(0.45, 0.7, 0.7, 0.9);
     legend_rpt_truth ->SetTextSize(0.03);
     legend_rpt_truth ->SetBorderSize(0);
     legend_rpt_truth ->SetFillStyle(0);

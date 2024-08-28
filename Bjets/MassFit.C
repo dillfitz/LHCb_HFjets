@@ -396,7 +396,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
     // gPad->SetBottomMargin(0.06);
     ccan[ican]->cd();
-    ccan[ican]->Divide(3, 4, 0.0001, 0.0001);
+    ccan[ican]->Divide(3, 5, 0.0001, 0.0001);
 
     ican = 1;
     sprintf(buf, "ccan%d", ican);
@@ -405,7 +405,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
     // gPad->SetBottomMargin(0.06);
     ccan[ican]->cd();
-    ccan[ican]->Divide(3, 4, 0.0001, 0.0001);
+    ccan[ican]->Divide(3, 5, 0.0001, 0.0001);
     // c->SaveAs("plots/"+extension+".pdf");
     // h1_mass->Scale(1./h1_mass->GetEntries());
 
