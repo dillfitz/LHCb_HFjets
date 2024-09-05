@@ -1,19 +1,10 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
 #include "MisIDTree.C"
 //#include "MisIDMCTree.C"
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
-//#include "Settings.h"
-//#include "fastjet/ClusterSequence.hh"
-//#include "fastjet/contrib/SoftDrop.hh"
-// #include "../RooHelpers.h"
-//#include "../LundGen.hh"
-#include "Helpers.h"
+#include "../Bjets/Settings.h"
+#include "../Helpers.h"
 
 //using namespace fastjet;
 using namespace std;

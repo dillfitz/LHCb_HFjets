@@ -1,24 +1,14 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
-// #include "HFjetLuC"
-
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
-//#include "Settings.h"
-//#include "../Helpers.h"
-//#include "fastjet/ClusterSequence.hh"
-//#include "../LundGen.hh"
-#include "../Reference/Helpers.h"
 #include <TF1.h>
 #include <TLatex.h>
 #include <THStack.h>
 #include <TChain.h>
 #include <TStyle.h>
-//using namespace fastjet;
+#include "Settings.h"
+#include "../Helpers.h"
+
 
 using namespace std;
 

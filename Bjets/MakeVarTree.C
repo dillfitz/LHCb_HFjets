@@ -7,13 +7,11 @@
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
-//#include "Settings.h"
-//#include "../Helpers.h"
+#include "Settings.h"
+#include "../Helpers.h"
 //#include "fastjet/ClusterSequence.hh"
 //#include "fastjet/contrib/SoftDrop.hh"
 //// #include "../RooHelpers.h"
-//#include "../LundGen.hh"
-#include "../Reference/Helpers.h"
 
 using namespace std;
 

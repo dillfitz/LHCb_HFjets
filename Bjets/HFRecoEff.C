@@ -1,16 +1,11 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
 #include "./BMCDecayTree.C"
 #include "./BDecayTree.C"
-
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
-//#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Bjets/LHCbStyle.C"
-#include "../Reference/Helpers.h"
+#include "Settings.h"
+#include "../Helpers.h"
+
 
 using namespace std;
 

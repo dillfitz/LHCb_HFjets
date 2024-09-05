@@ -1,15 +1,9 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
-// #include "HFjetLuC"
 #include <iostream>
 #include <TCanvas.h>
 #include <vector>
-//#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Bjets/LHCbStyle.C"
-#include "../Reference/Helpers.h"
-//#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Settings.h" (Inluding this file is raising amn error)
+#include "Settings.h"
+#include "../Helpers.h"
+
 //#include "fastjet/ClusterSequence.hh"
 //#include "fastjet/contrib/SoftDrop.hh"
 //#include "../LundGen.hh"

@@ -1,17 +1,9 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
 #include <iostream>
 #include <TCanvas.h>
 #include <vector>
-//#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Bjets/LHCbStyle.C"
-#include "../Reference/Helpers.h"
-//#include "fastjet/ClusterSequence.hh"
-//#include "fastjet/contrib/SoftDrop.hh"
-//#include "../LundGen.hh"
-//using namespace fastjet;
+#include "Settings.h"
+#include "../Helpers.h"
+
 using namespace std;
 
 void MCSimpleEff(int NumEvts = -1, int dataset = 91599,

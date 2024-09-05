@@ -1,23 +1,13 @@
-
 /*
    This macro creates a tree from a MC ROOT file that stores "TRUTH" Monte Carlo variables
  */
-
-//#include "./MC_10192023/BjetMCTree.C"  //Truth
-//#include "./MC_08152023/BjetMCTree.C"  //Truth
-//#include "./MC_10162023/BjetMCTree.C"  //Truth
-//#include "./MC_03032024/BjetMCTree.C"  //Truth
 #include "./BjetMCTree.C"  //Truth
-
 #include <iostream>
 #include <TCanvas.h>
 #include <vector>
-//#include "/Users/josearias18/Desktop/QCDc2/pythia/Scripts/Reference/Header.h"
-#include "../Reference/Helpers.h"
-//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldResponse.h"
-//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldBayes.h"
-//#include "../Helpers.h"
-//#include "../RooHelpers.h"
+#include "Settings.h"
+#include "../Helpers.h"
+
 
 using namespace std;
 

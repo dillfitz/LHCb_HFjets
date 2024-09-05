@@ -1,32 +1,17 @@
-
-
-// #include "AnalyzeDijetData_withsubsets.h"
-// #include "LundPlaneData.h"
-
-// #include "ZjetLuC"
-
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <TH3.h>
-//#include "Settings.h"
-//#include "../Helpers.h"
-// #include "../LundGen.hh"
-#include "../Reference/Helpers.h"
 #include <TF1.h>
 #include <TLatex.h>
 #include <THStack.h>
 #include <TChain.h>
 #include <TStyle.h>
-////#include "RooUnfoldResponse.h"
-//#include "RooUnfoldBayes.h"
 #include <TLegend.h>
 #include <TEfficiency.h>
-//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfold.h"
-//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldBayes.h"
-
-//#include "/Users/josearias18/Desktop/QCDc2/root/RooUnfold/src/RooUnfoldResponse.h"
+#include "Settings.h"
+#include "../Helpers.h"
 
 
  using namespace std;

@@ -9,7 +9,9 @@
 #include "TCanvas.h"
 #include "TAxis.h"
 #include "TH1.h"
-#include "../Reference/Helpers.h"
+#include "../Bjets/Settings.h"
+#include "../Helpers.h"
+
 using namespace RooFit;
 
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,

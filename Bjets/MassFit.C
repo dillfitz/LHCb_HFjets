@@ -9,10 +9,9 @@
 #include "TCanvas.h"
 #include "TAxis.h"
 #include "TH1.h"
-//#include "Settings.h"
-//#include "../Helpers.h"
-//#include "../LundGen.hh"
-#include "../Reference/Helpers.h"
+#include "Settings.h"
+#include "../Helpers.h"
+
 using namespace RooFit;
 
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,

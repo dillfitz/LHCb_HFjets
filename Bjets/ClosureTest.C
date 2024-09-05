@@ -1,8 +1,9 @@
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
-//#include "../Reference/Settings.h"
-#include "../Reference/Helpers.h"
+#include "Settings.h"
+#include "../Helpers.h"
+
 using namespace std;
 
 void ClosureTest(int NumEvts = -1,
@@ -362,6 +363,11 @@ void ClosureTest(int NumEvts = -1,
         h1_z_ptbinned[j-2]->GetXaxis()->SetTitle("z");
         h1_z_truth_ptbinned[j-2]->GetXaxis()->SetTitle("z");
         
+        //if (j==4)
+       // {
+       //   h1_z_ptbinned[j-2]->Rebin(2);  
+       //   h1_z_truth_ptbinned[j-2]->Rebin(2);
+       // }      
         h1_z_ptbinned[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1), "width");
         h1_z_truth_ptbinned[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1), "width");
         h1_z_ptbinned_ratio[j-2] = new TRatioPlot(h1_z_ptbinned[j-2], h1_z_truth_ptbinned[j-2]);
