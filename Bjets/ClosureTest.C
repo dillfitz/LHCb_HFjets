@@ -239,6 +239,8 @@ void ClosureTest(int NumEvts = -1,
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
+  
+  std::cout << "############################## Unfolding for ptz ##############################" << std::endl;
 
   //TH1D *h1_z_truth = (TH1D *)file_truth->Get("z");
   TH2D *h2_ptz_truth = (TH2D *)file_truth->Get("ptz");
@@ -248,6 +250,13 @@ void ClosureTest(int NumEvts = -1,
   TH2D *h2_eff_ptz = (TH2D *)file_unfold->Get("efficiency_ptz");
   TH2D *h2_purity_ptz = (TH2D *)file_unfold->Get("purity_ptz");
   RooUnfoldResponse *response_ptz = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
+  
+  TH2D *h2_ptz_truth_50_100 = (TH2D *)file_truth->Get("ptz_50_100");
+  TH2D *h2_ptz_50_100 = (TH2D *)file_reco->Get("ptz_50_100");
+  TH2D *h2_ptz_data_50_100 = (TH2D *)file_data->Get("ptz_50_100");  
+  TH2D *h2_eff_ptz_50_100 = (TH2D *)file_unfold->Get("efficiency_ptz_50_100");
+  TH2D *h2_purity_ptz_50_100 = (TH2D *)file_unfold->Get("purity_ptz_50_100");
+  RooUnfoldResponse *response_ptz_50_100 = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz_50_100");
   
   // Multiply by purity  
   h2_ptz_final->Multiply(h2_ptz_final, h2_purity_ptz);
@@ -259,8 +268,12 @@ void ClosureTest(int NumEvts = -1,
   
   int binlow = h2_ptz->GetYaxis()->FindBin(ptMin + 0.1);
   int binhigh = h2_ptz->GetYaxis()->FindBin(ptMax - 0.1);
-  int binlowz = h2_ptz->GetXaxis()->FindBin(0.0);
-  int binhighz = h2_ptz->GetXaxis()->FindBin(1.1);
+  int binlowz = h2_ptz->GetXaxis()->FindBin(z_binedges[0]);
+  int binhighz = h2_ptz->GetXaxis()->FindBin(z_binedges[zbinsize-1]);
+  //int binhighz = h2_ptz->GetXaxis()->FindBin(0.95);  
+  int binlowz_50_100 = h2_ptz_50_100->GetXaxis()->FindBin(z_binedges_50_100[0]);
+  int binhighz_50_100 = h2_ptz_50_100->GetXaxis()->FindBin(z_binedges_50_100[zbinsize_50_100-1]);
+  //int binhighz_50_100 = h2_ptz_50_100->GetXaxis()->FindBin(0.9);
 
   h2_ptz_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
   h2_ptz_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
@@ -271,6 +284,7 @@ void ClosureTest(int NumEvts = -1,
   TH1D *h1_z_final = (TH1D *)h2_ptz_final->ProjectionX("z_final");
   TH1D *h1_z = (TH1D *)h2_ptz->ProjectionX("z");
   TH1D *h1_z_truth = (TH1D *)h2_ptz_truth->ProjectionX("z_truth");
+  TH1D *h1_z_truth_50_100 = (TH1D *)h2_ptz_truth_50_100->ProjectionX("z_truth_50_100");  
   //
   
   h1_z_final->GetXaxis()->SetRange(binlowz, binhighz);
@@ -300,32 +314,43 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptz_smear = (TH2D *)h2_ptz->Clone(Form("ptz_smear%d", i));
+    TH2D *h2_ptz_smear_50_100 = (TH2D *)h2_ptz_50_100->Clone(Form("ptz_smear%d_50_100", i));    
     //myRNG->SetSeed(time(0));
     myRNG->SetSeed(fixSmear);
     SmearObservables(h2_ptz_smear, h2_ptz_data, myRNG);
+    SmearObservables(h2_ptz_smear_50_100, h2_ptz_data_50_100, myRNG);    
     
     // Multiply by purity
     h2_ptz_smear->Multiply(h2_ptz_smear, h2_purity_ptz);
-    
+    h2_ptz_smear_50_100->Multiply(h2_ptz_smear_50_100, h2_purity_ptz_50_100);  
+
     RooUnfoldBayes unfold_ptz_smear(response_ptz, h2_ptz_smear, NumIters);
     h2_ptz_smear = (TH2D *)unfold_ptz_smear.Hreco();
+    RooUnfoldBayes unfold_ptz_smear_50_100(response_ptz_50_100, h2_ptz_smear_50_100, NumIters);
+    h2_ptz_smear_50_100 = (TH2D *)unfold_ptz_smear_50_100.Hreco();    
     
     // Divide by efficiency    
     h2_ptz_smear->Divide(h2_ptz_smear, h2_eff_ptz);
+    h2_ptz_smear_50_100->Divide(h2_ptz_smear_50_100, h2_eff_ptz_50_100);      
+    
     
     h2_ptz_smear->GetYaxis()->SetRangeUser(ptMin, ptMax);
-    
+    h2_ptz_smear_50_100->GetYaxis()->SetRangeUser(ptMin, ptMax);        
        
     // pT bins [7-15, 15-20, 20-30, 30-50, 50-100, 100-?]
-    TH1D *h1_z_smear = (TH1D *)h2_ptz_smear->ProjectionX(Form("z_smear%d", i));
+    TH1D *h1_z_smear = (TH1D *)h2_ptz_smear->ProjectionX(Form("z_smear%d", i));    
+    TH1D *h1_z_smear_50_100 = (TH1D *)h2_ptz_smear_50_100->ProjectionX(Form("z_smear%d_50_100", i));
     //TH1D *h1_z_smear_20_100 = (TH1D *)h2_ptz_smear->ProjectionX(Form("z_smear_20_100_%d", i), 3, 5);  
 
 
     h1_z_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h1_z_smear->GetXaxis()->SetTitle("z");
+    h1_z_smear_50_100->GetXaxis()->SetRange(binlowz_50_100, binhighz_50_100);
+    h1_z_smear_50_100->GetXaxis()->SetTitle("z");    
     
              
     h1_z_smear->Scale(1. / Njets_final, "width");
+    h1_z_smear_50_100->Scale(1. / Njets_final, "width");    
 
     std::cout << endl;    
     std::cout << "h1_z after norm : " << h1_z_smear->GetEntries() << std::endl;
@@ -341,23 +366,31 @@ void ClosureTest(int NumEvts = -1,
     z_ratio_smear->SetH2DrawOpt("E"); 
     h1_z_truth->SetLineColor(kRed);       
     
-    z_ratio_smear->Write(Form("z_ratio_smear%d", i));    
-    z_ratio_smear->GetUpperPad()->cd();
-    TLegend *leg_z = new TLegend(0.8, 0.8, 1.0, 1.0);
-    leg_z->AddEntry(h1_z_smear, "l");
-    leg_z->AddEntry(h1_z_truth,"l");
-    leg_z->Draw();
+    z_ratio_smear->Write(Form("z_ratio_smear%d", i));   
+
+    TRatioPlot *z_ratio_smear_50_100 = new TRatioPlot(h1_z_smear_50_100, h1_z_truth_50_100);
+
+    z_ratio_smear_50_100->SetH1DrawOpt("E");
+    z_ratio_smear_50_100->SetH2DrawOpt("E"); 
+    h1_z_truth_50_100->SetLineColor(kRed);       
+    
+    z_ratio_smear_50_100->Write(Form("z_ratio_smear%d_50_100", i));   
     
     //TRatioPlot *z_ratio_smear_20_100 = new TRatioPlot(h1_z_smear_20_100, h1_z_truth_20_100);       
     //z_ratio_smear_20_100->Write(Form("z_ratio_smear_%d_20_100", i));    
   
     // pT bins [7-15, 15-20, 20-30, 30-50, 50-100, 100-?]        
     TH1D *h1_z_ptbinned[ptbinsize-2], *h1_z_truth_ptbinned[ptbinsize-2];
+    TH1D *h1_z_eff_ptbinned[ptbinsize-2], *h1_z_purity_ptbinned[ptbinsize-2];    
     TRatioPlot *h1_z_ptbinned_ratio[ptbinsize-2];
     for (int j=2; j < ptbinsize; ++j)
     {
-        h1_z_ptbinned[j-2] = (TH1D *)h2_ptz_smear->ProjectionX(Form("z_smear%d_pt%d", i,j), j+1, j+1);    
+        h1_z_ptbinned[j-2] = (TH1D *)h2_ptz_smear->ProjectionX(Form("z_smear%d_pt%d", i,j), j+1, j+1);     
         h1_z_truth_ptbinned[j-2] = (TH1D *)h2_ptz_truth->ProjectionX(Form("z_truth_smear%d_pt%d", i,j), j+1, j+1);
+        h1_z_eff_ptbinned[j-2] = (TH1D *)h2_eff_ptz->ProjectionX(Form("z_eff_smear%d_pt%d", i,j), j+1, j+1);   
+        h1_z_eff_ptbinned[j-2]->Write();
+        h1_z_purity_ptbinned[j-2] = (TH1D *)h2_purity_ptz->ProjectionX(Form("z_purty_smear%d_pt%d", i,j), j+1, j+1);   
+        h1_z_purity_ptbinned[j-2]->Write();                                 
         h1_z_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
         h1_z_truth_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
         h1_z_ptbinned[j-2]->GetXaxis()->SetTitle("z");
@@ -376,6 +409,31 @@ void ClosureTest(int NumEvts = -1,
         h1_z_truth_ptbinned[j-2]->SetLineColor(kRed);
         h1_z_ptbinned_ratio[j-2]->Write(Form("z_ratio_smear%d_pt%d", i,j));                 
     }
+
+    TH1D *h1_z_ptbinned_50_100[ptbinsize-2], *h1_z_truth_ptbinned_50_100[ptbinsize-2];
+    TH1D *h1_z_eff_ptbinned_50_100[ptbinsize-2], *h1_z_purity_ptbinned_50_100[ptbinsize-2];        
+    TRatioPlot *h1_z_ptbinned_ratio_50_100[ptbinsize-2];
+    for (int j=2; j < ptbinsize; ++j)
+    {
+        h1_z_ptbinned_50_100[j-2] = (TH1D *)h2_ptz_smear_50_100->ProjectionX(Form("z_smear%d_50_100_pt%d", i,j), j+1, j+1);    
+        h1_z_truth_ptbinned_50_100[j-2] = (TH1D *)h2_ptz_truth_50_100->ProjectionX(Form("z_truth_smear%d_50_100_pt%d", i,j), j+1, j+1);
+        h1_z_eff_ptbinned_50_100[j-2] = (TH1D *)h2_eff_ptz_50_100->ProjectionX(Form("z_eff_smear%d_pt%d_50_100", i,j), j+1, j+1);   
+        h1_z_eff_ptbinned_50_100[j-2]->Write();
+        h1_z_purity_ptbinned_50_100[j-2] = (TH1D *)h2_purity_ptz_50_100->ProjectionX(Form("z_purty_smear%d_pt%d_50_100", i,j), j+1, j+1);   
+        h1_z_purity_ptbinned_50_100[j-2]->Write();                                 
+        h1_z_ptbinned_50_100[j-2]->GetXaxis()->SetRange(binlowz_50_100, binhighz_50_100);
+        h1_z_truth_ptbinned_50_100[j-2]->GetXaxis()->SetRange(binlowz_50_100, binhighz_50_100);
+        h1_z_ptbinned_50_100[j-2]->GetXaxis()->SetTitle("z");
+        h1_z_truth_ptbinned_50_100[j-2]->GetXaxis()->SetTitle("z");
+            
+        h1_z_ptbinned_50_100[j-2]->Scale(1./h1_jetpt_final->Integral(j+1, j+1), "width");
+        h1_z_truth_ptbinned_50_100[j-2]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1), "width");
+        h1_z_ptbinned_ratio_50_100[j-2] = new TRatioPlot(h1_z_ptbinned_50_100[j-2], h1_z_truth_ptbinned_50_100[j-2]);
+        h1_z_ptbinned_ratio_50_100[j-2]->SetH1DrawOpt("E");
+        h1_z_ptbinned_ratio_50_100[j-2]->SetH2DrawOpt("E");
+        h1_z_truth_ptbinned_50_100[j-2]->SetLineColor(kRed);
+        h1_z_ptbinned_ratio_50_100[j-2]->Write(Form("z_ratio_smear%d_50_100_pt%d", i,j));                 
+    }
   }
   
   ////////////////////////////////////////////////////////////////////////////////
@@ -391,6 +449,8 @@ void ClosureTest(int NumEvts = -1,
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
+  
+  std::cout << "############################## Unfolding for ptjt ##############################" << std::endl;
 
   //TH1D *h1_jt_truth = (TH1D *)file_truth->Get("jt");
   TH2D *h2_ptjt_truth = (TH2D *)file_truth->Get("ptjt");
@@ -409,8 +469,8 @@ void ClosureTest(int NumEvts = -1,
   // Divide by efficiency  
   h2_ptjt_final->Divide(h2_ptjt_final, h2_eff_ptjt);
   
-  int binlowjt = h2_ptjt->GetXaxis()->FindBin(0.0);
-  int binhighjt = h2_ptjt->GetXaxis()->FindBin(10.0);   
+  int binlowjt = h2_ptjt->GetXaxis()->FindBin(jt_binedges[0]);
+  int binhighjt = h2_ptjt->GetXaxis()->FindBin(jt_binedges[jtbinsize-1]);   
 
   h2_ptjt_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
   h2_ptjt_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
@@ -496,7 +556,7 @@ void ClosureTest(int NumEvts = -1,
     
   }  
   
-  ////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////double z_binedges_50_100[zbinsize_50_100 + 1] = {0.0, 0.15, 0.3, 0.45, 0.6,  0.7,  0.8, 0.9,  1.0};
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -510,6 +570,8 @@ void ClosureTest(int NumEvts = -1,
 
   ////////////////////////////////////////////////////////////////////////////////
 
+  std::cout << "############################## Unfolding for ptr ##############################" << std::endl;
+  
   //TH1D *h1_r_truth = (TH1D *)file_truth->Get("r");
   TH2D *h2_ptr_truth = (TH2D *)file_truth->Get("ptr");
   TH2D *h2_ptr = (TH2D *)file_reco->Get("ptr");
@@ -527,8 +589,8 @@ void ClosureTest(int NumEvts = -1,
   // Divide by efficiency  
   h2_ptr_final->Divide(h2_ptr_final, h2_eff_ptr);
   
-  int binlowr = h2_ptr->GetXaxis()->FindBin(0.0);
-  int binhighr = h2_ptr->GetXaxis()->FindBin(0.5);  
+  int binlowr = h2_ptr->GetXaxis()->FindBin(r_binedges[0]);
+  int binhighr = h2_ptr->GetXaxis()->FindBin(r_binedges[rbinsize-1]);  
 
   h2_ptr_final->GetYaxis()->SetRangeUser(ptMin, ptMax);
   h2_ptr_truth->GetYaxis()->SetRangeUser(ptMin, ptMax);
@@ -630,6 +692,8 @@ void ClosureTest(int NumEvts = -1,
 
   ////////////////////////////////////////////////////////////////////////////////
 
+  std::cout << "############################## Unfolding for ptzjt ##############################" << std::endl;
+  
   //TH2D *h2_zjt_truth = (TH2D *)file_truth->Get("zjt");
   TH3D *h3_ptzjt_truth = (TH3D *)file_truth->Get("ptzjt");
   TH3D *h3_ptzjt = (TH3D *)file_reco->Get("ptzjt");
@@ -828,6 +892,8 @@ void ClosureTest(int NumEvts = -1,
 
   ////////////////////////////////////////////////////////////////////////////////
 
+  std::cout << "############################## Unfolding for ptzr ##############################" << std::endl;
+  
   //TH2D *h2_zr_truth = (TH2D *)file_truth->Get("zr");
   TH3D *h3_ptzr_truth = (TH3D *)file_truth->Get("ptzr");
   TH3D *h3_ptzr = (TH3D *)file_reco->Get("ptzr");
@@ -1023,6 +1089,8 @@ void ClosureTest(int NumEvts = -1,
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
+
+  std::cout << "############################## Unfolding for ptjtr ##############################" << std::endl;
 
   //TH2D *h2_jtr_truth = (TH2D *)file_truth->Get("jtr");
   TH3D *h3_ptjtr_truth = (TH3D *)file_truth->Get("ptjtr");

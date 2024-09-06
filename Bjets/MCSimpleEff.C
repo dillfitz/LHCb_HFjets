@@ -293,6 +293,8 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     TH2D *h2_num_efficiency_jtr = new TH2D("num_efficiency_jtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges);
     TH2D *h2_denom_efficiency_jtr = new TH2D("denom_efficiency_jtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges);
     
+    
+    
     // 2D and 4D Observables response Matrices (286 - 292)
     RooUnfoldResponse *response_zjt = new RooUnfoldResponse( h2_zjt, h2_zjt_truth, "response_zjt" );
     RooUnfoldResponse *response_zr = new RooUnfoldResponse( h2_zr, h2_zr_truth, "respose_zr");
@@ -405,6 +407,14 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     TH2D *h2_purity_ptr = new TH2D("purity_ptr", "", rbinsize, r_binedges,  ptbinsize, pt_binedges );
     
     RooUnfoldResponse *response_ptr = new RooUnfoldResponse(h2_ptr, h2_truthptr, "response_ptr");
+    
+    
+    TH3D *h3_denom_efficiency_ptzjt_50_100 = new TH3D("denom_efficiency_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );   
+    TH3D *h3_denom_efficiency_ptzr_50_100 = new TH3D("denom_efficiency_ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
+    TH3D *h3_denom_efficiency_ptjtr_50_100 = new TH3D("denom_efficiency_ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize,  pt_binedges );    
+    TH2D *h2_denom_efficiency_ptz_50_100 = new TH2D("denom_efficiency_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges );   
+    TH2D *h2_denom_efficiency_ptjt_50_100 = new TH2D("denom_efficiency_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);     
+    TH2D *h2_denom_efficiency_ptr_50_100 = new TH2D("denom_efficiency_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);    
     
     TH2D *h2_SVTag_eff_denom = new TH2D("h2_SVTag_eff_denom","", ptHFbinsize, ptHF_binedges, customptbinsize, custompt_binedges);
     TH2D *h2_SVTag_eff_denom_z = new TH2D("h2_SVTag_eff_denom_z","", zbinsize, z_binedges, customptbinsize, custompt_binedges);
@@ -654,6 +664,14 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
             h3_denom_efficiency_ptzjt->Fill(truth_z, truth_jt, jet_pt);
             h3_denom_efficiency_ptzr->Fill(truth_z, truth_r, jet_pt);
             h3_denom_efficiency_ptjtr->Fill(truth_jt, truth_r, jet_pt);
+            
+            h2_denom_efficiency_ptz_50_100->Fill(truth_z, jet_pt);
+            h2_denom_efficiency_ptjt_50_100->Fill(truth_jt, jet_pt);
+            h2_denom_efficiency_ptr_50_100->Fill(truth_r, jet_pt);
+    
+            h3_denom_efficiency_ptzjt_50_100->Fill(truth_z, truth_jt, jet_pt);
+            h3_denom_efficiency_ptzr_50_100->Fill(truth_z, truth_r, jet_pt);
+            h3_denom_efficiency_ptjtr_50_100->Fill(truth_jt, truth_r, jet_pt);            
             
             h1_denom_efficiency_z->Fill(truth_z);
             h1_denom_efficiency_jt->Fill(truth_jt);

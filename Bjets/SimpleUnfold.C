@@ -256,6 +256,7 @@ void SimpleUnfold(int NumEvts = -1,
     TH2D *h2_denom_efficiency_zjt = (TH2D*)file_eff->Get("denom_efficiency_zjt");
     TH2D *h2_denom_efficiency_zr = (TH2D*)file_eff->Get("denom_efficiency_zr");
     TH2D *h2_denom_efficiency_jtr = (TH2D*)file_eff->Get("denom_efficiency_jtr");
+    
     TH2D *h2_denom_efficiency_ptz=(TH2D*)file_eff->Get("denom_efficiency_ptz");
     TH2D *h2_denom_efficiency_ptjt=(TH2D*)file_eff->Get("denom_efficiency_ptjt");
     TH2D *h2_denom_efficiency_ptr=(TH2D*)file_eff->Get("denom_efficiency_ptr");
@@ -264,7 +265,15 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_denom_efficiency_ptzr=(TH3D*)file_eff->Get("denom_efficiency_ptzr");
     TH3D *h3_denom_efficiency_ptjtr=(TH3D*)file_eff->Get("denom_efficiency_ptjtr");
     
-     TH2D *h2_SVTag_eff_denom_z = (TH2D *)file_eff->Get("h2_SVTag_eff_denom_z");
+    TH2D *h2_denom_efficiency_ptz_50_100=(TH2D*)file_eff->Get("denom_efficiency_ptz_50_100");
+    TH2D *h2_denom_efficiency_ptjt_50_100=(TH2D*)file_eff->Get("denom_efficiency_ptjt_50_100");
+    TH2D *h2_denom_efficiency_ptr_50_100=(TH2D*)file_eff->Get("denom_efficiency_ptr_50_100");
+    
+    TH3D *h3_denom_efficiency_ptzjt_50_100=(TH3D*)file_eff->Get("denom_efficiency_ptzjt_50_100");
+    TH3D *h3_denom_efficiency_ptzr_50_100=(TH3D*)file_eff->Get("denom_efficiency_ptzr_50_100");
+    TH3D *h3_denom_efficiency_ptjtr_50_100=(TH3D*)file_eff->Get("denom_efficiency_ptjtr_50_100");    
+    
+    TH2D *h2_SVTag_eff_denom_z = (TH2D *)file_eff->Get("h2_SVTag_eff_denom_z");
     TH2D *h2_SVTag_eff_denom = (TH2D *)file_eff->Get("h2_SVTag_eff_denom");
     
     TH1D *h1_recoHF_HFpt = (TH1D *)file_decay->Get("num_efficiency_HFpt");
@@ -422,7 +431,6 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_ptzjt = new TH3D("ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_truthptzjt = new TH3D("truthptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_efficiency_ptzjt = new TH3D("num_efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-//    TH3D *h3_denom_efficiency_ptzjt = new TH3D("denom_efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_efficiency_ptzjt = new TH3D("efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_purity_ptzjt = new TH3D("num_purity_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_denom_purity_ptzjt = new TH3D("denom_purity_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
@@ -430,10 +438,19 @@ void SimpleUnfold(int NumEvts = -1,
     
     RooUnfoldResponse *response_ptzjt = new RooUnfoldResponse(h3_ptzjt, h3_truthptzjt, "response_ptzjt");
     
+    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_truthptzjt_50_100 = new TH3D("truthptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptzjt_50_100 = new TH3D("num_efficiency_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_efficiency_ptzjt_50_100 = new TH3D("efficiency_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptzjt_50_100 = new TH3D("num_purity_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptzjt_50_100 = new TH3D("denom_purity_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptzjt_50_100 = new TH3D("purity_ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptzjt_50_100 = new RooUnfoldResponse(h3_ptzjt_50_100, h3_truthptzjt_50_100, "response_ptzjt_50_100");    
+    
     TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_truthptzr = new TH3D("truthptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_efficiency_ptzr = new TH3D("num_efficiency_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-//    TH3D *h3_denom_efficiency_ptzr = new TH3D("denom_efficiency_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_efficiency_ptzr = new TH3D("efficiency_ptzr", "", zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_purity_ptzr = new TH3D("num_purity_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_denom_purity_ptzr = new TH3D("denom_purity_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -441,10 +458,19 @@ void SimpleUnfold(int NumEvts = -1,
     
     RooUnfoldResponse *response_ptzr = new RooUnfoldResponse(h3_ptzr, h3_truthptzr, "response_ptzr");
     
+    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_truthptzr_50_100 = new TH3D("truthptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptzr_50_100 = new TH3D("num_efficiency_ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_efficiency_ptzr_50_100 = new TH3D("efficiency_ptzr_50_100", "", zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptzr_50_100 = new TH3D("num_purity_ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptzr_50_100 = new TH3D("denom_purity_ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptzr_50_100 = new TH3D("purity_ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptzr_50_100 = new RooUnfoldResponse(h3_ptzr_50_100, h3_truthptzr_50_100, "response_ptzr_50_100");    
+    
     TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_truthptjtr = new TH3D("truthptjtr", "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_efficiency_ptjtr = new TH3D("num_efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-//    TH3D *h3_denom_efficiency_ptjtr = new TH3D("denom_efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize,  pt_binedges );
     TH3D *h3_efficiency_ptjtr = new TH3D("efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_num_purity_ptjtr = new TH3D("num_purity_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_denom_purity_ptjtr = new TH3D("denom_purity_ptjtr", "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -452,11 +478,21 @@ void SimpleUnfold(int NumEvts = -1,
     
     RooUnfoldResponse *response_ptjtr = new RooUnfoldResponse(h3_ptjtr, h3_truthptjtr, "response_ptjtr");
     
+    
+    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_truthptjtr_50_100 = new TH3D("truthptjtr_50_100", "", jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptjtr_50_100 = new TH3D("num_efficiency_ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_efficiency_ptjtr_50_100 = new TH3D("efficiency_ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptjtr_50_100 = new TH3D("num_purity_ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptjtr_50_100 = new TH3D("denom_purity_ptjtr_50_100", "", jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptjtr_50_100 = new TH3D("purity_ptjtr_50_100", "", jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100,  ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptjtr_50_100 = new RooUnfoldResponse(h3_ptjtr_50_100, h3_truthptjtr_50_100, "response_ptjtr_50_100");    
+    
     // 2D Jet_pt vs Observable histograms, Purities/Efficiencies, Responses (359 - 368)
     TH2D *h2_ptz = new TH2D("ptz", "", zbinsize, z_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_truthptz = new TH2D("truthptz", "", zbinsize, z_binedges, ptbinsize, pt_binedges );
     TH2D *h2_num_efficiency_ptz = new TH2D("num_efficiency_ptz", "", zbinsize, z_binedges,  ptbinsize, pt_binedges );
-//    TH2D *h2_denom_efficiency_ptz = new TH2D("denom_efficiency_ptz", "", zbinsize, z_binedges, ptbinsize, pt_binedges );
     TH2D *h2_efficiency_ptz = new TH2D("efficiency_ptz", "", zbinsize, z_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_num_purity_ptz = new TH2D("num_purity_ptz", "", zbinsize, z_binedges, ptbinsize, pt_binedges );
     TH2D *h2_denom_purity_ptz = new TH2D("denom_purity_ptz", "", zbinsize, z_binedges,  ptbinsize, pt_binedges );
@@ -464,10 +500,19 @@ void SimpleUnfold(int NumEvts = -1,
     
     RooUnfoldResponse *response_ptz = new RooUnfoldResponse(h2_ptz, h2_truthptz, "response_ptz");
     
+    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", "", zbinsize_50_100, z_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_truthptz_50_100 = new TH2D("truthptz_50_100", "", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_num_efficiency_ptz_50_100 = new TH2D("num_efficiency_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_efficiency_ptz_50_100 = new TH2D("efficiency_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_num_purity_ptz_50_100 = new TH2D("num_purity_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_denom_purity_ptz_50_100 = new TH2D("denom_purity_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_purity_ptz_50_100 = new TH2D("purity_ptz_50_100", "", zbinsize_50_100, z_binedges_50_100,  ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptz_50_100 = new RooUnfoldResponse(h2_ptz_50_100, h2_truthptz_50_100, "response_ptz_50_100");    
+    
     TH2D *h2_ptjt = new TH2D("ptjt", "", jtbinsize, jt_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_truthptjt = new TH2D("truthptjt", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH2D *h2_num_efficiency_ptjt = new TH2D("num_efficiency_ptjt", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-//    TH2D *h2_denom_efficiency_ptjt = new TH2D("denom_efficiency_ptjt", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
     TH2D *h2_efficiency_ptjt = new TH2D("efficiency_ptjt", "", jtbinsize, jt_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_num_purity_ptjt = new TH2D("num_purity_ptjt", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH2D *h2_denom_purity_ptjt = new TH2D("denom_purity_ptjt", "", jtbinsize, jt_binedges,  ptbinsize, pt_binedges );
@@ -475,16 +520,35 @@ void SimpleUnfold(int NumEvts = -1,
     
     RooUnfoldResponse *response_ptjt = new RooUnfoldResponse(h2_ptjt, h2_truthptjt, "response_ptjt");
     
+    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_truthptjt_50_100 = new TH2D("truthptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_num_efficiency_ptjt_50_100 = new TH2D("num_efficiency_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_efficiency_ptjt_50_100 = new TH2D("efficiency_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_num_purity_ptjt_50_100 = new TH2D("num_purity_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_denom_purity_ptjt_50_100 = new TH2D("denom_purity_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_purity_ptjt_50_100 = new TH2D("purity_ptjt_50_100", "", jtbinsize_50_100, jt_binedges_50_100,  ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptjt_50_100 = new RooUnfoldResponse(h2_ptjt_50_100, h2_truthptjt_50_100, "response_ptjt_50_100");    
+    
     TH2D *h2_ptr = new TH2D("ptr", "", rbinsize, r_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_truthptr = new TH2D("truthptr", "", rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH2D *h2_num_efficiency_ptr = new TH2D("num_efficiency_ptr", "", rbinsize, r_binedges, ptbinsize, pt_binedges);
-//    TH2D *h2_denom_efficiency_ptr = new TH2D("denom_efficiency_ptr", "", rbinsize, r_binedges, ptbinsize, pt_binedges);
     TH2D *h2_efficiency_ptr = new TH2D("efficiency_ptr", "", rbinsize, r_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_num_purity_ptr = new TH2D("num_purity_ptr", "", rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH2D *h2_denom_purity_ptr = new TH2D("denom_purity_ptr", "", rbinsize, r_binedges,  ptbinsize, pt_binedges );
     TH2D *h2_purity_ptr = new TH2D("purity_ptr", "", rbinsize, r_binedges,  ptbinsize, pt_binedges );
     
     RooUnfoldResponse *response_ptr = new RooUnfoldResponse(h2_ptr, h2_truthptr, "response_ptr");
+    
+    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", "", rbinsize_50_100, r_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_truthptr_50_100 = new TH2D("truthptr_50_100", "", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_num_efficiency_ptr_50_100 = new TH2D("num_efficiency_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_efficiency_ptr_50_100 = new TH2D("efficiency_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_num_purity_ptr_50_100 = new TH2D("num_purity_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH2D *h2_denom_purity_ptr_50_100 = new TH2D("denom_purity_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100,  ptbinsize, pt_binedges );
+    TH2D *h2_purity_ptr_50_100 = new TH2D("purity_ptr_50_100", "", rbinsize_50_100, r_binedges_50_100,  ptbinsize, pt_binedges );
+    
+    RooUnfoldResponse *response_ptr_50_100 = new RooUnfoldResponse(h2_ptr_50_100, h2_truthptr_50_100, "response_ptr_50_100");    
     
     ////SV tagging
     TH3D *h3_ptzjt_SV = new TH3D("ptzjt_SV", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
@@ -947,12 +1011,21 @@ void SimpleUnfold(int NumEvts = -1,
             h2_num_efficiency_zr->Fill(z, r, reweight);
             h2_num_efficiency_jtr->Fill(jt, r, reweight);
             
+                       
             h3_num_efficiency_ptzjt->Fill(tr_z, tr_jt, tr_HFjet.Pt(), reweight);
             h3_num_efficiency_ptzr->Fill(tr_z, tr_r, tr_HFjet.Pt(), reweight);
             h3_num_efficiency_ptjtr->Fill( tr_jt, tr_r, tr_HFjet.Pt(), reweight);
             
             h1_num_purity_jetpt->Fill(jet_pt, reweight);
             h1_num_purity_rap->Fill(jet_rap, reweight);
+            
+            h2_num_efficiency_ptz_50_100->Fill(tr_z, tr_HFjet.Pt(), reweight);
+            h2_num_efficiency_ptjt_50_100->Fill(tr_jt, tr_HFjet.Pt(), reweight);
+            h2_num_efficiency_ptr_50_100->Fill(tr_r, tr_HFjet.Pt(), reweight);
+                                  
+            h3_num_efficiency_ptzjt_50_100->Fill(tr_z, tr_jt, tr_HFjet.Pt(), reweight);
+            h3_num_efficiency_ptzr_50_100->Fill(tr_z, tr_r, tr_HFjet.Pt(), reweight);
+            h3_num_efficiency_ptjtr_50_100->Fill( tr_jt, tr_r, tr_HFjet.Pt(), reweight);            
                                   
         }
         
@@ -986,6 +1059,14 @@ void SimpleUnfold(int NumEvts = -1,
             h3_denom_purity_ptzjt->Fill(z, jt, jet_pt, reweight);
             h3_denom_purity_ptzr->Fill(z, r, jet_pt, reweight);
             h3_denom_purity_ptjtr->Fill(jt, r, jet_pt, reweight);
+            
+            h2_denom_purity_ptz_50_100->Fill(z, jet_pt, reweight);
+            h2_denom_purity_ptjt_50_100->Fill(jt, jet_pt, reweight);
+            h2_denom_purity_ptr_50_100->Fill(r, jet_pt, reweight);
+            
+            h3_denom_purity_ptzjt_50_100->Fill(z, jt, jet_pt, reweight);
+            h3_denom_purity_ptzr_50_100->Fill(z, r, jet_pt, reweight);
+            h3_denom_purity_ptjtr_50_100->Fill(jt, r, jet_pt, reweight);            
             
         }
   /*      
@@ -1025,6 +1106,14 @@ void SimpleUnfold(int NumEvts = -1,
             h3_num_purity_ptzr->Fill(z, r, jet_pt, reweight);
             h3_num_purity_ptjtr->Fill(jt, r, jet_pt, reweight);
             
+            h2_num_purity_ptz_50_100->Fill(z, jet_pt, reweight);
+            h2_num_purity_ptjt_50_100->Fill(jt, jet_pt, reweight);
+            h2_num_purity_ptr_50_100->Fill(r, jet_pt, reweight);
+            
+            h3_num_purity_ptzjt_50_100->Fill(z, jt, jet_pt, reweight);
+            h3_num_purity_ptzr_50_100->Fill(z, r, jet_pt, reweight);
+            h3_num_purity_ptjtr_50_100->Fill(jt, r, jet_pt, reweight);            
+            
             NumTrueBjets++;              
         }
         
@@ -1052,12 +1141,20 @@ void SimpleUnfold(int NumEvts = -1,
         response_zjt->Fill(z, jt, tr_z, tr_jt);
         response_zr->Fill(z, r, tr_z, tr_r);
         response_jtr->Fill(jt, r, tr_jt, tr_r);
+        
         response_ptjt->Fill( jt, jet_pt, tr_jt, tr_jet_pt);
         response_ptr->Fill( r,  jet_pt, tr_r, tr_jet_pt);
         response_ptz->Fill( z,  jet_pt, tr_z, tr_jet_pt);
         response_ptzjt->Fill( z, jt, jet_pt, tr_z, tr_jt, tr_jet_pt);
         response_ptzr->Fill( z, r, jet_pt, tr_z, tr_r, tr_jet_pt);
         response_ptjtr->Fill( jt,  r, jet_pt, tr_jt, tr_r, tr_jet_pt);
+        
+        response_ptjt_50_100->Fill( jt, jet_pt, tr_jt, tr_jet_pt);
+        response_ptr_50_100->Fill( r,  jet_pt, tr_r, tr_jet_pt);
+        response_ptz_50_100->Fill( z,  jet_pt, tr_z, tr_jet_pt);
+        response_ptzjt_50_100->Fill( z, jt, jet_pt, tr_z, tr_jt, tr_jet_pt);
+        response_ptzr_50_100->Fill( z, r, jet_pt, tr_z, tr_r, tr_jet_pt);
+        response_ptjtr_50_100->Fill( jt,  r, jet_pt, tr_jt, tr_r, tr_jet_pt);        
         
         
         // if(jet_pt > ptMax) continue;
@@ -1118,9 +1215,17 @@ void SimpleUnfold(int NumEvts = -1,
     response_ptr->Write( "Roo_response_ptr");
     response_ptz->Write("Roo_response_ptz" );
         
-    response_ptzjt->Write("Roo_response_ptzjt" );
+    response_ptzjt->Write("Roo_response_ptzjt");
     response_ptzr->Write( "Roo_response_ptzr");
-    response_ptjtr->Write( "Roo_response_ptjtr") ;
+    response_ptjtr->Write( "Roo_response_ptjtr");
+    
+    response_ptjt_50_100->Write("Roo_response_ptjt_50_100");
+    response_ptr_50_100->Write( "Roo_response_ptr_50_100");
+    response_ptz_50_100->Write("Roo_response_ptz_50_100" );
+        
+    response_ptzjt_50_100->Write("Roo_response_ptzjt_50_100");
+    response_ptzr_50_100->Write( "Roo_response_ptzr_50_100");
+    response_ptjtr_50_100->Write( "Roo_response_ptjtr_50_100") ;    
 
 //          TEfficiency *h1_purity_z = new TEfficiency(*h1_num_purity_z, *h1_denom_purity_z);
         
@@ -1183,13 +1288,44 @@ void SimpleUnfold(int NumEvts = -1,
     
     h1_efficiency_z->Divide(h1_num_efficiency_z, h1_denom_efficiency_z, 1, 1, "B");     
     h1_efficiency_jt->Divide(h1_num_efficiency_jt, h1_denom_efficiency_jt, 1, 1, "B");     
-    h1_efficiency_r->Divide(h1_num_efficiency_r, h1_denom_efficiency_r, 1, 1, "B");                                   
+    h1_efficiency_r->Divide(h1_num_efficiency_r, h1_denom_efficiency_r, 1, 1, "B");   
+                                    
     h2_efficiency_ptz->Divide(h2_num_efficiency_ptz, h2_denom_efficiency_ptz, 1, 1, "B");    
     h2_efficiency_ptjt->Divide(h2_num_efficiency_ptjt, h2_denom_efficiency_ptjt, 1, 1, "B");    
     h2_efficiency_ptr->Divide(h2_num_efficiency_ptr, h2_denom_efficiency_ptr, 1, 1, "B");    
+    
     h2_purity_ptz->Divide(h2_num_purity_ptz, h2_denom_purity_ptz, 1, 1, "B");     
     h2_purity_ptjt->Divide(h2_num_purity_ptjt, h2_denom_purity_ptjt, 1, 1, "B"); 
     h2_purity_ptr->Divide(h2_num_purity_ptr, h2_denom_purity_ptr, 1, 1, "B");
+    
+    h3_efficiency_ptzjt->Divide(h3_num_efficiency_ptzjt, h3_denom_efficiency_ptzjt, 1, 1, "B");
+    h3_efficiency_ptzr->Divide(h3_num_efficiency_ptzr, h3_denom_efficiency_ptzr, 1, 1, "B");
+    h3_efficiency_ptjtr->Divide(h3_num_efficiency_ptjtr, h3_denom_efficiency_ptjtr, 1, 1, "B");    
+    
+    h3_purity_ptzjt->Divide(h3_num_purity_ptzjt, h3_denom_purity_ptzjt, 1, 1, "B");    
+    h3_purity_ptzr->Divide(h3_num_purity_ptzr, h3_denom_purity_ptzr, 1, 1, "B");
+    h3_purity_ptjtr->Divide(h3_num_purity_ptjtr, h3_denom_purity_ptjtr, 1, 1, "B");    
+    
+    h2_efficiency_ptz_50_100->Divide(h2_num_efficiency_ptz_50_100, h2_denom_efficiency_ptz_50_100, 1, 1, "B");    
+    h2_efficiency_ptjt_50_100->Divide(h2_num_efficiency_ptjt_50_100, h2_denom_efficiency_ptjt_50_100, 1, 1, "B");    
+    h2_efficiency_ptr_50_100->Divide(h2_num_efficiency_ptr_50_100, h2_denom_efficiency_ptr_50_100, 1, 1, "B");    
+    
+    h2_purity_ptz_50_100->Divide(h2_num_purity_ptz_50_100, h2_denom_purity_ptz_50_100, 1, 1, "B");     
+    h2_purity_ptjt_50_100->Divide(h2_num_purity_ptjt_50_100, h2_denom_purity_ptjt_50_100, 1, 1, "B"); 
+    h2_purity_ptr_50_100->Divide(h2_num_purity_ptr_50_100, h2_denom_purity_ptr_50_100, 1, 1, "B");
+    
+    h3_efficiency_ptzjt_50_100->Divide(h3_num_efficiency_ptzjt_50_100, h3_denom_efficiency_ptzjt_50_100, 1, 1, "B");
+    h3_efficiency_ptzr_50_100->Divide(h3_num_efficiency_ptzr_50_100, h3_denom_efficiency_ptzr_50_100, 1, 1, "B");
+    h3_efficiency_ptjtr_50_100->Divide(h3_num_efficiency_ptjtr_50_100, h3_denom_efficiency_ptjtr_50_100, 1, 1, "B");    
+    
+    h3_purity_ptzjt_50_100->Divide(h3_num_purity_ptzjt_50_100, h3_denom_purity_ptzjt_50_100, 1, 1, "B");    
+    h3_purity_ptzr_50_100->Divide(h3_num_purity_ptzr_50_100, h3_denom_purity_ptzr_50_100, 1, 1, "B");
+    h3_purity_ptjtr_50_100->Divide(h3_num_purity_ptjtr_50_100, h3_denom_purity_ptjtr_50_100, 1, 1, "B");        
+      
+    h3_efficiency_ptzjt_SV->Divide(h3_num_efficiency_ptzjt_SV, h3_denom_efficiency_ptzjt_SV, 1, 1, "B");
+    h3_purity_ptzr_SV->Divide(h3_num_purity_ptzr_SV, h3_denom_purity_ptzr_SV, 1, 1, "B");
+    
+    h3_efficiency_ptjtr_SV->Divide(h3_num_efficiency_ptjtr_SV, h3_denom_efficiency_ptjtr_SV, 1, 1, "B");    
     
  
     TH2D *h2_efficiency_HFpteta = (TH2D *)h2_num_efficiency_HFpteta->Clone("h2_efficiency_HFpteta");
@@ -1216,20 +1352,6 @@ void SimpleUnfold(int NumEvts = -1,
     TH1D *h1_efficiency_recoJet_jetpt = (TH1D *)h1_num_efficiency_jetpt->Clone("efficiency_recoJet_jetpt");
     h1_efficiency_recoJet_jetpt->Divide(h1_efficiency_recoJet_jetpt, h1_recoHF_jetpt, 1, 1, "B");
         
-    
-    h3_efficiency_ptzjt->Divide(h3_num_efficiency_ptzjt, h3_denom_efficiency_ptzjt, 1, 1, "B");
-    h3_purity_ptzjt->Divide(h3_num_purity_ptzjt, h3_denom_purity_ptzjt, 1, 1, "B");
-    
-    h3_efficiency_ptzr->Divide(h3_num_efficiency_ptzr, h3_denom_efficiency_ptzr, 1, 1, "B");
-    h3_purity_ptzr->Divide(h3_num_purity_ptzr, h3_denom_purity_ptzr, 1, 1, "B");
-    
-    h3_efficiency_ptjtr->Divide(h3_num_efficiency_ptjtr, h3_denom_efficiency_ptjtr, 1, 1, "B");
-    h3_purity_ptjtr->Divide(h3_num_purity_ptjtr, h3_denom_purity_ptjtr, 1, 1, "B");
-      
-    h3_efficiency_ptzjt_SV->Divide(h3_num_efficiency_ptzjt_SV, h3_denom_efficiency_ptzjt_SV, 1, 1, "B");
-    h3_purity_ptzr_SV->Divide(h3_num_purity_ptzr_SV, h3_denom_purity_ptzr_SV, 1, 1, "B");
-    
-    h3_efficiency_ptjtr_SV->Divide(h3_num_efficiency_ptjtr_SV, h3_denom_efficiency_ptjtr_SV, 1, 1, "B");
         
 //      h2_purity_zjt->Write("purity_zjt");
 //      h2_purity_zr->Write("purity_zr");
@@ -1259,6 +1381,22 @@ void SimpleUnfold(int NumEvts = -1,
     h3_purity_ptzjt->Write("purity_ptzjt");
     h3_purity_ptzr->Write("purity_ptzr");
     h3_purity_ptjtr->Write("purity_ptjtr");
+    
+    h2_efficiency_ptz_50_100->Write("efficiency_ptz_50_100");
+    h2_efficiency_ptjt_50_100->Write("efficiency_ptjt_50_100");
+    h2_efficiency_ptr_50_100->Write("efficiency_ptr_50_100");
+    
+    h2_purity_ptz_50_100->Write("purity_ptz_50_100");
+    h2_purity_ptjt_50_100->Write("purity_ptjt_50_100");
+    h2_purity_ptr_50_100->Write("purity_ptr_50_100");
+    
+    h3_efficiency_ptzjt_50_100->Write("efficiency_ptzjt_50_100");
+    h3_efficiency_ptzr_50_100->Write("efficiency_ptzr_50_100");
+    h3_efficiency_ptjtr_50_100->Write("efficiency_ptjtr_50_100");
+    
+    h3_purity_ptzjt_50_100->Write("purity_ptzjt_50_100");
+    h3_purity_ptzr_50_100->Write("purity_ptzr_50_100");
+    h3_purity_ptjtr_50_100->Write("purity_ptjtr_50_100");    
         
     h2_efficiency_HFpteta->Write("efficiency_HFpteta");
     h3_efficiency_HFptetajetpt->Write("efficiency_HFptetajetpt");
