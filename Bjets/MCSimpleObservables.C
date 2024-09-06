@@ -183,6 +183,14 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     
+    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T};", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r;", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
+    
+    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", "", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", "",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", "",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
+    
     TH3D *h3_ptzjt_gluon = new TH3D("ptzjt_gluon", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr_gluon = new TH3D("ptzr_gluon", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr_gluon = new TH3D("ptjtr_gluon", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -609,17 +617,25 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
       h2_ptjt->Fill(truth_jt, jet_pt);
       h2_ptr->Fill(truth_r, jet_pt);
       
-     h3_ptzjt->Fill(truth_z, truth_jt, jet_pt);
-     h3_ptzr->Fill(truth_z, truth_r, jet_pt);
-     h3_ptjtr->Fill(truth_jt, truth_r, jet_pt);
+      h3_ptzjt->Fill(truth_z, truth_jt, jet_pt);
+      h3_ptzr->Fill(truth_z, truth_r, jet_pt);
+      h3_ptjtr->Fill(truth_jt, truth_r, jet_pt);
       
-     h2_zjt->Fill(truth_z, truth_jt);
-     h2_zr->Fill(truth_z, truth_r);
-     h2_jtr->Fill(truth_jt, truth_r);
+      h2_ptz_50_100->Fill(truth_z, jet_pt);
+      h2_ptjt_50_100->Fill(truth_jt, jet_pt);
+      h2_ptr_50_100->Fill(truth_r, jet_pt);
       
-     h2_meas_zjt->Fill(meas_z, meas_jt);
-     h2_meas_zr->Fill(meas_z, meas_r);
-     h2_meas_jtr->Fill(meas_jt, meas_r);
+      h3_ptzjt_50_100->Fill(truth_z, truth_jt, jet_pt);
+      h3_ptzr_50_100->Fill(truth_z, truth_r, jet_pt);
+      h3_ptjtr_50_100->Fill(truth_jt, truth_r, jet_pt);      
+      
+      h2_zjt->Fill(truth_z, truth_jt);
+      h2_zr->Fill(truth_z, truth_r);
+      h2_jtr->Fill(truth_jt, truth_r);
+      
+      h2_meas_zjt->Fill(meas_z, meas_jt);
+      h2_meas_zr->Fill(meas_z, meas_r);
+      h2_meas_jtr->Fill(meas_jt, meas_r);
 
       // 2D Truth-Reco Correspondence (219 - 224)
 //      TH2D *h2_truthreco_z = new TH2D("truthreco_z", ";Reco z; Truth z", zbinsize, z_binedges, zbinsize, z_binedges);

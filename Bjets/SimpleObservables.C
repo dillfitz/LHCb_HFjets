@@ -381,6 +381,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH3D *h3_ptzjt = new TH3D("ptzjt", ";z ; j_{T};", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr = new TH3D("ptzr", ";z ; r;",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T}; r; ",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    
+    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T};", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r;", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
+    
+    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", ";z ; j_{T};", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", ";z ; r;",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", ";j_{T}; r; ",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
      
     TH3D *h3_ptzjt_unweight = new TH3D("ptzjt_unweight", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr_unweight = new TH3D("ptzr_unweight", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -389,6 +397,13 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH3D *h3_ptHFzjt = new TH3D("ptHFzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptHFbinsize, ptHF_binedges );
     TH3D *h3_ptHFzr = new TH3D("ptHFzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptHFbinsize, ptHF_binedges );
     TH3D *h3_ptHFjtr = new TH3D("ptHFjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptHFbinsize, ptHF_binedges );
+    
+    TH2D *h2_ptHFz = new TH2D("HFptz", ";z;", zbinsize, z_binedges, ptHFbinsize, ptHF_binedges);
+    TH2D *h2_ptHFjt = new TH2D("HFptjt", ";j_{T};", jtbinsize, jt_binedges, ptHFbinsize, ptHF_binedges);
+    TH2D *h2_ptHFr = new TH2D("HFptr", ";r;", rbinsize, r_binedges, ptHFbinsize, ptHF_binedges);    
+
+    TH1D *h1_z_ptHFcut_g5 = new TH1D("z_ptHFcut_g5", ";z;", zbinsize, z_binedges);
+    TH1D *h1_z_ptHFcut_l5 = new TH1D("z_ptHFcut_l5", ";z;", zbinsize, z_binedges);    
     
     /// ------------------------------------------ COMBINATORIAL --------------------------------------------- ///
     
@@ -1251,6 +1266,22 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_ptz->Fill(z, jet_pt, event_weight);
         h2_ptjt->Fill(jt, jet_pt, event_weight);
         h2_ptr->Fill(r, jet_pt, event_weight);
+        
+        h3_ptzjt_50_100->Fill(z, jt, jet_pt, event_weight);
+        h3_ptzr_50_100->Fill(z, r, jet_pt, event_weight);
+        h3_ptjtr_50_100->Fill(jt, r, jet_pt, event_weight);
+
+
+        h2_ptz_50_100->Fill(z, jet_pt, event_weight);
+        h2_ptjt_50_100->Fill(jt, jet_pt, event_weight);
+        h2_ptr_50_100->Fill(r, jet_pt, event_weight);        
+
+        h2_ptHFz->Fill(z, HF_pt);
+        h2_ptHFjt->Fill(jt, HF_pt);
+        h2_ptHFr->Fill(r, HF_pt);      
+        
+        if (HF_pt < 5.) { h1_z_ptHFcut_l5->Fill(z); }        
+        else { h1_z_ptHFcut_g5->Fill(z); }
 
       }
   
