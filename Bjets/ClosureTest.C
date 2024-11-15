@@ -9,7 +9,7 @@ using namespace std;
 void ClosureTest(int NumEvts = -1,
                  int dataset1 = 91590,
                  int dataset2 = 91591,
-                 int NumIters = 2,                 
+                 int NumIters = 4,                 
                  bool chargedJetCut = false,
                  bool WTA_cut = false,
                  double minimum_dR = 0.1,

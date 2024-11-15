@@ -17,6 +17,7 @@ using namespace RooFit;
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
              bool UseDTF = true,
              bool DoRecSelEff = 0,
+             bool DoSystematic = 0,             
              float ptmin_user = 7.0,
              float ptmax_user = 250)
 {
@@ -126,6 +127,13 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         extension_reco = "recselsys_" + extension_reco;
     }
     
+    if (DoSystematic)
+    {
+        extension = "sys_" + extension;
+        // extension_reco = "recselsys_" + extension_reco;
+    }
+    
+    
     cout << extension << endl;
     cout << extension_reco << endl;
     // Setup Tree
@@ -175,7 +183,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     float jet_pt, bmass_dtf, chi2ndf_dtf, tau_dtf;
     float HF_px, HF_py, HF_pz, HF_e;
     float tr_HF_px, tr_HF_py, tr_HF_pz, tr_HF_e;
-    float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
+    float Jpsi_CHI2NDOF, Jpsi_BPVDLS, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
     float dphi;
     float jet_eta;
@@ -199,6 +207,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     BTree->SetBranchAddress("Jpsi_FDCHI2", &Jpsi_FDCHI2);
     BTree->SetBranchAddress("Jpsi_CHI2", &Jpsi_CHI2);
     BTree->SetBranchAddress("Jpsi_CHI2NDOF", &Jpsi_CHI2NDOF);
+    BTree->SetBranchAddress("Jpsi_BPVDLS", &Jpsi_BPVDLS);    
 
     BTree->SetBranchAddress("mum_px", &mum_px);
     BTree->SetBranchAddress("mum_py", &mum_py);
@@ -255,7 +264,22 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     TH1D *h1_mass_all = new TH1D("h1_mass_all", "", nBins + 17, 4.8, mass_high);
     TH1D *h1_MassMin = new TH1D("h1_MassMin", "", ptHFbinsize, ptHF_binedges);
     TH1D *h1_MassMax = new TH1D("h1_MassMax", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Min = new TH1D("h1_Sideband1Min", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Max = new TH1D("h1_Sideband1Max", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Min = new TH1D("h1_Sideband2Min", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Max = new TH1D("h1_Sideband2Max", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Min_forSysNear = new TH1D("h1_Sideband1Min_forSysNear", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Max_forSysNear = new TH1D("h1_Sideband1Max_forSysNear", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Min_forSysNear = new TH1D("h1_Sideband2Min_forSysNear", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Max_forSysNear = new TH1D("h1_Sideband2Max_forSysNear", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Min_forSysFar = new TH1D("h1_Sideband1Min_forSysFar", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband1Max_forSysFar = new TH1D("h1_Sideband1Max_forSysFar", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Min_forSysFar = new TH1D("h1_Sideband2Min_forSysFar", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_Sideband2Max_forSysFar = new TH1D("h1_Sideband2Max_forSysFar", "", ptHFbinsize, ptHF_binedges);    
     TH1D *h1_BkgScale = new TH1D("h1_BkgScale", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_BkgScale_forSysNear = new TH1D("h1_BkgScale_forSysNear", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_BkgScale_forSysFar = new TH1D("h1_BkgScale_forSysFar", "", ptHFbinsize, ptHF_binedges);
+    
 
     for (int ev = 0; ev < NumEvts; ev++)
     {
@@ -273,14 +297,18 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             continue;
         if (DoRecSelEff)
         {
-            if (Bu_IPCHI2 > 20)
+            // cout << Bu_IPCHI2 << ", " << Bu_CHI2 << ", " << Jpsi_CHI2 << ", " << Jpsi_CHI2NDOF << ", " << sqrt(Jpsi_FDCHI2) << endl;
+            if (Bu_IPCHI2 > 22)
                 continue;
-            if (Bu_CHI2 > 40)
+            if (Bu_CHI2 > 42)
                 continue;
             if (Jpsi_CHI2 > 22)
                 continue;
             if (Jpsi_CHI2NDOF > 18)
                 continue;
+            if (fabs(Jpsi_BPVDLS) < 2.8)
+                continue;
+
         }
 
         TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, Bfromjet, tr_HFmeson;
@@ -411,7 +439,13 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     std::ofstream SigParams("csv/signal_" + extension + ".csv");
     std::ofstream BkgParams("csv/bkg_" + extension + ".csv");
     std::ofstream ResonantParams("csv/res_" + extension + ".csv");
-    SigParams << "mu,sigma,alpha1,n1,alpha2,n2,nsig" << endl;
+    if (DoSystematic)
+    {
+        SigParams << "m,t,n,nsig,fraction" << endl;
+    }
+    else
+        SigParams << "mu,sigma1,sigma2,alpha1,n1,n1_2,alpha2,n2,n2_2,nsig" << endl;
+
     BkgParams << "exp,nbkg" << endl;
     ResonantParams << "mu,sigma,alpha1,n1,alpha2,n2,nres" << endl;
 
@@ -431,7 +465,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         
 //        TFile *file_workspace_misid = new TFile(Form("../BjetMisID/hists/workspace%d_", i) + extension_misid + ".root", "READ");
         // Need to create these workspaces for both misID and reco! 
-        TFile *file_workspace_misid = new TFile(extension_RootFilesMC + TString("MisID/") + extension_misid + TString(".root"), "READ");
+        TFile *file_workspace_misid = new TFile(extension_RootFilesMC + TString("MisID/") + Form("workspace%d_", i) + extension_misid + TString(".root"), "READ");
         
         std::cout <<  extension_RootFilesMC << Form("workspace%d_", i) << extension_reco << ".root" << std::endl;
         std::cout << extension_RootFilesMC << TString("MisID/") << extension_misid << TString(".root");
@@ -444,6 +478,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooWorkspace *w_read_misid = (RooWorkspace *)file_workspace_misid->Get(Form("w%d", i));
         RooRealVar *sigma_ratio, *mean, *sigma1, *sigma2;
         RooRealVar *mu_sig, *alpha1_sig, *alpha2_sig, *p1_sig, *p2_sig;
+        RooRealVar *mu_sig2, *alpha1_sig2, *alpha2_sig2, *p1_sig2, *p2_sig2;        
         RooRealVar *mu, *width, *alpha1, *alpha2, *p1, *p2;
 
         RooRealVar HFMass("HFMass", "HFMass", mass_low, mass_high);
@@ -486,6 +521,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
          p2_sig = new RooRealVar("p2_sig", "p2", 1., 0.6, 4.);
 //        p1_sig = new RooRealVar("p1_sig", "p1", 2.);
 //        p2_sig = new RooRealVar("p2_sig", "p2", 3.);
+
+        p1_sig2 = new RooRealVar("p1_sig2", "p1", 2., 1., 6.);
+        p2_sig2 = new RooRealVar("p2_sig2", "p2", 3., 1., 6.);
 
         // Or, Create signal from two Crystal Ball functions
         // These parameters have been derived from simulation
@@ -531,6 +569,15 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
           //RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(nsig1));
         RooAddPdf sig("sig", "Signal", RooArgList(dcbPdf_sig1, dcbPdf_sig2), RooArgList(*nsig1));
+        
+        RooRealVar *sig2_m = new RooRealVar("sig2_m", "sig2_m", 5.279, 5.27, 5.282);
+        RooRealVar *sig2_n = new RooRealVar("sig2_n", "sig2_n", 5.);
+        sig2_n->setConstant(kTRUE);
+        RooRealVar *sig2_t = new RooRealVar("sig2_t", "sig2_t", 0.02, 0.001, 0.3);
+
+        RooGenericPdf sig2("student-t", "", "tgamma((sig2_n+1)/2)/(tgamma(sig2_n/2)*sqrt(TMath::Pi()*sig2_n)*sig2_t) * pow(1+(1/sig2_n * pow((HFMass-sig2_m)/sig2_t, 2)), (-1-sig2_n)/2)", RooArgList(HFMass, *sig2_m, *sig2_n, *sig2_t));
+
+        
 
         //
         // RooRealVar mean_nosec("mean_nosec", "mean of gaussians", 5.279, 5.25, 5.285);
@@ -567,7 +614,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             // alpha2 = RooRealVar("alpha2", "alpha2", 5.70189e-01);
             // p1 = RooRealVar("p1", "p1", 1.31970e+00);
             // p2 = RooRealVar("p2", "p2", 2.27406e+00);
-
+            cout << "READING THE MIS ID PARAMS!" << endl;
             mu = (RooRealVar *)w_read_misid->obj("mu");
             width = (RooRealVar *)w_read_misid->obj("width");
             alpha1 = (RooRealVar *)w_read_misid->obj("alpha1");
@@ -580,6 +627,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             alpha2->setConstant(kTRUE);
             p1->setConstant(kTRUE);
             p2->setConstant(kTRUE);
+            cout << "FINISHED READING THE MISID PARAMS!" << endl;
         }
         else
         {
@@ -654,16 +702,18 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         ///////////////////////////////////////////////////
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
-        RooRealVar *nsig = new RooRealVar("nsig", "fraction in signal", 10000, 800., 10000000.);
+        RooRealVar *nsig = new RooRealVar("nsig", "fraction in signal", 10000, 0., 100000.);
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
         RooRealVar *nsig_nosec = new RooRealVar("nsig_nosec", "fraction in signal", 500, 0., 1000000.);
-        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000);
+
+        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000.);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.0384 * nsig->getVal(), 0., 0.1 * nsig->getVal());
+        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.0384 * nsig->getVal(),  0.005*nsig->getVal() /*0.0*/, 0.05 * nsig->getVal());
         // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
         RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
+
         // S a m p l e ,   f i t   a n d   p l o t   m o d e l
         // ---------------------------------------------------
         HFMass.setRange("comb1", 5.55, 5.78);
@@ -683,11 +733,28 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooAddPdf *model, *model_nosec;
         // if(isData) model =new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig, tanhpdf), RooArgList(bkgfrac,tanhfrac));
         if (isData)
-            // model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig, dcbPdf), RooArgList(*nbkg, *nsig, *nres));
-            model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg_cheb, sig, dcbPdf), RooArgList(*nbkg, *nsig, *nres));
-        //  else model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig), RooArgList(nbkg, nsig));
+        {
+            if (UseDTF)
+            {
+                if (DoSystematic)
+                {
+                    model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg_cheb, sig2, dcbPdf), RooArgList(*nbkg, *nsig, *nres));
+                }
+                else
+                {
+                    model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg_cheb, sig, dcbPdf), RooArgList(*nbkg, *nsig, *nres));
+                    // model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg_cheb, sig), RooArgList(nbkg, nsig));
+                }
+            }
+            else
+                model = new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig, dcbPdf), RooArgList(*nbkg, *nsig, *nres));
+        }        
         else
+        {
             model = new RooAddPdf("model", "g1+g2+a", RooArgList(sig), RooArgList(*nsig));
+            // model = new RooAddPdf("model", "g1+g2+a", RooArgList(sig2), RooArgList(*nsig));
+        }
+
 
         // model_nosec = new RooAddPdf("model_nosec", "g1+g2+a", RooArgList(bkg_nosec, sig_nosec, dcbPdf), RooArgList(nbkg_nosec, nsig_nosec, nres_nosec));
         // model->fitTo(B_mass, Range("noSec"), PrintEvalErrors(-1), Save(true));
@@ -821,20 +888,47 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
         float MassMu = mu_sig->getVal();
         float MassSigma = sigma2->getVal();
+        
+        if (DoSystematic)
+        {
+            MassMu = sig2_m->getVal();
+            MassSigma = sig2_t->getVal();
+            cout << "MassMu = " << sig2_m->getVal() << endl;
+            cout << "MassSigma = " << sig2_t->getVal() << endl;
+        }
+        
         float MassUp = MassMu + 2 * MassSigma;
         float MassDown = MassMu - 2 * MassSigma;
         Sideband1_Min = MassMu - 9 * MassSigma;
         Sideband1_Max = MassMu - 5 * MassSigma;
         Sideband2_Min = MassMu + 5 * MassSigma;
         Sideband2_Max = MassMu + 9 * MassSigma;
+        
+        float Sideband1_Min_forSysNear = Sideband1_Min + MassSigma;
+        float Sideband1_Max_forSysNear = Sideband1_Max;
+        float Sideband2_Min_forSysNear = Sideband2_Min;
+        float Sideband2_Max_forSysNear = Sideband2_Max - MassSigma;
+
+        float Sideband1_Min_forSysFar = Sideband1_Min;
+        float Sideband1_Max_forSysFar = Sideband1_Max - MassSigma;
+        float Sideband2_Min_forSysFar = Sideband2_Min + MassSigma;
+        float Sideband2_Max_forSysFar = Sideband2_Max;
+        
         cout << MassDown << ", " << MassUp << endl;
         cout << "Sideband1: " << Sideband1_Min << ", " << Sideband1_Max << endl;
         cout << "Sideband2: " << Sideband2_Min << ", " << Sideband2_Max << endl;
+        
         HFMass.setRange("signal", MassDown, MassUp);
         HFMass.setRange("sideband1", Sideband1_Min, Sideband1_Max);
         HFMass.setRange("sideband2", Sideband2_Min, Sideband2_Max);
-        // HFMass.setRange("signal", MassMin, MassMax);
 
+        HFMass.setRange("sideband1_forSysNear", Sideband1_Min_forSysNear, Sideband1_Max_forSysNear);
+        HFMass.setRange("sideband2_forSysNear", Sideband2_Min_forSysNear, Sideband2_Max_forSysNear);
+        HFMass.setRange("sideband1_forSysFar", Sideband1_Min_forSysFar, Sideband1_Max_forSysFar);
+        HFMass.setRange("sideband2_forSysFar", Sideband2_Min_forSysFar, Sideband2_Max_forSysFar);
+
+        // HFMass.setRange("signal", MassMin, MassMax);
+        
         // intsigX = sig->createIntegral(*HFMass, NormSet(*HFMass), Range("signal"));
         // intbkgX = bkg->createIntegral(*HFMass, NormSet(*HFMass), Range("signal"));
         RooAbsReal *intsigX;
@@ -845,13 +939,23 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         intbkgSide = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1", "sideband2"));
         intbkgSideLeft = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1"));
         intbkgSideRight = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2"));
+        RooAbsReal *intbkgSide_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear", "sideband2_forSysNear"));
+        RooAbsReal *intbkgSideLeft_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear"));
+        RooAbsReal *intbkgSideRight_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysNear"));
+        RooAbsReal *intbkgSide_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar", "sideband2_forSysFar"));
+        RooAbsReal *intbkgSideLeft_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar"));
+        RooAbsReal *intbkgSideRight_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysFar"));
+        
         intresX = dcbPdf.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
         float sig_yield = intsigX->getVal() * nsig->getVal();
         float bkg_yield = intbkgX->getVal() * nbkg->getVal();
         float res_yield = intresX->getVal() * nres->getVal();
         float bkg_frac = (bkg_yield) / (sig_yield + bkg_yield + res_yield);
         float res_frac = (res_yield) / (sig_yield + bkg_yield + res_yield);
+        float sig_frac = (sig_yield) / (sig_yield + bkg_yield + res_yield);        
         float bkg_scale = intbkgX->getVal() / intbkgSide->getVal();
+        float bkg_scale_forSysNear = intbkgX->getVal() / intbkgSide_forSysNear->getVal();
+        float bkg_scale_forSysFar = intbkgX->getVal() / intbkgSide_forSysFar->getVal();        
         // cout << "Bkg Yield = " << intbkgX->getVal() << endl;
         // cout << "Sig Yield = " << intsigX->getVal() << endl;
         cout << "Signal Yield = " << sig_yield << endl;
@@ -867,10 +971,37 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
         h1_MassMax->SetBinContent(i + 1, MassUp);
         h1_MassMin->SetBinContent(i + 1, MassDown);
-        h1_BkgScale->SetBinContent(i + 1, bkg_scale);
+        
+        h1_Sideband1Min->SetBinContent(i + 1, Sideband1_Min);
+        h1_Sideband1Max->SetBinContent(i + 1, Sideband1_Max);
+        h1_Sideband2Min->SetBinContent(i + 1, Sideband2_Min);
+        h1_Sideband2Max->SetBinContent(i + 1, Sideband2_Max);
 
-        SigParams
-            << mu_sig->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << nsig->getVal() << endl;
+        h1_Sideband1Min_forSysNear->SetBinContent(i + 1, Sideband1_Min_forSysNear);
+        h1_Sideband1Max_forSysNear->SetBinContent(i + 1, Sideband1_Max_forSysNear);
+        h1_Sideband2Min_forSysNear->SetBinContent(i + 1, Sideband2_Min_forSysNear);
+        h1_Sideband2Max_forSysNear->SetBinContent(i + 1, Sideband2_Max_forSysNear);
+
+        h1_Sideband1Min_forSysFar->SetBinContent(i + 1, Sideband1_Min_forSysFar);
+        h1_Sideband1Max_forSysFar->SetBinContent(i + 1, Sideband1_Max_forSysFar);
+        h1_Sideband2Min_forSysFar->SetBinContent(i + 1, Sideband2_Min_forSysFar);
+        h1_Sideband2Max_forSysFar->SetBinContent(i + 1, Sideband2_Max_forSysFar);
+        
+        h1_BkgScale->SetBinContent(i + 1, bkg_scale);        
+
+        h1_BkgScale_forSysNear->SetBinContent(i + 1, bkg_scale_forSysNear);
+        h1_BkgScale_forSysFar->SetBinContent(i + 1, bkg_scale_forSysFar);
+        
+
+        if (!DoSystematic)
+        {
+            SigParams
+                << mu_sig->getVal() << "," << sigma1->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << p1_sig2->getVal() << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << p2_sig2->getVal() << "," << nsig->getVal() << ", " << sig_frac << endl;
+        }
+        else
+            SigParams
+                << sig2_m->getVal() << "," << sig2_t->getVal() << "," << sig2_n->getVal() << "," << nsig->getVal() << ", " << sig_frac << endl;
+
         BkgParams << a1->getVal() << "," << nbkg->getVal() << endl;
         ResonantParams << mu->getVal() << "," << width->getVal() << "," << alpha1->getVal() << "," << p1->getVal() << "," << alpha2->getVal() << "," << p2->getVal() << "," << nsig->getVal() << endl;
     }

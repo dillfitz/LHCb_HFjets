@@ -28,6 +28,8 @@ void SimpleUnfold(int NumEvts = -1,
                   bool DoGhostCut = false,
                   bool DoRecSelEff = false,
                   bool DoSignalSys = false,
+                  bool DoUnfoldPrior = false,
+                  bool DoJetID = false,                  
                   bool SubtractGS = false )
 {
     // gROOT->ProcessLine(".L ZjetLuC");
@@ -157,22 +159,27 @@ void SimpleUnfold(int NumEvts = -1,
     // if (isData)
     //   extension += "_forData";
     
-    if (DoReverse)
-        extension_prefix = "reverse_";
-    if (DoJES == 1)
-        extension_prefix = TString("JESPos_");
-    else if (DoJES == 2)
-        extension_prefix = TString("JESNeg_");
-    if (DoJER)
-        extension_prefix = TString("JER_");
-    if (DoFSPEff)
-        extension_prefix = TString("fspeff_");
-    if (DoTrackPt)
-        extension_prefix = TString("trackpt_");
-    if (DoGhostCut)
-        extension_prefix = TString("ghostcut_");
-    if (DoRecSelEff)
-        extension_prefix = TString("recselsys_");
+  if (DoReverse)
+    extension_prefix = "reverse_";
+  if (DoJES == 1)
+    extension_prefix = TString("JESPos_");
+  else if (DoJES == 2)
+    extension_prefix = TString("JESNeg_");
+  if (DoJER)
+    extension_prefix = TString("JER_");
+  if (DoFSPEff)
+    extension_prefix = TString("fspeff_");
+  if (DoGhostCut)
+    extension_prefix = TString("ghostcut_");
+  if (DoJetID)
+    extension_prefix = TString("jetid_");
+  if (DoRecSelEff)
+    extension_prefix = TString("recselsys_");
+  if (DoSignalSys)
+    extension_prefix = TString("signalsys_");
+  if (DoUnfoldPrior)
+    extension_prefix = TString("priorsys_");
+
     // int NumEvts = 0;
     // cout <<"Choose number of events (-1: All Events, or enter integer): ";
     // cin>> NumEvts;
@@ -188,12 +195,10 @@ void SimpleUnfold(int NumEvts = -1,
     extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
     
     if (!DoReverse)
-        extension_read = extension_prefix + extension_read;
+      extension_read = extension_prefix + extension_read;
+
     extension = extension_prefix + extension;
     
-    // TFile fread(dir_deadcone + "hists/" + extension_read + ".root", "READ");
-    cout << "File:" << endl;
-    cout << extension_read << endl;
     
     TFile *file_eff = new TFile(extension_RootFilesMC + extension_eff + TString(".root"), "READ");
     TFile *file_decay = new TFile(extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
@@ -219,8 +224,10 @@ void SimpleUnfold(int NumEvts = -1,
             else if (Mag == 1)
                 str_Mag = "_MU";
             extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
-            if (!DoReverse && !DoRecSelEff)
-                extension_read = extension_prefix + extension_read;
+            if (!(DoReverse || DoRecSelEff || DoSignalSys || DoUnfoldPrior))        
+            {
+              extension_read = extension_prefix + extension_read;
+            }
             cout << extension_read << endl;
             BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");
         }
@@ -228,8 +235,10 @@ void SimpleUnfold(int NumEvts = -1,
     else
     {
         extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
-        if (!DoReverse && !DoRecSelEff)
-            extension_read = extension_prefix + extension_read;
+        if (!(DoReverse || DoRecSelEff || DoSignalSys || DoUnfoldPrior))        
+        {
+          extension_read = extension_prefix + extension_read;
+        }
         cout << extension_read << endl;
         BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");
     }
@@ -291,11 +300,12 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_dRztheta_ratio;
     
 //    /////////////////// Mass Fit Parameters /////////////////////////////////
-    TString extension_mass( extension_RootFilesData + TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");      
+    TString extension_mass( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");      
     if (DoRecSelEff)
       extension_mass = "recselsys_" + extension_mass;
     if (DoSignalSys)
       extension_mass = "sys_" + extension_mass;
+    extension_mass = extension_RootFilesData + extension_mass;
     TFile f_massfit( extension_mass, "READ");
     TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
     TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
@@ -691,7 +701,7 @@ void SimpleUnfold(int NumEvts = -1,
     int NumBHads_tr;
     int eventNumber, nSV;
     bool Hasbbbar, TOS;
-    float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
+    float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2, Jpsi_BPVDLS;;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
     float sv_mass, sv_chi2, sv_ntrks, sv_cosine, bdt_mCor;
     int SVTag;
@@ -725,6 +735,7 @@ void SimpleUnfold(int NumEvts = -1,
     BTree->SetBranchAddress("Jpsi_FDCHI2", &Jpsi_FDCHI2);
     BTree->SetBranchAddress("Jpsi_CHI2", &Jpsi_CHI2);
     BTree->SetBranchAddress("Jpsi_CHI2NDOF", &Jpsi_CHI2NDOF);
+    BTree->SetBranchAddress("Jpsi_BPVDLS", &Jpsi_BPVDLS);    
     
     //  BTree->SetBranchAddress("tr_thetas", &tr_thetas);
     //  BTree->SetBranchAddress("tr_Erads", &tr_Erads);
@@ -874,20 +885,21 @@ void SimpleUnfold(int NumEvts = -1,
         
         
         
-        if (DoRecSelEff)
-        {
-            // cout << Bu_IPCHI2 << ", " << Bu_CHI2 << ", " << Jpsi_CHI2 << ", " << Jpsi_CHI2NDOF << ", " << sqrt(Jpsi_FDCHI2) << endl;
-            if (Bu_IPCHI2 > 20)
-                continue;
-            if (Bu_CHI2 > 40)
-                continue;
-            if (Jpsi_CHI2 > 22)
-                continue;
-            if (Jpsi_CHI2NDOF > 18)
-                continue;
-            // if (sqrt(Jpsi_FDCHI2) > 2.8)
-            //   continue;
-        }
+
+    if (DoRecSelEff)
+    {
+      // cout << Bu_IPCHI2 << ", " << Bu_CHI2 << ", " << Jpsi_CHI2 << ", " << Jpsi_CHI2NDOF << ", " << sqrt(Jpsi_FDCHI2) << endl;
+      if (Bu_IPCHI2 > 22)
+        continue;
+      if (Bu_CHI2 > 42)
+        continue;
+      if (Jpsi_CHI2 > 22)
+        continue;
+      if (Jpsi_CHI2NDOF > 18)
+        continue;
+      if (fabs(Jpsi_BPVDLS) < 2.8)
+        continue;
+    }
         
         if (!TOS)
             continue;
@@ -2546,7 +2558,7 @@ void SimpleUnfold(int NumEvts = -1,
     //  bool DoTrigEff = false;
     //  int DoPIDEff = 0;
     //  bool DoRecSelEff = false;
-    //  bool DoMassFit = false;
+    //  bool DoSignalSys = false;
     //  bool SubtractGS = false;
     //
     //  // Parsing command line arguments
@@ -2803,6 +2815,7 @@ void SimpleUnfold(int NumEvts = -1,
     //               DoTrackPt,
     //               DoGhostCut,
     //               DoRecSelEff,
+    //               DoSignalSys,    
     //               SubtractGS);
     //  return 0;
     

@@ -616,6 +616,33 @@ double GetWeightedAverage(TH2D *h2)
   return result;
 }
 
+void SubtractUnity(TH1D *h1)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    // double err = hvals->GetBinError(i, j);
+    h1->SetBinContent(i, h1->GetBinContent(i) - 1.);
+  }
+}
+
+double GetWeightedAverage(TH1D *h1)
+{
+  double sumWeights = 0.;
+  double num = 0.;
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    double weight = 1. / h1->GetBinError(i);
+    double val = fabs(h1->GetBinContent(i) - 1.);
+    if (val == 1.)
+      continue;
+    num += val * weight;
+    sumWeights += weight;
+  }
+  double result = num / sumWeights;
+  return result;
+}
+
+
 double GetWeightedAverage(TH2D *h2, TH2D *h2_weight)
 {
   double sumWeights = 0.;
@@ -699,6 +726,18 @@ void SetHistErrCorr(TH2 *hist, TH2 *hist1, TH2 *hist2, double corr = 0.)
     }
   }
 }
+
+void SetHistErrCorr(TH1 *hist, TH1 *hist1, TH1 *hist2, double corr = 0.)
+{
+  for (int i = 1; i < hist->GetNbinsX() + 1; i++)
+  {
+    double err1 = hist1->GetBinError(i);
+    double err2 = hist2->GetBinError(i);
+    hist->SetBinError(i, sqrt(err1 * err1 + err2 * err2 - 2 * corr * err1 * err2));
+
+  }
+}
+
 void GetSqrtHist(TH2 *h2)
 {
   for (int i = 1; i < h2->GetNbinsX() + 1; i++)

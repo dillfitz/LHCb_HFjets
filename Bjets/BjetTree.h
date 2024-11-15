@@ -173,6 +173,7 @@ public :
    Double_t        Jpsi_FD_ORIVX;
    Double_t        Jpsi_FDCHI2_ORIVX;
    Double_t        Jpsi_DIRA_ORIVX;
+   Double_t        Jpsi_BPVDLS;   
    Int_t           Jpsi_TRUEID;
    Double_t        Jpsi_TRUEP_E;
    Double_t        Jpsi_TRUEP_X;
@@ -1083,6 +1084,7 @@ public :
        TBranch *b_Jpsi_FD_ORIVX;                               //!
        TBranch *b_Jpsi_FDCHI2_ORIVX;                           //!
        TBranch *b_Jpsi_DIRA_ORIVX;                             //!
+       TBranch *b_Jpsi_BPVDLS;                              //!
        TBranch *b_Jpsi_TRUEID;                                 //!
        TBranch *b_Jpsi_TRUEP_E;                                //!
        TBranch *b_Jpsi_TRUEP_X;                                //!
@@ -2336,6 +2338,7 @@ void BjetTree::Init(TTree *tree)
     fChain->SetBranchAddress("Jpsi_FD_ORIVX", &Jpsi_FD_ORIVX, &b_Jpsi_FD_ORIVX);
     fChain->SetBranchAddress("Jpsi_FDCHI2_ORIVX", &Jpsi_FDCHI2_ORIVX, &b_Jpsi_FDCHI2_ORIVX);
     fChain->SetBranchAddress("Jpsi_DIRA_ORIVX", &Jpsi_DIRA_ORIVX, &b_Jpsi_DIRA_ORIVX);
+    fChain->SetBranchAddress("Jpsi_BPVDLS", &Jpsi_BPVDLS, &b_Jpsi_BPVDLS);    
     fChain->SetBranchAddress("Jpsi_TRUEID", &Jpsi_TRUEID, &b_Jpsi_TRUEID);
     fChain->SetBranchAddress("Jpsi_TRUEP_E", &Jpsi_TRUEP_E, &b_Jpsi_TRUEP_E);
     fChain->SetBranchAddress("Jpsi_TRUEP_X", &Jpsi_TRUEP_X, &b_Jpsi_TRUEP_X);

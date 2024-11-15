@@ -21,10 +21,12 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
                 bool DoTrackPt = false,
                 bool DoGhostCut = false,
                 int DoTrackEff = 0,
-                bool DoTrigEff = false,
+                int DoTrigEff = 0,
                 int DoPIDEff = 0,
                 bool DoRecSelEff = false,
-                bool DoMassFit = false,
+                int DoMassFit = 0,
+                bool DoSignalSys = false,
+                bool DoJetID = false,                                
                 bool SubtractGS = false)
 {
 
@@ -205,10 +207,13 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     extension_prefix = TString("trackpt_");
   if (DoGhostCut)
     extension_prefix = TString("ghostcut_");
+  if (DoJetID)
+    extension_prefix = TString("jetid_");    
   if (DoRecSelEff)
     extension_prefix = TString("recselsys_");
-  if (DoMassFit)
-    extension_prefix = TString("massfitsys_");
+  if (DoSignalSys)
+    extension_prefix = TString("signalsys_");
+    
 
   extension_unfold = extension_prefix + extension_unfold;
 
@@ -220,10 +225,18 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     extension = TString("pidsysup_") + extension;
   if (DoPIDEff == 2)
     extension = TString("pidsysdown_") + extension;
-  if (DoTrigEff)
-    extension = TString("trigsys_") + extension;
+  if (DoTrigEff == 1)
+    extension = TString("trigsysup_") + extension;
+  if (DoTrigEff == 2)
+    extension = TString("trigsysdown_") + extension;  
+  if (DoMassFit == 1)
+    extension_prefix = TString("massfitsysnear_");
+  if (DoMassFit == 2)
+    extension_prefix = TString("massfitsysfar_");
+  
 
-  cout << extension_read << endl;
+
+  //cout << extension_read << endl;
   cout << extension_unfold << endl;
 
   extension = extension_prefix + extension;
@@ -298,19 +311,38 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-    TString datastr = TString("massfit_data_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
-    TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
-    TString extension_mass = isData ? datastr : recostr;
+  TString massfit = TString("massfit_data_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
+  //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
+  TString extension_mass = massfit;
     
-    std::cout << "extension_mass : " << extension_mass << std::endl;
   if (DoRecSelEff)
-    extension_mass = "recselsys_/" + extension_mass;
+    extension_mass = "recselsys_" + extension_mass;
+  if (DoSignalSys)
+  {
+    extension_mass = "sys_" + extension_mass;
+  }
+  std::cout << "extension_mass : " << extension_mass << std::endl;   
   TFile f_massfit( extension_RootFiles  + extension_mass, "READ");
   TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
   TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
+  TH1D *h1_Sideband1Min = (TH1D *)f_massfit.Get("h1_Sideband1Min");
+  TH1D *h1_Sideband1Max = (TH1D *)f_massfit.Get("h1_Sideband1Max");
+  TH1D *h1_Sideband2Min = (TH1D *)f_massfit.Get("h1_Sideband2Min");
+  TH1D *h1_Sideband2Max = (TH1D *)f_massfit.Get("h1_Sideband2Max");
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
+  TH1D *h1_BkgScale_forSysNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
+  TH1D *h1_BkgScale_forSysFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
+
 
   //////////////////////////////////////
+  
+  /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
+  TString extension_trig("jpsieff_reco_ev_-1_b" + TString("_91599.root"));
+  // if (DoTrigEff)
+  //   extension_trig = "recselsys_" + extension_trig;
+  TFile f_trig("../../root_files/TrigEff/" + extension_trig, "READ");
+  TH2D *h2_trig_ratio = (TH2D *)f_trig.Get("h2_eff_ratio");
+
 
   TF1 *f_eff = (TF1 *)file_unfold->Get("f_eff1");
   TF1 *f_pur = (TF1 *)file_unfold->Get("f_pur1");
@@ -334,9 +366,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       else if (Mag == 1)
         str_Mag = "_MU";
       extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
-      if (!DoRecSelEff)
-//        extension_read = extension_prefix + extension_read;
-        extension_read =  extension_read;
+      if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
+      {
+        extension_read = extension_prefix + extension_read;
+        cout << "Loading Dataset(s) " << extension_read << endl;        
+      }
 
      BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
     }
@@ -344,9 +378,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   else
   {
     extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
-    if (!DoRecSelEff)
-//      extension_read = extension_prefix + extension_read;
-      extension_read = extension_read;
+    if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
+    {   
+      extension_read = extension_prefix + extension_read;
+      cout << "Loading Dataset(s) " << extension_read << endl;       
+    }
       BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
   }
 
@@ -593,7 +629,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   float mup_CHI2NDOF, mup_GHOSTPROB, mup_IPCHI2;
   float mum_CHI2NDOF, mum_GHOSTPROB, mum_IPCHI2;
   float K_CHI2NDOF, K_GHOSTPROB, K_IPCHI2;
-  float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
+  float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2, Jpsi_BPVDLS;
   float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
   float Bfromjet_px, Bfromjet_py, Bfromjet_pz, Bfromjet_e;
   float K_PIDK;
@@ -701,6 +737,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   BTree->SetBranchAddress("Jpsi_FDCHI2", &Jpsi_FDCHI2);
   BTree->SetBranchAddress("Jpsi_CHI2", &Jpsi_CHI2);
   BTree->SetBranchAddress("Jpsi_CHI2NDOF", &Jpsi_CHI2NDOF);
+  BTree->SetBranchAddress("Jpsi_BPVDLS", &Jpsi_BPVDLS);  
     
   BTree->SetBranchAddress("jpsi_ipchi2", &jpsi_ipchi2);
 
@@ -906,6 +943,39 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     float bkg_weight = h1_BkgScale != NULL ? h1_BkgScale->GetBinContent(h1_BkgScale->FindBin(HFmeson.Pt())) : 1.0;
     float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
     float MassLow = h1_MassMin != NULL ? h1_MassMin->GetBinContent(h1_MassMin->FindBin(HFmeson.Pt())) : 5.24;
+
+    float Sideband1Min = h1_Sideband1Min != NULL ? h1_Sideband1Min->GetBinContent(h1_Sideband1Min->FindBin(HFmeson.Pt())) : 5.24;
+    float Sideband1Max = h1_Sideband1Max != NULL ? h1_Sideband1Max->GetBinContent(h1_Sideband1Max->FindBin(HFmeson.Pt())) : 5.31;
+    float Sideband2Min = h1_Sideband2Min != NULL ? h1_Sideband2Min->GetBinContent(h1_Sideband2Min->FindBin(HFmeson.Pt())) : 5.24;
+    float Sideband2Max = h1_Sideband2Max != NULL ? h1_Sideband2Max->GetBinContent(h1_Sideband2Max->FindBin(HFmeson.Pt())) : 5.31;
+
+    // cout << HFmeson.Pt() << ", " << MassLow << ", " << MassHigh << ", " << Sideband1Min << ", " << Sideband1Max << ", " << Sideband2Min << ", " << Sideband2Max << endl;
+    if (DoMassFit == 1)
+    {
+      TH1D *h1_Sideband1Min_forSysNear = (TH1D *)f_massfit.Get("h1_Sideband1Min_forSysNear");
+      TH1D *h1_Sideband1Max_forSysNear = (TH1D *)f_massfit.Get("h1_Sideband1Max_forSysNear");
+      TH1D *h1_Sideband2Min_forSysNear = (TH1D *)f_massfit.Get("h1_Sideband2Min_forSysNear");
+      TH1D *h1_Sideband2Max_forSysNear = (TH1D *)f_massfit.Get("h1_Sideband2Max_forSysNear");
+      Sideband1Min = h1_Sideband1Min_forSysNear != NULL ? h1_Sideband1Min_forSysNear->GetBinContent(h1_Sideband1Min_forSysNear->FindBin(HFmeson.Pt())) : 5.24;
+      Sideband1Max = h1_Sideband1Max_forSysNear != NULL ? h1_Sideband1Max_forSysNear->GetBinContent(h1_Sideband1Max_forSysNear->FindBin(HFmeson.Pt())) : 5.31;
+      Sideband2Min = h1_Sideband2Min_forSysNear != NULL ? h1_Sideband2Min_forSysNear->GetBinContent(h1_Sideband2Min_forSysNear->FindBin(HFmeson.Pt())) : 5.24;
+      Sideband2Max = h1_Sideband2Max_forSysNear != NULL ? h1_Sideband2Max_forSysNear->GetBinContent(h1_Sideband2Max_forSysNear->FindBin(HFmeson.Pt())) : 5.31;
+      bkg_weight = h1_BkgScale_forSysNear != NULL ? h1_BkgScale_forSysNear->GetBinContent(h1_BkgScale_forSysNear->FindBin(HFmeson.Pt())) : 1.0;
+    }
+    if (DoMassFit == 2)
+    {
+      TH1D *h1_Sideband1Min_forSysFar = (TH1D *)f_massfit.Get("h1_Sideband1Min_forSysFar");
+      TH1D *h1_Sideband1Max_forSysFar = (TH1D *)f_massfit.Get("h1_Sideband1Max_forSysFar");
+      TH1D *h1_Sideband2Min_forSysFar = (TH1D *)f_massfit.Get("h1_Sideband2Min_forSysFar");
+      TH1D *h1_Sideband2Max_forSysFar = (TH1D *)f_massfit.Get("h1_Sideband2Max_forSysFar");
+      Sideband1Min = h1_Sideband1Min_forSysFar != NULL ? h1_Sideband1Min_forSysFar->GetBinContent(h1_Sideband1Min_forSysFar->FindBin(HFmeson.Pt())) : 5.24;
+      Sideband1Max = h1_Sideband1Max_forSysFar != NULL ? h1_Sideband1Max_forSysFar->GetBinContent(h1_Sideband1Max_forSysFar->FindBin(HFmeson.Pt())) : 5.31;
+      Sideband2Min = h1_Sideband2Min_forSysFar != NULL ? h1_Sideband2Min_forSysFar->GetBinContent(h1_Sideband2Min_forSysFar->FindBin(HFmeson.Pt())) : 5.24;
+      Sideband2Max = h1_Sideband2Max_forSysFar != NULL ? h1_Sideband2Max_forSysFar->GetBinContent(h1_Sideband2Max_forSysFar->FindBin(HFmeson.Pt())) : 5.31;
+      bkg_weight = h1_BkgScale_forSysFar != NULL ? h1_BkgScale_forSysFar->GetBinContent(h1_BkgScale_forSysFar->FindBin(HFmeson.Pt())) : 1.0;
+    }
+    
+    
     // cout << "Mass Range = [" << MassLow << ", " << MassHigh << "]"
     //      << ", " << HFmeson.Pt() << endl;
     // cout << bkg_weight << ", " << MassLow << ", " << MassHigh << endl;
@@ -1000,20 +1070,35 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     if (DoRecSelEff)
     {
       // cout << Bu_IPCHI2 << ", " << Bu_CHI2 << ", " << Jpsi_CHI2 << ", " << Jpsi_CHI2NDOF << ", " << sqrt(Jpsi_FDCHI2) << endl;
-      if (Bu_IPCHI2 > 20)
+      if (Bu_IPCHI2 > 22)
         continue;
-      if (Bu_CHI2 > 40)
+      if (Bu_CHI2 > 42)
         continue;
       if (Jpsi_CHI2 > 22)
         continue;
       if (Jpsi_CHI2NDOF > 18)
         continue;
-      // if (sqrt(Jpsi_FDCHI2) > 2.8)
-      //   continue;
+      if (fabs(Jpsi_BPVDLS) < 2.8)
+        continue;
     }
-    if (DoTrigEff)
+
+    if (DoTrigEff == 1)
     {
+      double trig_var = h2_trig_ratio->GetBinContent(h2_trig_ratio->GetXaxis()->FindBin(HFmeson.Pt()), h2_trig_ratio->GetYaxis()->FindBin(HFmeson.Rapidity()));
+      double trig_err = h2_trig_ratio->GetBinError(h2_trig_ratio->GetXaxis()->FindBin(HFmeson.Pt()), h2_trig_ratio->GetYaxis()->FindBin(HFmeson.Rapidity()));
+      trig_var = fabs(1.0 - trig_var);
+      trig_var = (trig_err > trig_var) ? trig_err : trig_var;
+      trigeff_ratio = trigeff_ratio * (1 + trig_var);
     }
+    if (DoTrigEff == 2)
+    {
+      double trig_var = h2_trig_ratio->GetBinContent(h2_trig_ratio->GetXaxis()->FindBin(HFmeson.Pt()), h2_trig_ratio->GetYaxis()->FindBin(HFmeson.Rapidity()));
+      double trig_err = h2_trig_ratio->GetBinError(h2_trig_ratio->GetXaxis()->FindBin(HFmeson.Pt()), h2_trig_ratio->GetYaxis()->FindBin(HFmeson.Rapidity()));
+      trig_var = fabs(1.0 - trig_var);
+      trig_var = (trig_err > trig_var) ? trig_err : trig_var;
+      trigeff_ratio = trigeff_ratio * (1 - trig_var);
+    }
+
       
 //    cout << " ------------------------------------------------ " << endl;
 //     cout << "Evt Pur:"<< event_pur << ", Event Eff:" << event_eff << endl;
@@ -2376,19 +2461,33 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   
   ccan[ican]->cd(1);
   gPad->SetLogz();
-    h2_zjt->SetStats(0);
-  h2_zjt->Draw("COLZ");
+  //h2_zjt->SetStats(0);
+  //h2_zjt->Draw("COLZ");
+  h3_ptzjt->GetZaxis()->SetRange(20.,100.);
+  TH2D *h2_temp_zjt = (TH2D*)h3_ptzjt->Project3D("yx");
+  h2_temp_zjt->SetStats(0);
+  h2_temp_zjt->Draw("COLZ");  
     
   ccan[ican]->cd(2);
   // h2_thetaErad->Scale(1./NumJets);
    gPad->SetLogz();
-  h2_zr->SetStats(0);
-  h2_zr->Draw("COLZ");
+  //h2_zr->SetStats(0);
+  //h2_zr->Draw("COLZ");
+  h3_ptzr->GetZaxis()->SetRange(20.,100.);
+  TH2D *h2_temp_zr = (TH2D*)h3_ptzr->Project3D("yx");
+  h2_temp_zr->SetStats(0);
+  h2_temp_zr->Draw("COLZ");
+
 
   ccan[ican]->cd(3);
   gPad->SetLogz();
-    h2_jtr->SetStats(0);
-  h2_jtr->Draw("COLZ");
+//    h2_jtr->SetStats(0);
+//  h2_jtr->Draw("COLZ");
+  h3_ptjtr->GetZaxis()->SetRange(20.,100.);
+  TH2D *h2_temp_jtr = (TH2D*)h3_ptjtr->Project3D("yx");
+  h2_temp_jtr->SetStats(0);
+  h2_temp_jtr->Draw("COLZ");
+
  
   ccan[ican]->cd(4);
   gPad->SetLogz();

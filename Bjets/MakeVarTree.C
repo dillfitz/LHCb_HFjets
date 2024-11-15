@@ -21,6 +21,7 @@ void MakeVarTree(int NumEvts_user = -1,
                  bool chargedJetCut_user = false,
                  bool DoJER = false,
                  int DoJES = 0,
+                 bool DoJetID = false,
                  bool DoFSPEff = false,
                  bool DoTrackPt = false,
                  bool DoGhostCut = false)
@@ -155,6 +156,9 @@ void MakeVarTree(int NumEvts_user = -1,
         extension = TString("trackpt_") + extension;
     if (DoGhostCut)
         extension = TString("ghostcut_") + extension;
+    if (DoJetID)
+        extension = TString("jetid_") + extension;
+        
 
     // extension_pideff = "effhists-Turbo" + str_year + str_Mag + "-K-DLLK>0-P.ETA.nTracks";
     ////////////////////////////////////////////////////
@@ -292,7 +296,7 @@ void MakeVarTree(int NumEvts_user = -1,
     float mup_CHI2NDOF, mup_GHOSTPROB, mup_IPCHI2;
     float mum_CHI2NDOF, mum_GHOSTPROB, mum_IPCHI2;
     float K_CHI2NDOF, K_GHOSTPROB, K_IPCHI2;
-    float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
+    float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_BPVDLS, Jpsi_IPCHI2;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
     int nTracks, nSPDHits;
     float jpsi_ipchi2, k_ipchi2;
@@ -427,6 +431,7 @@ void MakeVarTree(int NumEvts_user = -1,
     BTree->Branch("Jpsi_pz", &Jpsi_pz);
     BTree->Branch("Jpsi_e", &Jpsi_e);
     BTree->Branch("Jpsi_FDCHI2", &Jpsi_FDCHI2);
+    BTree->Branch("Jpsi_BPVDLS", &Jpsi_BPVDLS);    
     BTree->Branch("Jpsi_CHI2", &Jpsi_CHI2);
     BTree->Branch("Jpsi_CHI2NDOF", &Jpsi_CHI2NDOF);
 
@@ -733,7 +738,7 @@ void MakeVarTree(int NumEvts_user = -1,
 
         if (DoJES == 1)
         {
-            float rand = 1.026;
+            float rand = 1.024;
             HFjet -= HFmeson;
             HFjet.SetPx(HFjet.Px() * rand);
             HFjet.SetPy(HFjet.Py() * rand);
@@ -743,7 +748,7 @@ void MakeVarTree(int NumEvts_user = -1,
         }
         else if (DoJES == 2)
         {
-            float rand = 0.974;
+            float rand = 0.976;
             HFjet -= HFmeson;
             HFjet.SetPx(HFjet.Px() * rand);
             HFjet.SetPy(HFjet.Py() * rand);
@@ -754,7 +759,7 @@ void MakeVarTree(int NumEvts_user = -1,
 
         if (DoJER)
         {
-            float rand = myRNG->Gaus(1, 0.103);
+            float rand = myRNG->Gaus(1, 0.114);
             HFjet -= HFmeson;
             HFjet.SetPx(HFjet.Px() * rand);
             HFjet.SetPy(HFjet.Py() * rand);
@@ -762,6 +767,36 @@ void MakeVarTree(int NumEvts_user = -1,
             HFjet.SetE(HFjet.E() * rand);
             HFjet += HFmeson;
         }
+
+        if (DoJetID)
+        {
+            double mpt = 0;
+            int num_trk = 0;
+            int num_neut = 0;
+            int num_part = 0;
+            double mtf = 0;
+            for (int dtrs0 = 0; dtrs0 < Tree.Jet_Dtr_nrecodtr; dtrs0++)
+            {
+
+                if (fabs(Tree.Jet_Dtr_ThreeCharge[dtrs0]) == 0)
+                {
+                    num_neut++;
+                }
+                else
+                {
+                    num_trk++;
+                }
+            }
+            // double cpf = (double)num_trk / (double)num_part;
+            // mtf /= Zjet.E();
+            // std::cout << "cpf = " << cpf << std::endl;
+            // std::cout << "mtf = " << mtf << std::endl;
+            // std::cout << "mpt = " << mpt << std::endl;
+
+            if (num_trk < 2)
+                continue;
+        }
+
         // cout<<tr_HFmeson.M()<<",";
 
         bmass_dtf = Tree.Bu_ConsBu_M[0] / 1000.;
@@ -1314,7 +1349,8 @@ void MakeVarTree(int NumEvts_user = -1,
         Jpsi_IPCHI2 = Tree.Jpsi_IPCHI2_OWNPV;
         Jpsi_CHI2 = Tree.Jpsi_ENDVERTEX_CHI2;
         Jpsi_FDCHI2 = Tree.Jpsi_FDCHI2_OWNPV;
-
+        Jpsi_BPVDLS = Tree.Jpsi_BPVDLS;
+        
         nTracks = Tree.nTracks;
         nSPDHits = Tree.nSPDHits;
         ndtrs_noghost = Tree.Jet_Dtr_nrecodtr;
