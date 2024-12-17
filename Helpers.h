@@ -272,6 +272,15 @@ void NormalizeHist(TH2 *h)
   // h->Scale(1./h->Integral());
   h->Scale(1. / h->Integral(), "width");
 }
+
+void NormalizeHist(TH3 *h)
+{
+  if (h == NULL)
+    return;
+  // h->Scale(1./h->Integral());
+  h->Scale(1. / h->Integral(), "width");
+}
+
 double eta_to_theta(double eta1, double eta2)
 {
   return fabs(-2 * atan(exp(-eta1)) + 2 * atan(exp(-eta2)));
@@ -686,6 +695,13 @@ void SetHistConst(TH2 *h2, double val)
     }
   }
 }
+void SetHistConst(TH1 *h1, double val)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    h1->SetBinContent(i, val);
+  }
+}
 void SetHistError(TH2 *h2, TH2 *h2_err)
 {
   for (int i = 1; i < h2->GetNbinsX() + 1; i++)
@@ -711,6 +727,13 @@ void SetHistErrorZero(TH2 *h2)
     {
       h2->SetBinError(i, j, 0.);
     }
+  }
+}
+void SetHistErrorZero(TH1 *h1)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    h1->SetBinError(i, 0.);
   }
 }
 
@@ -746,6 +769,14 @@ void GetSqrtHist(TH2 *h2)
     {
       h2->SetBinContent(i, j, sqrt(h2->GetBinContent(i, j)));
     }
+  }
+}
+
+void GetSqrtHist(TH1 *h1)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    h1->SetBinContent(i, sqrt(h1->GetBinContent(i)));
   }
 }
 

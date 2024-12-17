@@ -8,6 +8,23 @@
 #include <TH1D.h>
 #include <TRandom3.h>
 
+TString str_Mag = "";
+TString str_pT = "";
+TString str_level = "";
+TString str_followHard = "";
+TString str_flavor = "";
+TString str_ghost = "";
+TString str_year = "";
+TString str_GS = "";
+TString str_charged = "";
+TString str_WTA = "";
+TString str_pt;
+TString str_eta;
+TString str_Nevts;
+TString str_DTF = "";
+TString str_PID = "";
+
+
 bool pt_cut = true;
 bool Erad_cut = true;
 bool kt_cut = true;
@@ -29,10 +46,10 @@ const double zjetdphicut = 7. * TMath::Pi() / 8.;
 float B_mass = 5.2;
 float MassMin = 5.24;
 float MassMax = 5.31;
-float Sideband1_Min = 5.15;
-float Sideband1_Max = 5.2;
-float Sideband2_Min = 5.4;
-float Sideband2_Max = 5.51;
+//float Sideband1_Min = 5.15;
+//float Sideband1_Max = 5.2;
+//float Sideband2_Min = 5.4;
+//float Sideband2_Max = 5.51;
 float mass_num;
 float BDTbc_cut = 0.1;
 float BDTbcudsg_cut = 0.0;

@@ -14,31 +14,25 @@
 using namespace std;
 
 void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
-                   bool chargedJetCut = false,
                    bool WTA_cut = false,
-                   double minimum_dR = 0.1,
                    int NumIters = 4,
                    double rho = 0.,
                    bool DoJER = false,
-                   int DoJES = 0,
-                   bool DoFSPEff = false,
-                   bool DoFSPPT = false,
-                   bool DoGhostCut = false,
+                   bool DoJES = false,
+                   bool DoJetID = false,                   
                    int DoTrackEff = 0,
                    int DoPIDEff = 0,
                    int DoTrigEff = 0,
-                   bool DoRecSelEff = 0,
-                   bool DoSignalSys = 0,
+                   bool DoRecSelEff = false,
+                   bool DoSignalSys = false,
                    int DoMassFit = 0,
                    int DoIterSys = 0,
-                   bool DoUnfoldPrior = 0,
-                   bool DoReverse = false,
-                   bool DoJetID = false)
+                   bool DoUnfoldPrior = false)
 {
 
   TString string_data_nominal, string_data_test,
       string_unfold, string_unfold_test, extension;
-  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor;
+  TString str_followHard, str_ghost, str_Mag, str_flavor;
   TString string_systype;
   TString loc_rootfiles_data("../../../root_files/Bjets/");
   TString loc_rootfiles_MC("../../../root_files/BjetsMC/");
@@ -65,23 +59,10 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   double ghostProb_test = ghostProb;
   int NumIters_test = NumIters;
 
-  if (DoReverse)
-    string_systype = "reverse_";
-  if (DoJES == 1)
-    string_systype = "JESPos_";
-  if (DoJES == 2)
-    string_systype = "JESNeg_";
+  if (DoJES)
+    string_systype = "JES_";
   if (DoJER)
     string_systype = "JER_";
-  if (DoFSPEff)
-    string_systype = "fspeff_";
-  if (DoFSPPT)
-    string_systype = "fsppt_";
-  if (DoGhostCut)
-    string_systype = "ghostcut_";
-  if (DoGhostCut)
-    ghostProb_test = 0.3;
-
   if (DoJetID)
     string_systype = "jetid_";
   if (DoTrackEff == 1)
@@ -131,8 +112,6 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TString str_flavor2 = "";
   TString str_ghost2 = "";
 
-  TString str_charged1 = "";
-  TString str_charged2 = "";
   TString str_DTF(""), str_PID("");
   TString str_WTA("");
 
@@ -163,9 +142,6 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   if (ghostCut1)
     str_ghost1 = Form("_ghost_%.1f", ghostProb);
 
-  if (chargedJetCut1)
-    str_charged1 = "_charge";
-
   if (Mag2 == 0)
     str_Mag2 = "_MD";
   else if (Mag2 == 1)
@@ -185,25 +161,22 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   if (ghostCut2)
     str_ghost2 = Form("_ghost_%.1f", ghostProb);
-  if (DoGhostCut)
-    str_ghost2 = Form("_ghost_%.1f", 0.3);
-  if (chargedJetCut2)
-    str_charged2 = "_charge";
 
-  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_charged1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset1);
-  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_charged2 + str_Mag2 + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset2);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + Form("_dR_%.2f", minimum_dR) + str_charged1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_unfold);
+
+  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset1);
+  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset2);
+  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_unfold);
   if (DoTrackEff != 0 || DoPIDEff != 0 || DoTrigEff != 0 || DoMassFit != 0 || DoIterSys != 0)
   {
-    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + Form("_dR_%.2f", minimum_dR) + str_charged2 + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
   }
   else
   {
-    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + Form("_dR_%.2f", minimum_dR) + str_charged2 + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
   }
   // string_data = loc + "hists/data_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
   // string_unfold = loc + "hists/unfold_reco_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
-  if (DoGhostCut || DoJetID || (DoTrackEff != 0) || (DoPIDEff != 0) || (DoTrigEff != 0) || (DoMassFit != 0) || (DoRecSelEff) || (DoSignalSys))
+  if (DoJetID || (DoTrackEff != 0) || (DoPIDEff != 0) || (DoTrigEff != 0) || (DoMassFit != 0) || (DoRecSelEff) || (DoSignalSys))
   {
     string_data_test = loc_rootfiles_data + string_systype + string_data_test;
   }
@@ -216,7 +189,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   cout << string_unfold << endl;
   cout << string_unfold_test << endl;
 
-  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + Form("_dR_%.2f", minimum_dR) + str_charged1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
+  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
 
   if (dataset1 != dataset2)
     extension += Form("_%d", dataset2);
@@ -230,13 +203,22 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TFile *file_save = new TFile(loc_rootfiles_data + "Systematics/" + extension + ".root", "RECREATE");
 
 
-  /////////////////////   Create z histograms /////////////////////////////////
+  /////////////////////   Create observable histograms /////////////////////////////////
 
   TH2D *h2_ptz_nominal = (TH2D *)file_data_nominal->Get("ptz");
   TH2D *h2_ptz_test = (TH2D *)file_data_test->Get("ptz");
-
   TH2D *h2_ptz_final_nominal = (TH2D *)h2_ptz_nominal->Clone("ptz_final_nominal");
   TH2D *h2_ptz_final_test = (TH2D *)h2_ptz_test->Clone("ptz_final_test");
+  
+  TH2D *h2_ptjt_nominal = (TH2D *)file_data_nominal->Get("ptjt");
+  TH2D *h2_ptjt_test = (TH2D *)file_data_test->Get("ptjt");   
+  TH2D *h2_ptjt_final_nominal = (TH2D *)h2_ptjt_nominal->Clone("ptjt_final_nominal");
+  TH2D *h2_ptjt_final_test = (TH2D *)h2_ptjt_test->Clone("ptjt_final_test");  
+  
+  TH2D *h2_ptr_nominal = (TH2D *)file_data_nominal->Get("ptr");
+  TH2D *h2_ptr_test = (TH2D *)file_data_test->Get("ptr");
+  TH2D *h2_ptr_final_nominal = (TH2D *)h2_ptr_nominal->Clone("ptr_final_nominal");
+  TH2D *h2_ptr_final_test = (TH2D *)h2_ptr_test->Clone("ptr_final_test");  
 
   /////////////////////   Get jet pT Hists for Normalization /////////////////////////////////
 
@@ -251,7 +233,17 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TH2D *h2_eff_ptz_nominal = (TH2D *)file_unfold->Get("efficiency_ptz");
   TH2D *h2_eff_ptz_test = (TH2D *)file_unfold_test->Get("efficiency_ptz");
   TH2D *h2_purity_ptz_nominal = (TH2D *)file_unfold->Get("purity_ptz");
-  TH2D *h2_purity_ptz_test = (TH2D *)file_unfold_test->Get("purity_ptz");  
+  TH2D *h2_purity_ptz_test = (TH2D *)file_unfold_test->Get("purity_ptz"); 
+  
+  TH2D *h2_eff_ptjt_nominal = (TH2D *)file_unfold->Get("efficiency_ptjt");
+  TH2D *h2_eff_ptjt_test = (TH2D *)file_unfold_test->Get("efficiency_ptjt");
+  TH2D *h2_purity_ptjt_nominal = (TH2D *)file_unfold->Get("purity_ptjt");
+  TH2D *h2_purity_ptjt_test = (TH2D *)file_unfold_test->Get("purity_ptjt");      
+  
+  TH2D *h2_eff_ptr_nominal = (TH2D *)file_unfold->Get("efficiency_ptr");
+  TH2D *h2_eff_ptr_test = (TH2D *)file_unfold_test->Get("efficiency_ptr");
+  TH2D *h2_purity_ptr_nominal = (TH2D *)file_unfold->Get("purity_ptr");
+  TH2D *h2_purity_ptr_test = (TH2D *)file_unfold_test->Get("purity_ptr");    
 
   TH1D *h1_eff_jetpt_nominal = (TH1D *)file_unfold->Get("efficiency_jetpt");
   TH1D *h1_eff_jetpt_test = (TH1D *)file_unfold_test->Get("efficiency_jetpt");
@@ -263,6 +255,12 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   RooUnfoldResponse *response_ptz_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
   RooUnfoldResponse *response_ptz_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptz");
   
+  RooUnfoldResponse *response_ptjt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjt");
+  RooUnfoldResponse *response_ptjt_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptjt");
+  
+  RooUnfoldResponse *response_ptr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptr");
+  RooUnfoldResponse *response_ptr_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptr");    
+  
   RooUnfoldResponse *response_jetpt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_jetpt");
   RooUnfoldResponse *response_jetpt_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_jetpt");
 
@@ -270,6 +268,12 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   h2_ptz_final_nominal->Multiply(h2_ptz_final_nominal, h2_purity_ptz_nominal);
   h2_ptz_final_test->Multiply(h2_ptz_final_test, h2_purity_ptz_test);
+  
+  h2_ptjt_final_nominal->Multiply(h2_ptjt_final_nominal, h2_purity_ptjt_nominal);
+  h2_ptjt_final_test->Multiply(h2_ptjt_final_test, h2_purity_ptjt_test);
+  
+  h2_ptr_final_nominal->Multiply(h2_ptr_final_nominal, h2_purity_ptr_nominal);
+  h2_ptr_final_test->Multiply(h2_ptr_final_test, h2_purity_ptr_test);    
   
   h1_jetpt_final_nominal->Multiply(h1_jetpt_final_nominal, h1_purity_jetpt_nominal);
   h1_jetpt_final_test->Multiply(h1_jetpt_final_test, h1_purity_jetpt_test);  
@@ -282,7 +286,13 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   RooUnfoldBayes unfold_ptz_nominal(response_ptz_nominal, h2_ptz_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptz_test(response_ptz_test, h2_ptz_final_test, NumIters_test);
+  
+  RooUnfoldBayes unfold_ptjt_nominal(response_ptjt_nominal, h2_ptjt_final_nominal, NumIters);
+  RooUnfoldBayes unfold_ptjt_test(response_ptjt_test, h2_ptjt_final_test, NumIters_test);  
 
+  RooUnfoldBayes unfold_ptr_nominal(response_ptr_nominal, h2_ptr_final_nominal, NumIters);
+  RooUnfoldBayes unfold_ptr_test(response_ptr_test, h2_ptr_final_test, NumIters_test);  
+  
   RooUnfoldBayes unfold_jetpt_nominal(response_jetpt_nominal, h1_jetpt_final_nominal, NumIters);
   RooUnfoldBayes unfold_jetpt_test(response_jetpt_test, h1_jetpt_final_test, NumIters_test);
 
@@ -292,19 +302,31 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   h2_ptz_final_nominal = (TH2D *)unfold_ptz_nominal.Hreco();
   h2_ptz_final_test = (TH2D *)unfold_ptz_test.Hreco();
+  
+  h2_ptjt_final_nominal = (TH2D *)unfold_ptjt_nominal.Hreco();
+  h2_ptjt_final_test = (TH2D *)unfold_ptjt_test.Hreco();
+  
+  h2_ptr_final_nominal = (TH2D *)unfold_ptr_nominal.Hreco();
+  h2_ptr_final_test = (TH2D *)unfold_ptr_test.Hreco();    
 
   h1_jetpt_final_nominal = (TH1D *)unfold_jetpt_nominal.Hreco();
   h1_jetpt_final_test = (TH1D *)unfold_jetpt_test.Hreco();
+ 
 
   cout << "Got Unfolded Dist" << endl;
   /////////////////////  Correct for efficiency if needed /////////////////////////////////
   h2_ptz_final_nominal->Divide(h2_ptz_final_nominal, h2_eff_ptz_nominal);
   h2_ptz_final_test->Divide(h2_ptz_final_test, h2_eff_ptz_test);
   
+  h2_ptjt_final_nominal->Divide(h2_ptjt_final_nominal, h2_eff_ptjt_nominal);
+  h2_ptjt_final_test->Divide(h2_ptjt_final_test, h2_eff_ptjt_test);
+  
+  h2_ptr_final_nominal->Divide(h2_ptr_final_nominal, h2_eff_ptr_nominal);
+  h2_ptr_final_test->Divide(h2_ptr_final_test, h2_eff_ptr_test);    
+  
   h1_jetpt_final_nominal->Divide(h1_jetpt_final_nominal, h1_eff_jetpt_nominal);
   h1_jetpt_final_test->Divide(h1_jetpt_final_test, h1_eff_jetpt_test);  
   
-
   cout << "Corrected for Eff" << endl;
   /////////////////////   Normalize histograms /////////////////////////////////
 
@@ -315,18 +337,37 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   double Njets_test = h1_jetpt_final_test->Integral(binlow_jet, binhigh_jet);
 
   int binlow = h2_ptz_nominal->GetYaxis()->FindBin(ptMin + 0.1);
-  int binhigh = h2_ptz_nominal->GetYaxis()->FindBin(ptMax - 0.1);
+  int binhigh = h2_ptz_nominal->GetYaxis()->FindBin(ptMax - 0.1); 
 
   h2_ptz_final_nominal->GetYaxis()->SetRange(binlow, binhigh);
   h2_ptz_final_test->GetYaxis()->SetRange(binlow, binhigh);
+  
+  h2_ptjt_final_nominal->GetYaxis()->SetRange(binlow, binhigh);
+  h2_ptjt_final_test->GetYaxis()->SetRange(binlow, binhigh);  
+  
+  h2_ptr_final_nominal->GetYaxis()->SetRange(binlow, binhigh);
+  h2_ptr_final_test->GetYaxis()->SetRange(binlow, binhigh);  
 
   TH1D *h1_z_ptbinned_final_nominal[ptbinsize-2], *h1_z_ptbinned_final_test[ptbinsize-2];
   TH1D *h1_z_ptbinned_ratio[ptbinsize-2], *h1_z_ptbinned_diff[ptbinsize-2];
+  
+  TH1D *h1_jt_ptbinned_final_nominal[ptbinsize-2], *h1_jt_ptbinned_final_test[ptbinsize-2];
+  TH1D *h1_jt_ptbinned_ratio[ptbinsize-2], *h1_jt_ptbinned_diff[ptbinsize-2];
+  
+  TH1D *h1_r_ptbinned_final_nominal[ptbinsize-2], *h1_r_ptbinned_final_test[ptbinsize-2];
+  TH1D *h1_r_ptbinned_ratio[ptbinsize-2], *h1_r_ptbinned_diff[ptbinsize-2];    
+    
   for (int j=2; j < ptbinsize; ++j)
   {
 
     h1_z_ptbinned_final_nominal[j-2] = (TH1D *)h2_ptz_final_nominal->ProjectionX(Form("z_nominal_pt%d",j), j+1, j+1);
-    h1_z_ptbinned_final_test[j-2] = (TH1D *)h2_ptz_final_test->ProjectionX(Form("z_test_pt%d",j), j+1, j+1);       
+    h1_z_ptbinned_final_test[j-2] = (TH1D *)h2_ptz_final_test->ProjectionX(Form("z_test_pt%d",j), j+1, j+1);    
+    
+    h1_jt_ptbinned_final_nominal[j-2] = (TH1D *)h2_ptjt_final_nominal->ProjectionX(Form("jt_nominal_pt%d",j), j+1, j+1);
+    h1_jt_ptbinned_final_test[j-2] = (TH1D *)h2_ptjt_final_test->ProjectionX(Form("jt_test_pt%d",j), j+1, j+1);       
+    
+    h1_r_ptbinned_final_nominal[j-2] = (TH1D *)h2_ptr_final_nominal->ProjectionX(Form("r_nominal_pt%d",j), j+1, j+1);
+    h1_r_ptbinned_final_test[j-2] = (TH1D *)h2_ptr_final_test->ProjectionX(Form("r_test_pt%d",j), j+1, j+1);               
 
     //h1_z_ptbinned_final_nominal[j-2]->GetXaxis()->SetRange(binlow, binhigh);
     //h1_z_ptbinned_final_test[j-2]->GetXaxis()->SetRange(binlow, binhigh);    
@@ -334,19 +375,57 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     //NormalizeHist(h1_z_ptbinned[j-2]_final_nominal);
     //NormalizeHist(h1_z_ptbinned[j-2]_final_test);
     
-    h1_z_ptbinned_final_nominal[j-2]->Scale(1./h1_jetpt_final_nominal->GetBinContent(j+1));
-    h1_z_ptbinned_final_test[j-2]->Scale(1./h1_jetpt_final_test->GetBinContent(j+1));    
+    NormalizeHist(h1_z_ptbinned_final_nominal[j-2]);    
+    NormalizeHist(h1_z_ptbinned_final_test[j-2]);      
+    
+    NormalizeHist(h1_jt_ptbinned_final_nominal[j-2]);
+    NormalizeHist(h1_jt_ptbinned_final_test[j-2]);    
+    
+    NormalizeHist(h1_r_ptbinned_final_nominal[j-2]);
+    NormalizeHist(h1_r_ptbinned_final_test[j-2]);            
     
     h1_z_ptbinned_ratio[j-2] = (TH1D*)h1_z_ptbinned_final_nominal[j-2]->Clone(Form("z_pt%d_ratio", j));
     h1_z_ptbinned_diff[j-2] = (TH1D*)h1_z_ptbinned_final_nominal[j-2]->Clone(Form("z_pt%d_diff", j));    
+    
+    h1_jt_ptbinned_ratio[j-2] = (TH1D*)h1_jt_ptbinned_final_nominal[j-2]->Clone(Form("jt_pt%d_ratio", j));
+    h1_jt_ptbinned_diff[j-2] = (TH1D*)h1_jt_ptbinned_final_nominal[j-2]->Clone(Form("jt_pt%d_diff", j));   
+    
+    h1_r_ptbinned_ratio[j-2] = (TH1D*)h1_r_ptbinned_final_nominal[j-2]->Clone(Form("r_pt%d_ratio", j));
+    h1_r_ptbinned_diff[j-2] = (TH1D*)h1_r_ptbinned_final_nominal[j-2]->Clone(Form("r_pt%d_diff", j));           
     
     /////////////////////   Compute ratios and pulls /////////////////////////////////
     h1_z_ptbinned_ratio[j-2]->Divide(h1_z_ptbinned_ratio[j-2], h1_z_ptbinned_final_test[j-2]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_z_ptbinned_ratio[j-2]) << endl;
     SubtractUnity(h1_z_ptbinned_ratio[j-2]);
+    h1_z_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("z");
+    h1_z_ptbinned_ratio[j-2]->Write();
 
     h1_z_ptbinned_diff[j-2]->Add(h1_z_ptbinned_diff[j-2], h1_z_ptbinned_final_test[j-2], 1, -1);
-    SetHistErrCorr(h1_z_ptbinned_diff[j-2], h1_z_ptbinned_final_nominal[j-2], h1_z_ptbinned_final_test[j-2], rho);    
+    SetHistErrCorr(h1_z_ptbinned_diff[j-2], h1_z_ptbinned_final_nominal[j-2], h1_z_ptbinned_final_test[j-2], rho);
+    h1_z_ptbinned_diff[j-2]->GetXaxis()->SetTitle("z");        
+    h1_z_ptbinned_diff[j-2]->Write();
+        
+    h1_jt_ptbinned_ratio[j-2]->Divide(h1_jt_ptbinned_ratio[j-2], h1_jt_ptbinned_final_test[j-2]);
+    cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_jt_ptbinned_ratio[j-2]) << endl;
+    SubtractUnity(h1_jt_ptbinned_ratio[j-2]);
+    h1_jt_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)");    
+    h1_jt_ptbinned_ratio[j-2]->Write();
+    
+    h1_jt_ptbinned_diff[j-2]->Add(h1_jt_ptbinned_diff[j-2], h1_jt_ptbinned_final_test[j-2], 1, -1);
+    SetHistErrCorr(h1_jt_ptbinned_diff[j-2], h1_jt_ptbinned_final_nominal[j-2], h1_jt_ptbinned_final_test[j-2], rho); 
+    h1_jt_ptbinned_diff[j-2]->GetXaxis()->SetTitle("j_{T} (GeC/c)");        
+    h1_jt_ptbinned_diff[j-2]->Write();
+        
+    h1_r_ptbinned_ratio[j-2]->Divide(h1_r_ptbinned_ratio[j-2], h1_r_ptbinned_final_test[j-2]);
+    cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_r_ptbinned_ratio[j-2]) << endl;
+    SubtractUnity(h1_r_ptbinned_ratio[j-2]);
+    h1_r_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("r");        
+    h1_r_ptbinned_ratio[j-2]->Write();
+    
+    h1_r_ptbinned_diff[j-2]->Add(h1_r_ptbinned_diff[j-2], h1_r_ptbinned_final_test[j-2], 1, -1);
+    SetHistErrCorr(h1_r_ptbinned_diff[j-2], h1_r_ptbinned_final_nominal[j-2], h1_r_ptbinned_final_test[j-2], rho);   
+    h1_r_ptbinned_diff[j-2]->GetXaxis()->SetTitle("r");        
+    h1_r_ptbinned_diff[j-2]->Write();              
   }
 /*
   /////////////////////   Create pull hists /////////////////////////////////
@@ -510,7 +589,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   }
   //
 */
-  file_save->Write();
+  //file_save->Write();
   file_save->Close();
 }
 /*
@@ -524,10 +603,7 @@ int main(int argc, char *argv[])
   bool chargedJetCut = false;
   double rho = 0.;
   bool DoJER = false;
-  int DoJES = 0;
-  bool DoFSPPT = false;
-  bool DoGhostCut = false;
-  bool DoFSPEff = false;
+  bool DoJES = false;
   int DoTrackEff = 0;
   int DoTrigEff = false;
   int DoPIDEff = 0;
@@ -535,11 +611,9 @@ int main(int argc, char *argv[])
   bool DoSignalSys = false;
   int DoMassFit = 0;
   bool SubtractGS = false;
-  bool DoReverse = false;
   bool WTA_cut = true;
   int DoIterSys = 0;
   bool DoUnfoldPrior = false;
-  double minimum_dR = 0.1;
   bool DoJetID = false;
   // Parsing command line arguments
   for (int i = 1; i < argc; ++i)
@@ -556,10 +630,7 @@ int main(int argc, char *argv[])
       std::cout << "  -isdata <isData>   : Whether the dataset is real data (0 or 1)" << std::endl;
       std::cout << "  -charge <chargedJetCut> : Whether to apply charged jet cut (0 or 1)" << std::endl;
       std::cout << "  -jer <DoJER>       : Whether to apply JER (0 or 1)" << std::endl;
-      std::cout << "  -jes <DoJES>       : JES variation (integer)" << std::endl;
-      std::cout << "  -fsppt <DoFSPPT>     : Whether to apply track pT cut (0 or 1)" << std::endl;
-      std::cout << "  -ghost <DoGhostCut>       : Whether to apply ghost cut (0 or 1)" << std::endl;
-      std::cout << "  -fspeff <DoFSPEff>       : Whether to apply full simulation efficiency (0 or 1)" << std::endl;
+      std::cout << "  -jes <DoJES>       : JES variation (0 or 1)" << std::endl;
       std::cout << "  -trackeff <DoTrackEff>   : Track efficiency variation (integer)" << std::endl;
       std::cout << "  -trig <DoTrigEff>        : Whether to apply trigger efficiency (0 or 1)" << std::endl;
       std::cout << "  -pideff <DoPIDEff>       : PID efficiency variation (integer)" << std::endl;
@@ -607,20 +678,6 @@ int main(int argc, char *argv[])
       else
       {
         std::cerr << "-dataset2 option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-mindR")
-    {
-      // std::cout << argv[i + 1] << std::endl;
-      if (i + 1 < argc)
-      {
-        minimum_dR = std::stod(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-mindR option requires one argument." << std::endl;
         return 1;
       }
     }
@@ -673,45 +730,6 @@ int main(int argc, char *argv[])
       else
       {
         std::cerr << "-jetid option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-fspeff")
-    {
-      if (i + 1 < argc)
-      {
-        DoFSPEff = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-fspeff option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-fsppt")
-    {
-      if (i + 1 < argc)
-      {
-        DoFSPPT = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-fsppt option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-ghost")
-    {
-      if (i + 1 < argc)
-      {
-        DoGhostCut = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-ghost option requires one argument." << std::endl;
         return 1;
       }
     }
@@ -832,19 +850,6 @@ int main(int argc, char *argv[])
         return 1;
       }
     }
-    else if (arg == "-reverse")
-    {
-      if (i + 1 < argc)
-      {
-        DoReverse = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-reverse option requires one argument." << std::endl;
-        return 1;
-      }
-    }
     else if (arg == "-priorsys")
     {
       if (i + 1 < argc)
@@ -896,14 +901,10 @@ int main(int argc, char *argv[])
                 dataset2,
                 chargedJetCut,
                 WTA_cut,
-                minimum_dR,
                 NumIters,
                 rho,
                 DoJER,
                 DoJES,
-                DoFSPEff,
-                DoFSPPT,
-                DoGhostCut,
                 DoTrackEff,
                 DoPIDEff,
                 DoTrigEff,
@@ -912,7 +913,6 @@ int main(int argc, char *argv[])
                 DoMassFit,
                 DoIterSys,
                 DoUnfoldPrior,
-                DoReverse,
                 DoJetID);
   return 0;
 }
