@@ -20,7 +20,7 @@ void MakeVarTree(int NumEvts_user = -1,
                  bool isData = true,
                  bool chargedJetCut_user = false,
                  bool DoJER = false,
-                 int DoJES = 0,
+                 bool DoJES = true,
                  bool DoJetID = false,
                  bool DoFSPEff = false,
                  bool DoTrackPt = false,
@@ -144,10 +144,8 @@ void MakeVarTree(int NumEvts_user = -1,
     
     extension_eff = TString("fspeff_") + "truth" + Form("_ev_%d", -1) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_flavor + Form("_%d", 91599);
 
-    if (DoJES == 1)
-        extension = TString("JESPos_") + extension;
-    else if (DoJES == 2)
-        extension = TString("JESNeg_") + extension;
+    if (DoJES)
+        extension = TString("JES_") + extension;
     if (DoJER)
         extension = TString("JER_") + extension;
     if (DoFSPEff)
@@ -736,17 +734,7 @@ void MakeVarTree(int NumEvts_user = -1,
         Jpsi.SetPxPyPzE(Tree.Jpsi_PX / 1000., Tree.Jpsi_PY / 1000., Tree.Jpsi_PZ / 1000., Tree.Jpsi_PE / 1000.);
         tr_HFmeson = tr_mup + tr_mum + tr_Kmeson;
 
-        if (DoJES == 1)
-        {
-            float rand = 1.024;
-            HFjet -= HFmeson;
-            HFjet.SetPx(HFjet.Px() * rand);
-            HFjet.SetPy(HFjet.Py() * rand);
-            HFjet.SetPz(HFjet.Pz() * rand);
-            HFjet.SetE(HFjet.E() * rand);
-            HFjet += HFmeson;
-        }
-        else if (DoJES == 2)
+        if (DoJES)
         {
             float rand = 0.976;
             HFjet -= HFmeson;
@@ -1634,7 +1622,7 @@ int main(int argc, char *argv[])
     bool isData = true;
     bool chargedJetCut = false;
     bool DoJER = false;
-    int DoJES = 0;
+    bool DoJES = false;
     bool DoFSPEff = false;
     bool DoTrackPt = false;
     bool DoGhostCut = false;
@@ -1653,7 +1641,7 @@ int main(int argc, char *argv[])
             std::cout << "  -isdata <isData>   : Whether the dataset is real data (0 or 1)" << std::endl;
             std::cout << "  -charge <chargedJetCut> : Whether to apply charged jet cut (0 or 1)" << std::endl;
             std::cout << "  -jer <DoJER>       : Whether to apply JER (0 or 1)" << std::endl;
-            std::cout << "  -jes <DoJES>       : JES variation (integer)" << std::endl;
+            std::cout << "  -jes <DoJES>       : JES variation (0 or 1)" << std::endl;
             std::cout << "  -trackpt <DoTrackPt>     : Whether to apply track pT cut (0 or 1)" << std::endl;
             std::cout << "  -ghost <DoGhostCut>       : Whether to apply ghost cut (0 or 1)" << std::endl;
             std::cout << "  -fspeff <DoFSPEff>       : Whether to apply full simulation efficiency (0 or 1)" << std::endl;

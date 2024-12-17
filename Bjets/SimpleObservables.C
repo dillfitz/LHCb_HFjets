@@ -14,12 +14,6 @@ using namespace std;
 
 void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
                 bool isData = true,
-                bool chargedJetCut_user = false,
-                bool DoJER = false,
-                int DoJES = 0,
-                bool DoFSPEff = false,
-                bool DoTrackPt = false,
-                bool DoGhostCut = false,
                 int DoTrackEff = 0,
                 int DoTrigEff = 0,
                 int DoPIDEff = 0,
@@ -30,33 +24,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
                 bool SubtractGS = false)
 {
 
-  // gROOT->ProcessLine(".L HFjetLuC");
-
-  // TFile *input = new TFile("/home/chahrour/DeadCone/", "read");
-
-  // int flavor = -99;
-  // cout<<"Current Flavor = "<<flavor<<endl;
-  //  while(flavor != 0 && flavor != 4 && flavor != 5){
-  //    cout<<"Please choose flavor (0: light, 4: charm, 5: beauty): ";
-  //    cin>>flavor;
-  //  }
-  // pt_cut = true;
-  // Erad_cut = Erad_cut_user;
-  // kt_cut = true;
-  // pt_track_cut = false;
-  // isData = fa;
-
   bool MCflag = !isData;
   followHardest = false;
-  truthLevel = false;
-  chargedJetCut = chargedJetCut_user;
-  if (truthLevel)
-  {
-    ghostCut = false;
-  }
 
-  if (DoGhostCut)
-    ghostProb = 0.3;
 
   int year = (dataset / 10000) % 10;
   int JetMeth = (dataset / 1000) % 10;
@@ -106,7 +76,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TString str_year = "2016";
   TString str_DTF = "";
   TString str_PID = "";
-  TString str_charged = "";
   TString str_GS = "";
 
   if (SubtractGS)
@@ -158,9 +127,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   if (ghostCut)
     str_ghost = Form("_ghost_%.1f", ghostProb);
-
-  if (chargedJetCut)
-    str_charged = "_charge";
   // TString str_trees[5];
   // str_trees[0] = "TaggedDijets/DecayTree";
   // str_trees[1] = "D0KPiJet/DecayTree";
@@ -175,7 +141,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TString extension_unfold, extension_prefix, extension_trackeff;
   TString extension;
 
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
 
   // HFjetTree Tree(0, dataset, isData);
 
@@ -190,23 +156,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     
   float minimum_dR = 0.1;
 
-  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
-  // extension_eff = TString("hists/efficiency_truth") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_flavor + Form("_%d", dataset);
-  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + Form("_dR_%.2f", minimum_dR) + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
-  extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
+  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
 
-  if (DoJES == 1)
-    extension_prefix = TString("JESPos_");
-  else if (DoJES == 2)
-    extension_prefix = TString("JESNeg_");
-  if (DoJER)
-    extension_prefix = TString("JER_");
-  if (DoFSPEff)
-    extension_prefix = TString("fspeff_");
-  if (DoTrackPt)
-    extension_prefix = TString("trackpt_");
-  if (DoGhostCut)
-    extension_prefix = TString("ghostcut_");
   if (DoJetID)
     extension_prefix = TString("jetid_");    
   if (DoRecSelEff)
@@ -214,7 +167,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   if (DoSignalSys)
     extension_prefix = TString("signalsys_");
     
-
   extension_unfold = extension_prefix + extension_unfold;
 
   if (DoTrackEff == 1)
@@ -313,16 +265,18 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
   TString massfit = TString("massfit_data_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
   //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
-  TString extension_mass = massfit;
+
     
   if (DoRecSelEff)
-    extension_mass = "recselsys_" + extension_mass;
+    massfit = "recselsys_" + massfit;
   if (DoSignalSys)
   {
-    extension_mass = "sys_" + extension_mass;
+    massfit = "sys_" + massfit;
   }
+  
+  TString extension_mass = "../../root_files/Bjets/" + massfit;  
   std::cout << "extension_mass : " << extension_mass << std::endl;   
-  TFile f_massfit( extension_RootFiles  + extension_mass, "READ");
+  TFile f_massfit( extension_mass, "READ");
   TH1D *h1_MassMin = (TH1D *)f_massfit.Get("h1_MassMin");
   TH1D *h1_MassMax = (TH1D *)f_massfit.Get("h1_MassMax");
   TH1D *h1_Sideband1Min = (TH1D *)f_massfit.Get("h1_Sideband1Min");
@@ -365,7 +319,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         str_Mag = "_MD";
       else if (Mag == 1)
         str_Mag = "_MU";
-      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
       if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
       {
         extension_read = extension_prefix + extension_read;
@@ -377,7 +331,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   }
   else
   {
-    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
     if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
     {   
       extension_read = extension_prefix + extension_read;
@@ -606,7 +560,27 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_bdt_z_falsepos = new TH2D("h2_bdt_z_falsepos", "", 30, 0, 15., 20, 0, 1.05);
   TH2D *h2_sv_mass_z_falsepos = new TH2D("h2_sv_mass_z_falsepos", "", 30, 0, 4., 20, 0, 1.05);
   TH2D *h2_sv_mass_ntrks_falsepos = new TH2D("h2_sv_mass_ntrks_falsepos", "", 30, 0, 4., 10, -0.5, 9.5);
+  
+  TH2D *h2_ptz_weighted = new TH2D("ptz_weighted", ";z;p_{T} (GeV/c)", zbinsize, z_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptjt_weighted = new TH2D("ptjt_weighted", ";j_{T} (GeV/c); p_{T} (GeV/c)", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptr_weighted = new TH2D("ptr_weighted", ";r;p_{T} (GeV/c)", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    
+  TH1D *h1_z_weighted = new TH1D("z_weighted", ";z;", zbinsize, z_binedges);
+  TH1D *h1_jt_weighted = new TH1D("jt_weighted", ";j_{T} (GeV/c);", jtbinsize, jt_binedges);
+  TH1D *h1_r_weighted = new TH1D("r_weighted", ";r;", rbinsize, r_binedges);  
+  
+  TH1D *h1_z_nobgsub, *h1_jt_nobgsub, *h1_r_nobgsub;
+  TH2D *h2_ptz_nobgsub, *h2_ptjt_nobgsub, *h2_ptr_nobgsub;
+  h1_z_nobgsub = (TH1D*)h1_z->Clone("z_nobgsub");
+  h1_jt_nobgsub = (TH1D*)h1_jt->Clone("jt_nobgsub");
+  h1_r_nobgsub = (TH1D*)h1_r->Clone("r_nobgsub");
+  h2_ptz_nobgsub = (TH2D*)h2_ptz->Clone("ptz_nobgsub");    
+  h2_ptjt_nobgsub = (TH2D*)h2_ptjt->Clone("ptjt_nobgsub");            
+  h2_ptr_nobgsub = (TH2D*)h2_ptr->Clone("ptr_nobgsub");     
    
+  TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");
+    
+   TH3D *h3_ptzjt_ratio = (TH3D *)file_reco_weights.Get("ptzjt_ratio");   
 
   //
   // Event loop
@@ -983,7 +957,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     bool PID_cond = (K_PIDK > 0);
     bool DTF_cond = (chi2ndf_dtf < 9) && (tau_dtf > 0.3);
     bool mass_cond = (bmass_dtf > MassLow && bmass_dtf < MassHigh);
-    bool bkg_cond = (bmass_dtf > Sideband1_Min && bmass_dtf < Sideband1_Max) || (bmass_dtf > Sideband2_Min && bmass_dtf < Sideband2_Max);
+    bool bkg_cond = (bmass_dtf > Sideband1Min && bmass_dtf < Sideband1Max) || (bmass_dtf > Sideband2Min && bmass_dtf < Sideband2Max);
     bool gluon_cond = mass_cond && Hasbbbar;
     bool SV_cond = (nSV > 0) && mass_cond && sv_mass > 0.4;
     bool signal_cond = mass_cond;
@@ -1233,14 +1207,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
             if (dtr_3charge->at(i) == 0 && dtr_id->at(i) != 22)
                 h1_dtr_pt->Fill(dtr_pt->at(i));
         }
-        
-      h1_z->Fill(z, event_weight);
-      h1_jt->Fill(jt, event_weight);
-      h1_r->Fill(r, event_weight);
-        
-      h2_zjt->Fill(z, jt);
-      h2_zr->Fill(z, r);
-      h2_jtr->Fill(jt, r);
+      
         
       if (HFHardest)
         N_hardest++;
@@ -1322,23 +1289,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     if (signal_cond)
     {
-    
-//        if (SVTag == 1)
-//        {
-//          h2_ktdR_truepos->Fill(logdR, logkt);
-//          h2_zdR_truepos->Fill(logdR, logz);
-//        }
-//
-//        else if (SVTag == 2)
-//        {
-//          h2_ktdR_falsepos->Fill(logdR, logkt);
-//          h2_zdR_falsepos->Fill(logdR, logz);
-//        }
-//
-//        h2_lundplane->Fill(logtheta, logkt);
-        
-        
-        //std::cout << "event weight : " << event_weight << std::endl;
         h3_ptzjt->Fill(z, jt, jet_pt, event_weight);
         h3_ptzr->Fill(z, r, jet_pt, event_weight);
         h3_ptjtr->Fill(jt, r, jet_pt, event_weight);
@@ -1359,12 +1309,45 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
         h2_ptz_50_100->Fill(z, jet_pt, event_weight);
         h2_ptjt_50_100->Fill(jt, jet_pt, event_weight);
-        h2_ptr_50_100->Fill(r, jet_pt, event_weight);        
+        h2_ptr_50_100->Fill(r, jet_pt, event_weight);    
+             
 
         h2_ptHFz->Fill(z, HF_pt);
         h2_ptHFjt->Fill(jt, HF_pt);
         h2_ptHFr->Fill(r, HF_pt);      
         
+        h1_z->Fill(z, event_weight);
+        h1_jt->Fill(jt, event_weight);
+        h1_r->Fill(r, event_weight);
+        
+        h2_zjt->Fill(z, jt, event_weight);
+        h2_zr->Fill(z, r, event_weight);
+        h2_jtr->Fill(jt, r, event_weight);
+        
+        h1_z_nobgsub->Fill(z, event_weight);
+        h1_jt_nobgsub->Fill(jt, event_weight);
+        h1_r_nobgsub->Fill(r, event_weight);
+        
+        h2_ptz_nobgsub->Fill(z, jet_pt, event_weight);
+        h2_ptjt_nobgsub->Fill(jt, jet_pt, event_weight);
+        h2_ptr_nobgsub->Fill(r, jet_pt, event_weight);
+              
+
+        double prior_weight = 1.0;
+        if (!isData) 
+        {
+          prior_weight = h3_ptzjt_ratio->GetBinContent(h3_ptzjt_ratio->GetXaxis()->FindBin(z),
+                                                       h3_ptzjt_ratio->GetYaxis()->FindBin(jt),
+                                                       h3_ptzjt_ratio->GetZaxis()->FindBin(jet_pt));
+        }
+        // For a cross check on the unfold prior systematic
+        h2_ptz_weighted->Fill(z, jet_pt, prior_weight);
+        h2_ptjt_weighted->Fill(jt, jet_pt, prior_weight);
+        h2_ptr_weighted->Fill(r, jet_pt, prior_weight);  
+        h1_z_weighted->Fill(z, prior_weight);
+        h1_jt_weighted->Fill(jt, prior_weight);
+        h1_r_weighted->Fill(r, prior_weight);   
+                
         if (HF_pt < 5.) { h1_z_ptHFcut_l5->Fill(z); }        
         else { h1_z_ptHFcut_g5->Fill(z); }
 
@@ -1384,7 +1367,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //    }
       
   }
-/*
+
   ///////////////// ////////////////
   // Background Subtraction
   ////////////// ////////////////
@@ -1394,41 +1377,42 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   cout << "Int ptzr = " << h3_ptzr->Integral() << endl;
   cout << "Int ptjtr = " << h3_ptjtr->Integral() << endl;
 
+
   if (isData)
   {
-    h1_jet_pt->Add(h1_jet_pt_comb, -1);
-      
-    /// Myself
   
+    // Why don't we call MakeHistPositive on the 1D distributions?
+    h1_jet_pt->Add(h1_jet_pt_comb, -1);
+ 
+
+                        
     h1_z->Add(h1_z_comb, -1);
     h1_jt->Add(h1_jt_comb, -1);
     h1_r->Add(h1_r_comb, -1);
-
-      
-    //// ------------------------------------- Below: This should be correct .... --------------- / / / /
+    
     h2_zjt->Add(h2_zjt_comb, -1);
     MakeHistPositive(h2_zjt);
     h2_zr->Add(h2_zr_comb, -1);
     MakeHistPositive(h2_zr);
     h2_jtr->Add(h2_jtr_comb, -1);
     MakeHistPositive(h2_jtr);
+ 
+    h2_ptz->Add(h2_ptz_comb, -1);
+    MakeHistPositive(h2_ptz);    
+    h2_ptjt->Add(h2_ptjt_comb, -1);
+    MakeHistPositive(h2_ptjt);
+    h2_ptr->Add(h2_ptr_comb, -1);
+    MakeHistPositive(h2_ptr); 
       
     h3_ptzjt->Add(h3_ptzjt_comb, -1);
+    MakeHistPositive(h3_ptzjt);    
     h3_ptzr->Add(h3_ptzr_comb, -1);
     MakeHistPositive(h3_ptzr);
-    h3_ptzr->Add(h3_ptzr_comb, -1);
-    MakeHistPositive(h3_ptzr);
-      
-//    h3_ptthetaErad->Add(h3_ptthetaErad_comb, -1);
-//    MakeHistPositive(h3_ptthetaErad);
-//    h3_ptdRErad->Add(h3_ptdRErad_comb, -1);
-//    MakeHistPositive(h3_ptdRErad);
-//    h3_ptdRptHF->Add(h3_ptdRptHF_comb, -1);
-//    MakeHistPositive(h3_ptdRptHF);
-      
-      
+    h3_ptjtr->Add(h3_ptjtr_comb, -1);
+    MakeHistPositive(h3_ptjtr);
+           
   }
-*/  
+ 
   // SetFeldmanErr(h3_ptktdR);
   // SetFeldmanErr(h3_ptzdR);
   cout << "After sub: " << endl;
@@ -2957,6 +2941,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //    ccan[ican]->Print(plotfilePDF.Data());
 //  }
   //
+ 
   f.Write();
   f.Close();
   file_unfold->Close();
@@ -2975,11 +2960,6 @@ int main(int argc, char *argv[])
   int dataset = 91599;
   bool isData = true;
   bool chargedJetCut = false;
-  bool DoJER = false;
-  int DoJES = 0;
-  bool DoTrackPt = false;
-  bool DoGhostCut = false;
-  bool DoFSPEff = false;
   int DoTrackEff = 0;
   bool DoTrigEff = false;
   int DoPIDEff = 0;
@@ -3001,11 +2981,6 @@ int main(int argc, char *argv[])
       std::cout << "  -dataset <dataset> : Dataset number" << std::endl;
       std::cout << "  -isdata <isData>   : Whether the dataset is real data (0 or 1)" << std::endl;
       std::cout << "  -charge <chargedJetCut> : Whether to apply charged jet cut (0 or 1)" << std::endl;
-      std::cout << "  -jer <DoJER>       : Whether to apply JER (0 or 1)" << std::endl;
-      std::cout << "  -jes <DoJES>       : JES variation (integer)" << std::endl;
-      std::cout << "  -trackpt <DoTrackPt>     : Whether to apply track pT cut (0 or 1)" << std::endl;
-      std::cout << "  -ghost <DoGhostCut>       : Whether to apply ghost cut (0 or 1)" << std::endl;
-      std::cout << "  -fspeff <DoFSPEff>       : Whether to apply full simulation efficiency (0 or 1)" << std::endl;
       std::cout << "  -trackeff <DoTrackEff>   : Track efficiency variation (integer)" << std::endl;
       std::cout << "  -trig <DoTrigEff>        : Whether to apply trigger efficiency (0 or 1)" << std::endl;
       std::cout << "  -pideff <DoPIDEff>       : PID efficiency variation (integer)" << std::endl;
@@ -3068,58 +3043,6 @@ int main(int argc, char *argv[])
         return 1;
       }
     }
-    else if (arg == "-jer")
-    {
-      if (i + 1 < argc)
-      {
-        DoJER = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-jer option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-fspeff")
-    {
-      if (i + 1 < argc)
-      {
-        DoFSPEff = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-fspeff option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-trackpt")
-    {
-      if (i + 1 < argc)
-      {
-        DoTrackPt = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-trackpt option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-ghost")
-    {
-      if (i + 1 < argc)
-      {
-        DoGhostCut = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-ghost option requires one argument." << std::endl;
-        return 1;
-      }
-    }
     else if (arg == "-recsel")
     {
       if (i + 1 < argc)
@@ -3172,19 +3095,6 @@ int main(int argc, char *argv[])
         return 1;
       }
     }
-    else if (arg == "-jes")
-    {
-      if (i + 1 < argc)
-      {
-        DoJES = std::stoi(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-jes option requires one argument." << std::endl;
-        return 1;
-      }
-    }
     else if (arg == "-trackeff")
     {
       if (i + 1 < argc)
@@ -3222,11 +3132,6 @@ int main(int argc, char *argv[])
              dataset,
              isData,
              chargedJetCut,
-             DoJER,
-             DoJES,
-             DoFSPEff,
-             DoTrackPt,
-             DoGhostCut,
              DoTrackEff,
              DoTrigEff,
              DoPIDEff,
