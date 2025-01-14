@@ -201,6 +201,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
     
   TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
+  
+  TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");  
 
   //
   TH2D *h2_HFptrap_ratio;
@@ -578,7 +580,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   h2_ptjt_nobgsub = (TH2D*)h2_ptjt->Clone("ptjt_nobgsub");            
   h2_ptr_nobgsub = (TH2D*)h2_ptr->Clone("ptr_nobgsub");     
    
-  TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");
     
    TH3D *h3_ptzjt_ratio = (TH3D *)file_reco_weights.Get("ptzjt_ratio");   
 
@@ -1488,7 +1489,40 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after eff ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
-    
+    TH1D *h1_z_final[ptbinsize-2], *h1_jt_final[ptbinsize-2], *h1_r_final[ptbinsize-2];
+    for (int i = 2; i < ptbinsize; i++)
+    {
+      h1_z_final[i-2] = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
+      h1_jt_final[i-2] = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);  
+      h1_r_final[i-2] = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);        
+            
+      h1_z_final[i-2]->SetStats(0);
+      NormalizeHist(h1_z_final[i-2]); 
+      
+      h1_jt_final[i-2]->SetStats(0);
+      NormalizeHist(h1_jt_final[i-2]);  
+        
+      h1_r_final[i-2]->SetStats(0);
+      NormalizeHist(h1_r_final[i-2]);        
+             
+
+      h1_z_final[i-2]->Write(Form("z_pt%d_final", i)); 
+      TCanvas *c0 = new TCanvas("c0");            
+      h1_z_final[i-2]->Draw();
+      c0->SaveAs(Form("z_pt%d_final.png",i)); 
+      
+      h1_jt_final[i-2]->Write(Form("jt_pt%d_final", i)); 
+      TCanvas *c1 = new TCanvas("c1");            
+      h1_jt_final[i-2]->Draw();
+      c1->SaveAs(Form("jt_pt%d_final.png",i));      
+      
+      h1_r_final[i-2]->Write(Form("r_pt%d_final", i)); 
+      TCanvas *c2 = new TCanvas("c2");            
+      h1_r_final[i-2]->Draw();
+      c1->SaveAs(Form("r_pt%d_final.png",i));         
+      //h1_temp->SetMinimum(0.0);
+//      h1_temp->SetMaximum(3.5);
+    }    
     
   SetRecoStyle(h1_jet_eta);
   SetDataStyle(h1_jet_rap);
@@ -1612,14 +1646,13 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 2; i < ptbinsize; i++)
     {
-      TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("htemp%d_ptz_final", i), i + 1, i + 1);;
+      TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
         
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);    
       h1_temp->SetMarkerStyle(i + 20);
       h1_temp->SetMarkerColor(i-1 + 1);
       h1_temp->SetLineColor(i-1 + 1);
-        
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
       //h1_temp->SetMinimum(0.0);
@@ -1715,7 +1748,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_jtpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 2; i < ptbinsize; i++)
     {
-      TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("htemp%d_ptjt_final", i), i + 1, i + 1);
+      TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);
         
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
@@ -1723,6 +1756,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       h1_temp->SetMarkerStyle(i + 20);
       h1_temp->SetMarkerColor(i-1 + 1);
       h1_temp->SetLineColor(i-1 + 1);
+
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
@@ -1822,13 +1856,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 2; i < ptbinsize; i++)
     {
-      TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("htemp%d_ptr_final", i), i + 1, i + 1);
+      TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);
         
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
       h1_temp->SetMarkerStyle(i + 20);
       h1_temp->SetMarkerColor(i-1 + 1);
       h1_temp->SetLineColor(i-1 + 1);
+      
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
