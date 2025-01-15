@@ -501,13 +501,13 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     cout << " zjt Averaged Rel. Unc. = " << GetWeightedAverage(h2_zjt_ptbinned_ratio[j-2]) << endl;
     SubtractUnity(h2_zjt_ptbinned_ratio[j-2]);
     h2_zjt_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("z");
-    h2_zjt_ptbinned_ratio[j-2]->GetYaxis()->SetTitle("j_{T} (GeV/c)");    
+    h2_zjt_ptbinned_ratio[j-2]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
     h2_zjt_ptbinned_ratio[j-2]->Write();
 
     h2_zjt_ptbinned_diff[j-2]->Add(h2_zjt_ptbinned_diff[j-2], h2_zjt_ptbinned_final_test[j-2], 1, -1);
     SetHistErrCorr(h2_zjt_ptbinned_diff[j-2], h2_zjt_ptbinned_final_nominal[j-2], h2_zjt_ptbinned_final_test[j-2], rho);
     h2_zjt_ptbinned_diff[j-2]->GetXaxis()->SetTitle("z");    
-    h2_zjt_ptbinned_diff[j-2]->GetYaxis()->SetTitle("j_{T} (GeV/c)");                
+    h2_zjt_ptbinned_diff[j-2]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
     h2_zjt_ptbinned_diff[j-2]->Write();
         
     h2_zr_ptbinned_ratio[j-2]->Divide(h2_zr_ptbinned_ratio[j-2], h2_zr_ptbinned_final_test[j-2]);
@@ -526,14 +526,14 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h2_jtr_ptbinned_ratio[j-2]->Divide(h2_jtr_ptbinned_ratio[j-2], h2_jtr_ptbinned_final_test[j-2]);
     cout << "jtr Averaged Rel. Unc. = " << GetWeightedAverage(h2_jtr_ptbinned_ratio[j-2]) << endl;
     SubtractUnity(h2_jtr_ptbinned_ratio[j-2]);
-    h2_jtr_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)");        
+    h2_jtr_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_ptbinned_ratio[j-2]->GetYaxis()->SetTitle("r");      
     h2_jtr_ptbinned_ratio[j-2]->Write();
     
     h2_jtr_ptbinned_diff[j-2]->Add(h2_jtr_ptbinned_diff[j-2], h2_jtr_ptbinned_final_test[j-2], 1, -1);
-    SetHistErrCorr(h2_jtr_ptbinned_diff[j-2], h2_jtr_ptbinned_final_nominal[j-2], h2_jtr_ptbinned_final_test[j-2], rho);   
-    h2_jtr_ptbinned_diff[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)"); 
-    h2_jtr_ptbinned_diff[j-2]->GetYaxis()->SetTitle("r");        
+    SetHistErrCorr(h2_jtr_ptbinned_diff[j-2], h2_jtr_ptbinned_final_nominal[j-2], h2_jtr_ptbinned_final_test[j-2], rho);
+    h2_jtr_ptbinned_diff[j-2]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_jtr_ptbinned_diff[j-2]->GetYaxis()->SetTitle("r");
     h2_jtr_ptbinned_diff[j-2]->Write();   
 
     h1_z_ptbinned_ratio[j-2]->Divide(h1_z_ptbinned_ratio[j-2], h1_z_ptbinned_final_test[j-2]);
@@ -550,12 +550,12 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h1_jt_ptbinned_ratio[j-2]->Divide(h1_jt_ptbinned_ratio[j-2], h1_jt_ptbinned_final_test[j-2]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_jt_ptbinned_ratio[j-2]) << endl;
     SubtractUnity(h1_jt_ptbinned_ratio[j-2]);
-    h1_jt_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("j_{T} (GeV/c)");    
+    h1_jt_ptbinned_ratio[j-2]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h1_jt_ptbinned_ratio[j-2]->Write();
     
     h1_jt_ptbinned_diff[j-2]->Add(h1_jt_ptbinned_diff[j-2], h1_jt_ptbinned_final_test[j-2], 1, -1);
     SetHistErrCorr(h1_jt_ptbinned_diff[j-2], h1_jt_ptbinned_final_nominal[j-2], h1_jt_ptbinned_final_test[j-2], rho); 
-    h1_jt_ptbinned_diff[j-2]->GetXaxis()->SetTitle("j_{T} (GeC/c)");        
+    h1_jt_ptbinned_diff[j-2]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h1_jt_ptbinned_diff[j-2]->Write();
         
     h1_r_ptbinned_ratio[j-2]->Divide(h1_r_ptbinned_ratio[j-2], h1_r_ptbinned_final_test[j-2]);
