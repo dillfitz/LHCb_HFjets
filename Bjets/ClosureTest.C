@@ -423,7 +423,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h1_z_ptbinned_closure_error[j-2]->GetBinContent(x);
           h1_z_ptbinned_closure_error[j-2]->SetBinContent(x, sumContent + binContent * binContent);
 
-          double binError = 1. - h1_z_ptbinned_ratio[j-2]->GetBinError(x);
+          double binError = h1_z_ptbinned_ratio[j-2]->GetBinError(x);
           double sumError = h1_z_ptbinned_closure_error[j-2]->GetBinError(x);
           h1_z_ptbinned_closure_error[j-2]->SetBinError(x, sumError + binError * binError);
         //}
@@ -581,7 +581,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h1_jt_ptbinned_closure_error[j-2]->GetBinContent(x);
           h1_jt_ptbinned_closure_error[j-2]->SetBinContent(x, sumContent + binContent * binContent);
 
-          double binError = 1. - h1_jt_ptbinned_ratio[j-2]->GetBinError(x);
+          double binError = h1_jt_ptbinned_ratio[j-2]->GetBinError(x);
           double sumError = h1_jt_ptbinned_closure_error[j-2]->GetBinError(x);
           h1_jt_ptbinned_closure_error[j-2]->SetBinError(x, sumError + binError * binError);
         //}
@@ -743,7 +743,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h1_r_ptbinned_closure_error[j-2]->GetBinContent(x);
           h1_r_ptbinned_closure_error[j-2]->SetBinContent(x, sumContent + binContent * binContent);
 
-          double binError = 1. - h1_r_ptbinned_ratio[j-2]->GetBinError(x);
+          double binError = h1_r_ptbinned_ratio[j-2]->GetBinError(x);
           double sumError = h1_r_ptbinned_closure_error[j-2]->GetBinError(x);
           h1_r_ptbinned_closure_error[j-2]->SetBinError(x, sumError + binError * binError);
         //}
@@ -807,9 +807,12 @@ void ClosureTest(int NumEvts = -1,
 
   h3_ptzjt->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-  TH2D *h2_zjt_final = (TH2D *)h3_ptzjt_final->Project3D("zjt_final_yx");
-  TH2D *h2_zjt = (TH2D *)h3_ptzjt->Project3D("zjt_yx");
-  TH2D *h2_zjt_truth = (TH2D *)h3_ptzjt_truth->Project3D("zjt_truth_yx");
+  TH2D *h2_zjt_final = (TH2D *)h3_ptzjt_final->Project3D("yx");
+  h2_zjt_final->SetName("zjt_final");
+  TH2D *h2_zjt = (TH2D *)h3_ptzjt->Project3D("yx");
+  h2_zjt->SetName("zjt");
+  TH2D *h2_zjt_truth = (TH2D *)h3_ptzjt_truth->Project3D("yx");
+  h2_zjt_truth->SetName("zjt_truth");
   //
   h2_zjt_final->GetYaxis()->SetRange(binlowjt, binhighjt);
   h2_zjt_final->GetXaxis()->SetRange(binlowz, binhighz);
@@ -874,7 +877,8 @@ void ClosureTest(int NumEvts = -1,
     h3_ptzjt_smear->Divide(h3_ptzjt_smear, h3_eff_ptzjt);
     h3_ptzjt_smear->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-    TH2D *h2_zjt_smear = (TH2D *)h3_ptzjt_smear->Project3D(Form("zjt_smear%d_yx", i));
+    TH2D *h2_zjt_smear = (TH2D *)h3_ptzjt_smear->Project3D("yx");
+    h2_zjt_smear->SetName(Form("zjt_smear%d", i));
 
     h2_zjt_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
     h2_zjt_smear->GetXaxis()->SetRange(binlowz, binhighz);
@@ -898,8 +902,10 @@ void ClosureTest(int NumEvts = -1,
     {
       h3_ptzjt_smear->GetZaxis()->SetRange(j+1, j+1);
       h3_ptzjt_truth->GetZaxis()->SetRange(j+1, j+1);        
-      h2_zjt_ptbinned[j-2] = (TH2D *)h3_ptzjt_smear->Project3D(Form("zjt_smear%d_pt%d_yx", i,j));    
-      h2_zjt_truth_ptbinned[j-2] = (TH2D *)h3_ptzjt_truth->Project3D(Form("zjt_truth_smear%d_pt%d_yx", i,j));
+      h2_zjt_ptbinned[j-2] = (TH2D *)h3_ptzjt_smear->Project3D("yx");  
+      h2_zjt_ptbinned[j-2]->SetName(Form("zjt_smear%d_pt%d", i,j)); 
+      h2_zjt_truth_ptbinned[j-2] = (TH2D *)h3_ptzjt_truth->Project3D("yx");
+      h2_zjt_truth_ptbinned[j-2]->SetName(Form("zjt_truth_smear%d_pt%d", i,j));
       h2_zjt_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
       h2_zjt_truth_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
       h2_zjt_ptbinned[j-2]->GetXaxis()->SetTitle("z");
@@ -934,7 +940,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h2_zjt_ptbinned_closure_error[j-2]->GetBinContent(x, y);
           h2_zjt_ptbinned_closure_error[j-2]->SetBinContent(x, y, sumContent + binContent * binContent);
 
-          double binError = 1. - h2_zjt_ptbinned_ratio[j-2]->GetBinError(x, y);
+          double binError = h2_zjt_ptbinned_ratio[j-2]->GetBinError(x, y);
           double sumError = h2_zjt_ptbinned_closure_error[j-2]->GetBinError(x, y);
           h2_zjt_ptbinned_closure_error[j-2]->SetBinError(x, y, sumError + binError * binError);
         }
@@ -1000,9 +1006,12 @@ void ClosureTest(int NumEvts = -1,
 
   h3_ptzr->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-  TH2D *h2_zr_final = (TH2D *)h3_ptzr_final->Project3D("zr_final_yx");
-  TH2D *h2_zr = (TH2D *)h3_ptzr->Project3D("zr_yx");
-  TH2D *h2_zr_truth = (TH2D *)h3_ptzr_truth->Project3D("zr_truth_yx");
+  TH2D *h2_zr_final = (TH2D *)h3_ptzr_final->Project3D("yx");
+  h2_zr_final->SetName("zr_final");
+  TH2D *h2_zr = (TH2D *)h3_ptzr->Project3D("yx");
+  h2_zr->SetName("zr");
+  TH2D *h2_zr_truth = (TH2D *)h3_ptzr_truth->Project3D("yx");
+  h2_zr_truth->SetName("zr_truth");
   //
   h2_zr_final->GetYaxis()->SetRange(binlowr, binhighr);
   h2_zr_final->GetXaxis()->SetRange(binlowz, binhighz);
@@ -1066,7 +1075,8 @@ void ClosureTest(int NumEvts = -1,
     h3_ptzr_smear->Divide(h3_ptzr_smear, h3_eff_ptzr);
     h3_ptzr_smear->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-    TH2D *h2_zr_smear = (TH2D *)h3_ptzr_smear->Project3D(Form("zr_smear%d_yx", i));
+    TH2D *h2_zr_smear = (TH2D *)h3_ptzr_smear->Project3D("yx");
+    h2_zr_smear->SetName(Form("zr_smear%d", i));
 
     h2_zr_smear->GetYaxis()->SetRange(binlowr, binhighr);
     h2_zr_smear->GetXaxis()->SetRange(binlowz, binhighz);
@@ -1090,8 +1100,10 @@ void ClosureTest(int NumEvts = -1,
     {
       h3_ptzr_smear->GetZaxis()->SetRange(j+1, j+1);
       h3_ptzr_truth->GetZaxis()->SetRange(j+1, j+1);        
-      h2_zr_ptbinned[j-2] = (TH2D *)h3_ptzr_smear->Project3D(Form("zr_smear%d_pt%d_yx", i,j));    
-      h2_zr_truth_ptbinned[j-2] = (TH2D *)h3_ptzr_truth->Project3D(Form("zr_truth_smear%d_pt%d_yx", i,j));
+      h2_zr_ptbinned[j-2] = (TH2D *)h3_ptzr_smear->Project3D("yx");    
+      h2_zr_ptbinned[j-2]->SetName(Form("zr_smear%d_pt%d", i,j));
+      h2_zr_truth_ptbinned[j-2] = (TH2D *)h3_ptzr_truth->Project3D("yx");
+      h2_zr_truth_ptbinned[j-2]->SetName(Form("zr_truth_smear%d_pt%d", i,j));
       h2_zr_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
       h2_zr_truth_ptbinned[j-2]->GetXaxis()->SetRange(binlowz, binhighz);
       h2_zr_ptbinned[j-2]->GetXaxis()->SetTitle("z");
@@ -1126,7 +1138,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h2_zr_ptbinned_closure_error[j-2]->GetBinContent(x, y);
           h2_zr_ptbinned_closure_error[j-2]->SetBinContent(x, y, sumContent + binContent * binContent);
 
-          double binError = 1. - h2_zr_ptbinned_ratio[j-2]->GetBinError(x, y);
+          double binError = h2_zr_ptbinned_ratio[j-2]->GetBinError(x, y);
           double sumError = h2_zr_ptbinned_closure_error[j-2]->GetBinError(x, y);
           h2_zr_ptbinned_closure_error[j-2]->SetBinError(x, y, sumError + binError * binError);
         }
@@ -1193,9 +1205,12 @@ void ClosureTest(int NumEvts = -1,
 
   h3_ptjtr->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-  TH2D *h2_jtr_final = (TH2D *)h3_ptjtr_final->Project3D("jtr_final_yx");
-  TH2D *h2_jtr = (TH2D *)h3_ptjtr->Project3D("jtr_yx");
-  TH2D *h2_jtr_truth = (TH2D *)h3_ptjtr_truth->Project3D("jtr_truth_yx");
+  TH2D *h2_jtr_final = (TH2D *)h3_ptjtr_final->Project3D("yx");
+  h2_jtr_final->SetName("jtr_final");
+  TH2D *h2_jtr = (TH2D *)h3_ptjtr->Project3D("yx");
+  h2_jtr->SetName("jtr");
+  TH2D *h2_jtr_truth = (TH2D *)h3_ptjtr_truth->Project3D("yx");
+  h2_jtr_truth->SetName("jtr_truth");
   //
   h2_jtr_final->GetYaxis()->SetRange(binlowr, binhighr);
   h2_jtr_final->GetXaxis()->SetRange(binlowjt, binhighjt);
@@ -1218,6 +1233,8 @@ void ClosureTest(int NumEvts = -1,
   h2_jtr_ratio_final->GetYaxis()->SetRange(binlowr, binhighr);
   h2_jtr_ratio_final->GetXaxis()->SetRange(binlowjt, binhighjt);
  
+  h2_jtr_ratio_final->SetOption("COLZ");
+  h2_jtr_ratio_final->Write();   
 
   ////////////////////////////////////
   // Smearing the Observables
@@ -1238,7 +1255,8 @@ void ClosureTest(int NumEvts = -1,
     h3_ptjtr_smear->Divide(h3_ptjtr_smear, h3_eff_ptjtr);
     h3_ptjtr_smear->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
-    TH2D *h2_jtr_smear = (TH2D *)h3_ptjtr_smear->Project3D(Form("jtr_smear%d_yx", i));
+    TH2D *h2_jtr_smear = (TH2D *)h3_ptjtr_smear->Project3D("yx");
+    h2_jtr_smear->SetName(Form("jtr_smear%d", i));
 
     h2_jtr_smear->GetYaxis()->SetRange(binlowr, binhighr);
     h2_jtr_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
@@ -1262,8 +1280,10 @@ void ClosureTest(int NumEvts = -1,
     {
       h3_ptjtr_smear->GetZaxis()->SetRange(j+1, j+1);
       h3_ptjtr_truth->GetZaxis()->SetRange(j+1, j+1);        
-      h2_jtr_ptbinned[j-2] = (TH2D *)h3_ptjtr_smear->Project3D(Form("jtr_smear%d_pt%d_yx", i,j));    
-      h2_jtr_truth_ptbinned[j-2] = (TH2D *)h3_ptjtr_truth->Project3D(Form("jtr_truth_smear%d_pt%d_yx", i,j));
+      h2_jtr_ptbinned[j-2] = (TH2D *)h3_ptjtr_smear->Project3D("yx");    
+      h2_jtr_ptbinned[j-2]->SetName(Form("jtr_smear%d_pt%d", i,j));
+      h2_jtr_truth_ptbinned[j-2] = (TH2D *)h3_ptjtr_truth->Project3D("yx");
+      h2_jtr_truth_ptbinned[j-2]->SetName(Form("jtr_truth_smear%d_pt%d", i,j));
       h2_jtr_ptbinned[j-2]->GetXaxis()->SetRange(binlowjt, binhighjt);
       h2_jtr_truth_ptbinned[j-2]->GetXaxis()->SetRange(binlowjt, binhighjt);
       h2_jtr_ptbinned[j-2]->GetXaxis()->SetTitle("j_{T}");
@@ -1299,7 +1319,7 @@ void ClosureTest(int NumEvts = -1,
           double sumContent = h2_jtr_ptbinned_closure_error[j-2]->GetBinContent(x, y);
           h2_jtr_ptbinned_closure_error[j-2]->SetBinContent(x, y, sumContent + binContent * binContent);
 
-          double binError = 1. - h2_jtr_ptbinned_ratio[j-2]->GetBinError(x, y);
+          double binError = h2_jtr_ptbinned_ratio[j-2]->GetBinError(x, y);
           double sumError = h2_jtr_ptbinned_closure_error[j-2]->GetBinError(x, y);
           h2_jtr_ptbinned_closure_error[j-2]->SetBinError(x, y, sumError + binError * binError);
         }

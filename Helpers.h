@@ -601,7 +601,10 @@ void SubtractUnity(TH2D *h2)
     for (int j = 1; j < h2->GetNbinsY() + 1; j++)
     {
       // double err = hvals->GetBinError(i, j);
-      h2->SetBinContent(i, j, h2->GetBinContent(i, j) - 1.);
+      if (h2->GetBinContent(i, j) != 0.)
+      {
+        h2->SetBinContent(i, j, h2->GetBinContent(i, j) - 1.);
+      }
     }
   }
 }
@@ -1087,6 +1090,15 @@ void MakeHistPositive(TH2 *h2)
     }
   }
 }
+void MakeHistPositive(TH1 *h1)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    if (h1->GetBinContent(i) < 0)
+      h1->SetBinContent(i, 0.);
+  }
+}
+
 int SampleTH1(TH1D *hist, TRandom3 *randomGenerator)
 {
   int numBins = hist->GetNbinsX();
