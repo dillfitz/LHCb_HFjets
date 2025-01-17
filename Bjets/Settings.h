@@ -46,10 +46,10 @@ const double zjetdphicut = 7. * TMath::Pi() / 8.;
 float B_mass = 5.2;
 float MassMin = 5.24;
 float MassMax = 5.31;
-//float Sideband1_Min = 5.15;
-//float Sideband1_Max = 5.2;
-//float Sideband2_Min = 5.4;
-//float Sideband2_Max = 5.51;
+float Sideband1_Min = 5.15;
+float Sideband1_Max = 5.2;
+float Sideband2_Min = 5.4;
+float Sideband2_Max = 5.51;
 float mass_num;
 float BDTbc_cut = 0.1;
 float BDTbcudsg_cut = 0.0;
@@ -116,7 +116,7 @@ float dR_max = 5.;
 // doesn't help Zjets to increase jet pt bins
 
 //const int ptHFbinsize = 9;
-const int ptbinsize = 5; //5
+const int ptbinsize = 7; //5
 const int customptbinsize = 5; //10
 const int fineptbinsize = 10;
 
@@ -136,7 +136,7 @@ const int nTracksbinsize = 5;
 
 const int zbinsize = 15;
 const int jtbinsize = 18;
-const int rbinsize = 12;
+const int rbinsize = 11;
 
 const int zbinsize_50_100 = 7; // N bins = len(binedges) - 1
 const int jtbinsize_50_100 = 10;
@@ -156,7 +156,7 @@ double eta_binedges[etabinsize + 1] = { 2.2, 2.5, 2.65, 2.9, 3.3, 4.0, 4.5 };
 double HFeta_binedges[HFetabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
 double Jpsieta_binedges[Jpsietabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
 
-double pt_binedges[ptbinsize + 1] = {pTLow, 15, 20, 30, 50, 100.};
+double pt_binedges[ptbinsize + 1] = {pTLow, 10, 12, 15, 20, 30, 50, 100.};
 double custompt_binedges[customptbinsize +1] = {pTLow, 15, 20, 30, 50, 100};
 double finept_binedges[fineptbinsize +1] = {pTLow, 15, 20, 30, 40, 50, 60, 70, 80, 100, 200};
 
@@ -169,7 +169,7 @@ double nTrack_binedges[nTracksbinsize + 1] = {0, 100, 200, 300, 400, 500};
 
 double z_binedges[zbinsize + 1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};
 double jt_binedges[jtbinsize + 1 ] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 10.0};
-double r_binedges[rbinsize +1 ] = {0.0, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
+double r_binedges[rbinsize +1 ] = {0.0, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5};
 
 double z_binedges_50_100[zbinsize_50_100 + 1] = {0.0, 0.1, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0};
 double jt_binedges_50_100[jtbinsize_50_100 + 1 ] = {0.0, 0.5, 1.0, 1.50, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0};
