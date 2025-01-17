@@ -21,10 +21,10 @@ void SimpleUnfold(int NumEvts = -1,
                   bool SubtractGS = false,                  
                   bool DoJES = false,
                   bool DoJER = false,
+                  bool DoJetID = false,                  
                   bool DoRecSelEff = false,
                   bool DoSignalSys = false,
-                  bool DoUnfoldPrior = false,
-                  bool DoJetID = false)
+                  bool DoUnfoldPrior = false)
 {
     // pt_cut = true;
     // pt_track_cut = false;

@@ -1489,36 +1489,36 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after eff ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
-    TH1D *h1_z_final[ptbinsize-2], *h1_jt_final[ptbinsize-2], *h1_r_final[ptbinsize-2];
-    for (int i = 2; i < ptbinsize; i++)
+    TH1D *h1_z_final[ptbinsize-1], *h1_jt_final[ptbinsize-1], *h1_r_final[ptbinsize-1];
+    for (int i = 1; i < ptbinsize; i++)
     {
-      h1_z_final[i-2] = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
-      h1_jt_final[i-2] = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);  
-      h1_r_final[i-2] = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);        
+      h1_z_final[i-1] = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
+      h1_jt_final[i-1] = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);  
+      h1_r_final[i-1] = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);        
             
-      h1_z_final[i-2]->SetStats(0);
-      NormalizeHist(h1_z_final[i-2]); 
+      h1_z_final[i-1]->SetStats(0);
+      NormalizeHist(h1_z_final[i-1]); 
       
-      h1_jt_final[i-2]->SetStats(0);
-      NormalizeHist(h1_jt_final[i-2]);  
+      h1_jt_final[i-1]->SetStats(0);
+      NormalizeHist(h1_jt_final[i-1]);  
         
-      h1_r_final[i-2]->SetStats(0);
-      NormalizeHist(h1_r_final[i-2]);        
+      h1_r_final[i-1]->SetStats(0);
+      NormalizeHist(h1_r_final[i-1]);        
              
 
-      h1_z_final[i-2]->Write(Form("z_pt%d_final", i)); 
+      h1_z_final[i-1]->Write(Form("z_pt%d_final", i)); 
       TCanvas *c0 = new TCanvas("c0");            
-      h1_z_final[i-2]->Draw();
+      h1_z_final[i-1]->Draw();
       c0->SaveAs(Form("z_pt%d_final.png",i)); 
       
-      h1_jt_final[i-2]->Write(Form("jt_pt%d_final", i)); 
+      h1_jt_final[i-1]->Write(Form("jt_pt%d_final", i)); 
       TCanvas *c1 = new TCanvas("c1");            
-      h1_jt_final[i-2]->Draw();
+      h1_jt_final[i-1]->Draw();
       c1->SaveAs(Form("jt_pt%d_final.png",i));      
       
-      h1_r_final[i-2]->Write(Form("r_pt%d_final", i)); 
+      h1_r_final[i-1]->Write(Form("r_pt%d_final", i)); 
       TCanvas *c2 = new TCanvas("c2");            
-      h1_r_final[i-2]->Draw();
+      h1_r_final[i-1]->Draw();
       c1->SaveAs(Form("r_pt%d_final.png",i));         
       //h1_temp->SetMinimum(0.0);
 //      h1_temp->SetMaximum(3.5);
