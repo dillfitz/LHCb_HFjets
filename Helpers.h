@@ -589,7 +589,7 @@ void SetTruthStyle(TH1 *h, double markersize = 1.)
 {
   if (h == NULL)
     return;
-  h->SetMarkerStyle(kFullTriangleUp);
+  h->SetMarkerStyle(kFullDiamond);
   h->SetMarkerColor(kGreen);
   h->SetLineColor(kGreen);
   h->SetMarkerSize(markersize);
@@ -608,6 +608,19 @@ void SubtractUnity(TH2D *h2)
     }
   }
 }
+
+void SubtractUnity(TH1D *h1)
+{
+  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
+  {
+    // double err = hvals->GetBinError(i, j);
+    if (h1->GetBinContent(i) != 0.)
+    {
+      h1->SetBinContent(i, h1->GetBinContent(i) - 1.);
+    }
+  }
+}
+
 double GetWeightedAverage(TH2D *h2)
 {
   double sumWeights = 0.;
@@ -626,15 +639,6 @@ double GetWeightedAverage(TH2D *h2)
   }
   double result = num / sumWeights;
   return result;
-}
-
-void SubtractUnity(TH1D *h1)
-{
-  for (int i = 1; i < h1->GetNbinsX() + 1; i++)
-  {
-    // double err = hvals->GetBinError(i, j);
-    h1->SetBinContent(i, h1->GetBinContent(i) - 1.);
-  }
 }
 
 double GetWeightedAverage(TH1D *h1)

@@ -18,13 +18,9 @@ using namespace std;
 void MakeVarTree(int NumEvts_user = -1,
                  int dataset = 91599,
                  bool isData = true,
-                 bool chargedJetCut_user = false,
                  bool DoJER = false,
-                 bool DoJES = true,
-                 bool DoJetID = false,
-                 bool DoFSPEff = false,
-                 bool DoTrackPt = false,
-                 bool DoGhostCut = false)
+                 bool DoJES = false,
+                 bool DoJetID = false)
 {
 
     int NumEvts = NumEvts_user;
@@ -32,13 +28,11 @@ void MakeVarTree(int NumEvts_user = -1,
     bool MCflag = !isData;
     followHardest = false;
     truthLevel = false;
-    chargedJetCut = chargedJetCut_user;
+
     if (truthLevel)
     {
         ghostCut = false;
     }
-    if (DoGhostCut)
-        ghostProb = 0.3;
 
     int year = (dataset / 10000) % 10;
     int JetMeth = (dataset / 1000) % 10;
@@ -49,7 +43,6 @@ void MakeVarTree(int NumEvts_user = -1,
 
     TString str_year = "2016";
 
-    TString str_charged = "";
 
     if (year == 6)
         str_year = "2016";
@@ -129,8 +122,6 @@ void MakeVarTree(int NumEvts_user = -1,
     if (ghostCut)
         str_ghost = Form("_ghost_%.1f", ghostProb);
 
-    if (chargedJetCut)
-        str_charged = "_charge";
     // TString str_trees[5];
     // str_trees[0] = "TaggedDijets/DecayTree";
     // str_trees[1] = "D0KPiJet/DecayTree";
@@ -140,7 +131,7 @@ void MakeVarTree(int NumEvts_user = -1,
     TString extension_read, extension_RootFilesMC, extension_RootFilesData, extension_RootFiles;
     TString extension, extension_eff;
     
-    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
     
     extension_eff = TString("fspeff_") + "truth" + Form("_ev_%d", -1) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_flavor + Form("_%d", 91599);
 
@@ -148,12 +139,6 @@ void MakeVarTree(int NumEvts_user = -1,
         extension = TString("JES_") + extension;
     if (DoJER)
         extension = TString("JER_") + extension;
-    if (DoFSPEff)
-        extension = TString("fspeff_") + extension;
-    if (DoTrackPt)
-        extension = TString("trackpt_") + extension;
-    if (DoGhostCut)
-        extension = TString("ghostcut_") + extension;
     if (DoJetID)
         extension = TString("jetid_") + extension;
         
@@ -244,12 +229,7 @@ void MakeVarTree(int NumEvts_user = -1,
     TFile *file_eff;
     TH2D *h2_trk_eff;
     TH2D *h2_neut_eff;
-    // if (DoFSPEff)
-    // {
-    //   file_eff = new TFile(dir_deadcone + "hists/" + extension_eff + ".root", "READ");
-    //   h2_trk_eff = (TH2D *)file_eff->Get("trk_eff_sys");
-    //   h2_neut_eff = (TH2D *)file_eff->Get("neut_eff_sys");
-    // }
+
 
     //if (isData)
     //  TFile f( extension_RootFilesData +  extension + ".root", "RECREATE");
@@ -980,36 +960,10 @@ void MakeVarTree(int NumEvts_user = -1,
                                   Tree.Jet_Dtr_TRUE_E[dtrs0] / 1000.);
             bool dtrpass = true;
 
-            if (DoTrackPt && !(abs(Tree.Jet_Dtr_ID[dtrs0]) != HF_pdgcode))
-            {
-                SmearDtrPt(dtr, Tree.Jet_Dtr_ThreeCharge[dtrs0], Tree.Jet_Dtr_ID[dtrs0], myRNG);
-            }
-
-//            dtrpass = DtrCuts(dtr, dtr_charge, Tree.Jet_Dtr_ProbNNghost[dtrs0], trchi2ndf, chargedJetCut);
-//            if (abs(Tree.Jet_Dtr_ID[dtrs0]) == HF_pdgcode)
-//                dtrpass = true;
-//            if (!dtrpass)
-//                continue;
             
             if (dtr.DeltaR(HFjet, true) > jetradius)
                 continue;
 
-            if (DoFSPEff && !(abs(Tree.Jet_Dtr_ID[dtrs0]) == HF_pdgcode))
-            {
-                float track_sys = 0.03;
-                float neutral_sys = 0.04;
-                bool drop = false;
-                if (fabs(Tree.Jet_Dtr_ThreeCharge[dtrs0]) > 0)
-                {
-                    drop = DropFSP(track_sys, myUniform);
-                }
-                else
-                {
-                    drop = DropFSP(neutral_sys, myUniform);
-                }
-                if (drop)
-                    continue;
-            }
 
 //            jetdtrs.push_back(PseudoJet(Tree.Jet_Dtr_PX[dtrs0] / 1000.,
 //                                        Tree.Jet_Dtr_PY[dtrs0] / 1000.,
@@ -1079,11 +1033,6 @@ void MakeVarTree(int NumEvts_user = -1,
 
                 bool dtrpass = true;
 
-//                dtrpass = DtrCuts(dtr, Tree.Jet_mcjet_dtrThreeCharge[dtrs0], 0, 0, chargedJetCut);
-//                if (abs(Tree.Jet_mcjet_dtrID[dtrs0]) == HF_pdgcode)
-//                    dtrpass = true;
-//                if (!dtrpass)
-//                    continue;
                 if (dtr.DeltaR(tr_HFjet, true) > jetradius)
                     continue;
 
@@ -1612,181 +1561,5 @@ void MakeVarTree(int NumEvts_user = -1,
 
     f.Write();
     f.Close();
-}
-
-int main(int argc, char *argv[])
-{
-
-    int NumEvts = -1;
-    int dataset = 91599;
-    bool isData = true;
-    bool chargedJetCut = false;
-    bool DoJER = false;
-    bool DoJES = false;
-    bool DoFSPEff = false;
-    bool DoTrackPt = false;
-    bool DoGhostCut = false;
-
-    // Parsing command line arguments
-    for (int i = 1; i < argc; ++i)
-    {
-        std::string arg = argv[i];
-        if (arg == "-h")
-        {
-            // Print help message explaining the options
-            std::cout << "Usage: " << argv[0] << " [options]" << std::endl;
-            std::cout << "Options:" << std::endl;
-            std::cout << "  -n <NumEvts>       : Number of events" << std::endl;
-            std::cout << "  -dataset <dataset> : Dataset number" << std::endl;
-            std::cout << "  -isdata <isData>   : Whether the dataset is real data (0 or 1)" << std::endl;
-            std::cout << "  -charge <chargedJetCut> : Whether to apply charged jet cut (0 or 1)" << std::endl;
-            std::cout << "  -jer <DoJER>       : Whether to apply JER (0 or 1)" << std::endl;
-            std::cout << "  -jes <DoJES>       : JES variation (0 or 1)" << std::endl;
-            std::cout << "  -trackpt <DoTrackPt>     : Whether to apply track pT cut (0 or 1)" << std::endl;
-            std::cout << "  -ghost <DoGhostCut>       : Whether to apply ghost cut (0 or 1)" << std::endl;
-            std::cout << "  -fspeff <DoFSPEff>       : Whether to apply full simulation efficiency (0 or 1)" << std::endl;
-            std::cout << "  -trackeff <DoTrackEff>   : Track efficiency variation (integer)" << std::endl;
-            std::cout << "  -trig <DoTrigEff>        : Whether to apply trigger efficiency (0 or 1)" << std::endl;
-            std::cout << "  -pideff <DoPIDEff>       : PID efficiency variation (integer)" << std::endl;
-            std::cout << "  -recsel <DoRecSelEff>    : Whether to apply reconstruction selection efficiency (0 or 1)" << std::endl;
-            std::cout << "  -massfit <DoMassFit>     : Whether to perform mass fitting (0 or 1)" << std::endl;
-            std::cout << "  -subtractGS <SubtractGS> : Whether to subtract ghost signals (0 or 1)" << std::endl;
-            return 0;
-        }
-        else if (arg == "-n")
-        {
-            if (i + 1 < argc)
-            {
-                NumEvts = std::stoi(argv[i + 1]);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-n option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-dataset")
-        {
-            if (i + 1 < argc)
-            {
-                dataset = std::stoi(argv[i + 1]);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-dataset option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-isdata")
-        {
-            std::cout << argv[i + 1] << std::endl;
-            if (i + 1 < argc)
-            {
-                isData = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-isdata option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-charge")
-        {
-            if (i + 1 < argc)
-            {
-                chargedJetCut = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-charge option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-jer")
-        {
-            if (i + 1 < argc)
-            {
-                DoJER = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-jer option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-fspeff")
-        {
-            if (i + 1 < argc)
-            {
-                DoFSPEff = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-fspeff option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-trackpt")
-        {
-            if (i + 1 < argc)
-            {
-                DoTrackPt = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-trackpt option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-ghost")
-        {
-            if (i + 1 < argc)
-            {
-                DoGhostCut = (stoi(argv[i + 1]) != 0);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-ghost option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else if (arg == "-jes")
-        {
-            if (i + 1 < argc)
-            {
-                DoJES = std::stoi(argv[i + 1]);
-                i++;
-            }
-            else
-            {
-                std::cerr << "-jes option requires one argument." << std::endl;
-                return 1;
-            }
-        }
-        else
-        {
-            std::cerr << "Unknown option: " << arg << std::endl;
-            return 1;
-        }
-    }
-
-    MakeVarTree(NumEvts,
-                dataset,
-                isData,
-                chargedJetCut,
-                DoJER,
-                DoJES,
-                DoFSPEff,
-                DoTrackPt,
-                DoGhostCut);
-    return 0;
 }
 //

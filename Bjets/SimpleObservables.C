@@ -293,7 +293,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   //////////////////////////////////////
   
   /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
-  TString extension_trig("jpsieff_reco_ev_-1_b" + TString("_91599.root"));
+  TString extension_trig("jpsieff_data_ev_-1_b" + TString("_91599.root"));
   // if (DoTrigEff)
   //   extension_trig = "recselsys_" + extension_trig;
   TFile f_trig("../../root_files/TrigEff/" + extension_trig, "READ");
@@ -1488,41 +1488,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after eff ptjt: " << h2_ptjt_final->Integral()  << endl;
     cout << "Integrals after eff ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
-    
-    TH1D *h1_z_final[ptbinsize-1], *h1_jt_final[ptbinsize-1], *h1_r_final[ptbinsize-1];
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      h1_z_final[i-1] = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
-      h1_jt_final[i-1] = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);  
-      h1_r_final[i-1] = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);        
-            
-      h1_z_final[i-1]->SetStats(0);
-      NormalizeHist(h1_z_final[i-1]); 
-      
-      h1_jt_final[i-1]->SetStats(0);
-      NormalizeHist(h1_jt_final[i-1]);  
-        
-      h1_r_final[i-1]->SetStats(0);
-      NormalizeHist(h1_r_final[i-1]);        
-             
-
-      h1_z_final[i-1]->Write(Form("z_pt%d_final", i)); 
-      TCanvas *c0 = new TCanvas("c0");            
-      h1_z_final[i-1]->Draw();
-      c0->SaveAs(Form("z_pt%d_final.png",i)); 
-      
-      h1_jt_final[i-1]->Write(Form("jt_pt%d_final", i)); 
-      TCanvas *c1 = new TCanvas("c1");            
-      h1_jt_final[i-1]->Draw();
-      c1->SaveAs(Form("jt_pt%d_final.png",i));      
-      
-      h1_r_final[i-1]->Write(Form("r_pt%d_final", i)); 
-      TCanvas *c2 = new TCanvas("c2");            
-      h1_r_final[i-1]->Draw();
-      c1->SaveAs(Form("r_pt%d_final.png",i));         
-      //h1_temp->SetMinimum(0.0);
-//      h1_temp->SetMaximum(3.5);
-    }    
     
   SetRecoStyle(h1_jet_eta);
   SetDataStyle(h1_jet_rap);
