@@ -293,7 +293,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   //////////////////////////////////////
   
   /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
-  TString extension_trig("jpsieff_data_ev_-1_b" + TString("_91599.root"));
+  TString extension_trig("PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID" + TString("_91599.root"));
   // if (DoTrigEff)
   //   extension_trig = "recselsys_" + extension_trig;
   TFile f_trig("../../root_files/TrigEff/" + extension_trig, "READ");
@@ -1574,6 +1574,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   // gStyle->SetLineWidth(3);
 
   //---- paint...
+  gStyle->SetImageScaling(3.);
   char buf[100];
   char bufb[100];
     TString rootfile;
@@ -1603,84 +1604,105 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->cd(1);
 
       
-    auto legend_zpt_final = new TLegend(0.2, 0.6, 0.45, 0.8);
+    auto legend_zpt_final = new TLegend(0.2, 0.5, 0.45, 0.85);
     legend_zpt_final ->SetTextSize(0.03);
     legend_zpt_final ->SetBorderSize(0);
     legend_zpt_final ->SetFillStyle(0);
     legend_zpt_final ->SetFillColor(3);
     legend_zpt_final->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
-        
-      h1_temp->SetStats(0);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("z");   
       NormalizeHist(h1_temp);    
       h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->GetYaxis()->SetRangeUser(0.0, 3.5);
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
-      //h1_temp->SetMinimum(0.0);
-//      h1_temp->SetMaximum(3.5);
- 
+
+      
       legend_zpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_zpt_final -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_corrected.png");
 
     ccan[ican]->cd(2);
-    auto legend_zpt_raw= new TLegend(0.25, 0.6, 0.5, 0.8);
+    auto legend_zpt_raw= new TLegend(0.25, 0.5, 0.5, 0.85);
     legend_zpt_raw ->SetTextSize(0.03);
     legend_zpt_raw ->SetBorderSize(0);
     legend_zpt_raw ->SetFillStyle(0);
     legend_zpt_raw ->SetFillColor(3);
     legend_zpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
-      TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("htemp%d_ptz_raw", i), i + 1, i + 1);
-
+      TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("htemp%d_ptz_raw", i), i + 1, i + 1); 
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        h1_temp->SetMarkerColor(i-1 + 1);
-        h1_temp->SetLineColor(i-1 + 1);
-        
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-        //h1_temp->SetMinimum(0.0);
-        //h1_temp->SetMaximum(3.5);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->GetYaxis()->SetRangeUser(0.0, 3.5);        
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
   
       legend_zpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_zpt_raw -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_uncorrected.png");    
     
     ccan[ican]->cd(3);
-    auto legend_zpt_truth = new TLegend(0.25, 0.6, 0.5, 0.8);
+    auto legend_zpt_truth = new TLegend(0.25, 0.5, 0.5, 0.85);
     legend_zpt_truth ->SetTextSize(0.03);
     legend_zpt_truth ->SetBorderSize(0);
     legend_zpt_truth ->SetFillStyle(0);
     legend_zpt_truth ->SetFillColor(3);
     legend_zpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
-      TH1D *h1_temp_truth = (TH1D *)h2_ptz_truth->ProjectionX(Form("htemp%d_ptz_truth", i), i + 1, i + 1);
-
+      TH1D *h1_temp_truth = (TH1D *)h2_ptz_truth->ProjectionX(Form("htemp%d_ptz_truth", i), i + 1, i + 1);   
       h1_temp_truth->SetStats(0);
       NormalizeHist(h1_temp_truth);
-        h1_temp_truth->SetMarkerStyle(i + 20);
-        h1_temp_truth->SetMarkerColor(i-1 + 1);
-        h1_temp_truth->SetLineColor(i-1 + 1);
-        
-        h1_temp_truth->Draw("P E SAME");
-        h1_temp_truth->Draw("HIST SAME");
-        //h1_temp_truth->SetMinimum(0.0);
-        //h1_temp_truth->SetMaximum(3.5);
+      h1_temp_truth->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp_truth->SetMarkerColor(i);
+        h1_temp_truth->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp_truth->SetMarkerColor(i*i+3);
+        h1_temp_truth->SetLineColor(i*i+3);
+      }
+      h1_temp_truth->GetYaxis()->SetRangeUser(0.0, 3.5);              
+      h1_temp_truth->Draw("P E SAME");
+      h1_temp_truth->Draw("HIST SAME");
   
       legend_zpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_zpt_truth -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_truth.png");    
   
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -1705,92 +1727,113 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
     ccan[ican]->cd(1);       
     gPad->SetLogy();    
-    auto legend_jtpt_final = new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_jtpt_final = new TLegend(0.5, 0.65, 0.75, 0.875);
     legend_jtpt_final ->SetTextSize(0.03);
     legend_jtpt_final ->SetBorderSize(0);
     legend_jtpt_final ->SetFillStyle(0);
     legend_jtpt_final ->SetFillColor(3);
     legend_jtpt_final->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);
         
       h1_temp->SetStats(0);
+      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");
       NormalizeHist(h1_temp);
-      //h1_temp->Scale(1./h1_temp->Integral("width"));
       h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
 
         
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
-      //h1_temp->SetMinimum(0.0);
-//      h1_temp->SetMaximum(3.5);
  
       legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_jtpt_final -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_corrected.png");              
 
     ccan[ican]->cd(2);
     gPad->SetLogy();        
-    auto legend_jtpt_raw= new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_jtpt_raw= new TLegend(0.55, 0.65, 0.825, 0.875);
     legend_jtpt_raw ->SetTextSize(0.03);
     legend_jtpt_raw ->SetBorderSize(0);
     legend_jtpt_raw ->SetFillStyle(0);
     legend_jtpt_raw ->SetFillColor(3);
     legend_jtpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt_raw", i), i + 1, i + 1);
 
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
  
-        h1_temp->SetMarkerStyle(i + 20);
-        h1_temp->SetMarkerColor(i-1 + 1);
-        h1_temp->SetLineColor(i-1 + 1);
-        
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-        //h1_temp->SetMinimum(0.0);
-        //h1_temp->SetMaximum(3.5);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
   
       legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_jtpt_raw -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_uncorrected.png");      
     
     
     ccan[ican]->cd(3);
     gPad->SetLogy();        
-    auto legend_jtpt_truth = new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_jtpt_truth = new TLegend(0.55, 0.65, 0.825, 0.875);
     legend_jtpt_truth ->SetTextSize(0.03);
     legend_jtpt_truth ->SetBorderSize(0);
     legend_jtpt_truth ->SetFillStyle(0);
     legend_jtpt_truth ->SetFillColor(3);
     legend_jtpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp_truth = (TH1D *)h2_ptjt_truth->ProjectionX(Form("htemp%d_ptjt_truth", i), i + 1, i + 1);
 
       h1_temp_truth->SetStats(0);
       NormalizeHist(h1_temp_truth);
  
-        h1_temp_truth->SetMarkerStyle(i + 20);
-        h1_temp_truth->SetMarkerColor(i-1 + 1);
-        h1_temp_truth->SetLineColor(i-1 + 1);
-        
-        h1_temp_truth->Draw("P E SAME");
-        h1_temp_truth->Draw("HIST SAME");
-        //h1_temp_truth->SetMinimum(0.0);
-        //h1_temp_truth->SetMaximum(3.5);
+      h1_temp_truth->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp_truth->SetMarkerColor(i);
+        h1_temp_truth->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp_truth->SetMarkerColor(i*i+3);
+        h1_temp_truth->SetLineColor(i*i+3);
+      }
+      h1_temp_truth->GetXaxis()->SetTitle("j_{T} [GeV/c]");  
+      h1_temp_truth->Draw("P E SAME");
+      h1_temp_truth->Draw("HIST SAME");
   
       legend_jtpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_jtpt_truth -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_truth.png");  
 
  
     ccan[ican]->cd();
@@ -1813,21 +1856,30 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     ccan[ican]->cd(1);     
     gPad->SetLogy();    
         
-    auto legend_rpt_final = new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_rpt_final = new TLegend(0.575, 0.675, 0.7, 0.89);
     legend_rpt_final ->SetTextSize(0.03);
     legend_rpt_final ->SetBorderSize(0);
     legend_rpt_final ->SetFillStyle(0);
     legend_rpt_final ->SetFillColor(3);
     legend_rpt_final->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);
         
       h1_temp->SetStats(0);
+      h1_temp->GetXaxis()->SetTitle("r");
       NormalizeHist(h1_temp);
       h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
       
         
       h1_temp->Draw("P E SAME");
@@ -1836,68 +1888,79 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //      h1_temp->SetMaximum(3.5);
  
       legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
+    
     }
     legend_rpt_final -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/r_ptbinned_corrected.png");      
 
     ccan[ican]->cd(2);
     gPad->SetLogy();        
-    auto legend_rpt_raw= new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_rpt_raw= new TLegend(0.575, 0.675, 0.775, 0.89);
     legend_rpt_raw ->SetTextSize(0.03);
     legend_rpt_raw ->SetBorderSize(0);
     legend_rpt_raw ->SetFillStyle(0);
     legend_rpt_raw ->SetFillColor(3);
     legend_rpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("htemp%d_ptr_raw", i), i + 1, i + 1);
 
       h1_temp->SetStats(0);
       NormalizeHist(h1_temp);
- 
-        h1_temp->SetMarkerStyle(i + 20);
-        h1_temp->SetMarkerColor(i-1 + 1);
-        h1_temp->SetLineColor(i-1 + 1);
-        
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-        //h1_temp->SetMinimum(0.0);
-        //h1_temp->SetMaximum(3.5);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      } 
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
   
       legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_rpt_raw -> Draw("SAME");
+    //gPad->SaveAs(plotextension + "SimpleObservables/r_ptbinned_uncorrected.png");      
     
     ccan[ican]->cd(3);
     gPad->SetLogy();        
-    auto legend_rpt_truth = new TLegend(0.45, 0.7, 0.7, 0.9);
+    auto legend_rpt_truth = new TLegend(0.55, 0.65, 0.75, 0.89);
     legend_rpt_truth ->SetTextSize(0.03);
     legend_rpt_truth ->SetBorderSize(0);
     legend_rpt_truth ->SetFillStyle(0);
     legend_rpt_truth ->SetFillColor(3);
     legend_rpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp_truth = (TH1D *)h2_ptr_truth->ProjectionX(Form("htemp%d_ptr_truth", i), i + 1, i + 1);
 
       h1_temp_truth->SetStats(0);
       NormalizeHist(h1_temp_truth);
- 
-        h1_temp_truth->SetMarkerStyle(i + 20);
-        h1_temp_truth->SetMarkerColor(i-1 + 1);
-        h1_temp_truth->SetLineColor(i-1 + 1);
-        
-        h1_temp_truth->Draw("P E SAME");
-        h1_temp_truth->Draw("HIST SAME");
-        //h1_temp_truth->SetMinimum(0.0);
-        //h1_temp_truth->SetMaximum(3.5);
+      h1_temp_truth->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp_truth->SetMarkerColor(i);
+        h1_temp_truth->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp_truth->SetMarkerColor(i*i+3);
+        h1_temp_truth->SetLineColor(i*i+3);
+      }
+      h1_temp_truth->Draw("P E SAME");
+      h1_temp_truth->Draw("HIST SAME");
   
       legend_rpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
     legend_rpt_truth -> Draw("SAME");
-  
+    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_truth.png");  
+      
     ccan[ican]->cd();
     ccan[ican]->Update();
 
@@ -2321,7 +2384,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zptSV ->SetFillStyle(0);
     legend_zptSV ->SetFillColor(3);
     legend_zptSV->SetHeader("SV > 0","C");
-  for (int i = 2; i < ptbinsize; i++)
+  for (int i = 1; i < ptbinsize; i++)
   {
     TH1D *h1_temp = (TH1D *)h2_ptz_SV->ProjectionX(Form("htemp%d_ptz_SV", i), i + 1, i + 1);
     NormalizeHist(h1_temp);
@@ -2371,7 +2434,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_jtptSV ->SetFillStyle(0);
       legend_jtptSV ->SetFillColor(3);
       legend_jtptSV->SetHeader("SV > 0","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt_SV->ProjectionX(Form("htemp%d_ptjt_SV", i), i + 1, i + 1);
 //      NormalizeHist(h1_temp);
@@ -2399,7 +2462,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_rptSV ->SetFillStyle(0);
       legend_rptSV ->SetFillColor(3);
       legend_rptSV->SetHeader("SV > 0","C");
-    for (int i = 2; i < ptbinsize; i++)
+    for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr_SV->ProjectionX(Form("htemp%d_ptr_SV", i), i + 1, i + 1);
 //      NormalizeHist(h1_temp);
@@ -2902,45 +2965,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }
-  //
-
-//  //
-//  ++ican;
-//  sprintf(buf, "ccan%d", ican);
-//  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-//  ccan[ican]->SetFillColor(10);
-//  gPad->SetLeftMargin(0.16);
-//  gPad->SetBottomMargin(0.06);
-//  gPad->SetRightMargin(0.15);
-//  ccan[ican]->cd();
-//  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-//  ccan[ican]->cd(1);
-//
-//  h2_ktdR_truepos->Draw("COLZ");
-//
-//  ccan[ican]->cd(2);
-//
-//  h2_ktdR_falsepos->Draw("COLZ");
-//
-//  ccan[ican]->cd(3);
-//
-//  h2_zdR_truepos->Draw("COLZ");
-//
-//  ccan[ican]->cd(4);
-//
-//  h2_zdR_falsepos->Draw("COLZ");
-//
-//  ccan[ican]->cd();
-//  ccan[ican]->Update();
-//  if (ican == 0)
-//  {
-//    ccan[ican]->Print(plotfileO.Data());
-//  }
-//  else
-//  {
-//    ccan[ican]->Print(plotfilePDF.Data());
-//  }
-  //
  
   f.Write();
   f.Close();
@@ -2951,192 +2975,4 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << " You plotted " << ican + 1 << " canvasses......." << endl;
     ccan[ican]->Print(plotfileC.Data());
   }
-}
-
-int main(int argc, char *argv[])
-{
-
-  int NumEvts = -1;
-  int dataset = 91599;
-  bool isData = true;
-  bool chargedJetCut = false;
-  int DoTrackEff = 0;
-  bool DoTrigEff = false;
-  int DoPIDEff = 0;
-  bool DoRecSelEff = false;
-  bool DoMassFit = false;
-  bool SubtractGS = false;
-
-  // Parsing command line arguments
-  for (int i = 1; i < argc; ++i)
-  {
-    // std::cout << "Parsing!" << std::endl;
-    std::string arg = argv[i];
-    if (arg == "-h")
-    {
-      // Print help message explaining the options
-      std::cout << "Usage: " << argv[0] << " [options]" << std::endl;
-      std::cout << "Options:" << std::endl;
-      std::cout << "  -n <NumEvts>       : Number of events" << std::endl;
-      std::cout << "  -dataset <dataset> : Dataset number" << std::endl;
-      std::cout << "  -isdata <isData>   : Whether the dataset is real data (0 or 1)" << std::endl;
-      std::cout << "  -charge <chargedJetCut> : Whether to apply charged jet cut (0 or 1)" << std::endl;
-      std::cout << "  -trackeff <DoTrackEff>   : Track efficiency variation (integer)" << std::endl;
-      std::cout << "  -trig <DoTrigEff>        : Whether to apply trigger efficiency (0 or 1)" << std::endl;
-      std::cout << "  -pideff <DoPIDEff>       : PID efficiency variation (integer)" << std::endl;
-      std::cout << "  -recsel <DoRecSelEff>    : Whether to apply reconstruction selection efficiency (0 or 1)" << std::endl;
-      std::cout << "  -massfit <DoMassFit>     : Whether to perform mass fitting (0 or 1)" << std::endl;
-      std::cout << "  -subtractGS <SubtractGS> : Whether to subtract ghost signals (0 or 1)" << std::endl;
-      return 0;
-    }
-    else if (arg == "-n")
-    {
-      // std::cout << argv[i + 1] << std::endl;
-      if (i + 1 < argc)
-      {
-        NumEvts = std::stoi(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-n option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-dataset")
-    {
-      // std::cout << argv[i + 1] << std::endl;
-      if (i + 1 < argc)
-      {
-        dataset = std::stoi(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-dataset option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-isdata")
-    {
-      if (i + 1 < argc)
-      {
-        isData = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-isdata option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-charge")
-    {
-      if (i + 1 < argc)
-      {
-        chargedJetCut = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-charge option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-recsel")
-    {
-      if (i + 1 < argc)
-      {
-        DoRecSelEff = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-recsel option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-trig")
-    {
-      if (i + 1 < argc)
-      {
-        DoTrigEff = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-trig option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-massfit")
-    {
-      if (i + 1 < argc)
-      {
-        DoMassFit = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-massfit option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-subtractGS")
-    {
-      if (i + 1 < argc)
-      {
-        SubtractGS = (stoi(argv[i + 1]) != 0);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-subtractGS option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-trackeff")
-    {
-      if (i + 1 < argc)
-      {
-        DoTrackEff = std::stoi(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-trackeff option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else if (arg == "-pideff")
-    {
-      if (i + 1 < argc)
-      {
-        DoPIDEff = std::stoi(argv[i + 1]);
-        i++;
-      }
-      else
-      {
-        std::cerr << "-pideff option requires one argument." << std::endl;
-        return 1;
-      }
-    }
-    else
-    {
-      std::cerr << "Unknown option: " << arg << std::endl;
-      return 1;
-    }
-  }
-
-  SimpleObservables(NumEvts,
-             dataset,
-             isData,
-             chargedJetCut,
-             DoTrackEff,
-             DoTrigEff,
-             DoPIDEff,
-             DoRecSelEff,
-             DoMassFit,
-             SubtractGS);
-  return 0;
 }

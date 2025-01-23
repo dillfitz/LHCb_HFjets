@@ -198,8 +198,8 @@ void MakeVarTree(int NumEvts_user = -1,
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
 
-    extension_trig_MC = "jpsieff_reco_ev_-1_b_91599";
-    extension_trig_Data = "jpsieff_data_ev_-1_b_91599";
+    extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
+    extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
 
     TFile file_trigeffMC(extension_RootFilesTrig+ extension_trig_MC + ".root", "READ");
     TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data + ".root", "READ");

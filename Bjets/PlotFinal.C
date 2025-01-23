@@ -286,39 +286,68 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599,
     
     gStyle->SetOptStat(0);
     
-  
+    TLegend *zleg = new TLegend(0.2, 0.5, 0.5, 0.8);
+    zleg->SetLineColor(0);
     can_z[j-1] = new TCanvas(Form("can_z_pt%d", j));
     can_z[j-1]->cd();
     h1_z_ptbinned_final[j-1]->SetLineColor(kBlack);
+    h1_z_ptbinned_final[j-1]->SetMarkerColor(kBlack);
+    h1_z_ptbinned_final[j-1]->SetMarkerStyle(kFullCircle);
     h1_z_ptbinned[j-1]->SetLineColor(kBlue);
+    h1_z_ptbinned[j-1]->SetMarkerColor(kBlue);
+    h1_z_ptbinned[j-1]->SetMarkerStyle(kFullSquare);
     h1_z_ptbinned_final[j-1]->GetXaxis()->SetTitle("z");
     h1_z_ptbinned_final[j-1]->Draw();
     h1_z_ptbinned[j-1]->Draw("same");
+    h1_z_ptbinned_final[j-1]->GetYaxis()->SetRangeUser(0.0, 3.5);
+    zleg->AddEntry(h1_z_ptbinned_final[j-1], "corrected data", "lp");
+    zleg->AddEntry(h1_z_ptbinned[j-1], "uncorrected data", "lp");
+    zleg->Draw("same");
     TString plotname = Form("z_compare_pt%d.png", j);
     plotname = plotdir + plotname;
     can_z[j-1]->SaveAs(plotname);
     
+    TLegend *jtleg = new TLegend(0.6, 0.6, 0.85, 0.85);
+    jtleg->SetLineColor(0);
     can_jt[j-1] = new TCanvas(Form("can_jt_pt%d", j));
     can_jt[j-1]->cd();
-    h1_jt_ptbinned_final[j-1]->SetLineColor(kBlack);    
+    can_jt[j-1]->SetLogy();
+    h1_jt_ptbinned_final[j-1]->SetLineColor(kBlack);
+    h1_jt_ptbinned_final[j-1]->SetMarkerColor(kBlack);
+    h1_jt_ptbinned_final[j-1]->SetMarkerStyle(kFullCircle);
     h1_jt_ptbinned[j-1]->SetLineColor(kBlue);
+    h1_jt_ptbinned[j-1]->SetMarkerColor(kBlue);
+    h1_jt_ptbinned[j-1]->SetMarkerStyle(kFullSquare);
     h1_jt_ptbinned_final[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h1_jt_ptbinned_final[j-1]->Draw();
     h1_jt_ptbinned[j-1]->Draw("same");
+    jtleg->AddEntry(h1_z_ptbinned_final[j-1], "corrected data", "lp");
+    jtleg->AddEntry(h1_z_ptbinned[j-1], "uncorrected data", "lp");
+    jtleg->Draw("same");
     plotname = Form("jt_compare_pt%d.png", j);
     plotname = plotdir + plotname;
-    can_jt[j-1]->SaveAs(plotname);    
+    can_jt[j-1]->SaveAs(plotname);
     
+    TLegend *rleg = new TLegend(0.6, 0.6, 0.85, 0.85);
+    rleg->SetLineColor(0);
     can_r[j-1] = new TCanvas(Form("can_r_pt%d", j));
     can_r[j-1]->cd();
-    h1_r_ptbinned_final[j-1]->SetLineColor(kBlack);    
+    can_r[j-1]->SetLogy();
+    h1_r_ptbinned_final[j-1]->SetLineColor(kBlack);
+    h1_r_ptbinned_final[j-1]->SetMarkerColor(kBlack);
+    h1_r_ptbinned_final[j-1]->SetMarkerStyle(kFullCircle);
     h1_r_ptbinned[j-1]->SetLineColor(kBlue);
+    h1_r_ptbinned[j-1]->SetMarkerColor(kBlue);
+    h1_r_ptbinned[j-1]->SetMarkerStyle(kFullSquare);
     h1_r_ptbinned_final[j-1]->GetXaxis()->SetTitle("r");
     h1_r_ptbinned_final[j-1]->Draw();
     h1_r_ptbinned[j-1]->Draw("same");
+    rleg->AddEntry(h1_z_ptbinned_final[j-1], "corrected data", "lp");
+    rleg->AddEntry(h1_z_ptbinned[j-1], "uncorrected data", "lp");
+    rleg->Draw("same");
     plotname = Form("r_compare_pt%d.png", j);
     plotname = plotdir + plotname;
-    can_r[j-1]->SaveAs(plotname);       
+    can_r[j-1]->SaveAs(plotname);
                      
   }
   
