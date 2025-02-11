@@ -1013,7 +1013,14 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_prior[i-1]->SetName(Form("jtr_sys_prior_pt%d", i));    
   h2_jtr_ptbinned_sys_total[i-1]->SetName(Form("jtr_sys_total_pt%d", i));        
   
-  
+  if (i==3)
+  {
+    for (int ibin = 0; ibin < h1_jt_ptbinned_sys_total[i-1]->GetNbinsX(); ++ibin)
+    {
+      cout << " total sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_total[i-1]->GetBinContent(ibin+1) << endl;
+      cout << " nonclosure sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_closure[i-1]->GetBinContent(ibin+1) << endl;      
+    }
+  }
   // Write relevant histograms to output file
   h1_z_ptbinned_sys_jetid[i-1]->Write();   
   h1_z_ptbinned_sys_jer[i-1]->Write();   
@@ -1467,13 +1474,15 @@ void GetTotalSys(int NumEvts = -1,
       h1_z_ptbinned_sys->SetMinimum(-0.70);
     }
     
-    legend_z_ptbinned->Draw("SAME");    
+    legend_z_ptbinned->Draw("SAME");   
     
     double top = 0.85;
     double step = 0.06;
     Tl.DrawLatex(0.2, top, Form("pp #sqrt{s} = 13 TeV"));
     Tl.DrawLatex(0.2, top - 2 * step, Form("2.5 < #eta_{jet} < 4"));    
-    Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));    
+    Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));  
+    
+    ccan[ican]->SaveAs(loc_plots + Form("z_total_sys_contributions_pt%d.png", i));      
     
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -1809,7 +1818,9 @@ void GetTotalSys(int NumEvts = -1,
     
     Tl.DrawLatex(0.2, top, Form("pp #sqrt{s} = 13 TeV"));
     Tl.DrawLatex(0.2, top - 2 * step, Form("2.5 < #eta_{jet} < 4"));    
-    Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));    
+    Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));   
+    
+    ccan[ican]->SaveAs(loc_plots + Form("jt_total_sys_contributions_pt%d.png", i));     
     
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -2143,6 +2154,8 @@ void GetTotalSys(int NumEvts = -1,
     Tl.DrawLatex(0.2, top - 2 * step, Form("2.5 < #eta_{jet} < 4"));    
     Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));    
     
+    ccan[ican]->SaveAs(loc_plots + Form("r_total_sys_contributions_pt%d.png", i));    
+    
     ccan[ican]->cd();
     ccan[ican]->Update();
     if (ican == 0)
@@ -2152,16 +2165,25 @@ void GetTotalSys(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    }     
-
+    }       
+    
+  if (i==3)
+  {
+    for (int ibin = 0; ibin < h1_jt_ptbinned_sys_total[i-1]->GetNbinsX(); ++ibin)
+    {
+      cout << " total sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_total[i-1]->GetBinContent(ibin+1) << endl;
+      cout << " nonclosure sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_closure[i-1]->GetBinContent(ibin+1) << endl;      
+    }
+  }      
 
   //
   cout << "pt bin " << i << endl;
   //
-  h1_z_ptbinned_sys_total[i-1]->Write();
-  h1_jt_ptbinned_sys_total[i-1]->Write();
-  h1_r_ptbinned_sys_total[i-1]->Write();    
+  //h1_z_ptbinned_sys_total[i-1]->Write();
+  //h1_jt_ptbinned_sys_total[i-1]->Write();
+  //h1_r_ptbinned_sys_total[i-1]->Write();    
   } // end pt bin loop
+  
   if (ican > -1)
   {
     cout << " You plotted " << ican + 1 << " canvasses......." << endl;

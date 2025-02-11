@@ -15,7 +15,7 @@ void GetFinalDistributions(int NumEvts = -1,
   TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_DTF(""), str_PID("");
   TString loc_rootfiles_data("../../root_files/Bjets/");
   TString loc_rootfiles_MC("../../root_files/BjetsMC/");
-  TString loc_plots("../../plots/Bjets/");
+  TString loc_plots("../../plots/Bjets/results/");
 
   int JetMeth = (dataset / 1000) % 10;
   int flavor = (dataset / 100) % 10;
@@ -111,7 +111,7 @@ void GetFinalDistributions(int NumEvts = -1,
   TH2D *h2_zjt_sys[ptbinsize-1], *h2_zr_sys[ptbinsize-1], *h2_jtr_sys[ptbinsize-1];    
   TH2D *h2_zjt_tot_unc[ptbinsize-1], *h2_zr_tot_unc[ptbinsize-1], *h2_jtr_tot_unc[ptbinsize-1];     
 
-  TRatioPlot *rp[1000];
+  TRatioPlot *rp[10000];
   // h2_ptktdR_truth->GetYaxis()->SetRange(1, ktbinsize);
 
   // NormalizeHist(h2_ptktdR_truth);
@@ -389,7 +389,6 @@ void GetFinalDistributions(int NumEvts = -1,
     {
       legend_stack_z->Draw("SAME");
     }
-
     rp[irp]->GetUpperPad()->Update();
 
     ccan[ican]->cd();
@@ -402,6 +401,8 @@ void GetFinalDistributions(int NumEvts = -1,
     {
       ccan[ican]->Print(plotfilePDF.Data());
     }
+    ccan[ican]->SaveAs(Form(loc_plots + "z_final_w_sys_pt%d.png",i));
+        
     ++irp;
 }     
     // jT historgrams //
@@ -423,6 +424,14 @@ void GetFinalDistributions(int NumEvts = -1,
     NormalizeHist(h1_jt_truth[i-1]); 
         
     h1_jt_sys[i-1] = (TH1D*)file_sys->Get(Form("jt_sys_total_pt%d",i));   
+    
+    for (int ibin=0; ibin<h1_jt_sys[i-1]->GetNbinsX(); ++ibin)
+    { 
+      
+      std::cout << "jt relative sys error pt: " << i << " : " << h1_jt_sys[i-1]->GetBinContent(ibin+1) << std::endl;    
+      std::cout << "jt data point pt " << i << " : " << h1_jt_data[i-1]->GetBinContent(ibin+1) << std::endl;
+      
+    }     
     TH1D *h1_jt_data_w_sys = (TH1D*)h1_jt_data[i-1]->Clone("h1_jt_data_w_sys");
     h1_jt_sys[i-1]->Multiply(h1_jt_sys[i-1], h1_jt_data[i-1]);
     for (int ibin=0; ibin<h1_jt_data_w_sys->GetNbinsX(); ++ibin)
@@ -520,6 +529,7 @@ void GetFinalDistributions(int NumEvts = -1,
     {
       legend_stack_jt->Draw("SAME");
     }
+ 
 
     rp[irp]->GetUpperPad()->Update();
 
@@ -532,7 +542,9 @@ void GetFinalDistributions(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    }  
+    }      
+    ccan[ican]->SaveAs(Form(loc_plots + "jt_final_w_sys_pt%d.png",i));   
+        
     ++irp;  
   }
   // r histograms! // 
@@ -657,7 +669,8 @@ void GetFinalDistributions(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    }    
+    }
+    ccan[ican]->SaveAs(Form(loc_plots + "r_final_w_sys_pt%d.png",i));     
     ++irp;
   }  
   
@@ -699,9 +712,10 @@ void GetFinalDistributions(int NumEvts = -1,
     } 
         
     gPad->SetLogz();
-    gPad->SetLogy();
     h2_zjt_data[i-1]->GetXaxis()->SetTitle("z");
     h2_zjt_data[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_zjt_data[i-1]->SetMinimum(0.00001);  
+    h2_zjt_data[i-1]->SetMaximum(10.);      
     //h2_zjt_data[i-1]->GetYaxis()->SetLimits(0.0, 20.0);
     h2_zjt_data[i-1]->Draw("COLZ");
 
@@ -712,28 +726,27 @@ void GetFinalDistributions(int NumEvts = -1,
     //Tl.DrawLatex(left, top2d - 2 * step2d, "#scale[0.8]{}");    
     
     ccan[ican]->cd(2); 
-    h2_zjt_tot_unc[i-1]->SetMinimum(0.0001);          
+    h2_zjt_tot_unc[i-1]->SetMinimum(0.00001);  
+    h2_zjt_tot_unc[i-1]->SetMaximum(10.);        
     gPad->SetLogz();
-    gPad->SetLogy();
     h2_zjt_tot_unc[i-1]->GetXaxis()->SetTitle("z");
     h2_zjt_tot_unc[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");      
     h2_zjt_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
-    ccan[ican]->cd(3);              
+    ccan[ican]->cd(3);   
+    h2_zjt_truth[i-1]->SetMinimum(0.00001);  
+    h2_zjt_truth[i-1]->SetMaximum(10.);                  
     gPad->SetLogz();
-    gPad->SetLogy();
     h2_zjt_truth[i-1]->GetXaxis()->SetTitle("z");
     h2_zjt_truth[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");        
     h2_zjt_truth[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
     
     ccan[ican]->cd(4);
-    gPad->SetLogz();
-    gPad->SetLogy();
     h2_zjt_ratio_MCData[i-1] = (TH2D*)h2_zjt_truth[i-1]->Clone(Form("h2_zjt_ratio_pt%d",i));
     h2_zjt_ratio_MCData[i-1]->Divide(h2_zjt_truth[i-1], h2_zjt_data[i-1]);    
-    h2_zjt_ratio_MCData[i-1]->SetMinimum(0.0001);        
+    //h2_zjt_ratio_MCData[i-1]->SetMinimum(0.0001);        
     h2_zjt_ratio_MCData[i-1]->GetXaxis()->SetTitle("z");
     h2_zjt_ratio_MCData[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");    
     h2_zjt_ratio_MCData[i-1]->Draw("COLZ");
@@ -749,7 +762,8 @@ void GetFinalDistributions(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    } 
+    }
+    ccan[ican]->SaveAs(Form(loc_plots + "zjt_final_w_sys_pt%d.png",i));     
   }     
   // zr plots //
   for (int i = 1; i < ptbinsize; i++)
@@ -774,7 +788,7 @@ void GetFinalDistributions(int NumEvts = -1,
     NormalizeHist(h2_zr_data[i-1]);
     NormalizeHist(h2_zr_truth[i-1]); 
         
-    h2_zr_sys[i-1] = (TH2D*)file_sys->Get(Form("zr_sys_total_pt%d",i));   
+    h2_zr_sys[i-1] = (TH2D*)file_sys->Get(Form("zr_sys_total_pt%d",i));
     h2_zr_sys[i-1]->Multiply(h2_zr_sys[i-1], h2_zr_data[i-1]);
     
     h2_zr_tot_unc[i-1] = (TH2D*)h2_zr_data[i-1]->Clone(Form("zr_tot_unc_pt%d", i));
@@ -790,7 +804,8 @@ void GetFinalDistributions(int NumEvts = -1,
     } 
         
     gPad->SetLogz();
-    gPad->SetLogy();
+    h2_zr_data[i-1]->SetMinimum(0.00001);  
+    h2_zr_data[i-1]->SetMaximum(200.);      
     h2_zr_data[i-1]->GetXaxis()->SetTitle("z");
     h2_zr_data[i-1]->GetYaxis()->SetTitle("r");
     h2_zr_data[i-1]->Draw("COLZ");
@@ -801,29 +816,28 @@ void GetFinalDistributions(int NumEvts = -1,
     Tl.DrawLatex(left, top2d, Form("#scale[0.8]{%.1f<p_{T,jet}<%.1f GeV/c        2.5 < #eta_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top2d - 2 * step2d, "#scale[0.8]{}");  
     
-    ccan[ican]->cd(2); 
-    h2_zr_tot_unc[i-1]->SetMinimum(0.0001);          
+    ccan[ican]->cd(2);   
+    h2_zr_tot_unc[i-1]->SetMinimum(0.00001);  
+    h2_zr_tot_unc[i-1]->SetMaximum(200.);               
     gPad->SetLogz();
-    gPad->SetLogy();
     h2_zr_tot_unc[i-1]->GetXaxis()->SetTitle("z");
     h2_zr_tot_unc[i-1]->GetYaxis()->SetTitle("r");      
     h2_zr_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
-    ccan[ican]->cd(3);              
+    ccan[ican]->cd(3);  
+    h2_zr_truth[i-1]->SetMinimum(0.00001);  
+    h2_zr_truth[i-1]->SetMaximum(200.);                  
     gPad->SetLogz();
-    gPad->SetLogy();
     h2_zr_truth[i-1]->GetXaxis()->SetTitle("z");
     h2_zr_truth[i-1]->GetYaxis()->SetTitle("r");        
     h2_zr_truth[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
     
     ccan[ican]->cd(4);
-    gPad->SetLogz();
-    gPad->SetLogy();
     h2_zr_ratio_MCData[i-1] = (TH2D*)h2_zr_truth[i-1]->Clone(Form("h2_zr_ratio_pt%d",i));
     h2_zr_ratio_MCData[i-1]->Divide(h2_zr_truth[i-1], h2_zr_data[i-1]);    
-    h2_zr_ratio_MCData[i-1]->SetMinimum(0.0001);        
+    //h2_zr_ratio_MCData[i-1]->SetMinimum(0.0001);        
     h2_zr_ratio_MCData[i-1]->GetXaxis()->SetTitle("z");
     h2_zr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");    
     h2_zr_ratio_MCData[i-1]->Draw("COLZ");
@@ -839,7 +853,8 @@ void GetFinalDistributions(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    } 
+    }
+    ccan[ican]->SaveAs(Form(loc_plots + "zr_final_w_sys_pt%d.png",i));
   }      
   
   // jtr plots //
@@ -880,9 +895,9 @@ void GetFinalDistributions(int NumEvts = -1,
       
     } 
         
+    h2_jtr_data[i-1]->SetMinimum(0.00001);  
+    h2_jtr_data[i-1]->SetMaximum(50.);        
     gPad->SetLogz();
-    gPad->SetLogy();
-    gPad->SetLogx();
     h2_jtr_data[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_data[i-1]->GetYaxis()->SetTitle("r");
     h2_jtr_data[i-1]->Draw("COLZ");
@@ -894,31 +909,27 @@ void GetFinalDistributions(int NumEvts = -1,
     //Tl.DrawLatex(left, top2d - 2 * step2d, "#scale[0.8]{}");  
     
     ccan[ican]->cd(2); 
-    h2_jtr_tot_unc[i-1]->SetMinimum(0.0001);          
+    h2_jtr_tot_unc[i-1]->SetMinimum(0.00001);  
+    h2_jtr_tot_unc[i-1]->SetMaximum(50.);          
     gPad->SetLogz();
-    gPad->SetLogy();
-    gPad->SetLogx();
     h2_jtr_tot_unc[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_tot_unc[i-1]->GetYaxis()->SetTitle("r");      
     h2_jtr_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
-    ccan[ican]->cd(3);              
+    ccan[ican]->cd(3);
+    h2_jtr_truth[i-1]->SetMinimum(0.00001);  
+    h2_jtr_truth[i-1]->SetMaximum(50.);                     
     gPad->SetLogz();
-    gPad->SetLogy();
-    gPad->SetLogx();
     h2_jtr_truth[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_truth[i-1]->GetYaxis()->SetTitle("r");        
     h2_jtr_truth[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
     
     ccan[ican]->cd(4);
-    gPad->SetLogz();
-    gPad->SetLogy();
-    gPad->SetLogx();
     h2_jtr_ratio_MCData[i-1] = (TH2D*)h2_jtr_truth[i-1]->Clone(Form("h2_jtr_ratio_pt%d",i));
     h2_jtr_ratio_MCData[i-1]->Divide(h2_jtr_truth[i-1], h2_jtr_data[i-1]);    
-    h2_jtr_ratio_MCData[i-1]->SetMinimum(0.0001);        
+    //h2_jtr_ratio_MCData[i-1]->SetMinimum(0.0001);        
     h2_jtr_ratio_MCData[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");    
     h2_jtr_ratio_MCData[i-1]->Draw("COLZ");
@@ -934,7 +945,8 @@ void GetFinalDistributions(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    } 
+    }
+    ccan[ican]->SaveAs(Form(loc_plots + "jtr_final_w_sys_pt%d.png",i));    
   }    
   
   if (ican > -1)

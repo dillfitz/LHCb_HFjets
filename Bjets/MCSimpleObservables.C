@@ -175,10 +175,17 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
     TFile f(extension_RootFilesMC + extension + ".root", "RECREATE");
 
-    TH2D *h2_ptz = new TH2D("ptz", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptr = new TH2D("ptr", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptz = new TH2D("ptz", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T} [GeV/c]; p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr = new TH2D("ptr", ";r; p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
+    TH2D *h2_ptz_gluon = new TH2D("h2_ptz_gluon", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);  
+    TH2D *h2_ptz_gluon_ratio = (TH2D*)h2_ptz_gluon->Clone("h2_ptz_gluon_ratio");
+    TH2D *h2_ptjt_gluon = new TH2D("h2_ptjt_gluon", ";j_{T} [GeV/c]; p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);  
+    TH2D *h2_ptjt_gluon_ratio = (TH2D*)h2_ptjt_gluon->Clone("h2_ptjt_gluon_ratio"); 
+    TH2D *h2_ptr_gluon = new TH2D("h2_ptr_gluon", ";r; p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);  
+    TH2D *h2_ptr_gluon_ratio = (TH2D*)h2_ptr_gluon->Clone("h2_ptr_gluon_ratio");         
+      
     TH3D *h3_ptzjt = new TH3D("ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -204,7 +211,6 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH1D *h1_frag_r_gluon = new TH1D("frag_r_gluon", "", 30, 0, 1);
 
     TH2D *h2_frag_z_jetpt = new TH2D("frag_z_jetpt", "", zbinsize, z_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_frag_z_jetpt_gluon = new TH2D("frag_z_jetpt_gluon", "", zbinsize, z_binedges, customptbinsize, custompt_binedges);
 
     TH1D *h1_z = new TH1D("z", "", zbinsize, z_binedges);
     TH1D *h1_jt = new TH1D("jt", "", jtbinsize, jt_binedges);
@@ -248,8 +254,14 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH1D *h1_jet_ptbalance0 = new TH1D("jet_ptbalance0", "", 20, 0, 2);
     TH1D *h1_jet_ptbalance1 = new TH1D("jet_ptbalance1", "", 20, 0, 2);
 
-  TH2D *h2_jetpteta = new TH2D("h2_jetpteta", "", ptbinsize, pt_binedges, etabinsize, eta_binedges);
-
+  TH2D *h2_jetpteta = new TH2D("h2_jetpteta", ";p_{T,jet} [GeV/c]; #eta", ptbinsize, pt_binedges, etabinsize, eta_binedges);
+  TH2D *h2_jetpteta_gluon = new TH2D("h2_jetpteta_gluon", ";p_{T,jet} [GeV/c]; #eta", ptbinsize, pt_binedges, etabinsize, eta_binedges);  
+  TH2D *h2_jetpteta_gluon_ratio = (TH2D*)h2_jetpteta_gluon->Clone("h2_jetpteta_gluon_ratio");
+  
+  TH2D *h2_jetptp = new TH2D("h2_jetptp", ";p_{T,jet} [GeV/c]; p_{jet} [GeV/c]", ptbinsize, pt_binedges, pbinsize, p_binedges);
+  TH2D *h2_jetptp_gluon = new TH2D("h2_jetptp_gluon", "p_{T,jet} [GeV/c]; p_{jet} [GeV/c]", ptbinsize, pt_binedges, pbinsize, p_binedges);  
+  TH2D *h2_jetptp_gluon_ratio = (TH2D*)h2_jetptp_gluon->Clone("h2_jetptp_gluon_ratio");  
+  
   TH1D *h1_meas_jet_pt = new TH1D("meas_Jet_pT", "", ptbinsize, pt_binedges);
   TH1D *h1_meas_jet_eta = new TH1D("meas_Jet_eta", "", 12, etaMin, etaMax);
   TH1D *h1_meas_jet_rap = new TH1D("meas_Jet_rap", "", 12, etaMin, etaMax);
@@ -380,9 +392,9 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     BTree->SetBranchAddress("truth_z", &truth_z);
     BTree->SetBranchAddress("truth_jt", &truth_jt);
     BTree->SetBranchAddress("truth_r", &truth_r);
-    BTree->SetBranchAddress("truth_z_b", &truth_z);
-    BTree->SetBranchAddress("truth_jt_b", &truth_jt);
-    BTree->SetBranchAddress("truth_r_b", &truth_r);
+    BTree->SetBranchAddress("truth_z_b", &truth_z_b);
+    BTree->SetBranchAddress("truth_jt_b", &truth_jt_b);
+    BTree->SetBranchAddress("truth_r_b", &truth_r_b);
     BTree->SetBranchAddress("truth_zg", &truth_zg);
     BTree->SetBranchAddress("truth_jtg", &truth_jtg);
     BTree->SetBranchAddress("truth_rg", &truth_rg);
@@ -493,14 +505,16 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     meas_K.SetPxPyPzE(meas_K_px, meas_K_py, meas_K_pz, meas_K_e);
     meas_HFmeson.SetPxPyPzE(meas_HF_px, meas_HF_py, meas_HF_pz, meas_HF_e);
     meas_Jpsi = meas_mup + meas_mum;
-
+ 
+   
     if (jet_eta > etaMin && jet_eta < etaMax)
       h2_HFptjetpt->Fill(HFmeson.Pt(), HFjet.Pt());
-    h2_jetpteta->Fill(HFjet.Pt(), HFjet.Eta());
+
 
 
     bool pt_cond = jet_pt > pTLow;
     bool rap_cond = jet_rap > etaMin && jet_rap < etaMax;
+  
 
     if (!rap_cond)
       continue;
@@ -524,6 +538,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
     if (SubtractGS && Hasbbbar)
     {
+      std::cout << " I am subtracting gluon splitting..." << std::endl;
       continue;
     }
 
@@ -556,8 +571,24 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     h1_jet_ptbalance1->Fill(meas_jet_pt/ jet_pt );
       
     h1_HFjet_ptbalance->Fill(jet_pt / HFmeson.Pt());
+    TVector3 HF_jet = HFjet.Vect();
+    TVector3 HF_meson = HFmeson.Vect();
+    double frag_z = (HF_meson.Dot(HF_jet)) / (HF_jet.Mag2());  
+/*      
+    if (frag_z != truth_z)
+    {
+      std::cout << "tree entry : " << ev << std::endl;
+      std::cout << std::endl;    
+      std::cout << "frag_z : " << frag_z << " truth_z : " << truth_z << std::endl;  
+      std::cout << "jet_eta : " << jet_eta << " jet_pt : " << jet_pt << std::endl;
 
-
+      std::cout << "2- (jet_px, jet_py, jet_pz, jet_e) = ( " << jet_px << " , " << jet_py << " , " << jet_pz << " , " << jet_e << ")" << std::endl;
+      std::cout << "2- (jet.px, jet.py, jet.pz, jet.e) = ( " << HFjet.Px() << " , " << HFjet.Py() << " , " << HFjet.Pz() << " , " << HFjet.E() << ")" << std::endl;
+      std::cout << "2- (HF_px, HF_py, HF_pz, HF_e) = ( " << HF_px << " , " << HF_py << " , " << HF_pz << " , " << HF_e << ")" << std::endl;        
+      std::cout << "2- (HF.px, HF.py, HF.pz, HF.e) = ( " << HFmeson.Px() << " , " << HFmeson.Py() << " , " << HFmeson.Pz() << " , " << HFmeson.E() << ")" << std::endl;         
+    
+    }
+*/    
     if (Hasbbbar)
     {
       double frag_z_gluon = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
@@ -603,15 +634,19 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
       h1_ratio_r1->Fill(meas_r/ truth_r);
       
     // cout << truth_z << ", " << HFjet.Pt();
-    h2_frag_z_jetpt->Fill(truth_z, HFjet.Pt());
+    h2_frag_z_jetpt->Fill(frag_z, HFjet.Pt());
     if (Hasbbbar)
-      h2_frag_z_jetpt_gluon->Fill(HFmeson.Pt() / HFjet.Pt(), HFjet.Pt());
+    {
+      //h2_frag_z_jetpt_gluon->Fill(HFmeson.Pt() / HFjet.Pt(), HFjet.Pt());
+      h2_jetpteta_gluon->Fill(HFjet.Pt(), HFjet.Eta());
+      h2_jetptp_gluon->Fill(HFjet.Pt(), HFjet.P());
+      h2_ptz_gluon->Fill(truth_z, jet_pt);
+      h2_ptjt_gluon->Fill(truth_jt, jet_pt);
+      h2_ptr_gluon->Fill(truth_r, jet_pt);                  
+    }
+      h2_jetpteta->Fill(HFjet.Pt(), HFjet.Eta());  
+      h2_jetptp->Fill(HFjet.Pt(), HFjet.P());            
 
-    // if(fabs(frag_z-0.3) < 0.02 ){
-    //   cout<<"("<<HFmeson.Px()<<", "<<HFmeson.Py()<<","<<HFmeson.Pz()<<")"<<endl;
-    //   cout<<"("<<HFjet.Px()<<", "<<HFjet.Py()<<","<<HFjet.Pz()<<")"<<endl;
-    //   cout<<ndtrs<<endl;
-    // }
       
       h2_ptz->Fill(truth_z, jet_pt);
       h2_ptjt->Fill(truth_jt, jet_pt);
@@ -644,9 +679,40 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
     bool hasEmission_ktdR = false;
     bool hasEmission_zdR = false;
-
+  // End of BTree entry loop
   }
-    
+  
+  h2_jetpteta_gluon_ratio->Divide(h2_jetpteta_gluon, h2_jetpteta);  
+  h2_jetptp_gluon_ratio->Divide(h2_jetptp_gluon, h2_jetptp);
+  h2_ptz_gluon_ratio->Divide(h2_ptz_gluon, h2_ptz);
+  h2_ptjt_gluon_ratio->Divide(h2_ptjt_gluon, h2_ptjt);
+  h2_ptr_gluon_ratio->Divide(h2_ptr_gluon, h2_ptr);   
+     
+  TH2D *h2_zjt_ptbinned[ptbinsize-1];
+  TH2D *h2_zr_ptbinned[ptbinsize-1];
+  TH2D *h2_jtr_ptbinned[ptbinsize-1];       
+  for (int j = 1; j < ptbinsize; j++)
+  {   
+      
+    h3_ptzjt->GetZaxis()->SetRange(j+1, j+1);      
+    h2_zjt_ptbinned[j-1] = (TH2D *)h3_ptzjt->Project3D("yx");
+    h2_zjt_ptbinned[j-1]->SetName(Form("zjt_truth_pt%d",j)); 
+    NormalizeHist(h2_zjt_ptbinned[j-1]);	
+
+    h3_ptzr->GetZaxis()->SetRange(j+1, j+1);        
+    h2_zr_ptbinned[j-1] = (TH2D *)h3_ptzr->Project3D("yx");
+    h2_zr_ptbinned[j-1]->SetName(Form("zr_truth_pt%d",j));
+    NormalizeHist(h2_zr_ptbinned[j-1]);	
+        
+    h3_ptjtr->GetZaxis()->SetRange(j+1, j+1);        
+    h2_jtr_ptbinned[j-1] = (TH2D *)h3_ptjtr->Project3D("yx");
+    h2_jtr_ptbinned[j-1]->SetName(Form("jtr_truth_pt%d",j));
+    NormalizeHist(h2_jtr_ptbinned[j-1]);	      
+  }  
+  h3_ptzjt->GetZaxis()->SetRange(1, ptbinsize+1);
+  h3_ptzr->GetZaxis()->SetRange(1, ptbinsize+1);
+  h3_ptjtr->GetZaxis()->SetRange(1, ptbinsize+1);    
+          
   cout << event_counter << " events processed" << endl;
 
   TH1D *h1_GS_frac = (TH1D *)h1_HFpt_GS->Clone("h1_GS_frac");
@@ -976,9 +1042,9 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
   ccan[ican]->cd(1);
-  for (int i = 2; i < ptbinsize; i++)
+  for (int i = 1; i < ptbinsize; i++)
   {
-    TH1D *h1_temp = (TH1D *)h2_frag_z_jetpt->ProjectionX(Form("htemp%d_fragzjetpt", i), i + 1, i + 1);
+    TH1D *h1_temp = (TH1D *)h2_frag_z_jetpt->ProjectionX(Form("htemp%d_fragzjetp", i), i + 1, i + 1);
     NormalizeHist(h1_temp);
     h1_temp ->SetStats(0);
     h1_temp->SetMarkerStyle(i + 20);
@@ -991,6 +1057,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   }
 
   ccan[ican]->cd(2);
+  /*
     auto legend_zg = new TLegend(0.55, 0.65, 0.9, 0.85);
     legend_zg ->SetTextSize(0.027);
     legend_zg ->SetBorderSize(0);
@@ -998,7 +1065,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     legend_zg ->SetFillColor(3);
     legend_zg->SetHeader("PYTHIA LHCb Unofficial","C");
     
-  for (int i = 2; i < ptbinsize; i++)
+  for (int i = 1; i < ptbinsize; i++)
   {
     TH1D *h1_temp = (TH1D *)h2_frag_z_jetpt_gluon->ProjectionX(Form("htemp%d_fragzjetpt_gluon", i), i + 1, i + 1);
     NormalizeHist(h1_temp);
@@ -1016,19 +1083,42 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     // h1_temp->SetMaximum(1.05);
       legend_zg->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
   }
-    legend_zg ->Draw("SAME");
+  */
+  for (int i = 1; i < ptbinsize; i++)
+  {
+    TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_truth_pt%d", i), i + 1, i + 1);
+    NormalizeHist(h1_temp);
+    h1_temp ->SetStats(0);
+    h1_temp->SetMarkerStyle(i + 20);
+    h1_temp->SetMarkerColor(i + 1);
+    h1_temp->SetLineColor(i + 1);
+    h1_temp->Draw("P E SAME");
+    h1_temp->Draw("HIST SAME");
+    // h1_temp->SetMinimum(0.);
+    // h1_temp->SetMaximum(1.05);
+  }
+  //  legend_zg ->Draw("SAME");
 
   // h1_frag_z_gluon->Draw("P E SAME");
 
   // SetTruthStyle(h1_tr_frag_z);
   // h1_tr_frag_z->Draw("P E SAME");
-
+/*
   ccan[ican]->cd(3);
-  h2_frag_z_jetpt->Draw("COLZ");
-
-  ccan[ican]->cd(4);
-  TH1D *h1_tmp = (TH1D *)h2_frag_z_jetpt->ProjectionX("_px", 4, 4);
-  h1_tmp->Draw("SAME");
+  for (int i = 1; i < ptbinsize; i++)
+  {
+    TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_truth_pt%d", i), i + 1, i + 1);
+    NormalizeHist(h1_temp);
+    h1_temp ->SetStats(0);
+    h1_temp->SetMarkerStyle(i + 20);
+    h1_temp->SetMarkerColor(i + 1);
+    h1_temp->SetLineColor(i + 1);
+    h1_temp->Draw("P E SAME");
+    h1_temp->Draw("HIST SAME");
+    // h1_temp->SetMinimum(0.);
+    // h1_temp->SetMaximum(1.05);
+  }
+  */
   ccan[ican]->cd();
   ccan[ican]->Update();
   if (ican == 0)

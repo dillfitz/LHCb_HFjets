@@ -288,11 +288,27 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
   TH1D *h1_BkgScale_forSysNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
   TH1D *h1_BkgScale_forSysFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
-
-
-  //////////////////////////////////////
-  
+    
   /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
+  ////////////////////////////////////////////////////
+  ///              Trigger
+  //////////////////////////////////////////////////
+  TString extension_trig_MC, extension_trig_Data;
+  TH2D *h2_trigeff_Data;
+  TH2D *h2_trigeff_MC;
+
+  extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
+  extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
+
+  TFile file_trigeffMC("../../root_files/TrigEff/" + extension_trig_MC + ".root", "READ");
+  TFile file_trigeffData("../../root_files/TrigEff/" + extension_trig_Data + ".root", "READ");
+
+  h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
+  h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
+  TH2D *h2_trigeff_ratio = (TH2D *)h2_trigeff_Data->Clone("h2_trigeff_ratio");
+  h2_trigeff_ratio->Divide(h2_trigeff_MC);
+
+ 
   TString extension_trig("PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID" + TString("_91599.root"));
   // if (DoTrigEff)
   //   extension_trig = "recselsys_" + extension_trig;
@@ -374,6 +390,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH3D *h3_ptzr = new TH3D("ptzr", ";z ; r;",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T}; r; ",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     
+    TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_uncorrected = new TH2D("ptr_uncorrected", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    
+    TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z ; j_{T};", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z ; r;",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_uncorrected = new TH3D("ptjtr_uncorrected", ";j_{T}; r; ",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );    
+    
     TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
     TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T};", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
     TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r;", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
@@ -382,9 +406,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", ";z ; r;",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", ";j_{T}; r; ",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
      
-    TH3D *h3_ptzjt_unweight = new TH3D("ptzjt_unweight", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr_unweight = new TH3D("ptzr_unweight", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr_unweight = new TH3D("ptjtr_unweight", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     
     TH3D *h3_ptHFzjt = new TH3D("ptHFzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptHFbinsize, ptHF_binedges );
     TH3D *h3_ptHFzr = new TH3D("ptHFzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptHFbinsize, ptHF_binedges );
@@ -802,7 +823,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   BTree->SetBranchAddress("trigeff_Data", &trigeff_Data);
   BTree->SetBranchAddress("trigeff_MC", &trigeff_MC);
-  BTree->SetBranchAddress("trigeff_ratio", &trigeff_ratio);
+  //BTree->SetBranchAddress("trigeff_ratio", &trigeff_ratio);
   BTree->SetBranchAddress("TOS", &TOS);
     
     BTree->SetBranchAddress("z", &z);
@@ -923,6 +944,25 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     float Sideband1Max = h1_Sideband1Max != NULL ? h1_Sideband1Max->GetBinContent(h1_Sideband1Max->FindBin(HFmeson.Pt())) : 5.31;
     float Sideband2Min = h1_Sideband2Min != NULL ? h1_Sideband2Min->GetBinContent(h1_Sideband2Min->FindBin(HFmeson.Pt())) : 5.24;
     float Sideband2Max = h1_Sideband2Max != NULL ? h1_Sideband2Max->GetBinContent(h1_Sideband2Max->FindBin(HFmeson.Pt())) : 5.31;
+    
+    //  Set Trigger Correction Weight
+    if (isData && h2_trigeff_Data != NULL)
+    {
+      double rap = (Jpsi.Rapidity() > 2.00) ? Jpsi.Rapidity() : 2.1;
+      double pt = (Jpsi.Pt() > 2.00) ? Jpsi.Pt() : 2.1;
+      trigeff_ratio = h2_trigeff_ratio->GetBinContent(h2_trigeff_ratio->GetXaxis()->FindBin(pt), h2_trigeff_ratio->GetYaxis()->FindBin(rap));
+      // trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_Data->GetYaxis()->FindBin(rap));
+      // trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_MC->GetYaxis()->FindBin(rap));
+      // trigeff_ratio = trigeff_Data / trigeff_MC;
+      // cout << trigeff_ratio << ", ";
+      if (std::isnan(trigeff_ratio) || std::isinf(trigeff_ratio) || trigeff_ratio == 0)
+        trigeff_ratio = trigeff_Data = trigeff_MC = 1.0;
+    }
+    else
+    {
+      trigeff_ratio = 1.0;
+    }
+    
 
     // cout << HFmeson.Pt() << ", " << MassLow << ", " << MassHigh << ", " << Sideband1Min << ", " << Sideband1Max << ", " << Sideband2Min << ", " << Sideband2Max << endl;
     if (DoMassFit == 1)
@@ -1084,9 +1124,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       
     //event_weight = event_pur / (event_eff * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
     
-    //event_weight = event_pur_ptz / (event_eff_ptz * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);    
-      
-    event_weight *= (1./ trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);   
+    //event_weight = event_pur_ptz / (event_eff_ptz * trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);
+    
+         
+    event_weight *= (1./ trkeff_K * trkeff_mum * trkeff_mup * pideff_mum * pideff_mup * trigeff_ratio);       
     
     //if (PID_cut)
     //  event_weight *= (1. / (pideff_K));
@@ -1294,11 +1335,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h3_ptzr->Fill(z, r, jet_pt, event_weight);
         h3_ptjtr->Fill(jt, r, jet_pt, event_weight);
         
-        h3_ptzjt_unweight->Fill(z, jt, jet_pt, event_weight);
-        h3_ptzr_unweight->Fill(z, r, jet_pt, event_weight);
-        h3_ptjtr_unweight->Fill(jt, r, jet_pt,  event_weight);
-
-
         h2_ptz->Fill(z, jet_pt, event_weight);
         h2_ptjt->Fill(jt, jet_pt, event_weight);
         h2_ptr->Fill(r, jet_pt, event_weight);
@@ -1325,6 +1361,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_zr->Fill(z, r, event_weight);
         h2_jtr->Fill(jt, r, event_weight);
         
+        
         h1_z_nobgsub->Fill(z, event_weight);
         h1_jt_nobgsub->Fill(jt, event_weight);
         h1_r_nobgsub->Fill(r, event_weight);
@@ -1332,6 +1369,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_ptz_nobgsub->Fill(z, jet_pt, event_weight);
         h2_ptjt_nobgsub->Fill(jt, jet_pt, event_weight);
         h2_ptr_nobgsub->Fill(r, jet_pt, event_weight);
+        
+        h3_ptzjt_uncorrected->Fill(z, jt, jet_pt);
+        h3_ptzr_uncorrected->Fill(z, r, jet_pt);
+        h3_ptjtr_uncorrected->Fill(jt, r, jet_pt);
+        
+        h2_ptz_uncorrected->Fill(z, jet_pt);
+        h2_ptjt_uncorrected->Fill(jt, jet_pt);
+        h2_ptr_uncorrected->Fill(r, jet_pt);        
               
 
         double prior_weight = 1.0;
@@ -1489,6 +1534,63 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after eff ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
+    TH2D *h2_zjt_ptbinned_uncorrected[ptbinsize-1], *h2_zjt_ptbinned[ptbinsize-1];
+    TH2D *h2_zr_ptbinned_uncorrected[ptbinsize-1], *h2_zr_ptbinned[ptbinsize-1];
+    TH2D *h2_jtr_ptbinned_uncorrected[ptbinsize-1], *h2_jtr_ptbinned[ptbinsize-1];       
+    for (int j = 1; j < ptbinsize; j++)
+    {   
+
+      if (isData)
+      {
+      
+        h3_ptzjt_uncorrected->GetZaxis()->SetRange(j+1, j+1);      
+        h2_zjt_ptbinned_uncorrected[j-1] = (TH2D *)h3_ptzjt_uncorrected->Project3D("yx");
+        h2_zjt_ptbinned_uncorrected[j-1]->SetName(Form("zjt_uncorrected_pt%d",j)); 
+    	  NormalizeHist(h2_zjt_ptbinned_uncorrected[j-1]);	
+
+        h3_ptzr_uncorrected->GetZaxis()->SetRange(j+1, j+1);        
+        h2_zr_ptbinned_uncorrected[j-1] = (TH2D *)h3_ptzr_uncorrected->Project3D("yx");
+        h2_zr_ptbinned_uncorrected[j-1]->SetName(Form("zr_uncorrected_pt%d",j));
+       	NormalizeHist(h2_zr_ptbinned_uncorrected[j-1]);	
+        
+        h3_ptjtr_uncorrected->GetZaxis()->SetRange(j+1, j+1);        
+        h2_jtr_ptbinned_uncorrected[j-1] = (TH2D *)h3_ptjtr_uncorrected->Project3D("yx");
+        h2_jtr_ptbinned_uncorrected[j-1]->SetName(Form("jtr_uncorrected_pt%d",j));
+       	NormalizeHist(h2_jtr_ptbinned_uncorrected[j-1]);	
+      }  
+      
+      
+      h3_ptzjt->GetZaxis()->SetRange(j+1, j+1);             
+      h2_zjt_ptbinned[j-1] = (TH2D *)h3_ptzjt->Project3D("yx");
+      if (isData)
+        h2_zjt_ptbinned[j-1]->SetName(Form("zjt_pt%d",j));
+      else
+        h2_zjt_ptbinned[j-1]->SetName(Form("zjt_reco_pt%d",j));                              
+      NormalizeHist(h2_zjt_ptbinned[j-1]);
+
+      h3_ptzr->GetZaxis()->SetRange(j+1, j+1);  
+      h2_zr_ptbinned[j-1] = (TH2D *)h3_ptzr->Project3D("yx");     
+      if (isData)
+        h2_zr_ptbinned[j-1]->SetName(Form("zr_pt%d",j));
+      else
+        h2_zr_ptbinned[j-1]->SetName(Form("zr_reco_pt%d",j));                    
+      NormalizeHist(h2_zr_ptbinned[j-1]);
+
+      h3_ptjtr->GetZaxis()->SetRange(j+1, j+1);
+      h2_jtr_ptbinned[j-1] = (TH2D *)h3_ptjtr->Project3D("yx");    
+      if (isData)
+        h2_jtr_ptbinned[j-1]->SetName(Form("jtr_pt%d",j));
+      else
+        h2_jtr_ptbinned[j-1]->SetName(Form("jtr_reco_pt%d",j));             
+      NormalizeHist(h2_jtr_ptbinned[j-1]);        
+    }  
+    h3_ptzjt->GetZaxis()->SetRange(1, ptbinsize+1);
+    h3_ptzr->GetZaxis()->SetRange(1, ptbinsize+1);
+    h3_ptjtr->GetZaxis()->SetRange(1, ptbinsize+1);
+    h3_ptzjt_uncorrected->GetZaxis()->SetRange(1, ptbinsize+1);
+    h3_ptzr_uncorrected->GetZaxis()->SetRange(1, ptbinsize+1);
+    h3_ptjtr_uncorrected->GetZaxis()->SetRange(1, ptbinsize+1);    
+        
   SetRecoStyle(h1_jet_eta);
   SetDataStyle(h1_jet_rap);
   SetRecoStyle(h1_jet_pt);
@@ -1577,6 +1679,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   gStyle->SetImageScaling(3.);
   char buf[100];
   char bufb[100];
+  
+    
     TString rootfile;
     TString plotfile;
     TString plotfilePDF;
@@ -1601,10 +1705,144 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     gPad->SetRightMargin(0.15);
     ccan[ican]->cd();
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
+    
+    cout <<" start of z plots " << endl;
     ccan[ican]->cd(1);
+    auto legend_zpt_raw= new TLegend(0.15, 0.5, 0.5, 0.85);
+    legend_zpt_raw ->SetTextSize(0.03);
+    legend_zpt_raw ->SetBorderSize(0);
+    legend_zpt_raw ->SetFillStyle(0);
+    legend_zpt_raw ->SetFillColor(3);
+    legend_zpt_raw ->SetHeader("LHCb Unofficial","C");
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptz_uncorrected->ProjectionX(Form("z_pt%d_raw", i), i + 1, i + 1); 
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);        
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+  
+      legend_zpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_zpt_raw -> Draw("SAME");  
+     
+    ccan[ican]->cd(2);  
+    if (isData)
+    { 
+      auto legend_zpt_nobgsub= new TLegend(0.15, 0.5, 0.5, 0.85);
+      legend_zpt_nobgsub ->SetTextSize(0.03);
+      legend_zpt_nobgsub ->SetBorderSize(0);
+      legend_zpt_nobgsub ->SetFillStyle(0);
+      legend_zpt_nobgsub ->SetFillColor(3);
+      legend_zpt_nobgsub ->SetHeader("LHCb Unofficial","C");
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptz_nobgsub->ProjectionX(Form("z_pt%d_nobgsub", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }
+        h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);        
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_zpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_zpt_nobgsub -> Draw("SAME");       
+    }   
+    else
+    {
+      auto legend_zpt_truth= new TLegend(0.15, 0.5, 0.5, 0.85);
+      legend_zpt_truth ->SetTextSize(0.03);
+      legend_zpt_truth ->SetBorderSize(0);
+      legend_zpt_truth ->SetFillStyle(0);
+      legend_zpt_truth ->SetFillColor(3);
+      legend_zpt_truth ->SetHeader("LHCb Unofficial","C");
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptz_truth->ProjectionX(Form("z_pt%d_truth", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }
+        h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);        
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_zpt_truth->AddEntry(h1_temp, Form(" %.1f < truth p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_zpt_truth -> Draw("SAME");          
+    }
+
+    ccan[ican]->cd(3);
+    auto legend_zpt = new TLegend(0.15, 0.5, 0.5, 0.85);
+    legend_zpt ->SetTextSize(0.03);
+    legend_zpt ->SetBorderSize(0);
+    legend_zpt ->SetFillStyle(0);
+    legend_zpt ->SetFillColor(3);
+    legend_zpt->SetHeader("LHCb Unofficial","C");
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_pt%d", i), i + 1, i + 1);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("z");   
+      NormalizeHist(h1_temp);    
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
 
       
-    auto legend_zpt_final = new TLegend(0.2, 0.5, 0.45, 0.85);
+      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_zpt -> Draw("SAME");        
+
+    ccan[ican]->cd(4);
+    auto legend_zpt_final = new TLegend(0.15, 0.5, 0.5, 0.85);
     legend_zpt_final ->SetTextSize(0.03);
     legend_zpt_final ->SetBorderSize(0);
     legend_zpt_final ->SetFillStyle(0);
@@ -1627,82 +1865,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h1_temp->SetMarkerColor(i*i+3);
         h1_temp->SetLineColor(i*i+3);
       }
-      h1_temp->GetYaxis()->SetRangeUser(0.0, 3.5);
+      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
 
       
-      legend_zpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      legend_zpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
-    legend_zpt_final -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_corrected.png");
-
-    ccan[ican]->cd(2);
-    auto legend_zpt_raw= new TLegend(0.25, 0.5, 0.5, 0.85);
-    legend_zpt_raw ->SetTextSize(0.03);
-    legend_zpt_raw ->SetBorderSize(0);
-    legend_zpt_raw ->SetFillStyle(0);
-    legend_zpt_raw ->SetFillColor(3);
-    legend_zpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("htemp%d_ptz_raw", i), i + 1, i + 1); 
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->GetYaxis()->SetRangeUser(0.0, 3.5);        
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_zpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_zpt_raw -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_uncorrected.png");    
-    
-    ccan[ican]->cd(3);
-    auto legend_zpt_truth = new TLegend(0.25, 0.5, 0.5, 0.85);
-    legend_zpt_truth ->SetTextSize(0.03);
-    legend_zpt_truth ->SetBorderSize(0);
-    legend_zpt_truth ->SetFillStyle(0);
-    legend_zpt_truth ->SetFillColor(3);
-    legend_zpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp_truth = (TH1D *)h2_ptz_truth->ProjectionX(Form("htemp%d_ptz_truth", i), i + 1, i + 1);   
-      h1_temp_truth->SetStats(0);
-      NormalizeHist(h1_temp_truth);
-      h1_temp_truth->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp_truth->SetMarkerColor(i);
-        h1_temp_truth->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp_truth->SetMarkerColor(i*i+3);
-        h1_temp_truth->SetLineColor(i*i+3);
-      }
-      h1_temp_truth->GetYaxis()->SetRangeUser(0.0, 3.5);              
-      h1_temp_truth->Draw("P E SAME");
-      h1_temp_truth->Draw("HIST SAME");
-  
-      legend_zpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_zpt_truth -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/z_ptbinned_truth.png");    
+    legend_zpt_final -> Draw("SAME");    
   
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -1717,17 +1888,158 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       ccan[ican]->Print(plotfilePDF.Data());
     }
     
-   
-    ++ican;  
-    
-    // jT pT   
+ 
+     // jT pT   
+    ++ican; 
+    sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->cd();    
-    ccan[ican]->SetFillColor(10);    
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-    ccan[ican]->cd(1);       
-    gPad->SetLogy();    
-    auto legend_jtpt_final = new TLegend(0.5, 0.65, 0.75, 0.875);
+    ccan[ican]->SetFillColor(10);
+    gPad->SetLeftMargin(0.16);
+    gPad->SetBottomMargin(0.06);
+    gPad->SetRightMargin(0.15);
+    ccan[ican]->cd();
+    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);     
+   
+    ccan[ican]->cd(1);
+    gPad->SetLogy();        
+    auto legend_jtpt_raw= new TLegend(0.45, 0.6, 0.75, 0.9);
+    legend_jtpt_raw ->SetTextSize(0.03);
+    legend_jtpt_raw ->SetBorderSize(0);
+    legend_jtpt_raw ->SetFillStyle(0);
+    legend_jtpt_raw ->SetFillColor(3);
+    legend_jtpt_raw ->SetHeader("LHCb Unofficial","C");
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptjt_uncorrected->ProjectionX(Form("jt_pt%d_raw", i), i + 1, i + 1); 
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->SetMaximum(20.0);            
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+  
+      legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_jtpt_raw -> Draw("SAME");
+     
+    ccan[ican]->cd(2); 
+    gPad->SetLogy();         
+    if (isData)
+    {
+      auto legend_jtpt_nobgsub= new TLegend(0.45, 0.6, 0.75, 0.9);
+      legend_jtpt_nobgsub ->SetTextSize(0.03);
+      legend_jtpt_nobgsub ->SetBorderSize(0);
+      legend_jtpt_nobgsub ->SetFillStyle(0);
+      legend_jtpt_nobgsub ->SetFillColor(3);
+      legend_jtpt_nobgsub ->SetHeader("LHCb Unofficial","C");  
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptjt_nobgsub->ProjectionX(Form("jt_pt%d_nobgsub", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }  
+        h1_temp->SetMaximum(20.0);             
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_jtpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_jtpt_nobgsub -> Draw("SAME");
+    }   
+    else
+    {
+      auto legend_jtpt_truth= new TLegend(0.45, 0.6, 0.75, 0.9);
+      legend_jtpt_truth ->SetTextSize(0.03);
+      legend_jtpt_truth ->SetBorderSize(0);
+      legend_jtpt_truth ->SetFillStyle(0);
+      legend_jtpt_truth ->SetFillColor(3);
+      legend_jtpt_truth ->SetHeader("LHCb Unofficial","C");
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptjt_truth->ProjectionX(Form("jt_pt%d_truth", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }
+        h1_temp->SetMaximum(20.0);        
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_jtpt_truth->AddEntry(h1_temp, Form(" %.1f < truth p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_jtpt_truth -> Draw("SAME");    
+    }      
+
+    ccan[ican]->cd(3);
+    gPad->SetLogy();        
+    auto legend_jtpt = new TLegend(0.45, 0.6, 0.75, 0.9);
+    legend_jtpt ->SetTextSize(0.03);
+    legend_jtpt ->SetBorderSize(0);
+    legend_jtpt ->SetFillStyle(0);
+    legend_jtpt ->SetFillColor(3);
+    legend_jtpt->SetHeader("LHCb Unofficial","C");  
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("jt_pt%d", i), i + 1, i + 1);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");   
+      NormalizeHist(h1_temp);    
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->SetMaximum(20.0);       
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+
+      
+      legend_jtpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_jtpt -> Draw("SAME");        
+
+    ccan[ican]->cd(4);
+    gPad->SetLogy();        
+    auto legend_jtpt_final = new TLegend(0.45, 0.6, 0.75, 0.9);
     legend_jtpt_final ->SetTextSize(0.03);
     legend_jtpt_final ->SetBorderSize(0);
     legend_jtpt_final ->SetFillStyle(0);
@@ -1736,10 +2048,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);
-        
-      h1_temp->SetStats(0);
-      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-      NormalizeHist(h1_temp);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");   
+      NormalizeHist(h1_temp);    
       h1_temp->SetMarkerStyle(i + 20);
       if (i!=5) 
       {
@@ -1751,89 +2062,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h1_temp->SetMarkerColor(i*i+3);
         h1_temp->SetLineColor(i*i+3);
       }
-
-        
+      h1_temp->SetMaximum(20.0);       
       h1_temp->Draw("P E SAME");
       h1_temp->Draw("HIST SAME");
- 
-      legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+      
+      legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
-    legend_jtpt_final -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_corrected.png");              
-
-    ccan[ican]->cd(2);
-    gPad->SetLogy();        
-    auto legend_jtpt_raw= new TLegend(0.55, 0.65, 0.825, 0.875);
-    legend_jtpt_raw ->SetTextSize(0.03);
-    legend_jtpt_raw ->SetBorderSize(0);
-    legend_jtpt_raw ->SetFillStyle(0);
-    legend_jtpt_raw ->SetFillColor(3);
-    legend_jtpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt_raw", i), i + 1, i + 1);
-
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
- 
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_jtpt_raw -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_uncorrected.png");      
-    
-    
-    ccan[ican]->cd(3);
-    gPad->SetLogy();        
-    auto legend_jtpt_truth = new TLegend(0.55, 0.65, 0.825, 0.875);
-    legend_jtpt_truth ->SetTextSize(0.03);
-    legend_jtpt_truth ->SetBorderSize(0);
-    legend_jtpt_truth ->SetFillStyle(0);
-    legend_jtpt_truth ->SetFillColor(3);
-    legend_jtpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp_truth = (TH1D *)h2_ptjt_truth->ProjectionX(Form("htemp%d_ptjt_truth", i), i + 1, i + 1);
-
-      h1_temp_truth->SetStats(0);
-      NormalizeHist(h1_temp_truth);
- 
-      h1_temp_truth->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp_truth->SetMarkerColor(i);
-        h1_temp_truth->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp_truth->SetMarkerColor(i*i+3);
-        h1_temp_truth->SetLineColor(i*i+3);
-      }
-      h1_temp_truth->GetXaxis()->SetTitle("j_{T} [GeV/c]");  
-      h1_temp_truth->Draw("P E SAME");
-      h1_temp_truth->Draw("HIST SAME");
-  
-      legend_jtpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_jtpt_truth -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_truth.png");  
+    legend_jtpt_final -> Draw("SAME");   
 
  
     ccan[ican]->cd();
@@ -1847,16 +2084,156 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     {
       ccan[ican]->Print(plotfilePDF.Data());
     }    
+  
+    ++ican;        
     
-    ++ican;    
+    // r histograms //
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
     ccan[ican]->cd();    
     ccan[ican]->SetFillColor(10);    
     ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
     ccan[ican]->cd(1);     
     gPad->SetLogy();    
-        
-    auto legend_rpt_final = new TLegend(0.575, 0.675, 0.7, 0.89);
+            
+    ccan[ican]->cd(1);
+    auto legend_rpt_raw= new TLegend(0.45, 0.6, 0.75, 0.9);
+    legend_rpt_raw ->SetTextSize(0.03);
+    legend_rpt_raw ->SetBorderSize(0);
+    legend_rpt_raw ->SetFillStyle(0);
+    legend_rpt_raw ->SetFillColor(3);
+    legend_rpt_raw ->SetHeader("LHCb Unofficial","C"); 
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptr_uncorrected->ProjectionX(Form("r_pt%d_raw", i), i + 1, i + 1); 
+      h1_temp->SetStats(0);
+      NormalizeHist(h1_temp);
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }    
+      h1_temp->SetMaximum(800.0);               
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+  
+      legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_rpt_raw -> Draw("SAME");
+     
+    ccan[ican]->cd(2);
+    gPad->SetLogy();            
+    if (isData)
+    {
+      auto legend_rpt_nobgsub= new TLegend(0.45, 0.6, 0.75, 0.9);
+      legend_rpt_nobgsub ->SetTextSize(0.03);
+      legend_rpt_nobgsub ->SetBorderSize(0);
+      legend_rpt_nobgsub ->SetFillStyle(0);
+      legend_rpt_nobgsub ->SetFillColor(3);
+      legend_rpt_nobgsub ->SetHeader("LHCb Unofficial","C");
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptr_nobgsub->ProjectionX(Form("r_pt%d_nobgsub", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }        
+        h1_temp->SetMaximum(800.0);
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_rpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_rpt_nobgsub -> Draw("SAME");
+    }   
+    else
+    {
+      auto legend_rpt_truth= new TLegend(0.45, 0.6, 0.75, 0.9);
+      legend_rpt_truth ->SetTextSize(0.03);
+      legend_rpt_truth ->SetBorderSize(0);
+      legend_rpt_truth ->SetFillStyle(0);
+      legend_rpt_truth ->SetFillColor(3);
+      legend_rpt_truth ->SetHeader("LHCb Unofficial","C");
+      for (int i = 1; i < ptbinsize; i++)
+      {
+        TH1D *h1_temp = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_pt%d_truth", i), i + 1, i + 1); 
+        h1_temp->SetStats(0);
+        NormalizeHist(h1_temp);
+        h1_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_temp->SetMarkerColor(i);
+          h1_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_temp->SetMarkerColor(i*i+3);
+          h1_temp->SetLineColor(i*i+3);
+        }
+        h1_temp->SetMaximum(800.0);                
+        h1_temp->Draw("P E SAME");
+        h1_temp->Draw("HIST SAME");
+  
+        legend_rpt_truth->AddEntry(h1_temp, Form(" %.1f < truth p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      }
+      
+      legend_rpt_truth -> Draw("SAME");    
+    }
+      
+    ccan[ican]->cd(3);
+    gPad->SetLogy();       
+    auto legend_rpt = new TLegend(0.45, 0.6, 0.75, 0.9);
+    legend_rpt ->SetTextSize(0.03);
+    legend_rpt ->SetBorderSize(0);
+    legend_rpt ->SetFillStyle(0);
+    legend_rpt ->SetFillColor(3);
+    legend_rpt->SetHeader("LHCb Unofficial","C");
+    for (int i = 1; i < ptbinsize; i++)
+    {
+      TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("r_pt%d", i), i + 1, i + 1);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("r");   
+      NormalizeHist(h1_temp);    
+      h1_temp->SetMarkerStyle(i + 20);
+      if (i!=5) 
+      {
+        h1_temp->SetMarkerColor(i);
+        h1_temp->SetLineColor(i);
+      }
+      else
+      {
+        h1_temp->SetMarkerColor(i*i+3);
+        h1_temp->SetLineColor(i*i+3);
+      }
+      h1_temp->SetMaximum(800.0);       
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+
+      
+      legend_rpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+
+    }
+    legend_rpt -> Draw("SAME");        
+
+    ccan[ican]->cd(4);
+    gPad->SetLogy();       
+    auto legend_rpt_final = new TLegend(0.45, 0.6, 0.75, 0.9);
     legend_rpt_final ->SetTextSize(0.03);
     legend_rpt_final ->SetBorderSize(0);
     legend_rpt_final ->SetFillStyle(0);
@@ -1865,10 +2242,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);
-        
-      h1_temp->SetStats(0);
-      h1_temp->GetXaxis()->SetTitle("r");
-      NormalizeHist(h1_temp);
+      h1_temp->SetStats(0);   
+      h1_temp->GetXaxis()->SetTitle("r");   
+      NormalizeHist(h1_temp);    
       h1_temp->SetMarkerStyle(i + 20);
       if (i!=5) 
       {
@@ -1880,86 +2256,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h1_temp->SetMarkerColor(i*i+3);
         h1_temp->SetLineColor(i*i+3);
       }
+      h1_temp->SetMaximum(800.0);       
+      h1_temp->Draw("P E SAME");
+      h1_temp->Draw("HIST SAME");
+
       
-        
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-      //h1_temp->SetMinimum(0.0);
-//      h1_temp->SetMaximum(3.5);
- 
-      legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-    
-    }
-    legend_rpt_final -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/r_ptbinned_corrected.png");      
-
-    ccan[ican]->cd(2);
-    gPad->SetLogy();        
-    auto legend_rpt_raw= new TLegend(0.575, 0.675, 0.775, 0.89);
-    legend_rpt_raw ->SetTextSize(0.03);
-    legend_rpt_raw ->SetBorderSize(0);
-    legend_rpt_raw ->SetFillStyle(0);
-    legend_rpt_raw ->SetFillColor(3);
-    legend_rpt_raw ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("htemp%d_ptr_raw", i), i + 1, i + 1);
-
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      } 
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < p_{T}^{Raw jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+      legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
     }
-    legend_rpt_raw -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/r_ptbinned_uncorrected.png");      
-    
-    ccan[ican]->cd(3);
-    gPad->SetLogy();        
-    auto legend_rpt_truth = new TLegend(0.55, 0.65, 0.75, 0.89);
-    legend_rpt_truth ->SetTextSize(0.03);
-    legend_rpt_truth ->SetBorderSize(0);
-    legend_rpt_truth ->SetFillStyle(0);
-    legend_rpt_truth ->SetFillColor(3);
-    legend_rpt_truth ->SetHeader("LHCb Unofficial","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp_truth = (TH1D *)h2_ptr_truth->ProjectionX(Form("htemp%d_ptr_truth", i), i + 1, i + 1);
-
-      h1_temp_truth->SetStats(0);
-      NormalizeHist(h1_temp_truth);
-      h1_temp_truth->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp_truth->SetMarkerColor(i);
-        h1_temp_truth->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp_truth->SetMarkerColor(i*i+3);
-        h1_temp_truth->SetLineColor(i*i+3);
-      }
-      h1_temp_truth->Draw("P E SAME");
-      h1_temp_truth->Draw("HIST SAME");
-  
-      legend_rpt_truth->AddEntry(h1_temp_truth, Form(" %.1f < p_{T}^{Truth jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_rpt_truth -> Draw("SAME");
-    //gPad->SaveAs(plotextension + "SimpleObservables/jt_ptbinned_truth.png");  
+    legend_rpt_final -> Draw("SAME");  
       
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -1972,8 +2277,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     {
       ccan[ican]->Print(plotfilePDF.Data());
     }    
+    
+                       
 
-  ++ican;
+  
+  /*
   sprintf(buf, "ccan%d", ican);
   ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
   ccan[ican]->SetFillColor(10);
@@ -2101,16 +2409,17 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   ccan[ican]->cd(4);
     
-  auto legend_zpt = new TLegend(0.25, 0.6, 0.5, 0.8);
-  legend_zpt ->SetTextSize(0.03);
-  legend_zpt ->SetBorderSize(0);
-  legend_zpt ->SetFillStyle(0);
-  legend_zpt ->SetFillColor(3);
-  legend_zpt->SetHeader("LHCb Unofficial","C");
+ // auto legend_zpt = new TLegend(0.25, 0.6, 0.5, 0.8);
+ // legend_zpt ->SetTextSize(0.03);
+ // legend_zpt ->SetBorderSize(0);
+ // legend_zpt ->SetFillStyle(0);
+ // legend_zpt ->SetFillColor(3);
+ // legend_zpt->SetHeader("LHCb Unofficial","C");
 //  for (int i = 0; i < ptbinsize; i++)
+
   for (int i = 2; i < ptbinsize; i++)
   {
-    TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("htemp%d_ptz", i), i + 1, i + 1);
+    TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt", i), i + 1, i + 1);
     h1_temp->SetStats(0);
     NormalizeHist(h1_temp);
       h1_temp->SetMarkerStyle(i + 20);
@@ -2126,6 +2435,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 //      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
 
   }
+ 
     legend_zpt -> Draw("SAME");
 
   // ccan[ican]->cd(4);
@@ -2965,7 +3275,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }
- 
+*/
   f.Write();
   f.Close();
   file_unfold->Close();

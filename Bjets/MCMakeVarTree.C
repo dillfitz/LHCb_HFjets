@@ -341,7 +341,11 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
                          Tree.MCJet_PZ / 1000.,
                          Tree.MCJet_PE / 1000.);
 
-        HFmeson = mup + mum + Kmeson;
+        //HFmeson = mup + mum + Kmeson;
+        HFmeson.SetPxPyPzE(Tree.MCJet_truth_B_PX / 1000.,
+                           Tree.MCJet_truth_B_PY / 1000.,
+                           Tree.MCJet_truth_B_PZ / 1000.,
+                           Tree.MCJet_truth_B_PE / 1000.);        
         Jpsi = mup + mum;
    
         meas_HFjet.SetPxPyPzE(Tree.MCJet_recojet_PX / 1000.,
@@ -455,7 +459,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
             
 //            if ( dtr.DeltaR(HFjet) > jetradius) continue;
             
-            if (static_cast < TLorentzVector > (dtr).DeltaR(HFjet, kTRUE) > jetradius) {continue;}
+            //if (static_cast < TLorentzVector > (dtr).DeltaR(HFjet, kTRUE) > jetradius) {continue;}
             
             if (abs(Tree.MCJet_Dtr_ID[dtrs0]) == HF_pdgcode)
             {
@@ -523,7 +527,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
                 continue;
             }
 
-            if (static_cast < TLorentzVector > (dtr).DeltaR(meas_HFjet, kTRUE) > jetradius) continue;
+            //if (static_cast < TLorentzVector > (dtr).DeltaR(meas_HFjet, kTRUE) > jetradius) continue;
 //            if ( dtr.DeltaR(meas_HFjet) > jetradius) continue;
 
             if (abs(Tree.MCJet_recojet_Dtr_ID[dtrs0]) == HF_pdgcode)
@@ -554,13 +558,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
         TVector3 HF_jet = HFjet.Vect();
         TVector3 meas_HF_meson = meas_HFmeson.Vect();
         TVector3 meas_HF_jet = meas_HFjet.Vect();
-
-        truth_z = (HF_meson.Dot(HF_jet) ) / (HF_jet.Mag2() );
-        truth_jt = (HF_jet.Cross(HF_meson).Mag()) / (HF_jet.Mag());
-        truth_r = static_cast < TLorentzVector > (HFmeson).DeltaR(HFjet, kTRUE);
-        
-        h1_z_truth->Fill(truth_z);
-        
+             
         if(!Hasbbbar) {
             truth_z_b = (HF_meson.Dot(HF_jet) ) / (HF_jet.Mag2() );
             truth_jt_b = (HF_jet.Cross(HF_meson).Mag()) / (HF_jet.Mag());
@@ -627,6 +625,10 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
         HF_pz = HFmeson.Pz();
         HF_e = HFmeson.E();
         HF_pt = HFmeson.Pt();
+        truth_z = HF_meson.Dot(HF_jet) / (HF_jet.Mag2());
+        truth_jt = (HF_jet.Cross(HF_meson).Mag()) / (HF_jet.Mag());
+        truth_r = static_cast < TLorentzVector > (HFmeson).DeltaR(HFjet, kTRUE);                
+                      
 
         meas_HF_pt = meas_HFmeson.Pt();
         meas_HF_px = meas_HFmeson.Px();

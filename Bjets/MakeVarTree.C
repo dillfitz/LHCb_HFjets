@@ -960,9 +960,9 @@ void MakeVarTree(int NumEvts_user = -1,
                                   Tree.Jet_Dtr_TRUE_E[dtrs0] / 1000.);
             bool dtrpass = true;
 
-            
-            if (dtr.DeltaR(HFjet, true) > jetradius)
-                continue;
+            // I THNK THIS SHOULD BE REMOVED ALL TOGETHER, BUT IF IT IS EVER ADDED BACK MAKE IT CONSISTENT W TRUTH AND USE RAPIDITY INSTEAD OF ETA??
+            //if (dtr.DeltaR(HFjet, true) > jetradius)
+            //    continue;
 
 
 //            jetdtrs.push_back(PseudoJet(Tree.Jet_Dtr_PX[dtrs0] / 1000.,
@@ -1033,8 +1033,8 @@ void MakeVarTree(int NumEvts_user = -1,
 
                 bool dtrpass = true;
 
-                if (dtr.DeltaR(tr_HFjet, true) > jetradius)
-                    continue;
+                //if (dtr.DeltaR(tr_HFjet, true) > jetradius)
+                //    continue;
 
 //                tr_jetdtrs.push_back(PseudoJet(Tree.Jet_mcjet_dtrPX[dtrs0] / 1000.,
 //                                               Tree.Jet_mcjet_dtrPY[dtrs0] / 1000.,
@@ -1049,18 +1049,19 @@ void MakeVarTree(int NumEvts_user = -1,
                     // if (fabs(dtr.Px() - HFmeson.Px()) < 2 && fabs(dtr.Py() - HFmeson.Py()) < 2)
                     // {
                     hasHFhadron_matched = true;
-                    if (fabs(dtr.E() - HFmeson.E()) < ptdiff)
+                    if (fabs(dtr.Pt() - HFmeson.Pt()) < 0.01)
                     {
                         tr_HFmeson.SetPxPyPzE(dtr.Px(), dtr.Py(), dtr.Pz(), dtr.E());
-                        ptdiff = fabs(dtr.E() - HFmeson.E());
+                        hasHFhadron_matched = false;                        
+                        //ptdiff = fabs(dtr.E() - HFmeson.E());
                     }
                     // }
                 }
 
                 // jet_Nmcdtrs++;
             }
-            if (tr_HFmeson.DeltaR(tr_HFjet, true) > jetradius)
-                hasHFhadron_matched = false;
+            //if (tr_HFmeson.DeltaR(tr_HFjet, true) > jetradius)
+
             // cout<<endl<<tr_HFmeson.Pt()<<endl;
             // if (fabs(HFmeson.Pt() - tr_HFmeson.Pt()) / tr_HFmeson.Pt() > 0.03 && hasHFhadron_matched)
             // {

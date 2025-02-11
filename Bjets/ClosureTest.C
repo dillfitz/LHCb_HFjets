@@ -14,6 +14,7 @@ void ClosureTest(int NumEvts = -1,
 {
 
   gStyle->SetPaintTextFormat("3.3f");
+  //gStyle->SetPaintTextFormat("4.3g");  
 
   TRandom3 *myRNG = new TRandom3();
   const int nRuns = 10;
@@ -222,6 +223,7 @@ void ClosureTest(int NumEvts = -1,
 
   h1_jetpt_closure_error->Write();
 */ 
+
   ////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -421,8 +423,13 @@ void ClosureTest(int NumEvts = -1,
        // for (int y = 1; y <= h1_z_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
        // {
        
-          double binContent = 1. - h1_z_ptbinned_ratio[j-1]->GetBinContent(x);
+          double binContent = 0;
+          if ( h1_z_ptbinned_ratio[j-1]->GetBinContent(x) != 0 )
+          { 
+            binContent = 1. - h1_z_ptbinned_ratio[j-1]->GetBinContent(x);
+          }
           double sumContent = h1_z_ptbinned_closure_error[j-1]->GetBinContent(x);
+
           h1_z_ptbinned_closure_error[j-1]->SetBinContent(x, sumContent + binContent * binContent);
 
           double binError = h1_z_ptbinned_ratio[j-1]->GetBinError(x);
@@ -579,7 +586,11 @@ void ClosureTest(int NumEvts = -1,
        // for (int y = 1; y <= h1_z_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
        // {
        
-          double binContent = 1. - h1_jt_ptbinned_ratio[j-1]->GetBinContent(x);
+          double binContent = 0;
+          if ( h1_jt_ptbinned_ratio[j-1]->GetBinContent(x) != 0 )
+          { 
+            binContent = 1. - h1_jt_ptbinned_ratio[j-1]->GetBinContent(x);
+          }
           double sumContent = h1_jt_ptbinned_closure_error[j-1]->GetBinContent(x);
           h1_jt_ptbinned_closure_error[j-1]->SetBinContent(x, sumContent + binContent * binContent);
 
@@ -606,7 +617,9 @@ void ClosureTest(int NumEvts = -1,
       }
       h1_jt_ptbinned_closure_error[j-1]->Write();                
     }
-  }    
+  } 
+ 
+     
   ////////////////////////////////////////////////////////////////////////////////double z_binedges_50_100[zbinsize_50_100 + 1] = {0.0, 0.15, 0.3, 0.45, 0.6,  0.7,  0.8, 0.9,  1.0};
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -741,7 +754,11 @@ void ClosureTest(int NumEvts = -1,
        // for (int y = 1; y <= h1_z_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
        // {
        
-          double binContent = 1. - h1_r_ptbinned_ratio[j-1]->GetBinContent(x);
+          double binContent = 0;
+          if ( h1_r_ptbinned_ratio[j-1]->GetBinContent(x) != 0 )
+          { 
+            binContent = 1. - h1_r_ptbinned_ratio[j-1]->GetBinContent(x);
+          }
           double sumContent = h1_r_ptbinned_closure_error[j-1]->GetBinContent(x);
           h1_r_ptbinned_closure_error[j-1]->SetBinContent(x, sumContent + binContent * binContent);
 
@@ -857,7 +874,6 @@ void ClosureTest(int NumEvts = -1,
   //double zjt_pullperf2_final = GetPullPerformance(h2_zjt_pull_final, 2);
   
   h2_zjt_ratio_final->SetOption("COLZ, text");  
-  h2_zjt_ratio_final->SetMarkerSize(0.6);
   h2_zjt_ratio_final->Write();
 
   
@@ -897,7 +913,6 @@ void ClosureTest(int NumEvts = -1,
     //h2_zjt_pull_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
     //h2_zjt_pull_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h2_zjt_ratio_smear->SetOption("COLZ, text");    
-    h2_zjt_ratio_smear->SetMarkerSize(0.6);
     h2_zjt_ratio_smear->Write();      
     //h2_zjt_pull_smear->Write(); 
     
@@ -925,8 +940,7 @@ void ClosureTest(int NumEvts = -1,
       NormalizeHist(h2_zjt_truth_ptbinned[j-1]);
       h2_zjt_ptbinned_ratio[j-1] = (TH2D *)h2_zjt_ptbinned[j-1]->Clone(Form("zjt_ratio_smear%d_pt%d", i,j));
       h2_zjt_ptbinned_ratio[j-1]->Divide(h2_zjt_ptbinned[j-1], h2_zjt_truth_ptbinned[j-1]);     
-      h2_zjt_ptbinned_ratio[j-1]->SetOption("COLZ, text");     
-      h2_zjt_ptbinned_ratio[j-1]->SetMarkerSize(0.6);    
+      h2_zjt_ptbinned_ratio[j-1]->SetOption("COLZ, text");         
       h2_zjt_ptbinned_ratio[j-1]->Write();     
         
       if (i == 0)
@@ -941,7 +955,11 @@ void ClosureTest(int NumEvts = -1,
         for (int y = 1; y <= h2_zjt_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
         {
        
-          double binContent = 1. - h2_zjt_ptbinned_ratio[j-1]->GetBinContent(x, y);
+          double binContent = 0;
+          if ( h2_zjt_ptbinned_ratio[j-1]->GetBinContent(x,y) != 0 )
+          { 
+            binContent = 1. - h2_zjt_ptbinned_ratio[j-1]->GetBinContent(x, y);
+          }
           double sumContent = h2_zjt_ptbinned_closure_error[j-1]->GetBinContent(x, y);
           h2_zjt_ptbinned_closure_error[j-1]->SetBinContent(x, y, sumContent + binContent * binContent);
 
@@ -971,8 +989,8 @@ void ClosureTest(int NumEvts = -1,
       }
       h2_zjt_ptbinned_closure_error[j-1]->Write();                
     }  
-  }                        
-    
+  }                          
+
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -1058,7 +1076,6 @@ void ClosureTest(int NumEvts = -1,
   //double zr_pullperf1_final = GetPullPerformance(h2_zr_pull_final, 1);
   //double zr_pullperf2_final = GetPullPerformance(h2_zr_pull_final, 2);
   h2_zr_ratio_final->SetOption("COLZ, text");  
-  h2_zr_ratio_final->SetMarkerSize(0.6);
   h2_zr_ratio_final->Write();
 
   
@@ -1098,7 +1115,6 @@ void ClosureTest(int NumEvts = -1,
     //h2_zr_pull_smear->GetYaxis()->SetRange(binlowr, binhighr);
     //h2_zr_pull_smear->GetXaxis()->SetRange(binlowz, binhighz);
     h2_zr_ratio_smear->SetOption("COLZ, text");
-    h2_zr_ratio_smear->SetMarkerSize(0.6);
     h2_zr_ratio_smear->Write();      
     //h2_zr_pull_smear->Write();   
     
@@ -1126,8 +1142,7 @@ void ClosureTest(int NumEvts = -1,
       NormalizeHist(h2_zr_truth_ptbinned[j-1]);
       h2_zr_ptbinned_ratio[j-1] = (TH2D *)h2_zr_ptbinned[j-1]->Clone(Form("zr_ratio_smear%d_pt%d", i,j));
       h2_zr_ptbinned_ratio[j-1]->Divide(h2_zr_ptbinned[j-1], h2_zr_truth_ptbinned[j-1]);     
-      h2_zr_ptbinned_ratio[j-1]->SetOption("COLZ, text");       
-      h2_zr_ptbinned_ratio[j-1]->SetMarkerSize(0.6);  
+      h2_zr_ptbinned_ratio[j-1]->SetOption("COLZ, text");         
       h2_zr_ptbinned_ratio[j-1]->Write();        
         
       if (i == 0)
@@ -1136,15 +1151,18 @@ void ClosureTest(int NumEvts = -1,
         h2_zr_ptbinned_closure_error[j-1]->Reset(); // Reset the histogram to zero
       }
 
-      // Loop over all bins and add in quadrature
+      // Loop over all bins and add in quadrature   
       for (int x = 1; x <= h2_zr_ptbinned_ratio[j-1]->GetNbinsX(); ++x)
       {
         for (int y = 1; y <= h2_zr_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
         {
-       
-          double binContent = 1. - h2_zr_ptbinned_ratio[j-1]->GetBinContent(x, y);
-          double sumContent = h2_zr_ptbinned_closure_error[j-1]->GetBinContent(x, y);
-          h2_zr_ptbinned_closure_error[j-1]->SetBinContent(x, y, sumContent + binContent * binContent);
+          double binContent = 0;
+          if ( h2_zr_ptbinned_ratio[j-1]->GetBinContent(x,y) != 0 )
+          { 
+            binContent = 1. - h2_zr_ptbinned_ratio[j-1]->GetBinContent(x, y);
+          }
+          double sumContent = h2_zr_ptbinned_closure_error[j-1]->GetBinContent(x, y);         
+          h2_zr_ptbinned_closure_error[j-1]->SetBinContent(x, y, sumContent + binContent * binContent);          
 
           double binError = h2_zr_ptbinned_ratio[j-1]->GetBinError(x, y);
           double sumError = h2_zr_ptbinned_closure_error[j-1]->GetBinError(x, y);
@@ -1242,7 +1260,6 @@ void ClosureTest(int NumEvts = -1,
   h2_jtr_ratio_final->GetXaxis()->SetRange(binlowjt, binhighjt);
  
   h2_jtr_ratio_final->SetOption("COLZ, text");
-  h2_jtr_ratio_final->SetMarkerSize(0.6);
   h2_jtr_ratio_final->Write();   
 
   ////////////////////////////////////
@@ -1281,7 +1298,6 @@ void ClosureTest(int NumEvts = -1,
     //h2_jtr_pull_smear->GetYaxis()->SetRange(binlowr, binhighr);
     //h2_jtr_pull_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
     h2_jtr_ratio_smear->SetOption("COLZ, text");
-    h2_jtr_ratio_smear->SetMarkerSize(0.6);
     h2_jtr_ratio_smear->Write();      
     //h2_jtr_pull_smear->Write();     
     
@@ -1309,8 +1325,7 @@ void ClosureTest(int NumEvts = -1,
       NormalizeHist(h2_jtr_truth_ptbinned[j-1]);
       h2_jtr_ptbinned_ratio[j-1] = (TH2D *)h2_jtr_ptbinned[j-1]->Clone(Form("jtr_ratio_smear%d_pt%d", i,j));
       h2_jtr_ptbinned_ratio[j-1]->Divide(h2_jtr_ptbinned[j-1], h2_jtr_truth_ptbinned[j-1]);     
-      h2_jtr_ptbinned_ratio[j-1]->SetOption("COLZ, text");   
-      h2_jtr_ptbinned_ratio[j-1]->SetMarkerSize(0.6);      
+      h2_jtr_ptbinned_ratio[j-1]->SetOption("COLZ, text");        
       //h2_jtr_ptbinned_ratio[j-1]->Write(Form("zjt_ratio_smear%d_pt%d", i,j));
       h2_jtr_ptbinned_ratio[j-1]->Write();           
         
@@ -1324,9 +1339,13 @@ void ClosureTest(int NumEvts = -1,
       for (int x = 1; x <= h2_jtr_ptbinned_ratio[j-1]->GetNbinsX(); ++x)
       {
         for (int y = 1; y <= h2_jtr_ptbinned_ratio[j-1]->GetNbinsY(); ++y)
-        {
-       
-          double binContent = 1. - h2_jtr_ptbinned_ratio[j-1]->GetBinContent(x, y);
+        {  
+        
+          double binContent = 0;
+          if ( h2_jtr_ptbinned_ratio[j-1]->GetBinContent(x,y) != 0 )
+          { 
+            binContent = 1. - h2_jtr_ptbinned_ratio[j-1]->GetBinContent(x, y);
+          }
           double sumContent = h2_jtr_ptbinned_closure_error[j-1]->GetBinContent(x, y);
           h2_jtr_ptbinned_closure_error[j-1]->SetBinContent(x, y, sumContent + binContent * binContent);
 

@@ -8,7 +8,6 @@ using namespace std;
 
 void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
                  bool chargedJetCut_user = false,
-                 double minimum_dR = 0.1,
                  bool SubtractGS = false) {
     
     bool MCflag = true;
@@ -471,9 +470,9 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     BTree->SetBranchAddress("truth_z", &truth_z);
     BTree->SetBranchAddress("truth_jt", &truth_jt);
     BTree->SetBranchAddress("truth_r", &truth_r);
-    BTree->SetBranchAddress("truth_z_b", &truth_z);
-    BTree->SetBranchAddress("truth_jt_b", &truth_jt);
-    BTree->SetBranchAddress("truth_r_b", &truth_r);
+    BTree->SetBranchAddress("truth_z_b", &truth_z_b);
+    BTree->SetBranchAddress("truth_jt_b", &truth_jt_b);
+    BTree->SetBranchAddress("truth_r_b", &truth_r_b);
     BTree->SetBranchAddress("truth_zg", &truth_zg);
     BTree->SetBranchAddress("truth_jtg", &truth_jtg);
     BTree->SetBranchAddress("truth_rg", &truth_rg);
