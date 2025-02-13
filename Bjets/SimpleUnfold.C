@@ -275,10 +275,13 @@ void SimpleUnfold(int NumEvts = -1,
     if (h1_BkgScaleFar == NULL)
       cout << "NULL FAR!" << endl;
 
-    TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");
+    //if (DoUnfoldPrior)
+   // {
+      TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");
     
-     TH3D *h3_ptzjt_ratio = (TH3D *)file_reco_weights.Get("ptzjt_ratio");
-    // h3_HFptjetptrap_ratio = (TH3D *)file_reco_weights.Get("h3_HFptjetptrap_ratio");
+      TH3D *h3_ptzjt_ratio = (TH3D *)file_reco_weights.Get("ptzjt_ratio");
+      // h3_HFptjetptrap_ratio = (TH3D *)file_reco_weights.Get("h3_HFptjetptrap_ratio");
+   // }
     
     TFile *f = TFile::Open(extension_RootFilesMC + extension + ".root", "RECREATE");
     

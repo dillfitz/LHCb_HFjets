@@ -1048,7 +1048,7 @@ void MakeVarTree(int NumEvts_user = -1,
                     NumBHads_tr++;
                     // if (fabs(dtr.Px() - HFmeson.Px()) < 2 && fabs(dtr.Py() - HFmeson.Py()) < 2)
                     // {
-                    if (fabs(dtr.Pt() - HFmeson.Pt()) < 0.01)
+                    if (fabs(dtr.Pt() - tr_HFmeson.Pt()) < 0.01)
                     {
                         tr_HFmeson.SetPxPyPzE(dtr.Px(), dtr.Py(), dtr.Pz(), dtr.E());
                         hasHFhadron_matched = true;

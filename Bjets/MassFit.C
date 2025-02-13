@@ -495,8 +495,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         {
             sigma_ratio = new RooRealVar("sigma_ratio", "sigma_ratio", 1.52571 / 0.856549);
             mean = new RooRealVar("mean", "mean of gaussians", 5.27966, 5.27, 5.282);
-            sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.02, 0.001, 0.3);
-            sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.01, 0.001, 0.1); // CHANGE
+            sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.008, 0.001, 0.03);
+            sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.008, 0.001, 0.03); // CHANGE
         }
         else
         {
@@ -514,6 +514,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooGaussian gauss1("gauss_sig1", "Signal component 1", HFMass, *mean, *sigma1);
         RooGaussian gauss2("gauss_sig2", "Signal component 2", HFMass, *mean, *sigma2);
 
+/*
         mu_sig = new RooRealVar("mu_sig", "mu", 5.279, 5.27, 5.282);
         alpha1_sig = new RooRealVar("alpha1_sig", "alpha1", 2., 0.01, 10.);
         alpha2_sig = new RooRealVar("alpha2_sig", "alpha2", 2., 0.01, 10.);
@@ -552,6 +553,49 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             p2_sig = new RooRealVar("p2_sig", "p2", 3.);
             p1_sig->setConstant(kTRUE);
             p2_sig->setConstant(kTRUE);
+        }
+*/
+
+        mu_sig = new RooRealVar("mu_sig", "mu", 5.279, 5.27, 5.282);
+        alpha1_sig = new RooRealVar("alpha1_sig", "alpha1", 2., 0.01, 10.);
+        alpha2_sig = new RooRealVar("alpha2_sig", "alpha2", 2., 0.01, 10.);
+
+        alpha1_sig2 = new RooRealVar("alpha1_sig2", "alpha1", 2., 0.01, 10.);
+        alpha2_sig2 = new RooRealVar("alpha2_sig2", "alpha2", 2., 0.01, 10.);
+        // p1_sig = RooRealVar("p1_sig", "p1", 1., 0.6, 4.);
+        // p2_sig = RooRealVar("p2_sig", "p2", 1., 0.6, 4.);
+        p1_sig = new RooRealVar("p1_sig", "p1", 2., 1., 6.);
+        p2_sig = new RooRealVar("p2_sig", "p2", 3., 1., 6.);
+
+        p1_sig2 = new RooRealVar("p1_sig2", "p1", 2., 1., 6.);
+        p2_sig2 = new RooRealVar("p2_sig2", "p2", 3., 1., 6.);
+        // p1_sig->setConstant(kTRUE);
+        // p2_sig->setConstant(kTRUE);
+        // p1_sig2->setConstant(kTRUE);
+        // p2_sig2->setConstant(kTRUE);
+        // Or, Create signal from two Crystal Ball functions
+        // These parameters have been derived from simulation
+
+        // else
+        //     return;
+
+        if (isData && w_read != NULL)
+        {
+            mu_sig = (RooRealVar *)w_read->obj("mu_sig");
+            alpha1_sig = (RooRealVar *)w_read->obj("alpha1_sig");
+            alpha2_sig = (RooRealVar *)w_read->obj("alpha2_sig");
+            p1_sig = (RooRealVar *)w_read->obj("p1_sig");
+            p2_sig = (RooRealVar *)w_read->obj("p2_sig");
+
+            // p1_sig2 = (RooRealVar *)w_read->obj("p1_sig2");
+            // p2_sig2 = (RooRealVar *)w_read->obj("p2_sig2");
+            // mu_sig.setConstant(kTRUE);
+            alpha1_sig->setConstant(kTRUE);
+            alpha2_sig->setConstant(kTRUE);
+            p1_sig->setConstant(kTRUE);
+            p2_sig->setConstant(kTRUE);
+            // p1_sig2->setConstant(kTRUE);
+            // p2_sig2->setConstant(kTRUE);
         }
 
         // Define the CB functions
@@ -605,7 +649,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         //  8  p1           1.31970e+00   1.23509e-01   2.03443e-03  -8.27233e-01     │--------
         //  9  p2           2.27406e+00   2.53814e-02   1.32025e-03  -5.76613e-01     │RooDataHist::B_mass(HFMass)
         // 10  width        1.59333e-02   1.00715e-04   2.54854e-04  -1.31767e+00
-
+/*
         if (UseDTF && w_read_misid != NULL)
         {
             // mu = RooRealVar("mu", "mu", 5.32697e+00);
@@ -631,6 +675,39 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         }
         else
         {
+            mu = new RooRealVar("mu", "mu", 5.33183e+00);
+            width = new RooRealVar("width", "width", 2.62897e-02);
+            alpha1 = new RooRealVar("alpha1", "alpha1", 1.72233e+00);
+            alpha2 = new RooRealVar("alpha2", "alpha2", 7.67677e-01);
+            p1 = new RooRealVar("p1", "p1", 1.73799e+00);
+            p2 = new RooRealVar("p2", "p2", 2.09840e+00);
+        }
+*/
+        if (UseDTF && w_read_misid != NULL)
+        {
+            // mu = RooRealVar("mu", "mu", 5.32697e+00);
+            // width = RooRealVar("width", "width", 1.59333e-02);
+            // alpha1 = RooRealVar("alpha1", "alpha1", 2.01441e+00);
+            // alpha2 = RooRealVar("alpha2", "alpha2", 5.70189e-01);
+            // p1 = RooRealVar("p1", "p1", 1.31970e+00);
+            // p2 = RooRealVar("p2", "p2", 2.27406e+00);
+
+            mu = (RooRealVar *)w_read_misid->obj("mu");
+            width = (RooRealVar *)w_read_misid->obj("width");
+            alpha1 = (RooRealVar *)w_read_misid->obj("alpha1");
+            alpha2 = (RooRealVar *)w_read_misid->obj("alpha2");
+            p1 = (RooRealVar *)w_read_misid->obj("p1");
+            p2 = (RooRealVar *)w_read_misid->obj("p2");
+            mu->setConstant(kTRUE);
+            width->setConstant(kTRUE);
+            alpha1->setConstant(kTRUE);
+            alpha2->setConstant(kTRUE);
+            p1->setConstant(kTRUE);
+            p2->setConstant(kTRUE);
+        }
+        else
+        {
+            return;
             mu = new RooRealVar("mu", "mu", 5.33183e+00);
             width = new RooRealVar("width", "width", 2.62897e-02);
             alpha1 = new RooRealVar("alpha1", "alpha1", 1.72233e+00);
@@ -691,9 +768,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         // RooRealVar * a1("a1", "a1", 2, 0., 9.);
         // RooPolynomial bkg("bkg", "Background", HFMass, RooArgList(a1, a2));
 
-        RooRealVar *a0_cheb = new RooRealVar("a0_cheb", "a0_cheb", 0.5, -3, 3.);
-        RooRealVar *a1_cheb = new RooRealVar("a1_cheb", "a1_cheb", 0.2, -3, 3.);
-        RooRealVar *a2_cheb = new RooRealVar("a2_cheb", "a2_cheb", 0.2, -3, 3.);
+        RooRealVar *a0_cheb = new RooRealVar("a0_cheb", "a0_cheb", -0.5, -3, -0.0001);
+        RooRealVar *a1_cheb = new RooRealVar("a1_cheb", "a1_cheb", -0.2, -3, -0.0001);
+        RooRealVar *a2_cheb = new RooRealVar("a2_cheb", "a2_cheb", -0.2, -3, -0.0001);
         // RooChebychev bkg_cheb("bkg_cheb", "Background_cheb", HFMass, RooArgSet(*a0_cheb, *a1_cheb, *a2_cheb));
         RooChebychev bkg_cheb("bkg_cheb", "Background_cheb", HFMass, RooArgSet(*a0_cheb, *a1_cheb));
 
@@ -702,17 +779,17 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         ///////////////////////////////////////////////////
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
-        RooRealVar *nsig = new RooRealVar("nsig", "fraction in signal", 10000, 0., 100000.);
+        RooRealVar *nsig = new RooRealVar("nsig", "fraction in signal", 10000, 0., 10000000.);
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
         RooRealVar *nsig_nosec = new RooRealVar("nsig_nosec", "fraction in signal", 500, 0., 1000000.);
-
-        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000.);
+        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.0384 * nsig->getVal(),  0.005*nsig->getVal() /*0.0*/, 0.05 * nsig->getVal());
+        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.1 * nsig->getVal());
         // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
         RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
+
 
         // S a m p l e ,   f i t   a n d   p l o t   m o d e l
         // ---------------------------------------------------
