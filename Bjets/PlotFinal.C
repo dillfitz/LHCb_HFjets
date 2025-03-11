@@ -13,11 +13,9 @@
 #include "../Helpers.h"
 using namespace std;
 
-void PlotFinal(int NumEvts = -1, int dataset = 91599,
-                   bool WTA_cut = false,
-                   int NumIters = 4)
+void PlotFinal(int NumEvts = -1, int dataset = 91599)
 {
-
+  bool WTA_cut = false;
   TString string_data, string_data_test, string_unfold, string_unfold_test, extension;
   TString str_followHard, str_ghost, str_Mag, str_flavor;
   TString loc_rootfiles_data("../../root_files/Bjets/");
@@ -37,7 +35,7 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599,
 
 
   double ghostProb_test = ghostProb;
-  int NumIters_test = NumIters;
+  int NumIters = 4;
 
 
   TString str_Mag1 = "";
@@ -80,13 +78,13 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599,
 
 
 
-  string_data = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset);
+  string_data = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset);
+  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset);
 
   cout << string_data << endl;
   cout << string_unfold << endl;
 
-  extension = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
   /////////////////////   Get Files /////////////////////////////////
 

@@ -120,7 +120,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
   TString extension_read, extension_RootFilesMC, extension;
     
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
 
   // int NumEvts = 0;
   // cout <<"Choose number of events (-1: All Events, or enter integer): ";

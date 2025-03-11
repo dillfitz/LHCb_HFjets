@@ -7,8 +7,7 @@ using namespace std;
 
 void GetFinalDistributions(int NumEvts = -1,
                            int dataset = 91599,
-                           bool WTA_cut = false,
-                           int NumIters = 4)
+                           bool WTA_cut = false)
 {
 
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
@@ -21,6 +20,8 @@ void GetFinalDistributions(int NumEvts = -1,
   int flavor = (dataset / 100) % 10;
   int ptRange = (dataset / 10) % 10;
   int Mag = (dataset / 1) % 10;
+  
+  int NumIters = 4;
 
   // int NumIters = 2;
   //int NumIters_z = 1;
@@ -54,9 +55,9 @@ void GetFinalDistributions(int NumEvts = -1,
 
   if (WTA_cut)
     str_WTA = "_WTA";
-  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_WTA + Form("_%d", dataset);
+  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_WTA + Form("_%d", dataset);
 
-  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
   string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
   

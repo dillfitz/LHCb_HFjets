@@ -7,8 +7,8 @@
 using namespace std;
 
 void ClosureTest(int NumEvts = -1,
-                 int dataset1 = 91590,
-                 int dataset2 = 91591,
+                 int dataset1 = 91599,
+                 int dataset2 = 91599,
                  int NumIters = 4,                 
                  bool WTA_cut = false)
 {
@@ -54,16 +54,16 @@ void ClosureTest(int NumEvts = -1,
 
   str_ghost = ghostCut ? Form("_ghost_%.1f", ghostProb) : "";
   str_eta = Form("_eta_%.1f%.1f", etaMin, etaMax);
-  str_pt = Form("_ptj_%d%d", int(ptMin), int(ptMax));
+  str_pt = Form("_ptj_%d%d", int(pTLow), int(ptMax));
   str_Nevts = Form("_ev_%d", NumEvts);
 
-  string_reco = loc_hists + "BjetsMC/" + TString("reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
-  string_truth = loc_hists + "BjetsMC/" + TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag1 + str_flavor + str_GS + str_WTA + Form("_%d", dataset1);  
-  string_eff = loc_hists + "BjetsMC/" + TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag2 + str_flavor + str_GS + str_WTA + Form("_%d", dataset2);
-  string_unfold = loc_hists + "BjetsMC/" + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag2 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset2); 
-  string_data = loc_hists + "Bjets/" + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
+  string_reco = loc_hists + "BjetsMC/" + TString("reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
+  string_truth = loc_hists + "BjetsMC/" + TString("truth") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag1 + str_flavor + str_GS + str_WTA + Form("_%d", dataset1);  
+  string_eff = loc_hists + "BjetsMC/" + TString("efficiency_truth") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag2 + str_flavor + str_GS + str_WTA + Form("_%d", dataset2);
+  string_unfold = loc_hists + "BjetsMC/" + TString("unfold_reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag2 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset2); 
+  string_data = loc_hists + "Bjets/" + TString("data") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
   
-  extension = loc_hists + "BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1) + Form("_%d", dataset2);
+  extension = loc_hists + "BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1) + Form("_%d", dataset2);
 
 
   cout << string_reco + TString(".root") << endl;

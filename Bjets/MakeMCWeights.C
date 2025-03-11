@@ -123,8 +123,8 @@ void MakeMCWeights(int NumEvts1 = -1, int NumEvts2 = -1,
 
   TString extension1, extension2, extension;
   extension = TString("compare_") + str_level1 + str_level2 + Form("_ev_%d", NumEvts1) + Form("_ev_%d", NumEvts2) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_followHard2 + str_ghost1 + str_ghost2 + str_charged1 + str_charged2 + str_Mag1 + +str_Mag2 + str_flavor1 + str_flavor2 + Form("_%d", dataset1) + Form("_%d", dataset2);
-  extension1 = str_level1 + Form("_ev_%d", NumEvts1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_charged1 + str_Mag1 + str_flavor1 + str_PID + Form("_%d", dataset1);
-  extension2 = str_level2 + Form("_ev_%d", NumEvts2) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_charged2 + str_Mag2 + str_flavor2 + str_PID + Form("_%d", dataset2);
+  extension1 = str_level1 + Form("_ev_%d", NumEvts1) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_charged1 + str_Mag1 + str_flavor1 + str_PID + Form("_%d", dataset1);
+  extension2 = str_level2 + Form("_ev_%d", NumEvts2) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_charged2 + str_Mag2 + str_flavor2 + str_PID + Form("_%d", dataset2);
   //extension1 = "data_ev_-1_ptj_20100_eta_2.54.0_HF_ghost_0.5_b_PID_WTA_91599";
   //extension2 = "reco_ev_-1_ptj_20100_eta_2.54.0_HF_ghost_0.5_b_PID_WTA_91599";
 

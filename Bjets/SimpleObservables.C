@@ -141,7 +141,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TString extension_unfold, extension_prefix, extension_trackeff;
   TString extension;
 
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
 
   // HFjetTree Tree(0, dataset, isData);
 
@@ -157,7 +157,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   float minimum_dR = 0.1;
 
   extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
-  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
   extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
 
   if (DoJetID)
@@ -197,23 +197,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TFile *file_unfold = new TFile(extension_RootFilesMC + extension_unfold + TString(".root"), "READ");
   // TFile fread(dir_deadcone + "hists/" + extension_read + ".root", "READ");
   // TFile fwspace(dir_deadcone + "hists/" + extension_wspace + ".root", "READ");
-  // TFile file_reco_weights("hists/MC_DATA_WEIGHTS.root", "READ");
   TFile *file_decay = new TFile( extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
     
-  TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1_ptj_20100_eta_2.54.0_HF_b_91599.root", "READ");
-  
-  TFile file_reco_weights("../../root_files/Bjets/MC_DATA_WEIGHTS.root", "READ");  
+  TFile *file_truth = new TFile( extension_RootFilesMC + "truth_ev_-1" + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + "_HF_b_91599.root", "READ");
+
 
   //
   TH2D *h2_HFptrap_ratio;
   TH3D *h3_HFptjetptrap_ratio;
   TH3D *h3_dRztheta_ratio;
-  // if (!isData)
-  // {
-  //   h2_HFptrap_ratio = (TH2D *)file_reco_weights.Get("h2_HFptrap_ratio");
-  //   h3_HFptjetptrap_ratio = (TH3D *)file_reco_weights.Get("h3_HFptjetptrap_ratio");
-  //   h3_dRztheta_ratio = (TH3D *)file_reco_weights.Get("h3_dRztheta_ratio");
-  // }
 
   /////////////////// Efficiencies and Purities /////////////////////////////////
 
@@ -265,7 +257,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-  TString massfit = TString("massfit_data_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag  + TString("_b_PID_") + Form("%d.root", dataset);
+    TString massfit( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
   //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
 
     
@@ -300,8 +292,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
   extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
 
-  TFile file_trigeffMC("../../root_files/TrigEff/" + extension_trig_MC + ".root", "READ");
-  TFile file_trigeffData("../../root_files/TrigEff/" + extension_trig_Data + ".root", "READ");
+  TFile file_trigeffMC("../../Effs/TrigEff/" + extension_trig_MC + ".root", "READ");
+  TFile file_trigeffData("../../Effs/TrigEff/" + extension_trig_Data + ".root", "READ");
 
   h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
   h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
@@ -309,11 +301,11 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   h2_trigeff_ratio->Divide(h2_trigeff_MC);
 
  
-  TString extension_trig("PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID" + TString("_91599.root"));
+  //TString extension_trig("PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID" + TString("_91599.root"));
   // if (DoTrigEff)
   //   extension_trig = "recselsys_" + extension_trig;
-  TFile f_trig("../../root_files/TrigEff/" + extension_trig, "READ");
-  TH2D *h2_trig_ratio = (TH2D *)f_trig.Get("h2_eff_ratio");
+  //TFile f_trig("../../Effs/TrigEff/" + extension_trig, "READ");
+  TH2D *h2_trig_ratio = (TH2D *)file_trigeffMC.Get("h2_eff_ratio");
 
 
   TF1 *f_eff = (TF1 *)file_unfold->Get("f_eff1");
@@ -584,14 +576,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_sv_mass_z_falsepos = new TH2D("h2_sv_mass_z_falsepos", "", 30, 0, 4., 20, 0, 1.05);
   TH2D *h2_sv_mass_ntrks_falsepos = new TH2D("h2_sv_mass_ntrks_falsepos", "", 30, 0, 4., 10, -0.5, 9.5);
   
-  TH2D *h2_ptz_weighted = new TH2D("ptz_weighted", ";z;p_{T} (GeV/c)", zbinsize, z_binedges, ptbinsize, pt_binedges);
-  TH2D *h2_ptjt_weighted = new TH2D("ptjt_weighted", ";j_{T} (GeV/c); p_{T} (GeV/c)", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-  TH2D *h2_ptr_weighted = new TH2D("ptr_weighted", ";r;p_{T} (GeV/c)", rbinsize, r_binedges, ptbinsize, pt_binedges);
-    
-  TH1D *h1_z_weighted = new TH1D("z_weighted", ";z;", zbinsize, z_binedges);
-  TH1D *h1_jt_weighted = new TH1D("jt_weighted", ";j_{T} (GeV/c);", jtbinsize, jt_binedges);
-  TH1D *h1_r_weighted = new TH1D("r_weighted", ";r;", rbinsize, r_binedges);  
-  
   TH1D *h1_z_nobgsub, *h1_jt_nobgsub, *h1_r_nobgsub;
   TH2D *h2_ptz_nobgsub, *h2_ptjt_nobgsub, *h2_ptr_nobgsub;
   h1_z_nobgsub = (TH1D*)h1_z->Clone("z_nobgsub");
@@ -602,7 +586,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   h2_ptr_nobgsub = (TH2D*)h2_ptr->Clone("ptr_nobgsub");     
    
     
-   TH3D *h3_ptzjt_ratio = (TH3D *)file_reco_weights.Get("ptzjt_ratio");   
 
   //
   // Event loop
@@ -1378,21 +1361,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_ptjt_uncorrected->Fill(jt, jet_pt);
         h2_ptr_uncorrected->Fill(r, jet_pt);        
               
-
-        double prior_weight = 1.0;
-        if (!isData) 
-        {
-          prior_weight = h3_ptzjt_ratio->GetBinContent(h3_ptzjt_ratio->GetXaxis()->FindBin(z),
-                                                       h3_ptzjt_ratio->GetYaxis()->FindBin(jt),
-                                                       h3_ptzjt_ratio->GetZaxis()->FindBin(jet_pt));
-        }
-        // For a cross check on the unfold prior systematic
-        h2_ptz_weighted->Fill(z, jet_pt, prior_weight);
-        h2_ptjt_weighted->Fill(jt, jet_pt, prior_weight);
-        h2_ptr_weighted->Fill(r, jet_pt, prior_weight);  
-        h1_z_weighted->Fill(z, prior_weight);
-        h1_jt_weighted->Fill(jt, prior_weight);
-        h1_r_weighted->Fill(r, prior_weight);   
                 
         if (HF_pt < 5.) { h1_z_ptHFcut_l5->Fill(z); }        
         else { h1_z_ptHFcut_g5->Fill(z); }

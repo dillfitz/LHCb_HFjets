@@ -119,7 +119,7 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
 
     // This should be the file from MCMakeVarTree
     
-    extension = TString("efficiency_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+    extension = TString("efficiency_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
     
 //    extension_read = TString("MCtree_") + str_level + str_mag + Form("_ev_%d", NumEvtsTrue3) + str_flavor;
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");

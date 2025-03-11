@@ -125,7 +125,7 @@ void SimpleUnfold(int NumEvts = -1,
 
     TString str_tree;   
     TString extension, extension_prefix;
-    extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+    extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
     // if (isData)
     //   extension += "_forData";
     
@@ -154,7 +154,7 @@ void SimpleUnfold(int NumEvts = -1,
     extension_RootFilesData = TString("../../root_files/Bjets/");    
     
     extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
-    extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+    extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
     
 
     extension = extension_prefix + extension;
@@ -256,7 +256,7 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_HFeff_HFptetajetpt = (TH3D *)file_decay->Get("efficiency_HFptetajetpt");
     
 //    /////////////////// Mass Fit Parameters /////////////////////////////////
-    TString extension_mass( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.5_b" + str_PID + "_91599.root");      
+    TString extension_mass( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root");      
     if (DoRecSelEff)
       extension_mass = "recselsys_" + extension_mass;
     if (DoSignalSys)

@@ -16,7 +16,7 @@ using namespace RooFit;
 
 void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
              bool UseDTF = false,
-             float ptmin_user = 7,
+             float ptmin_user = pTLow,
              float ptmax_user = 250)
 {
     bool MCflag = !isData;

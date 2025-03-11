@@ -18,8 +18,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
              bool UseDTF = true,
              bool DoRecSelEff = 0,
              bool DoSystematic = 0,             
-             float ptmin_user = 7.0,
-             float ptmax_user = 250)
+             float ptmin_user = pTLow,
+             float ptmax_user = 250.)
 {
     bool MCflag = !isData;
     followHardest = false;
@@ -186,7 +186,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     float Jpsi_CHI2NDOF, Jpsi_BPVDLS, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
     float dphi;
-    float jet_eta;
+    float jet_eta, jet_rap;
     bool isTrueBjet, TOS;
     int nSV;
     
@@ -227,6 +227,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
     BTree->SetBranchAddress("jet_pt", &jet_pt);
     BTree->SetBranchAddress("jet_eta", &jet_eta);
+    BTree->SetBranchAddress("jet_rap", &jet_rap);    
 
     BTree->SetBranchAddress("dphi", &dphi);
     BTree->SetBranchAddress("nSV", &nSV);
@@ -287,7 +288,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
         if (ev % 10000 == 0)
             cout << "Executing event " << ev << endl;
-        if (jet_eta < etaMin || jet_eta > etaMax)
+        if (jet_rap < etaMin || jet_rap > etaMax)
             continue;
         if (jet_pt > ptMax)
             continue;
@@ -495,8 +496,17 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         {
             sigma_ratio = new RooRealVar("sigma_ratio", "sigma_ratio", 1.52571 / 0.856549);
             mean = new RooRealVar("mean", "mean of gaussians", 5.27966, 5.27, 5.282);
-            sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.008, 0.001, 0.03);
-            sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.008, 0.001, 0.03); // CHANGE
+            if (isData)
+            {
+              sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.011, 0.001, 0.03);
+              sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.007, 0.001, 0.03); // CHANGE
+            }
+            else
+            {
+              sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.025, 0.001, 0.03);
+              sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.025, 0.001, 0.03); // CHANGE
+            }            
+            
         }
         else
         {
@@ -786,7 +796,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.1 * nsig->getVal());
+        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.07 * nsig->getVal());
         // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
         RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
 
@@ -974,12 +984,12 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             cout << "MassSigma = " << sig2_t->getVal() << endl;
         }
         
-        float MassUp = MassMu + 2 * MassSigma;
-        float MassDown = MassMu - 2 * MassSigma;
-        Sideband1_Min = MassMu - 9 * MassSigma;
-        Sideband1_Max = MassMu - 5 * MassSigma;
-        Sideband2_Min = MassMu + 5 * MassSigma;
-        Sideband2_Max = MassMu + 9 * MassSigma;
+        float MassUp = MassMu + 3 * MassSigma;
+        float MassDown = MassMu - 3 * MassSigma;
+        Sideband1_Min = MassMu - 11 * MassSigma;
+        Sideband1_Max = MassMu - 7 * MassSigma;
+        Sideband2_Min = MassMu + 10 * MassSigma;
+        Sideband2_Max = MassMu + 14 * MassSigma;
         
         float Sideband1_Min_forSysNear = Sideband1_Min + MassSigma;
         float Sideband1_Max_forSysNear = Sideband1_Max;

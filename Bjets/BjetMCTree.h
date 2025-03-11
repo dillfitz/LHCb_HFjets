@@ -519,150 +519,274 @@ BjetMCTree::BjetMCTree(TTree *tree = 0, int dataset = 93539, bool isData = false
     TString data_dir = "../../data/";
     if (dataset == 61590)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 61591)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+     
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 61599)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 71590)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 71591)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 71599)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");              
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 81590)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 81591)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 81599)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");              
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");
     }
     else if (dataset == 91599)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
 
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree"); 
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree"); 
 
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");   
-          
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");
+
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02092025_full.root/MCJets/MCJetTree"); 
+
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");                  
     }
     else if (dataset == 91590)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
 
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
 
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_05152024_full.root/MCJets/MCJetTree");
+        
+       
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");
+
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MD_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MD_02092025_full.root/MCJets/MCJetTree");        
     }
     else if (dataset == 91591)
     {
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
         
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");         
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");         
 
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
-        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");                
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_05152024_full.root/MCJets/MCJetTree");
+        //chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_05152024_full.root/MCJets/MCJetTree");
+        
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2016_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");
+        
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2017_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");         
+
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09h_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09i_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09k_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim09l_MU_02092025_full.root/MCJets/MCJetTree");
+        chain->Add(data_dir + "Bjet_MC_Jpsi2MuMu_HighPT_2018_Sim10a_MU_02092025_full.root/MCJets/MCJetTree");        
     }    
 
     tree = chain;

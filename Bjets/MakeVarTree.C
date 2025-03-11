@@ -193,7 +193,7 @@ void MakeVarTree(int NumEvts_user = -1,
     ///              Trigger
     ////////////////////////////////////////////////
     TString extension_trig_MC, extension_trig_Data, extension_RootFilesTrig;
-    extension_RootFilesTrig = TString("../../root_files/TrigEff/");
+    extension_RootFilesTrig = TString("../../Effs/TrigEff/");
     
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
@@ -201,7 +201,7 @@ void MakeVarTree(int NumEvts_user = -1,
     extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
     extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
 
-    TFile file_trigeffMC(extension_RootFilesTrig+ extension_trig_MC + ".root", "READ");
+    TFile file_trigeffMC(extension_RootFilesTrig + extension_trig_MC + ".root", "READ");
     TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data + ".root", "READ");
 
     h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
@@ -796,131 +796,6 @@ void MakeVarTree(int NumEvts_user = -1,
         float testjet_phi, testjet_px, testjet_py, testjet_pz, testjet_e;
         int ncand = Tree.nCandidate;
 
-        // if (Tree.totCandidates > 1 && fabs(last_HFjet - HFjet.Pt()) > 1e-1)
-        // {
-        //   cout << Tree.eventNumber << ", " << HFjet.Pt() << ", " << HFmeson.Pt() << ", " << HFjet.DeltaR(HFmeson, true) << endl;
-        //   cout << Tree.hasb << ", " << Tree.hasbbar << endl;
-        // }
-        // last_HFjet = HFjet.Pt();
-
-        // if (Tree.K_PIDK < 2)
-        //   continue;
-
-        // cout<<"new ev"<<endl;
-        // cout<<"totcand = "<<Tree.totCandidates<<endl;
-        // if (Tree.totCandidates > 1)
-        // {
-        //   for (int icand = 0; icand < Tree.totCandidates; icand++)
-        //   {
-        //     Tree.GetEntry(ev + icand - ncand);
-        //     // cout<<ev+icand-ncand<<endl;
-        //     HFjet.SetPxPyPzE(Tree.Jet_PX / 1000.,
-        //                      Tree.Jet_PY / 1000.,
-        //                      Tree.Jet_PZ / 1000.,
-        //                      Tree.Jet_PE / 1000.);
-        //     mup.SetPxPyPzE(Tree.mup_PX / 1000., Tree.mup_PY / 1000., Tree.mup_PZ / 1000., Tree.mup_PE / 1000.);
-        //     mum.SetPxPyPzE(Tree.mum_PX / 1000., Tree.mum_PY / 1000., Tree.mum_PZ / 1000., Tree.mum_PE / 1000.);
-        //     Kmeson.SetPxPyPzE(Tree.K_PX / 1000., Tree.K_PY / 1000., Tree.K_PZ / 1000., Tree.K_PE / 1000.);
-        //     HFmeson = mup + mum + Kmeson;
-        //     //  HFjet = HFjet - mup - mum - Kmeson;
-
-        //     //  cout<<HFjet.Pt()<<", "<<HFmeson.Pt()<<endl;
-        //     bool hasHF = HFmeson.DeltaR(HFjet, true) < jetradius;
-
-        //     float cand_jetpt = HFjet.Pt();
-        //     // cout<<"Has HF"<<endl;
-        //     if (!hasHF)
-        //     {
-        //       if (cand_jetpt > leading_pT)
-        //       {
-        //         // cout<<leading_pT<<", "<<cand_jetpt<<endl;
-        //         leading_pT = cand_jetpt;
-        //         n_maxpT_cand = Tree.nCandidate;
-        //         n_maxpT_entry = ev + icand - ncand;
-        //         // cout<<n_maxpT_entry<<endl;
-        //       }
-        //     }
-        //     else
-        //     {
-        //       HF_counter++;
-        //       if (HFmeson.Pt() > last_HFpt)
-        //         n_HFpt_entry = ev + icand - ncand;
-
-        //       // cout<<"n_HFpt_entry = "<<n_HFpt_entry<<endl;
-        //       // cout<<HF_counter<<endl;
-        //       last_HFjet = HFjet.Pt();
-        //       last_HFpt = HFmeson.Pt();
-        //     }
-        //   }
-        //   Tree.GetEntry(n_maxpT_entry);
-        //   HFjet.SetPxPyPzE(Tree.Jet_PX / 1000.,
-        //                    Tree.Jet_PY / 1000.,
-        //                    Tree.Jet_PZ / 1000.,
-        //                    Tree.Jet_PE / 1000.);
-        //   // HFjet = HFjet - mup - mum - Kmeson;
-        //   testjet_phi = HFjet.Phi();
-        //   testjet_px = HFjet.Px();
-        //   testjet_py = HFjet.Py();
-        //   testjet_pz = HFjet.Pz();
-        //   testjet_e = HFjet.E();
-        //   if (Tree.Jet_BDTTag_bdt0[0] > 0. && Tree.Jet_BDTTag_bdt1[0] > 0.2)
-        //     nSV_test = 1;
-        //   else
-        //     nSV_test = 0;
-        // }
-        // // if(HF_counter > 1){
-        // //   maxHFpT_found = true;
-        // //   Tree.GetEntry(n_HFpt_entry);
-        // // }
-        // // else Tree.GetEntry(ev);
-        // Tree.GetEntry(ev);
-        // HFjet.SetPxPyPzE(Tree.Jet_PX / 1000.,
-        //                  Tree.Jet_PY / 1000.,
-        //                  Tree.Jet_PZ / 1000.,
-        //                  Tree.Jet_PE / 1000.);
-        // mup.SetPxPyPzE(Tree.mup_PX / 1000., Tree.mup_PY / 1000., Tree.mup_PZ / 1000., Tree.mup_PE / 1000.);
-        // mum.SetPxPyPzE(Tree.mum_PX / 1000., Tree.mum_PY / 1000., Tree.mum_PZ / 1000., Tree.mum_PE / 1000.);
-        // Kmeson.SetPxPyPzE(Tree.K_PX / 1000., Tree.K_PY / 1000., Tree.K_PZ / 1000., Tree.K_PE / 1000.);
-        // HFmeson = mup + mum + Kmeson;
-        // tr_HFjet.SetPxPyPzE(Tree.Jet_mcjet_PX / 1000.,
-        //                     Tree.Jet_mcjet_PY / 1000.,
-        //                     Tree.Jet_mcjet_PZ / 1000.,
-        //                     Tree.Jet_mcjet_PE / 1000.);
-        // tr_mup.SetPxPyPzE(Tree.mup_TRUEP_X / 1000., Tree.mup_TRUEP_Y / 1000.,
-        //                   Tree.mup_TRUEP_Z / 1000., Tree.mup_TRUEP_E / 1000.);
-        // tr_mum.SetPxPyPzE(Tree.mum_TRUEP_X / 1000., Tree.mum_TRUEP_Y / 1000.,
-        //                   Tree.mum_TRUEP_Z / 1000., Tree.mum_TRUEP_E / 1000.);
-        // tr_Kmeson.SetPxPyPzE(Tree.K_TRUEP_X / 1000., Tree.K_TRUEP_Y / 1000.,
-        //                      Tree.K_TRUEP_Z / 1000., Tree.K_TRUEP_E / 1000.);
-        // tr_HFmeson = tr_mup + tr_mum + tr_Kmeson;
-
-        // cout<<Tree.Jet_SVTag_Tag<< ", "<< Tree.Jet_SVTag_Nvertices<<endl;
-        // if (HFjet.Eta() < etaMin || HFjet.Eta() > etaMax)
-        // {
-        //   cut_jeteta++;
-        //   continue;
-        // }
-        // if (HF_jet_dR > jetradius)
-        // {
-        //   cut_Dinjet++;
-        //   continue;
-        // }
-
-        // if (Tree.totCandidates > 1)
-        // {
-        //   dphi = fabs(checkphi(checkphi(HFmeson.Phi()) - checkphi(testjet_phi)));
-        //   if (fabs(HFjet.Px() - testjet_px) < 0.01 &&
-        //       fabs(HFjet.E() - testjet_e) < 0.01)
-        //     dphi = 3.14159;
-        //   // cout<<nSV_test<<endl;
-        //   NumTwoCand++;
-        //   if (fabs(HFjet.E() - testjet_e) < 0.0001)
-        //   {
-        //     NumTwoHFInJet++;
-        //   }
-        // }
-        // if (dphi < 2.5)
-        //   continue;
 
         bool hasHFhadron = false;
 
@@ -1048,7 +923,7 @@ void MakeVarTree(int NumEvts_user = -1,
                     NumBHads_tr++;
                     // if (fabs(dtr.Px() - HFmeson.Px()) < 2 && fabs(dtr.Py() - HFmeson.Py()) < 2)
                     // {
-                    if (fabs(dtr.Pt() - tr_HFmeson.Pt()) < 0.01)
+                    if (fabs(dtr.Pt() - Tree.Bu_TRUEPT / 1000.) < 0.01)
                     {
                         tr_HFmeson.SetPxPyPzE(dtr.Px(), dtr.Py(), dtr.Pz(), dtr.E());
                         hasHFhadron_matched = true;
@@ -1337,8 +1212,10 @@ void MakeVarTree(int NumEvts_user = -1,
 
         if (isData && h2_trigeff_Data != NULL)
         {
-            trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_Data->GetYaxis()->FindBin(Jpsi.Rapidity()));
-            trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_MC->GetYaxis()->FindBin(Jpsi.Rapidity()));
+            double rap_trig = (Jpsi.Rapidity() > 2.00) ? Jpsi.Rapidity() : 2.1;
+            double pt_trig = (Jpsi.Pt() > 2.00) ? Jpsi.Pt() : 2.1;        
+            trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(pt_trig), h2_trigeff_Data->GetYaxis()->FindBin(rap_trig));
+            trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(pt_trig), h2_trigeff_MC->GetYaxis()->FindBin(rap_trig));
             trigeff_ratio = trigeff_Data / trigeff_MC;
             if (std::isnan(trigeff_ratio) || std::isinf(trigeff_ratio))
                 trigeff_ratio = trigeff_Data = trigeff_MC = 1.0;
