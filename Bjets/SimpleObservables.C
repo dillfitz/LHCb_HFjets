@@ -359,14 +359,14 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
     TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
     
-    TH2D *h2_zjt = new TH2D("zjt", ";z; j_{T} ", zbinsize, z_binedges, jtbinsize, jt_binedges);
-    TH2D *h2_zr = new TH2D("zr", ";z; r ", zbinsize, z_binedges, rbinsize, r_binedges);
-    TH2D *h2_jtr = new TH2D("jtr", "; j_{T}; r ", jtbinsize, jt_binedges, rbinsize, r_binedges);
+    TH2D *h2_zjt = new TH2D("zjt", ";z; j_{T} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges);
+    TH2D *h2_zr = new TH2D("zr", ";z; r", zbinsize, z_binedges, rbinsize, r_binedges);
+    TH2D *h2_jtr = new TH2D("jtr", "; j_{T} [GeV/c]; r", jtbinsize, jt_binedges, rbinsize, r_binedges);
     
     TH1D *h1_z = new TH1D("z", ";z", zbinsize, z_binedges);
     TH1D *h1_tr_z = new TH1D("tr_z", ";z", zbinsize, z_binedges);
-    TH1D *h1_jt = new TH1D("jt", ";j_{T}", jtbinsize, jt_binedges);
-    TH1D *h1_tr_jt = new TH1D("tr_jt", ";j_{T}", jtbinsize, jt_binedges);
+    TH1D *h1_jt = new TH1D("jt", ";j_{T} [GeV/c]", jtbinsize, jt_binedges);
+    TH1D *h1_tr_jt = new TH1D("tr_jt", ";j_{T} [GeV/c]", jtbinsize, jt_binedges);
     TH1D *h1_r = new TH1D("r", ";r", rbinsize, r_binedges);
     TH1D *h1_tr_r = new TH1D("tr_r", "r", rbinsize, r_binedges);
                                     
@@ -374,29 +374,29 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH1D *h1_z_tot = new TH1D("z_tot", "Total; z", zbinsize, z_binedges);
     TH1D *h1_r_tot = new TH1D("r_tot", "Total; r ", rbinsize, r_binedges);
 
-    TH2D *h2_ptz = new TH2D("ptz", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptr = new TH2D("ptr", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptz = new TH2D("ptz", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr = new TH2D("ptr", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
-    TH3D *h3_ptzjt = new TH3D("ptzjt", ";z ; j_{T};", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr = new TH3D("ptzr", ";z ; r;",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T}; r; ",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     
-    TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;", zbinsize, z_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T};", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
-    TH2D *h2_ptr_uncorrected = new TH2D("ptr_uncorrected", ";r;", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_uncorrected = new TH2D("ptr_uncorrected", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
-    TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z ; j_{T};", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z ; r;",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr_uncorrected = new TH3D("ptjtr_uncorrected", ";j_{T}; r; ",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );    
+    TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_uncorrected = new TH3D("ptjtr_uncorrected", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );    
     
-    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
-    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T};", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
-    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r;", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;p_{T,jet} [GeV/c]", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r;p_{T,jet} [GeV/c]", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
     
-    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", ";z ; j_{T};", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", ";z ; r;",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", ";j_{T}; r; ",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
+    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", ";z;r;p_{T} [GeV/c]",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
      
     
     TH3D *h3_ptHFzjt = new TH3D("ptHFzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptHFbinsize, ptHF_binedges );
@@ -1502,19 +1502,189 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     cout << "Integrals after eff ptr: " << h2_ptr_final->Integral()  << endl;
     cout << " ------------------------------------------------ " << endl;
     
+    THStack *hs_ptz = new THStack("hs_ptz", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt = new THStack("hs_ptjt", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr = new THStack("hs_ptr", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");    
+    THStack *hs_ptz_uncorrected = new THStack("hs_ptz_uncorrected", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt_uncorrected = new THStack("hs_ptjt_uncorrected", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr_uncorrected = new THStack("hs_ptr_uncorrected", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");
+    THStack *hs_ptz_nobgsub = new THStack("hs_ptz_nobgsub", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt_nobgsub = new THStack("hs_ptjt_nobgsub", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr_nobgsub = new THStack("hs_ptr_nobgsub", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");    
     TH2D *h2_zjt_ptbinned_uncorrected[ptbinsize-1], *h2_zjt_ptbinned[ptbinsize-1];
     TH2D *h2_zr_ptbinned_uncorrected[ptbinsize-1], *h2_zr_ptbinned[ptbinsize-1];
     TH2D *h2_jtr_ptbinned_uncorrected[ptbinsize-1], *h2_jtr_ptbinned[ptbinsize-1];       
     for (int j = 1; j < ptbinsize; j++)
     {   
+    
+        TH1D *h1_ptz_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptz_temp);
+        h1_ptz_temp->SetStats(0);
+        h1_ptz_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(j);
+          h1_ptz_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(j*j+3);
+          h1_ptz_temp->SetLineColor(j*j+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));
+        //h1_ptz_temp->SetOption("PE HIST");
+        hs_ptz->Add(h1_ptz_temp);
+
+        TH1D *h1_ptjt_temp = (TH1D *)h2_ptjt->ProjectionX(Form("jt_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptjt_temp);        
+        h1_ptjt_temp->SetStats(0);
+        h1_ptjt_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(j);
+          h1_ptjt_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(j*j+3);
+          h1_ptjt_temp->SetLineColor(j*j+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));        
+        hs_ptjt->Add(h1_ptjt_temp);
+        
+        TH1D *h1_ptr_temp = (TH1D *)h2_ptr->ProjectionX(Form("r_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptr_temp);        
+        h1_ptr_temp->SetStats(0);
+        h1_ptr_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(j);
+          h1_ptr_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(j*j+3);
+          h1_ptr_temp->SetLineColor(j*j+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));        
+        hs_ptr->Add(h1_ptr_temp);   
 
       if (isData)
       {
+        // Add uncorrected z histos (pt binned) to THStack
+        h1_ptz_temp = (TH1D *)h2_ptz_uncorrected->ProjectionX(Form("z_pt%d_raw", j), j + 1, j + 1); 
+        h1_ptz_temp->SetStats(0);
+        NormalizeHist(h1_ptz_temp);
+        h1_ptz_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(j);
+          h1_ptz_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(j*j+3);
+          h1_ptz_temp->SetLineColor(j*j+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptz_uncorrected->Add(h1_ptz_temp);
+        
+        // Add uncorrected jt histos (pt binned) to THStack        
+        h1_ptjt_temp = (TH1D *)h2_ptjt_uncorrected->ProjectionX(Form("jt_pt%d_raw", j), j + 1, j + 1); 
+        h1_ptjt_temp->SetStats(0);
+        NormalizeHist(h1_ptjt_temp);
+        h1_ptjt_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(j);
+          h1_ptjt_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(j*j+3);
+          h1_ptjt_temp->SetLineColor(j*j+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptjt_uncorrected->Add(h1_ptjt_temp);  
+        
+        // Add uncorrected r histos (pt binned) to THStack
+        h1_ptr_temp = (TH1D *)h2_ptr_uncorrected->ProjectionX(Form("r_pt%d_raw", j), j + 1, j + 1); 
+        h1_ptr_temp->SetStats(0);
+        NormalizeHist(h1_ptr_temp);
+        h1_ptr_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(j);
+          h1_ptr_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(j*j+3);
+          h1_ptr_temp->SetLineColor(j*j+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptr_uncorrected->Add(h1_ptr_temp);
+        
+        // Add no bg sub z histos (pt binned) to THStack
+        h1_ptz_temp = (TH1D *)h2_ptz_nobgsub->ProjectionX(Form("z_pt%d_nobgsub", j), j + 1, j + 1); 
+        h1_ptz_temp->SetStats(0);
+        NormalizeHist(h1_ptz_temp);
+        h1_ptz_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(j);
+          h1_ptz_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(j*j+3);
+          h1_ptz_temp->SetLineColor(j*j+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptz_nobgsub->Add(h1_ptz_temp);
+        
+        // Add no bg sub jt histos (pt binned) to THStack        
+        h1_ptjt_temp = (TH1D *)h2_ptjt_nobgsub->ProjectionX(Form("jt_pt%d_nobgsub", j), j + 1, j + 1); 
+        h1_ptjt_temp->SetStats(0);
+        NormalizeHist(h1_ptjt_temp);
+        h1_ptjt_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(j);
+          h1_ptjt_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(j*j+3);
+          h1_ptjt_temp->SetLineColor(j*j+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptjt_nobgsub->Add(h1_ptjt_temp);  
+        
+        // Add no bg sub r histos (pt binned) to THStack
+        h1_ptr_temp = (TH1D *)h2_ptr_nobgsub->ProjectionX(Form("r_pt%d_nobgsub", j), j + 1, j + 1); 
+        h1_ptr_temp->SetStats(0);
+        NormalizeHist(h1_ptr_temp);
+        h1_ptr_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(j);
+          h1_ptr_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(j*j+3);
+          h1_ptr_temp->SetLineColor(j*j+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));                
+        hs_ptr_nobgsub->Add(h1_ptr_temp);                                    
+        
+         
       
         h3_ptzjt_uncorrected->GetZaxis()->SetRange(j+1, j+1);      
         h2_zjt_ptbinned_uncorrected[j-1] = (TH2D *)h3_ptzjt_uncorrected->Project3D("yx");
         h2_zjt_ptbinned_uncorrected[j-1]->SetName(Form("zjt_uncorrected_pt%d",j)); 
-    	  NormalizeHist(h2_zjt_ptbinned_uncorrected[j-1]);	
+        NormalizeHist(h2_zjt_ptbinned_uncorrected[j-1]);	
 
         h3_ptzr_uncorrected->GetZaxis()->SetRange(j+1, j+1);        
         h2_zr_ptbinned_uncorrected[j-1] = (TH2D *)h3_ptzr_uncorrected->Project3D("yx");
@@ -1552,6 +1722,19 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_jtr_ptbinned[j-1]->SetName(Form("jtr_reco_pt%d",j));             
       NormalizeHist(h2_jtr_ptbinned[j-1]);        
     }  
+    hs_ptz->Write();
+    hs_ptjt->Write();
+    hs_ptr->Write();
+    if (isData)
+    {
+        hs_ptz_uncorrected->Write();
+        hs_ptjt_uncorrected->Write();
+        hs_ptr_uncorrected->Write();
+        hs_ptz_nobgsub->Write();
+        hs_ptjt_nobgsub->Write();
+        hs_ptr_nobgsub->Write();
+    }
+    
     h3_ptzjt->GetZaxis()->SetRange(1, ptbinsize+1);
     h3_ptzr->GetZaxis()->SetRange(1, ptbinsize+1);
     h3_ptjtr->GetZaxis()->SetRange(1, ptbinsize+1);
@@ -1622,9 +1805,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TLatex Tl;
   Tl.SetNDC(kTRUE);
   Tl.SetTextSize(0.04);
+  /*
   //
   // gStyle->SetOptStat(0);
-  // gStyle->SetPaperSize(TStyle::kUSLetter);
+  // gStyle->SetPaperSize(TStyle::kUSLetter);root -l -b -q "SimpleObservables.C(-1, 91599, 0)"
   // gStyle->SetPadBottomMargin(0.08);
   // gStyle->SetPadTopMargin(0.005);
   gStyle->SetPadLeftMargin(0.13);
@@ -1642,9 +1826,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   gStyle->SetTitleStyle(0);
   gStyle->SetStatStyle(0);
   // gStyle->SetLineWidth(3);
-
+*/
   //---- paint...
-  gStyle->SetImageScaling(3.);
+
   char buf[100];
   char bufb[100];
   
@@ -1681,7 +1865,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zpt_raw ->SetBorderSize(0);
     legend_zpt_raw ->SetFillStyle(0);
     legend_zpt_raw ->SetFillColor(3);
-    legend_zpt_raw ->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptz_uncorrected->ProjectionX(Form("z_pt%d_raw", i), i + 1, i + 1); 
@@ -1715,7 +1898,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_zpt_nobgsub ->SetBorderSize(0);
       legend_zpt_nobgsub ->SetFillStyle(0);
       legend_zpt_nobgsub ->SetFillColor(3);
-      legend_zpt_nobgsub ->SetHeader("LHCb Unofficial","C");
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptz_nobgsub->ProjectionX(Form("z_pt%d_nobgsub", i), i + 1, i + 1); 
@@ -1748,7 +1930,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_zpt_truth ->SetBorderSize(0);
       legend_zpt_truth ->SetFillStyle(0);
       legend_zpt_truth ->SetFillColor(3);
-      legend_zpt_truth ->SetHeader("LHCb Unofficial","C");
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptz_truth->ProjectionX(Form("z_pt%d_truth", i), i + 1, i + 1); 
@@ -1781,7 +1962,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zpt ->SetBorderSize(0);
     legend_zpt ->SetFillStyle(0);
     legend_zpt ->SetFillColor(3);
-    legend_zpt->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_pt%d", i), i + 1, i + 1);
@@ -1815,7 +1995,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_zpt_final ->SetBorderSize(0);
     legend_zpt_final ->SetFillStyle(0);
     legend_zpt_final ->SetFillColor(3);
-    legend_zpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
@@ -1875,7 +2054,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_jtpt_raw ->SetBorderSize(0);
     legend_jtpt_raw ->SetFillStyle(0);
     legend_jtpt_raw ->SetFillColor(3);
-    legend_jtpt_raw ->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt_uncorrected->ProjectionX(Form("jt_pt%d_raw", i), i + 1, i + 1); 
@@ -1909,8 +2087,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_jtpt_nobgsub ->SetTextSize(0.03);
       legend_jtpt_nobgsub ->SetBorderSize(0);
       legend_jtpt_nobgsub ->SetFillStyle(0);
-      legend_jtpt_nobgsub ->SetFillColor(3);
-      legend_jtpt_nobgsub ->SetHeader("LHCb Unofficial","C");  
+      legend_jtpt_nobgsub ->SetFillColor(3);  
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptjt_nobgsub->ProjectionX(Form("jt_pt%d_nobgsub", i), i + 1, i + 1); 
@@ -1943,7 +2120,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_jtpt_truth ->SetBorderSize(0);
       legend_jtpt_truth ->SetFillStyle(0);
       legend_jtpt_truth ->SetFillColor(3);
-      legend_jtpt_truth ->SetHeader("LHCb Unofficial","C");
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptjt_truth->ProjectionX(Form("jt_pt%d_truth", i), i + 1, i + 1); 
@@ -1976,8 +2152,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_jtpt ->SetTextSize(0.03);
     legend_jtpt ->SetBorderSize(0);
     legend_jtpt ->SetFillStyle(0);
-    legend_jtpt ->SetFillColor(3);
-    legend_jtpt->SetHeader("LHCb Unofficial","C");  
+    legend_jtpt ->SetFillColor(3); 
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("jt_pt%d", i), i + 1, i + 1);
@@ -2012,7 +2187,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_jtpt_final ->SetBorderSize(0);
     legend_jtpt_final ->SetFillStyle(0);
     legend_jtpt_final ->SetFillColor(3);
-    legend_jtpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);
@@ -2068,8 +2242,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt_raw ->SetTextSize(0.03);
     legend_rpt_raw ->SetBorderSize(0);
     legend_rpt_raw ->SetFillStyle(0);
-    legend_rpt_raw ->SetFillColor(3);
-    legend_rpt_raw ->SetHeader("LHCb Unofficial","C"); 
+    legend_rpt_raw ->SetFillColor(3); 
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr_uncorrected->ProjectionX(Form("r_pt%d_raw", i), i + 1, i + 1); 
@@ -2104,7 +2277,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_rpt_nobgsub ->SetBorderSize(0);
       legend_rpt_nobgsub ->SetFillStyle(0);
       legend_rpt_nobgsub ->SetFillColor(3);
-      legend_rpt_nobgsub ->SetHeader("LHCb Unofficial","C");
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptr_nobgsub->ProjectionX(Form("r_pt%d_nobgsub", i), i + 1, i + 1); 
@@ -2137,7 +2309,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       legend_rpt_truth ->SetBorderSize(0);
       legend_rpt_truth ->SetFillStyle(0);
       legend_rpt_truth ->SetFillColor(3);
-      legend_rpt_truth ->SetHeader("LHCb Unofficial","C");
       for (int i = 1; i < ptbinsize; i++)
       {
         TH1D *h1_temp = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_pt%d_truth", i), i + 1, i + 1); 
@@ -2171,7 +2342,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt ->SetBorderSize(0);
     legend_rpt ->SetFillStyle(0);
     legend_rpt ->SetFillColor(3);
-    legend_rpt->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("r_pt%d", i), i + 1, i + 1);
@@ -2206,7 +2376,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     legend_rpt_final ->SetBorderSize(0);
     legend_rpt_final ->SetFillStyle(0);
     legend_rpt_final ->SetFillColor(3);
-    legend_rpt_final->SetHeader("LHCb Unofficial","C");
     for (int i = 1; i < ptbinsize; i++)
     {
       TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);

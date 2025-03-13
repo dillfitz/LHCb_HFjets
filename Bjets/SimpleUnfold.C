@@ -977,6 +977,170 @@ void SimpleUnfold(int NumEvts = -1,
     h3_purity_ptzjt_50_100->Write("purity_ptzjt_50_100");
     h3_purity_ptzr_50_100->Write("purity_ptzr_50_100");
     h3_purity_ptjtr_50_100->Write("purity_ptjtr_50_100");    
+    
+    TH2D *h2_efficiency_zjt_ptbinned[ptbinsize-1];
+    TH2D *h2_efficiency_zr_ptbinned[ptbinsize-1];
+    TH2D *h2_efficiency_jtr_ptbinned[ptbinsize-1];  
+    TH2D *h2_purity_zjt_ptbinned[ptbinsize-1];
+    TH2D *h2_purity_zr_ptbinned[ptbinsize-1];
+    TH2D *h2_purity_jtr_ptbinned[ptbinsize-1];      
+    
+    THStack *hs_efficiency_ptz = new THStack("hs_efficiency_ptz", ";z;efficiency");
+    THStack *hs_efficiency_ptjt = new THStack("hs_efficiency_ptjt", ";j_{T} [GeV/c];efficiency");
+    THStack *hs_efficiency_ptr = new THStack("hs_efficiency_ptr", ";r;efficiency");
+    THStack *hs_purity_ptz = new THStack("hs_purity_ptz", ";z;purity");
+    THStack *hs_purity_ptjt = new THStack("hs_purity_ptjt", ";j_{T} [GeV/c];purity");
+    THStack *hs_purity_ptr = new THStack("hs_purity_ptr", ";r;purity");
+                         
+    for (int i = 1; i < ptbinsize; i++)
+    {   
+    
+        TH1D *h1_ptz_temp = (TH1D *)h2_efficiency_ptz->ProjectionX(Form("efficiency_z_pt%d", i), i + 1, i + 1); 
+        h1_ptz_temp->SetStats(0);
+        h1_ptz_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(i);
+          h1_ptz_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(i*i+3);
+          h1_ptz_temp->SetLineColor(i*i+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+        hs_efficiency_ptz->Add(h1_ptz_temp);
+        
+        TH1D *h1_ptjt_temp = (TH1D *)h2_efficiency_ptjt->ProjectionX(Form("efficiency_jt_pt%d", i), i + 1, i + 1); 
+        h1_ptjt_temp->SetStats(0);
+        h1_ptjt_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(i);
+          h1_ptjt_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(i*i+3);
+          h1_ptjt_temp->SetLineColor(i*i+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));        
+        hs_efficiency_ptjt->Add(h1_ptjt_temp);
+        
+        TH1D *h1_ptr_temp = (TH1D *)h2_efficiency_ptr->ProjectionX(Form("efficiency_r_pt%d", i), i + 1, i + 1); 
+        h1_ptr_temp->SetStats(0);
+        h1_ptr_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(i);
+          h1_ptr_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(i*i+3);
+          h1_ptr_temp->SetLineColor(i*i+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));        
+        hs_efficiency_ptr->Add(h1_ptr_temp);
+        
+        
+        h1_ptz_temp = (TH1D *)h2_purity_ptz->ProjectionX(Form("purity_z_pt%d", i), i + 1, i + 1); 
+        h1_ptz_temp->SetStats(0);
+        h1_ptz_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(i);
+          h1_ptz_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(i*i+3);
+          h1_ptz_temp->SetLineColor(i*i+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));        
+        hs_purity_ptz->Add(h1_ptz_temp);
+        
+        h1_ptjt_temp = (TH1D *)h2_purity_ptjt->ProjectionX(Form("purity_jt_pt%d", i), i + 1, i + 1); 
+        h1_ptjt_temp->SetStats(0);
+        h1_ptjt_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(i);
+          h1_ptjt_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(i*i+3);
+          h1_ptjt_temp->SetLineColor(i*i+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));        
+        hs_purity_ptjt->Add(h1_ptjt_temp);
+        
+        h1_ptr_temp = (TH1D *)h2_purity_ptr->ProjectionX(Form("purity_r_pt%d", i), i + 1, i + 1); 
+        h1_ptr_temp->SetStats(0);
+        h1_ptr_temp->SetMarkerStyle(i + 20);
+        if (i!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(i);
+          h1_ptr_temp->SetLineColor(i);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(i*i+3);
+          h1_ptr_temp->SetLineColor(i*i+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));        
+        hs_purity_ptr->Add(h1_ptr_temp); 
+                                     
+        h3_efficiency_ptzjt->GetZaxis()->SetRange(i+1, i+1);      
+        h2_efficiency_zjt_ptbinned[i-1] = (TH2D *)h3_efficiency_ptzjt->Project3D("yx");
+        h2_efficiency_zjt_ptbinned[i-1]->SetStats(0);
+        h2_efficiency_zjt_ptbinned[i-1]->SetName(Form("zjt_efficiency_pt%d", i));
+        h2_efficiency_zjt_ptbinned[i-1]->Write(); 
+
+        h3_efficiency_ptzr->GetZaxis()->SetRange(i+1, i+1); 
+        h2_efficiency_zr_ptbinned[i-1] = (TH2D *)h3_efficiency_ptzr->Project3D("yx");
+        h2_efficiency_zr_ptbinned[i-1]->SetStats(0);       
+        h2_efficiency_zr_ptbinned[i-1]->SetName(Form("zr_efficiency_pt%d",i)); 
+        h2_efficiency_zr_ptbinned[i-1]->Write();
+        
+        h3_efficiency_ptjtr->GetZaxis()->SetRange(i+1, i+1);        
+        h2_efficiency_jtr_ptbinned[i-1] = (TH2D *)h3_efficiency_ptjtr->Project3D("yx");
+        h2_efficiency_jtr_ptbinned[i-1]->SetStats(0);        
+        h2_efficiency_jtr_ptbinned[i-1]->SetName(Form("jtr_efficiency_pt%d",i));        
+        h2_efficiency_jtr_ptbinned[i-1]->Write();
+        
+        h3_purity_ptzjt->GetZaxis()->SetRange(i+1, i+1);      
+        h2_purity_zjt_ptbinned[i-1] = (TH2D *)h3_purity_ptzjt->Project3D("yx");
+        h2_purity_zjt_ptbinned[i-1]->SetStats(0);                       
+        h2_purity_zjt_ptbinned[i-1]->SetName(Form("zjt_purity_pt%d",i)); 
+        h2_purity_zjt_ptbinned[i-1]->Write();         
+
+        h3_purity_ptzr->GetZaxis()->SetRange(i+1, i+1);        
+        h2_purity_zr_ptbinned[i-1] = (TH2D *)h3_purity_ptzr->Project3D("yx");
+        h2_purity_zr_ptbinned[i-1]->SetStats(0);
+        h2_purity_zr_ptbinned[i-1]->SetName(Form("zr_purity_pt%d",i));
+        h2_purity_zr_ptbinned[i-1]->Write();        
+        
+        h3_purity_ptjtr->GetZaxis()->SetRange(i+1, i+1);        
+        h2_purity_jtr_ptbinned[i-1] = (TH2D *)h3_purity_ptjtr->Project3D("yx");
+        h2_purity_jtr_ptbinned[i-1]->SetStats(0);
+        h2_purity_jtr_ptbinned[i-1]->SetName(Form("jtr_purity_pt%d",i));
+        h2_purity_jtr_ptbinned[i-1]->Write();                        
+    }   
+    
+    //hs_efficiency_ptz->SetOption("nostack");
+    //hs_efficiency_ptjt->SetOption("nostack");
+    //hs_efficiency_ptr->SetOption("nostack");
+    //hs_purity_ptz->SetOption("nostack");
+    //hs_purity_ptjt->SetOption("nostack");
+    //hs_purity_ptr->SetOption("nostack");
+    hs_efficiency_ptz->Write();
+    hs_efficiency_ptjt->Write();
+    hs_efficiency_ptr->Write();
+    hs_purity_ptz->Write();
+    hs_purity_ptjt->Write();
+    hs_purity_ptr->Write();       
                   
     NormalizeHist(h2_ptz_weighted);
     NormalizeHist(h2_ptjt_weighted);
