@@ -11,8 +11,7 @@
 
 
 using namespace std;
-
-void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
+void SimpleObservables(int NumEvts = -1, int dataset = 91599,
                 bool isData = true,
                 int DoTrackEff = 0,
                 int DoTrigEff = 0,
@@ -21,7 +20,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
                 int DoMassFit = 0,
                 bool DoSignalSys = false,
                 bool DoJetID = false,                                
-                bool SubtractGS = false)
+                bool SubtractGS = false,
+                bool onlyL0DiMuon = false)
 {
 
   bool MCflag = !isData;
@@ -73,7 +73,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TString str_followHard = "";
   TString str_flavor = "";
   TString str_ghost = "";
-  TString str_year = "2016";
+  TString str_year = "";
   TString str_DTF = "";
   TString str_PID = "";
   TString str_GS = "";
@@ -124,24 +124,25 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     else
       str_followHard = "_HF";
   }
+  
 
   if (ghostCut)
     str_ghost = Form("_ghost_%.1f", ghostProb);
-  // TString str_trees[5];
-  // str_trees[0] = "TaggedDijets/DecayTree";
-  // str_trees[1] = "D0KPiJet/DecayTree";
-  // str_trees[2] = "B0KPiJet/DecayTree";
-  // str_trees[3] = "Jets/DecayTree";
+
+  TString str_L0 = "";
+  if (onlyL0DiMuon)
+    str_L0 = "_L0DiMuon";
+
 
   TString str_tree;
-  TString  extension_RootFilesMC, extension_RootFiles;
-  TString  extension_read, extension_wspace, extension_eff;
+  TString extension_RootFilesMC, extension_RootFiles;
+  TString extension_read, extension_wspace, extension_eff;
   TString eff_path;
 
   TString extension_unfold, extension_prefix, extension_trackeff;
   TString extension;
 
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_L0 + Form("_%d", dataset);
 
   // HFjetTree Tree(0, dataset, isData);
 
@@ -156,7 +157,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     
   float minimum_dR = 0.1;
 
-  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
+  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
   extension_unfold = TString("unfold_reco") + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
   extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(15), int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
 
@@ -257,8 +258,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-    TString massfit( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
+  TString massfit( TString("splotfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
+  //TString massfit( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
   //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
+
 
     
   if (DoRecSelEff)
@@ -280,6 +283,9 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
   TH1D *h1_BkgScale_forSysNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
   TH1D *h1_BkgScale_forSysFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
+
+  TTree *sWeightTree = (TTree *)f_massfit.Get("sWeightTree");
+
     
   /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
   ////////////////////////////////////////////////////
@@ -289,11 +295,13 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_trigeff_Data;
   TH2D *h2_trigeff_MC;
 
-  extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
-  extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
+  //extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
+  //extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
+  extension_trig_MC = "HLT2Lines_jpsieff_reco_ev_-1_b_PID_99599.root";
+  extension_trig_Data = "HLT2Lines_jpsieff_data_ev_-1_b_PID_99599.root";
 
-  TFile file_trigeffMC("../../Effs/TrigEff/" + extension_trig_MC + ".root", "READ");
-  TFile file_trigeffData("../../Effs/TrigEff/" + extension_trig_Data + ".root", "READ");
+  TFile file_trigeffMC("../../Effs/TrigEff/" + extension_trig_MC, "READ");
+  TFile file_trigeffData("../../Effs/TrigEff/" + extension_trig_Data, "READ");
 
   h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
   h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
@@ -329,7 +337,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         str_Mag = "_MD";
       else if (Mag == 1)
         str_Mag = "_MU";
-      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_L0 + Form("_%d", vec_datasets[i]);
       if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
       {
         extension_read = extension_prefix + extension_read;
@@ -357,6 +365,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     NumEvts = BTree->GetEntries();
   cout << BTree->GetEntries() << endl;
 
+
     TFile f(extension_RootFiles  + extension + ".root", "RECREATE");
     
     TH2D *h2_zjt = new TH2D("zjt", ";z; j_{T} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges);
@@ -377,10 +386,16 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     TH2D *h2_ptz = new TH2D("ptz", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
     TH2D *h2_ptjt = new TH2D("ptjt", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
     TH2D *h2_ptr = new TH2D("ptr", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptz_sweight = new TH2D("ptz_sweight", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptjt_sweight = new TH2D("ptjt_sweight", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+    TH2D *h2_ptr_sweight = new TH2D("ptr_sweight", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
     TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt_sweight = new TH3D("ptzjt_sweight", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_sweight = new TH3D("ptzr_sweight", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_sweight = new TH3D("ptjtr_sweight", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     
     TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
     TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
@@ -575,6 +590,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TH2D *h2_bdt_z_falsepos = new TH2D("h2_bdt_z_falsepos", "", 30, 0, 15., 20, 0, 1.05);
   TH2D *h2_sv_mass_z_falsepos = new TH2D("h2_sv_mass_z_falsepos", "", 30, 0, 4., 20, 0, 1.05);
   TH2D *h2_sv_mass_ntrks_falsepos = new TH2D("h2_sv_mass_ntrks_falsepos", "", 30, 0, 4., 10, -0.5, 9.5);
+
+  TH1D *h1_nSPDHits = new TH1D("nSPDHits", ";N_{SPD};", 100, 0., 1000.);
   
   TH1D *h1_z_nobgsub, *h1_jt_nobgsub, *h1_r_nobgsub;
   TH2D *h2_ptz_nobgsub, *h2_ptjt_nobgsub, *h2_ptr_nobgsub;
@@ -586,10 +603,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   h2_ptr_nobgsub = (TH2D*)h2_ptr->Clone("ptr_nobgsub");     
    
     
-
-  //
-  // Event loop
-  //
   unsigned long long last_eventNum = 0;
   float last_jetpT = 0.;
   int event_counter = 0;
@@ -635,6 +648,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   int SVTag;
   float chi2ndf_dtf, tau_dtf;
   int Ndtr_charged, Ndtr_neutral;
+  int nSPDHits;
   // TLorentzVector
     
     float pideff_K(1.0), pideff_mup(1.0), pideff_mum(1.0);
@@ -808,6 +822,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   BTree->SetBranchAddress("trigeff_MC", &trigeff_MC);
   //BTree->SetBranchAddress("trigeff_ratio", &trigeff_ratio);
   BTree->SetBranchAddress("TOS", &TOS);
+  BTree->SetBranchAddress("nSPDHits", &nSPDHits);
+
     
     BTree->SetBranchAddress("z", &z);
     BTree->SetBranchAddress("jt", &jt);
@@ -818,6 +834,10 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     BTree->SetBranchAddress("tr_z", &tr_z);
     BTree->SetBranchAddress("tr_jt", &tr_jt);
     BTree->SetBranchAddress("tr_r", &tr_r);
+
+    float sweight;
+    sWeightTree->SetBranchAddress("sweight", &sweight);
+  
 
   int eventNum;
   int NumJets_zdR_comb = 0;
@@ -847,16 +867,32 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   //   MassSigma = 3.08492e-02;
   // }
 
-  cout << "Requested # of events" << NumEvts << endl;
+  cout << "Requested # of events : " << NumEvts << endl;
+  cout << "NumEvents in the sweight tree : " << sWeightTree->GetEntries() << std::endl; 
+  if (isData && NumEvts != sWeightTree->GetEntries())
+  {
+    std::cout << "Different number of entries in sWeightTree vs. Data tree is different!" << std::endl;
+    return;
+  }
   // float MassHigh = MassMu + 3 * MassSigma;
   // float MassLow = MassMu - 3 * MassSigma;
 
   TRandom3 *randomGenerator = new TRandom3();
 
+  //
+  // Event loop
+  //
   for (int ev = 0; ev < NumEvts; ev++)
   {
     BTree->GetEntry(ev);
-
+    if (isData)
+    {
+      sWeightTree->GetEntry(ev);
+    }
+    else
+    {
+      sweight = 1.0;
+    }
     if (ev % 100000 == 0)
       cout << "Executing event " << ev << endl;
 
@@ -1076,7 +1112,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         continue;
       if (Jpsi_CHI2NDOF > 18)
         continue;
-      if (fabs(Jpsi_BPVDLS) < 2.8)
+      if (fabs(Jpsi_BPVDLS) < 3.2)
         continue;
     }
 
@@ -1317,10 +1353,17 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h3_ptzjt->Fill(z, jt, jet_pt, event_weight);
         h3_ptzr->Fill(z, r, jet_pt, event_weight);
         h3_ptjtr->Fill(jt, r, jet_pt, event_weight);
+        h3_ptzjt_sweight->Fill(z, jt, jet_pt, event_weight*sweight);
+        h3_ptzr_sweight->Fill(z, r, jet_pt, event_weight*sweight);
+        h3_ptjtr_sweight->Fill(jt, r, jet_pt, event_weight*sweight);
         
         h2_ptz->Fill(z, jet_pt, event_weight);
         h2_ptjt->Fill(jt, jet_pt, event_weight);
         h2_ptr->Fill(r, jet_pt, event_weight);
+        h2_ptz_sweight->Fill(z, jet_pt, event_weight*sweight);
+        h2_ptjt_sweight->Fill(jt, jet_pt, event_weight*sweight);
+        h2_ptr_sweight->Fill(r, jet_pt, event_weight*sweight);
+
         
         h3_ptzjt_50_100->Fill(z, jt, jet_pt, event_weight);
         h3_ptzr_50_100->Fill(z, r, jet_pt, event_weight);
@@ -1364,6 +1407,8 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
                 
         if (HF_pt < 5.) { h1_z_ptHFcut_l5->Fill(z); }        
         else { h1_z_ptHFcut_g5->Fill(z); }
+
+        h1_nSPDHits->Fill(nSPDHits);
 
       }
   
@@ -1505,12 +1550,15 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
     THStack *hs_ptz = new THStack("hs_ptz", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
     THStack *hs_ptjt = new THStack("hs_ptjt", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
     THStack *hs_ptr = new THStack("hs_ptr", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");    
-    THStack *hs_ptz_uncorrected = new THStack("hs_ptz_uncorrected", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
-    THStack *hs_ptjt_uncorrected = new THStack("hs_ptjt_uncorrected", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
-    THStack *hs_ptr_uncorrected = new THStack("hs_ptr_uncorrected", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");
-    THStack *hs_ptz_nobgsub = new THStack("hs_ptz_nobgsub", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
-    THStack *hs_ptjt_nobgsub = new THStack("hs_ptjt_nobgsub", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
-    THStack *hs_ptr_nobgsub = new THStack("hs_ptr_nobgsub", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");    
+    THStack *hs_ptz_sweight = new THStack("hs_ptz_sweight", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt_sweight = new THStack("hs_ptjt_sweight", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr_sweight = new THStack("hs_ptr_sweight", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");        
+    THStack *hs_ptz_uncorrected = new THStack("z_uncorrected_data_all", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt_uncorrected = new THStack("jt_uncorrected_data_all", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr_uncorrected = new THStack("r_uncorrected_data_all", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");
+    THStack *hs_ptz_nobgsub = new THStack("z_evtweights_nosbsub_data_all", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+    THStack *hs_ptjt_nobgsub = new THStack("jt_evtweights_nosbsub_data_all", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    THStack *hs_ptr_nobgsub = new THStack("r_evtweights_nosbsub_data_all", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");    
     TH2D *h2_zjt_ptbinned_uncorrected[ptbinsize-1], *h2_zjt_ptbinned[ptbinsize-1];
     TH2D *h2_zr_ptbinned_uncorrected[ptbinsize-1], *h2_zr_ptbinned[ptbinsize-1];
     TH2D *h2_jtr_ptbinned_uncorrected[ptbinsize-1], *h2_jtr_ptbinned[ptbinsize-1];       
@@ -1568,6 +1616,60 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         }
         h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));        
         hs_ptr->Add(h1_ptr_temp);   
+        
+
+        // Sweighted distributions
+        h1_ptz_temp = (TH1D *)h2_ptz_sweight->ProjectionX(Form("z_sweight_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptz_temp);
+        h1_ptz_temp->SetStats(0);
+        h1_ptz_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptz_temp->SetMarkerColor(j);
+          h1_ptz_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptz_temp->SetMarkerColor(j*j+3);
+          h1_ptz_temp->SetLineColor(j*j+3);
+        }
+        h1_ptz_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));
+        //h1_ptz_temp->SetOption("PE HIST");
+        hs_ptz_sweight->Add(h1_ptz_temp);
+
+        h1_ptjt_temp = (TH1D *)h2_ptjt_sweight->ProjectionX(Form("jt_sweight_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptjt_temp);        
+        h1_ptjt_temp->SetStats(0);
+        h1_ptjt_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptjt_temp->SetMarkerColor(j);
+          h1_ptjt_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptjt_temp->SetMarkerColor(j*j+3);
+          h1_ptjt_temp->SetLineColor(j*j+3);
+        }
+        h1_ptjt_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));        
+        hs_ptjt_sweight->Add(h1_ptjt_temp);
+        
+        h1_ptr_temp = (TH1D *)h2_ptr_sweight->ProjectionX(Form("r_sweight_pt%d", j), j + 1, j + 1); 
+        NormalizeHist(h1_ptr_temp);        
+        h1_ptr_temp->SetStats(0);
+        h1_ptr_temp->SetMarkerStyle(j + 20);
+        if (j!=5) 
+        {
+          h1_ptr_temp->SetMarkerColor(j);
+          h1_ptr_temp->SetLineColor(j);
+        }
+        else
+        {
+          h1_ptr_temp->SetMarkerColor(j*j+3);
+          h1_ptr_temp->SetLineColor(j*j+3);
+        }
+        h1_ptr_temp->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]));        
+        hs_ptr_sweight->Add(h1_ptr_temp);  
 
       if (isData)
       {
@@ -1697,7 +1799,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
        	NormalizeHist(h2_jtr_ptbinned_uncorrected[j-1]);	
       }  
       
-      
       h3_ptzjt->GetZaxis()->SetRange(j+1, j+1);             
       h2_zjt_ptbinned[j-1] = (TH2D *)h3_ptzjt->Project3D("yx");
       if (isData)
@@ -1722,18 +1823,36 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
         h2_jtr_ptbinned[j-1]->SetName(Form("jtr_reco_pt%d",j));             
       NormalizeHist(h2_jtr_ptbinned[j-1]);        
     }  
-    hs_ptz->Write();
-    hs_ptjt->Write();
-    hs_ptr->Write();
+
+    h1_nSPDHits->Write();
     if (isData)
     {
+        hs_ptz->SetName("z_evtweights_sbsub_data_all");
+        hs_ptjt->SetName("jt_evtweights_sbsub_data_all");
+        hs_ptr->SetName("r_evtweights_sbsub_data_all");    
+        //hs_ptz_sweight->SetName("z_evtweights_sbsub_data_sweight_all");
+        //hs_ptjt_sweight->SetName("jt_evtweights_sbsub_data_sweight_all");
+        //hs_ptr_sweight->SetName("r_evtweights_sbsub_data_sweight_all");   
         hs_ptz_uncorrected->Write();
-        hs_ptjt_uncorrected->Write();
-        hs_ptr_uncorrected->Write();
+        hs_ptjt_uncorrected->Write();   
+        hs_ptr_uncorrected->Write();      
         hs_ptz_nobgsub->Write();
         hs_ptjt_nobgsub->Write();
         hs_ptr_nobgsub->Write();
     }
+    else
+    {
+        hs_ptz->SetName("z_reco_all");
+        hs_ptjt->SetName("jt_reco_all");
+        hs_ptr->SetName("r_reco_all");
+    }
+    
+    hs_ptz->Write();
+    hs_ptjt->Write();
+    hs_ptr->Write();
+    hs_ptz_sweight->Write();
+    hs_ptjt_sweight->Write();
+    hs_ptr_sweight->Write();
     
     h3_ptzjt->GetZaxis()->SetRange(1, ptbinsize+1);
     h3_ptzr->GetZaxis()->SetRange(1, ptbinsize+1);
@@ -1773,22 +1892,6 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   SetRecoStyle(h1_jt_gluon);
   SetRecoStyle(h1_r_gluon);
 
-  // for(int j = 0; j<NumHists; j++){
-  //   cout<<"NumJets ["<<MinErad+StepErad*j<<","<<MinErad+StepErad*(j+1)<<"] = "<<NumJets_allcuts_Erad[j]<<endl;
-  //   // for(int k = 0; k<NumRbins;k++){
-  //   //   h1_Rratios_vec[j][k]->Scale(1./NumJets_allcuts_Erad[j]);
-  //   // }
-  //   h1_Rratios[j]->Scale(1./NumJets_allcuts_Erad[j]);
-  //   h1_tr_Rratios[j]->Scale(1./tr_NumJets_allcuts_Erad[j]);
-  // }
-  // for(int k = 0; k < NumRbins; k++){
-  //   THStack *stack_temp = new THStack(Form("hs_R%d", k), "");
-  //   // for(int j = 0; j< NumHists; j++){
-  //   //   h1_Rratios_vec[j][k]->SetStats(0);
-  //   //   stack_temp->Add(h1_Rratios_vec[j][k], "HIST");
-  //   // }
-  //   stack_R_vec.push_back(stack_temp);
-  // }
 
   //---- paint setup...
   //
@@ -1805,28 +1908,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
   TLatex Tl;
   Tl.SetNDC(kTRUE);
   Tl.SetTextSize(0.04);
-  /*
-  //
-  // gStyle->SetOptStat(0);
-  // gStyle->SetPaperSize(TStyle::kUSLetter);root -l -b -q "SimpleObservables.C(-1, 91599, 0)"
-  // gStyle->SetPadBottomMargin(0.08);
-  // gStyle->SetPadTopMargin(0.005);
-  gStyle->SetPadLeftMargin(0.13);
-  gStyle->SetPadRightMargin(0.13);
-  gStyle->SetLabelSize(0.05, "X");
-  gStyle->SetLabelSize(0.05, "Y");
-  gStyle->SetTitleXSize(0.055);
-  gStyle->SetTitleYSize(0.055);
-  gStyle->SetTitleOffset(0.85, "X");
-  gStyle->SetTitleOffset(1.2, "Y");
-  gStyle->SetStatW(0.2);
-  gStyle->SetPalette(kBird);
-  gStyle->SetNumberContours(100);
-  // gStyle->SetErrorX(0);
-  gStyle->SetTitleStyle(0);
-  gStyle->SetStatStyle(0);
-  // gStyle->SetLineWidth(3);
-*/
+
   //---- paint...
 
   char buf[100];
@@ -2415,1004 +2497,7 @@ void SimpleObservables(int NumEvts = 10000, int dataset = 1510,
       ccan[ican]->Print(plotfilePDF.Data());
     }    
     
-                       
-
-  
-  /*
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-
-  // h1_frag_z_tot->SetStats(0);
-  // SetDataStyle(h1_frag_z_tot);
-  // h1_frag_z_tot->Draw("P E SAME");
-
-  h1_z->SetStats(0);
-  h1_z->SetXTitle("z");
-  h1_z->SetYTitle("#frac{dN}{ dz} ");
-  h1_z->SetMinimum(0.0);
-  h1_z->SetMaximum(8000);
-  SetRecoStyle(h1_z);
-  h1_z->SetMarkerSize(0.7);
-
-  h1_z->Draw("P E SAME");
-//
-//  h1_z_SV->SetStats(0);
-//  SetTruthStyle(h1_z_SV);
-//  h1_z_SV->Draw("P E SAME");
-
-//  h1_z_gluon->SetStats(0);
-//  h1_z_gluon->SetMarkerColor(kRed);
-//  // SetDataStyle(h1_frag_z_gluon);
-//  h1_z_gluon->Draw("P E SAME");
-
-//  h1_z_comb->SetStats(0);
-//  h1_z_comb->SetLineColor(38);
-//  h1_z_comb->SetMarkerColor(38);
-//  h1_z_comb->Draw("P E SAME");
-    
-  auto legend_z = new TLegend(0.25, 0.6, 0.45, 0.9);
-    legend_z->SetBorderSize(0);
-    legend_z->SetFillStyle(0);
-    legend_z->SetFillColor(3);
-    legend_z->SetHeader("LHCb Unofficial","C");
-    legend_z->AddEntry(h1_z , "p_{T}^{jet} > 20 GeV/c");
-//    legend_z->AddEntry(h1_z_SV, "SV");
-////    legend_z->AddEntry(h1_z_gluon, "Gluons");
-//    legend_z->AddEntry(h1_z_comb, "Comb.");
-
-   legend_z->Draw("SAME");
-
-  ccan[ican]->cd(2);
-
-  // SetRecoStyle(h1_SVTag_eff);
-  // h1_SVTag_eff->Draw("PE SAME");
-  // h1_SVTag_eff->Draw("HIST SAME");
-
-  // h2_thetaErad->Scale(1./NumJets);
-  gPad->SetLogy();
-  h1_jt->SetStats(0);
-  h1_jt->SetXTitle("j_{T}");
-  h1_jt->SetYTitle("#frac{dN}{ dj_{T} }");
-  h1_jt->SetMaximum(120000);
-  SetRecoStyle(h1_jt);
-  h1_jt->SetMarkerSize(0.7);
-
-  h1_jt->Draw("P E SAME");
-
-//  h1_jt_SV->SetStats(0);
-//  SetTruthStyle(h1_jt_SV);
-//  h1_jt_SV->Draw("P E SAME");
-
-//  h1_jt_gluon->SetStats(0);
-//  SetDataStyle(h1_jt_gluon);
-//  h1_jt_gluon->Draw("P E SAME");
-//
-//  h1_jt_comb->SetStats(0);
-//    h1_jt_comb->SetLineColor(38);
-//    h1_jt_comb->SetMarkerColor(38);
-//  h1_jt_comb->Draw("SAME");
-    
-    auto legend_jt = new TLegend(0.6, 0.6, 0.8, 0.8);
-      legend_jt->SetBorderSize(0);
-      legend_jt->SetFillStyle(0);
-      legend_jt->SetFillColor(3);
-      legend_jt->SetHeader("LHCb Unofficial","C");
-      legend_jt->AddEntry(h1_jt , "p_{T}^{jet} > 20 GeV/c");
-//      legend_jt->AddEntry(h1_jt_SV, "SV");
-//      legend_jt->AddEntry(h1_jt_gluon, "Gluons");
-//      legend_jt->AddEntry(h1_jt_comb, "Comb.");
-    legend_jt->Draw("SAME");
-
-  ccan[ican]->cd(3);
-    
-  gPad->SetLogy();
-  SetRecoStyle(h1_r);
-  h1_r->SetStats(0);
-  h1_r->SetMarkerSize(0.7);
-  h1_r->SetMaximum(120000);
-    h1_r->SetYTitle("#frac{dN}{ dr }");
-  h1_r->Draw("P E SAME");
-
-//  h1_r_SV->SetStats(0);
-//  SetTruthStyle(h1_r_SV);
-//  h1_r_SV->Draw("P E SAME");
-
-//  h1_r_gluon->SetStats(0);
-//  SetDataStyle(h1_r_gluon);
-//  h1_r_gluon->Draw("P E SAME");
-
-//  h1_r_comb->SetStats(0);
-//    h1_r_comb->SetLineColor(38);
-//    h1_r_comb->SetMarkerColor(38);
-//  h1_r_comb->Draw("SAME");
-    
-  auto legend_r = new TLegend(0.6, 0.6, 0.8, 0.8);
-  legend_r->SetBorderSize(0);
-  legend_r->SetFillStyle(0);
-  legend_r->SetFillColor(3);
-  legend_r->SetHeader("LHCb Unofficial","C");
-  legend_r->AddEntry(h1_r , "p_{T}^{jet} > 20 GeV/c ");
-//  legend_r->AddEntry(h1_r_SV, "SV");
-////  legend_r->AddEntry(h1_r_gluon, "Gluons");
-//  legend_r->AddEntry(h1_r_comb, "Comb.");
-  legend_r->Draw("SAME");
-
-  ccan[ican]->cd(4);
-    
- // auto legend_zpt = new TLegend(0.25, 0.6, 0.5, 0.8);
- // legend_zpt ->SetTextSize(0.03);
- // legend_zpt ->SetBorderSize(0);
- // legend_zpt ->SetFillStyle(0);
- // legend_zpt ->SetFillColor(3);
- // legend_zpt->SetHeader("LHCb Unofficial","C");
-//  for (int i = 0; i < ptbinsize; i++)
-
-  for (int i = 2; i < ptbinsize; i++)
-  {
-    TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt", i), i + 1, i + 1);
-    h1_temp->SetStats(0);
-    NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
-    h1_temp->Draw("P E SAME");
-    h1_temp->Draw("HIST SAME");
-    h1_temp->SetMinimum(0.0);
-    h1_temp->SetMaximum(3.5);
-      
-    legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-      
-//      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-  }
- 
-    legend_zpt -> Draw("SAME");
-
-  // ccan[ican]->cd(4);
-  // for (int i = 0; i < customptbinsize; i++)
-  // {
-  //   TH1D *h1_temp = (TH1D *)h2_SVTag_eff_z->ProjectionX(Form("htemp%d_z", i), i + 1, i + 1);
-  //   TH1D *h1_temp_pur = (TH1D *)h2_SVTag_pur_z->ProjectionX(Form("htemp_pur%d", i), i + 1, i + 1);
-
-  //   h1_temp->SetMarkerStyle(i + 20);
-  //   h1_temp->SetMarkerColor(i + 1);
-  //   h1_temp->SetLineColor(i + 1);
-  //   h1_temp->Draw("P E SAME");
-  //   h1_temp->Draw("HIST SAME");
-  //   h1_temp->SetMinimum(0.);
-  //   h1_temp->SetMaximum(1.05);
-
-  //   h1_temp_pur->SetMarkerStyle(i + 23);
-  //   h1_temp_pur->SetMarkerColor(i + 4);
-  //   h1_temp_pur->SetLineColor(i + 4);
-  //   h1_temp_pur->Draw("P E SAME");
-  //   h1_temp_pur->Draw("HIST SAME");
-  //   h1_temp_pur->SetMinimum(0.);
-  //   h1_temp_pur->SetMaximum(1.05);
-  // }
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-  //
-    ++ican;
-    sprintf(buf, "ccan%d", ican);
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->SetFillColor(10);
-    gPad->SetLeftMargin(0.16);
-    gPad->SetBottomMargin(0.06);
-    gPad->SetRightMargin(0.15);
-    ccan[ican]->cd();
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-
-    ccan[ican]->cd(1);
-    auto legend_jtpt = new TLegend(0.6, 0.65, 0.8, 0.8);
-//    legend_jtpt ->SetTextSize(0.03);
-    legend_jtpt ->SetBorderSize(0);
-    legend_jtpt ->SetFillStyle(0);
-    legend_jtpt ->SetFillColor(3);
-    legend_jtpt->SetHeader("LHCb Unofficial","C");
-    gPad->SetLogy();
-  //  for (int i = 0; i < ptbinsize; i++)
-    for (int i = 2; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("htemp%d_ptjt", i), i + 1, i + 1);
-      h1_temp->SetStats(0);
-//      NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        h1_temp->SetMarkerColor(i-1 + 1);
-        h1_temp->SetLineColor(i-1 + 1);
-      h1_temp->SetYTitle("#frac{1}{N} #frac{dN}{d j_{T}}");
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-//      h1_temp->SetMinimum(0.1);
-//      h1_temp->SetMaximum(2.0);
-        
-      legend_jtpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-        
-  //      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-      legend_jtpt -> Draw("SAME");
-    
-    ccan[ican]->cd(2);
-    auto legend_rpt = new TLegend(0.6, 0.65, 0.8, 0.85);
-//    legend_jtpt ->SetTextSize(0.03);
-    legend_rpt ->SetBorderSize(0);
-    legend_rpt ->SetFillStyle(0);
-    legend_rpt ->SetFillColor(3);
-    legend_rpt->SetHeader("LHCb Unofficial","C");
-    gPad->SetLogy();
-  //  for (int i = 0; i < ptbinsize; i++)
-    for (int i = 2; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("htemp%d_ptr", i), i + 1, i + 1);
-      h1_temp->SetStats(0);
-//      NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        h1_temp->SetMarkerColor(i-1 + 1);
-        h1_temp->SetLineColor(i-1 + 1);
-      h1_temp->SetYTitle("#frac{1}{N} #frac{dN}{d j_{r}}");
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-//      h1_temp->SetMinimum(0.7);
-//      h1_temp->SetMaximum(30.0);
-        
-      legend_rpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-        
-  //      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-      legend_rpt -> Draw("SAME");
-    
-    ccan[ican]->cd();
-    ccan[ican]->Update();
-    if (ican == 0)
-    {
-      ccan[ican]->Print(plotfileO.Data());
-    }
-    else
-    {
-      ccan[ican]->Print(plotfilePDF.Data());
-    }
-    
-    
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-
-  NormalizeHist(h1_z);
-  NormalizeHist(h1_z_SV);
-  NormalizeHist(h1_z_gluon);
-  NormalizeHist(h1_jt);
-  NormalizeHist(h1_jt_SV);
-  NormalizeHist(h1_jt_gluon);
-  NormalizeHist(h1_r);
-  NormalizeHist(h1_r_SV);
-  NormalizeHist(h1_r_gluon);
-  NormalizeHist(h1_z_comb);
-  NormalizeHist(h1_jt_comb);
-  NormalizeHist(h1_r_comb);
-
-  ccan[ican]->cd(1);
-
-  h1_z->SetStats(0);
-  h1_z->SetXTitle("z");
-  SetRecoStyle(h1_z);
-    h1_z->SetMarkerSize(0.7);
-    h1_z->SetMinimum(0.);
-    h1_z->SetMaximum(3.5);
-
-  h1_z->Draw("P E SAME");
-
-  h1_z_SV->SetStats(0);
-  SetTruthStyle(h1_z_SV);
-  h1_z_SV->SetMarkerSize(0.7);
-  h1_z_SV->Draw("P E SAME");
-
-
-//  h1_z_gluon->SetStats(0);
-//  h1_z_gluon->SetLineColor(kMagenta);
-//  // SetDataStyle(h1_frag_z_gluon);
-//  h1_z_gluon->Draw("P E SAME");
-
-//  h1_z_comb->SetStats(0);
-//  h1_z_comb->SetLineColor(kRed);
-//  h1_z_comb->SetMarkerColor(kRed);
-//  h1_z_comb->SetMarkerStyle(8);
-//  h1_z_comb->SetMarkerSize(0.7);
-//  h1_z_comb->Draw("SAME");
-    
-    auto legend_znorm = new TLegend(0.2, 0.6, 0.3, 0.8);
-    legend_znorm->SetBorderSize(0);
-    legend_znorm->SetFillStyle(0);
-    legend_znorm->SetFillColor(3);
-    legend_znorm->AddEntry(h1_z , "b-quark");
-    legend_znorm->AddEntry(h1_z_SV, "SV");
-//      legend_jt->AddEntry(h1_jt_gluon, "Gluons");
-//    legend_znorm->AddEntry(h1_z_comb, "Comb. (SB)");
-    legend_znorm->Draw("SAME");
-
-  ccan[ican]->cd(2);
-  // h2_thetaErad->Scale(1./NumJets);
-  gPad->SetLogy();
-
-//  h1_jt_gluon->SetStats(0);
-//  SetDataStyle(h1_jt_gluon);
-//  h1_jt_gluon->Draw("P E SAME");
-    
-  h1_jt->SetStats(0);
-  h1_jt->SetXTitle("j_{T}");
-  SetRecoStyle(h1_jt);
-  h1_jt->SetMarkerSize(0.7);
-  h1_jt->Draw("P E SAME");
-
-  h1_jt_SV->SetStats(0);
-  SetTruthStyle(h1_jt_SV);
-  h1_jt_SV->SetMarkerSize(0.7);
-  h1_jt_SV->Draw("P E SAME");
-
-//  h1_jt_comb->SetStats(0);
-//  h1_jt_comb->SetLineColor(kRed);
-//  h1_jt_comb->SetMarkerColor(kRed);
-//  h1_jt_comb->SetMarkerStyle(8);
-//  h1_jt_comb->SetMarkerSize(0.7);
-//  h1_jt_comb->Draw("SAME");
-    
-    auto legend_jtnorm = new TLegend(0.65, 0.6, 0.85, 0.8);
-    legend_jtnorm->SetBorderSize(0);
-    legend_jtnorm->SetFillStyle(0);
-    legend_jtnorm->SetFillColor(3);
-    legend_jtnorm->AddEntry(h1_jt , "b-quark");
-    legend_jtnorm->AddEntry(h1_jt_SV, "SV");
-//      legend_jt->AddEntry(h1_jt_gluon, "Gluons");
-//    legend_jtnorm->AddEntry(h1_jt_comb, "Comb. (SB)");
-    legend_jtnorm->Draw("SAME");
-
-  ccan[ican]->cd(3);
-
-  gPad->SetLogy();
-  SetRecoStyle(h1_r);
-  h1_r->SetMarkerSize(0.7);
-  h1_r->Draw("P E SAME");
-
-  h1_r_SV->SetStats(0);
-  SetTruthStyle(h1_r_SV);
-  h1_r_SV->SetMarkerSize(0.7);
-  h1_r_SV->Draw("P E SAME");
-    
-    //  h1_r_gluon->SetStats(0);
-    //  SetDataStyle(h1_r_gluon);
-    //  h1_r_gluon->Draw("P E SAME");
-
-//  h1_r_comb->SetStats(0);
-//  h1_r_comb->SetLineColor(kRed);
-//  h1_r_comb->SetMarkerColor(kRed);
-//  h1_r_comb->SetMarkerStyle(8);
-//  h1_r_comb->SetMarkerSize(0.7);
-//  h1_r_comb->Draw("SAME");
-    
-    
-    auto legend_rnorm = new TLegend(0.65, 0.65, 0.85, 0.88);
-    legend_rnorm->SetBorderSize(0);
-    legend_rnorm->SetFillStyle(0);
-    legend_rnorm->SetFillColor(3);
-    legend_rnorm->AddEntry(h1_r , "b-quark");
-    legend_rnorm->AddEntry(h1_r_SV, "SV");
-//      legend_jt->AddEntry(h1_jt_gluon, "Gluons");
-//    legend_rnorm->AddEntry(h1_r_comb, "Comb. (SB)");
-    legend_rnorm->Draw("SAME");
-
-
-  ccan[ican]->cd(4);
-    auto legend_zptSV = new TLegend(0.55, 0.65, 0.9, 0.85);
-    legend_zptSV ->SetTextSize(0.027);
-    legend_zptSV ->SetBorderSize(0);
-    legend_zptSV ->SetFillStyle(0);
-    legend_zptSV ->SetFillColor(3);
-    legend_zptSV->SetHeader("SV > 0","C");
-  for (int i = 1; i < ptbinsize; i++)
-  {
-    TH1D *h1_temp = (TH1D *)h2_ptz_SV->ProjectionX(Form("htemp%d_ptz_SV", i), i + 1, i + 1);
-    NormalizeHist(h1_temp);
-      h1_temp->SetStats(0);
-    h1_temp->SetMarkerStyle(i + 20);
-    h1_temp->SetMarkerColor(i-1 + 1);
-    h1_temp->SetLineColor(i-1 + 1);
-    h1_temp->Draw("P E SAME");
-    h1_temp->Draw("HIST SAME");
-    h1_temp->SetMinimum(0.);
-    h1_temp->SetMaximum(3.5);
-    // h1_temp->SetMinimum(0.);
-    // h1_temp->SetMaximum(1.05);
-      
-      legend_zptSV->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-  }
-    legend_zptSV -> Draw("SAME");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-    
-    ////
-    ///
-    ++ican;
-    sprintf(buf, "ccan%d", ican);
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->SetFillColor(10);
-    gPad->SetLeftMargin(0.16);
-    gPad->SetBottomMargin(0.06);
-    gPad->SetRightMargin(0.15);
-    ccan[ican]->cd();
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-
-    ccan[ican]->cd(1);
-    gPad->SetLogy();
-      auto legend_jtptSV = new TLegend(0.55, 0.65, 0.9, 0.85);
-      legend_jtptSV ->SetTextSize(0.027);
-      legend_jtptSV ->SetBorderSize(0);
-      legend_jtptSV ->SetFillStyle(0);
-      legend_jtptSV ->SetFillColor(3);
-      legend_jtptSV->SetHeader("SV > 0","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt_SV->ProjectionX(Form("htemp%d_ptjt_SV", i), i + 1, i + 1);
-//      NormalizeHist(h1_temp);
-        h1_temp->SetStats(0);
-      h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-      h1_temp->SetXTitle("j_{T}");
-//      h1_temp->SetMinimum(0.);
-//      h1_temp->SetMaximum(3.5);
-      // h1_temp->SetMinimum(0.);
-      // h1_temp->SetMaximum(1.05);
-        
-        legend_jtptSV->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-    }
-      legend_jtptSV -> Draw("SAME");
-    
-    ccan[ican]->cd(2);
-    gPad->SetLogy();
-      auto legend_rptSV = new TLegend(0.55, 0.65, 0.9, 0.85);
-      legend_rptSV ->SetTextSize(0.027);
-      legend_rptSV ->SetBorderSize(0);
-      legend_rptSV ->SetFillStyle(0);
-      legend_rptSV ->SetFillColor(3);
-      legend_rptSV->SetHeader("SV > 0","C");
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr_SV->ProjectionX(Form("htemp%d_ptr_SV", i), i + 1, i + 1);
-//      NormalizeHist(h1_temp);
-        h1_temp->SetStats(0);
-      h1_temp->SetMarkerStyle(i + 20);
-      h1_temp->SetMarkerColor(i-1 + 1);
-      h1_temp->SetLineColor(i-1 + 1);
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-      h1_temp->SetXTitle("r");
-////      h1_temp->SetMinimum(0.);
-//      h1_temp->SetMaximum(30);
-      // h1_temp->SetMinimum(0.);
-      // h1_temp->SetMaximum(1.05);
-        
-        legend_rptSV->AddEntry(h1_temp, Form(" %.1f < p_{T}^{jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-    }
-      legend_rptSV -> Draw("SAME");
-
-    ccan[ican]->cd();
-    ccan[ican]->Update();
-    if (ican == 0)
-    {
-      ccan[ican]->Print(plotfileO.Data());
-    }
-    else
-    {
-      ccan[ican]->Print(plotfilePDF.Data());
-    }
-  //
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-//  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 650);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-//  gPad->SetTopMargin(0.08);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(3, 2, 0.0001, 0.0001);
-  
-  ccan[ican]->cd(1);
-  gPad->SetLogz();
-  //h2_zjt->SetStats(0);
-  //h2_zjt->Draw("COLZ");
-  h3_ptzjt->GetZaxis()->SetRange(20.,100.);
-  TH2D *h2_temp_zjt = (TH2D*)h3_ptzjt->Project3D("yx");
-  h2_temp_zjt->SetStats(0);
-  h2_temp_zjt->Draw("COLZ");  
-    
-  ccan[ican]->cd(2);
-  // h2_thetaErad->Scale(1./NumJets);
-   gPad->SetLogz();
-  //h2_zr->SetStats(0);
-  //h2_zr->Draw("COLZ");
-  h3_ptzr->GetZaxis()->SetRange(20.,100.);
-  TH2D *h2_temp_zr = (TH2D*)h3_ptzr->Project3D("yx");
-  h2_temp_zr->SetStats(0);
-  h2_temp_zr->Draw("COLZ");
-
-
-  ccan[ican]->cd(3);
-  gPad->SetLogz();
-//    h2_jtr->SetStats(0);
-//  h2_jtr->Draw("COLZ");
-  h3_ptjtr->GetZaxis()->SetRange(20.,100.);
-  TH2D *h2_temp_jtr = (TH2D*)h3_ptjtr->Project3D("yx");
-  h2_temp_jtr->SetStats(0);
-  h2_temp_jtr->Draw("COLZ");
-
- 
-  ccan[ican]->cd(4);
-  gPad->SetLogz();
-  h2_zjt_SV->SetStats(0);
-  h2_zjt_SV->Draw("COLZ");
-  
- ccan[ican]->cd(5);
- gPad->SetLogz();
- h2_zr_SV->SetStats(0);
-  h2_zr_SV->Draw("COLZ");
-
-  ccan[ican]->cd(6);
-  gPad->SetLogz();
-  h2_jtr_SV->SetStats(0);
-  h2_jtr_SV->Draw("COLZ");
-    
-//    ccan[ican]->cd(7);
-//    gPad->SetLogz();
-//    h2_zjt_gluon->SetStats(0);
-//    h2_zjt_gluon->Draw("COLZ");
-//    
-//    ccan[ican]->cd(8);
-//    // h2_thetaErad->Scale(1./NumJets);
-//    gPad->SetLogz();
-//    h2_zr_gluon->Draw("COLZ");
-//
-//    ccan[ican]->cd(9);
-//    gPad->SetLogz();
-//    h2_jtr_gluon->SetStats(0);
-//    h2_jtr_gluon->Draw("COLZ");
-
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-  gPad->SetLogy();
-  SetDataStyle(h1_jet_pt_comb);
-  SetTruthStyle(h1_jet_pt_SV);
-  SetRecoStyle(h1_jet_pt);
-  h1_jet_pt->SetStats(0);
-  h1_jet_pt->SetXTitle("pT(jet)");
-  h1_jet_pt->Draw("P E SAME");
-  cout << h1_jet_pt->Integral() << endl;
-
-  h1_jet_pt_comb->Draw(" P E SAME");
-  h1_jet_pt_SV->Draw(" P E SAME");
-
-  h1_tr_jet_pt->SetStats(0);
-  // h1_tr_jet_pt->SetXTitle("pT(jet)");
-  h1_tr_jet_pt->Draw("P E SAME");
-
-  ccan[ican]->cd(2);
-  // h2_thetaErad->Scale(1./NumJets);
-  h1_jet_eta->SetStats(0);
-  h1_jet_eta->SetXTitle("#eta(jet)");
-  h1_jet_eta->Draw("P E SAME");
-  h1_jet_rap->Draw("P E SAME");
-
-  ccan[ican]->cd(3);
-  // PaintOverflow(h1_jet_ptbalance);
-  h1_jet_ptbalance->SetTitle("; pT(Reco)/pT(Truth);");
-  h1_jet_ptbalance->Draw("P E SAME");
-  // gPad->SetLogy();
-
-  ccan[ican]->cd(4);
-  h2_jetpt_HFpt->Draw("COLZ");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-  gPad->SetLogy();
-  SetRecoStyle(h1_dtr_pt);
-  h1_dtr_pt->Draw("PE SAME");
-
-  ccan[ican]->cd(2);
-  for (int i = 0; i < ptbinsize; i++)
-  {
-    TH1D *h1_temp = (TH1D *)h2_Ndtr_jetpt->ProjectionX(Form("htemp%d_dtrjetpt", i), i + 1, i + 1);
-
-    h1_temp->SetMarkerStyle(i + 20);
-    h1_temp->SetMarkerColor(i + 1);
-    h1_temp->SetLineColor(i + 1);
-    h1_temp->Draw("P E SAME");
-    h1_temp->Draw("HIST SAME");
-    // h1_temp->SetMinimum(0.);
-    // h1_temp->SetMaximum(1.05);
-  }
-  ccan[ican]->cd(3);
-  for (int i = 0; i < ptbinsize; i++)
-  {
-    TH1D *h1_temp = (TH1D *)h2_Ndtr_jetpt_charged->ProjectionX(Form("htemp%d_dtrjetptcharged", i), i + 1, i + 1);
-
-    h1_temp->SetMarkerStyle(i + 20);
-    h1_temp->SetMarkerColor(i + 1);
-    h1_temp->SetLineColor(i + 1);
-    h1_temp->Draw("P E SAME");
-    h1_temp->Draw("HIST SAME");
-    // h1_temp->SetMinimum(0.);
-    // h1_temp->SetMaximum(1.05);
-  }
-  ccan[ican]->cd(4);
-  for (int i = 0; i < ptbinsize; i++)
-  {
-    TH1D *h1_temp = (TH1D *)h2_Ndtr_jetpt_neutral->ProjectionX(Form("htemp%d_dtrjetptneutral", i), i + 1, i + 1);
-
-    h1_temp->SetMarkerStyle(i + 20);
-    h1_temp->SetMarkerColor(i + 1);
-    h1_temp->SetLineColor(i + 1);
-    h1_temp->Draw("P E SAME");
-    h1_temp->Draw("HIST SAME");
-    // h1_temp->SetMinimum(0.);
-    // h1_temp->SetMaximum(1.05);
-  }
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-  gPad->SetLogy();
-  h1_HF_pt->SetStats(0);
-  h1_HF_pt->SetXTitle("pT(HF)");
-  h1_HF_pt->SetMarkerStyle(20);
-  h1_HF_pt->SetMarkerColor(kBlue);
-  h1_HF_pt->SetLineColor(kBlue);
-
-  h1_HF_pt->Draw("P E SAME");
-  // Tl.DrawLatex(.5, 0.75, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-  // Tl.DrawLatex(0.7, 0.8, "No cuts");
-  // h1_tr_dR->SetStats(0);
-  // h1_tr_dR->SetMarkerStyle(21);
-  // h1_tr_dR->SetMarkerColor(kRed);
-  // h1_tr_dR->SetLineColor(kRed);
-  // h1_tr_dR->Draw("P E SAME");
-
-  ccan[ican]->cd(2);
-  // h2_thetaErad->Scale(1./NumJets);
-  h1_HF_rap->SetStats(0);
-  h1_HF_rap->SetXTitle("y(HF)");
-  // h2_lundplane->Sethflocimum(.01);
-  // h2_lundplane->SetMinimum(0.00001);
-  h1_HF_rap->Draw("P E SAME");
-  ccan[ican]->cd(3);
-  // gPad->SetLogy();
-  h1_HF_mass->SetStats(0);
-  // h1_dphi_HF_jet->SetXTitle("#Delta#Phi");
-  // h2_lundplane->Sethflocimum(.01);
-  // h2_lundplane->SetMinimum(0.00001);
-  h1_HF_mass->Draw("P E SAME");
-  h1_HF_mass_dtfcut->Draw("SAME");
-  // SetTruthStyle(h1_HF_mass_float);
-  // h2_HF_mass_float->Draw("COLZ");
-
-  ccan[ican]->cd(4);
-  SetDataStyle(h1_nJetDtrs_noghost_comb);
-  SetRecoStyle(h1_nJetDtrs_noghost);
-  SetTruthStyle(h1_nJetDtrs_noghost_SV);
-  h1_nJetDtrs_noghost->Draw("P E SAME");
-  h1_nJetDtrs_noghost_SV->Draw("P E SAME");
-  h1_nJetDtrs_noghost_comb->Draw("P E SAME");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-  gPad->SetLogy();
-  h1_Jpsi_pt->SetStats(0);
-  h1_Jpsi_pt->SetXTitle("pT(J/#psi)");
-  h1_Jpsi_pt->SetMarkerStyle(20);
-  h1_Jpsi_pt->SetMarkerColor(kBlue);
-  h1_Jpsi_pt->SetLineColor(kBlue);
-
-  h1_Jpsi_pt->Draw("P E SAME");
-  // Tl.DrawLatex(.5, 0.75, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-  // Tl.DrawLatex(0.7, 0.8, "No cuts");
-  // h1_tr_dR->SetStats(0);
-  // h1_tr_dR->SetMarkerStyle(21);
-  // h1_tr_dR->SetMarkerColor(kRed);
-  // h1_tr_dR->SetLineColor(kRed);
-  // h1_tr_dR->Draw("P E SAME");
-
-  ccan[ican]->cd(2);
-  // h2_thetaErad->Scale(1./NumJets);
-  h1_Jpsi_rap->SetStats(0);
-  h1_Jpsi_rap->SetXTitle("y(J/#psi)");
-  // h2_lundplane->Sethflocimum(.01);
-  // h2_lundplane->SetMinimum(0.00001);
-  h1_Jpsi_rap->Draw("P E SAME");
-  ccan[ican]->cd(3);
-  h1_Jpsi_mass->SetStats(0);
-  // h1_dphi_Jpsi_jet->SetXTitle("#Delta#Phi");
-  // h2_lundplane->Sethflocimum(.01);
-  // h2_lundplane->SetMinimum(0.00001);
-  h1_Jpsi_mass->Draw("P E SAME");
-  ccan[ican]->cd(4);
-  h1_Jpsi_ipchi2->Draw("P E SAME");
-  h1_Jpsi_ipchi2->SetStats(0);
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-//  ++ican;
-//  sprintf(buf, "ccan%d", ican);
-//  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-//  ccan[ican]->SetFillColor(10);
-//  gPad->SetLeftMargin(0.16);
-//  gPad->SetBottomMargin(0.06);
-//  gPad->SetRightMargin(0.15);
-//  ccan[ican]->cd();
-//  ccan[ican]->Divide(1, 1, 0.0001, 0.0001);
-//  ccan[ican]->cd(1);
-//  THStack *stack_theta = new THStack("stack_theta", "");
-//  for (int i = 0; i < Eradbinsize; i++)
-//  {
-//    TH1D *hX_Y = (TH1D *)h2_thetaErad->ProjectionY(Form("hX_Y%d", i + 1), i + 1, i + 1);
-//    stack_theta->Add(hX_Y);
-//  }
-//  stack_theta->Draw("PLC NOSTACK");
-
-//  ccan[ican]->cd();
-//  ccan[ican]->Update();
-//  if (ican == 0)
-//  {
-//    ccan[ican]->Print(plotfileO.Data());
-//  }
-//  else
-//  {
-//    ccan[ican]->Print(plotfilePDF.Data());
-//  }
-
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-
-  h2_sv_mass_z_truepos->Draw("COLZ");
-
-  ccan[ican]->cd(2);
-
-  h2_bdt_z_truepos->Draw("COLZ");
-
-  ccan[ican]->cd(3);
-
-  h2_bdt_sv_mass_truepos->Draw("COLZ");
-
-  ccan[ican]->cd(4);
-  SetRecoStyle(h1_r_false);
-  SetTruthStyle(h1_r_true);
-  // NormalizeHist(h1_r_false);
-  // NormalizeHist(h1_r_true);
-  h1_r_true->Draw("P E SAME");
-  h1_r_false->Draw("P E SAME");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-
-  h2_sv_mass_z_falsepos->Draw("COLZ");
-
-  ccan[ican]->cd(2);
-
-  h2_bdt_z_falsepos->Draw("COLZ");
-
-  ccan[ican]->cd(3);
-
-  h2_bdt_sv_mass_falsepos->Draw("COLZ");
-
-  ccan[ican]->cd(4);
-  SetRecoStyle(h1_z_false);
-  SetTruthStyle(h1_z_true);
-  SetDataStyle(h1_z_truefalse);
-  // NormalizeHist(h1_z_false);
-  // NormalizeHist(h1_z_true);
-  // NormalizeHist(h1_z_truefalse);
-  h1_z_truefalse->Draw("PE SAME");
-  h1_z_false->Draw("P E SAME");
-  h1_z_true->Draw("P E SAME");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  gPad->SetLeftMargin(0.16);
-  gPad->SetBottomMargin(0.06);
-  gPad->SetRightMargin(0.15);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-  ccan[ican]->cd(1);
-
-  h2_sv_mass_ntrks_falsepos->Draw("COLZ");
-
-  ccan[ican]->cd(2);
-
-  h2_sv_mass_ntrks_truepos->Draw("COLZ");
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-*/
+                     
   f.Write();
   f.Close();
   file_unfold->Close();

@@ -12,7 +12,8 @@ using namespace std;
 
 void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
                   bool chargedJetCut_user = false,
-                  bool SubtractGS = false)
+                  bool SubtractGS = false,
+                  bool onlysim9 = false)
 {
 
   bool MCflag = true;
@@ -111,16 +112,18 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
   if (chargedJetCut)
     str_charged = "_charge";
-  // TString str_trees[5];
-  // str_trees[0] = "TaggedDijets/DecayTree";
-  // str_trees[1] = "D0KPiJet/DecayTree";
-  // str_trees[2] = "B0KPiJet/DecayTree";
-  // str_trees[3] = "Jets/DecayTree";
+    
+  TString str_simversion = "";     
+  if (onlysim9)
+  {
+    str_simversion = "_sim9";
+  }    
+
   TString str_tree;
 
   TString extension_read, extension_RootFilesMC, extension;
     
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + str_simversion + Form("_%d", dataset);
 
   // int NumEvts = 0;
   // cout <<"Choose number of events (-1: All Events, or enter integer): ";
@@ -128,7 +131,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
 
   extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
-  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+  extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
 
   // TFile fread(dir_deadcone + "hists/" + extension_read + ".root", "READ");
     
@@ -154,7 +157,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
           str_Mag = "_MD";
         else if (Mag == 1)
           str_Mag = "_MU";
-        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", vec_datasets[i]);
         // extension_read = extension_prefix + extension_read;
         cout << extension_read << endl;
         BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");
@@ -162,7 +165,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     }
     else
     {
-      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
       // extension_read = extension_prefix + extension_read;
       cout << extension_read << endl;
       BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");
@@ -689,9 +692,9 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   h2_ptr_gluon_ratio->Divide(h2_ptr_gluon, h2_ptr);   
 
 
-  THStack *hs_ptz = new THStack("hs_ptz", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
-  THStack *hs_ptjt = new THStack("hs_ptjt", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
-  THStack *hs_ptr = new THStack("hs_ptr", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");         
+  THStack *hs_ptz = new THStack("z_truth_all", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
+  THStack *hs_ptjt = new THStack("jt_truth_all", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+  THStack *hs_ptr = new THStack("r_truth_all", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");         
   TH2D *h2_zjt_ptbinned[ptbinsize-1];
   TH2D *h2_zr_ptbinned[ptbinsize-1];
   TH2D *h2_jtr_ptbinned[ptbinsize-1];       

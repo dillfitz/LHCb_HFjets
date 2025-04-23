@@ -20,7 +20,8 @@ void MakeVarTree(int NumEvts_user = -1,
                  bool isData = true,
                  bool DoJER = false,
                  bool DoJES = false,
-                 bool DoJetID = false)
+                 bool DoJetID = false,
+                 bool onlyL0DiMuon = false)
 {
 
     int NumEvts = NumEvts_user;
@@ -122,6 +123,10 @@ void MakeVarTree(int NumEvts_user = -1,
     if (ghostCut)
         str_ghost = Form("_ghost_%.1f", ghostProb);
 
+    TString str_L0 = "";
+    if (onlyL0DiMuon)
+        str_L0 = "_L0DiMuon";
+
     // TString str_trees[5];
     // str_trees[0] = "TaggedDijets/DecayTree";
     // str_trees[1] = "D0KPiJet/DecayTree";
@@ -131,10 +136,8 @@ void MakeVarTree(int NumEvts_user = -1,
     TString extension_read, extension_RootFilesMC, extension_RootFilesData, extension_RootFiles;
     TString extension, extension_eff;
     
-    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
+    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
     
-    extension_eff = TString("fspeff_") + "truth" + Form("_ev_%d", -1) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_flavor + Form("_%d", 91599);
-
     if (DoJES)
         extension = TString("JES_") + extension;
     if (DoJER)
@@ -198,11 +201,11 @@ void MakeVarTree(int NumEvts_user = -1,
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
 
-    extension_trig_MC = "PhotonHadronElectronTIS_jpsieff_reco_ev_-1_b_PID_91599";
-    extension_trig_Data = "PhotonHadronElectronTIS_jpsieff_data_ev_-1_b_PID_91599";
+    extension_trig_MC = "HLT2Lines_jpsieff_reco_ev_-1_b_PID_99599.root";
+    extension_trig_Data = "HLT2Lines_jpsieff_data_ev_-1_b_PID_99599.root";
 
-    TFile file_trigeffMC(extension_RootFilesTrig + extension_trig_MC + ".root", "READ");
-    TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data + ".root", "READ");
+    TFile file_trigeffMC(extension_RootFilesTrig + extension_trig_MC, "READ");
+    TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data, "READ");
 
     h2_trigeff_Data = (TH2D *)file_trigeffData.Get("efficiency_Jpsiptrap");
     h2_trigeff_MC = (TH2D *)file_trigeffMC.Get("efficiency_Jpsiptrap");
@@ -648,11 +651,11 @@ void MakeVarTree(int NumEvts_user = -1,
             continue;
         // }
 
-        jpsi_L0 = Tree.Jpsi_L0MuonDecision_TOS || Tree.Jpsi_L0DiMuonDecision_TOS;
+        jpsi_L0 = onlyL0DiMuon ? Tree.Jpsi_L0DiMuonDecision_TOS : Tree.Jpsi_L0MuonDecision_TOS || Tree.Jpsi_L0DiMuonDecision_TOS;
         mup_L0 = Tree.mup_L0MuonDecision_TOS || Tree.mup_L0DiMuonDecision_TOS;
         mum_L0 = Tree.mum_L0MuonDecision_TOS || Tree.mum_L0DiMuonDecision_TOS;
         jpsi_Hlt1 = Tree.Jpsi_Hlt1DiMuonHighMassDecision_TOS;
-        jpsi_Hlt2 = Tree.Jpsi_Hlt2DiMuonJPsiHighPTDecision_TOS;
+        jpsi_Hlt2 = Tree.Jpsi_Hlt2DiMuonDetachedJPsiDecision_TOS || Tree.Jpsi_Hlt2DiMuonJPsiHighPTDecision_TOS || Tree.Jpsi_Hlt2DiMuonJPsiDecision_TOS;
 
         TIS = (Tree.Jpsi_L0Global_TIS && Tree.Jpsi_Hlt1Global_TIS && Tree.Jpsi_Hlt2Global_TIS);
         TOS = jpsi_L0 && jpsi_Hlt1 && jpsi_Hlt2;
@@ -963,126 +966,6 @@ void MakeVarTree(int NumEvts_user = -1,
             SVTag = 2;
         }
 
-        // cout<<"Starting dijet loop";
-
-//        thetas.clear();
-//        ktthetas.clear();
-//        dRs.clear();
-//        Erads.clear();
-//        kts.clear();
-//        zs.clear();
-//        raps.clear();
-//        phis.clear();
-//        hardest.clear();
-//        tr_thetas.clear();
-//        tr_ktthetas.clear();
-//        tr_dRs.clear();
-//        tr_Erads.clear();
-//        tr_kts.clear();
-//        tr_zs.clear();
-//        tr_raps.clear();
-//        tr_phis.clear();
-//        tr_hardest.clear();
-
-        // if(jetdtrs.size() < 2) continue;
-
-//        ClusterSequence cs(jetdtrs, jet_def);
-//        vector<PseudoJet> constit;
-//        vector<LundDeclustering> declusts;
-//        vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
-//        PseudoJet mom = jets[0];
-
-//        if (mom.has_constituents())
-//        {
-//            constit = mom.constituents();
-//            int had_loc = -99;
-//            for (int i = 0; i < constit.size(); i++)
-//            {
-//                if (abs(constit.at(i).user_info<MyInfo>().pdg_id()) == HF_pdgcode)
-//                {
-//                    had_loc = i;
-//                    break;
-//                }
-//            }
-//            if (had_loc > -1)
-//            {
-//                // Decluster jet by following either hardest prong or HF prong
-//                // Store info such as kt, Eradiator, theta, delta R
-//                // cout<<"Reco Declust!"<<endl;
-//                declusts = result(mom, constit[had_loc]);
-//                for (int idecl = 0; idecl < declusts.size(); idecl++)
-//                {
-//                    float kt = declusts[idecl].kt();
-//                    kts.push_back(kt);
-//                    float dR = declusts[idecl].Delta();
-//                    dRs.push_back(dR);
-//                    float z = declusts[idecl].z();
-//                    zs.push_back(z);
-//                    float theta = declusts[idecl].theta();
-//                    thetas.push_back(theta);
-//                    float kttheta = declusts[idecl].kttheta();
-//                    ktthetas.push_back(kttheta);
-//                    float erad = declusts[idecl].erad();
-//                    Erads.push_back(erad);
-//                    float rap = declusts[idecl].rap();
-//                    raps.push_back(rap);
-//                    float phi = declusts[idecl].phi();
-//                    phis.push_back(phi);
-//                    bool isHard = declusts[idecl].hardest();
-//                    hardest.push_back(isHard);
-//                    if (!isHard)
-//                        HFHardest = false;
-//                }
-//            }
-//        }
-
-//        vector<LundDeclustering> tr_declusts;
-//        if (!isData)
-//        {
-//            if (tr_jetdtrs.size() > 1)
-//            {
-//                ClusterSequence cs_tr_(tr_jetdtrs, jet_def);
-//                vector<PseudoJet> tr_constit;
-//                vector<PseudoJet> tr_jets = sorted_by_pt(cs_tr_.inclusive_jets());
-//                PseudoJet tr_mom = tr_jets[0];
-//
-//                tr_constit = tr_mom.constituents();
-//                int tr_had_loc = -99;
-//                for (int i = 0; i < tr_constit.size(); i++)
-//                {
-//                    if (abs(tr_constit.at(i).user_info<MyInfo>().pdg_id()) == HF_pdgcode)
-//                    {
-//                        tr_had_loc = i;
-//                        break;
-//                    }
-//                }
-//                // cout<<"Truth Declust!"<<endl;
-//                if (tr_had_loc > -1)
-//                    tr_declusts = result(tr_mom, tr_constit[tr_had_loc]);
-//            };
-//            for (int idecl = 0; idecl < tr_declusts.size(); idecl++)
-//            {
-//                float kt = tr_declusts[idecl].kt();
-//                tr_kts.push_back(kt);
-//                float dR = tr_declusts[idecl].Delta();
-//                tr_dRs.push_back(dR);
-//                float z = tr_declusts[idecl].z();
-//                tr_zs.push_back(z);
-//                float theta = tr_declusts[idecl].theta();
-//                tr_thetas.push_back(theta);
-//                float kttheta = tr_declusts[idecl].kttheta();
-//                tr_ktthetas.push_back(kttheta);
-//                float erad = tr_declusts[idecl].erad();
-//                tr_Erads.push_back(erad);
-//                float rap = tr_declusts[idecl].rap();
-//                tr_raps.push_back(rap);
-//                float phi = tr_declusts[idecl].phi();
-//                tr_phis.push_back(phi);
-//                bool isHard = tr_declusts[idecl].hardest();
-//                tr_hardest.push_back(isHard);
-//            }
-//        }
-
         TVector3 HF_meson = HFmeson.Vect();
         TVector3 HF_jet = HFjet.Vect();
         TVector3 tr_HF_meson = tr_HFmeson.Vect();
@@ -1210,6 +1093,7 @@ void MakeVarTree(int NumEvts_user = -1,
         bdt_pt = Tree.Jet_BDTTag_pt[0] / 1000.;
         bdt_z = Tree.Jet_BDTTag_z[0];
 
+        /*
         if (isData && h2_trigeff_Data != NULL)
         {
             double rap_trig = (Jpsi.Rapidity() > 2.00) ? Jpsi.Rapidity() : 2.1;
@@ -1224,7 +1108,7 @@ void MakeVarTree(int NumEvts_user = -1,
         {
             trigeff_Data = trigeff_MC = trigeff_ratio = 1.0;
         }
-
+        */
         if (isData && h3_pideff_K_P_ETA_nTracks != NULL && h2_ratio_trkeff_P_ETA != NULL)
         {
             float p_K = (Kmeson.P() >= 400) ? 399 * 1e3 : Kmeson.P() * 1e3;

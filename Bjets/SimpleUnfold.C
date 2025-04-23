@@ -702,7 +702,7 @@ void SimpleUnfold(int NumEvts = -1,
         continue;
       if (Jpsi_CHI2NDOF > 18)
         continue;
-      if (fabs(Jpsi_BPVDLS) < 2.8)
+      if (fabs(Jpsi_BPVDLS) < 3.2)
         continue;
     }
         
@@ -985,12 +985,12 @@ void SimpleUnfold(int NumEvts = -1,
     TH2D *h2_purity_zr_ptbinned[ptbinsize-1];
     TH2D *h2_purity_jtr_ptbinned[ptbinsize-1];      
     
-    THStack *hs_efficiency_ptz = new THStack("hs_efficiency_ptz", ";z;efficiency");
-    THStack *hs_efficiency_ptjt = new THStack("hs_efficiency_ptjt", ";j_{T} [GeV/c];efficiency");
-    THStack *hs_efficiency_ptr = new THStack("hs_efficiency_ptr", ";r;efficiency");
-    THStack *hs_purity_ptz = new THStack("hs_purity_ptz", ";z;purity");
-    THStack *hs_purity_ptjt = new THStack("hs_purity_ptjt", ";j_{T} [GeV/c];purity");
-    THStack *hs_purity_ptr = new THStack("hs_purity_ptr", ";r;purity");
+    THStack *hs_efficiency_ptz = new THStack("efficiency_z_all", ";z;efficiency");
+    THStack *hs_efficiency_ptjt = new THStack("efficiency_jt_all", ";j_{T} [GeV/c];efficiency");
+    THStack *hs_efficiency_ptr = new THStack("efficiency_r_all", ";r;efficiency");
+    THStack *hs_purity_ptz = new THStack("purity_z_all", ";z;purity");
+    THStack *hs_purity_ptjt = new THStack("purity_jt_all", ";j_{T} [GeV/c];purity");
+    THStack *hs_purity_ptr = new THStack("purity_r_all", ";r;purity");
                          
     for (int i = 1; i < ptbinsize; i++)
     {   
@@ -1095,37 +1095,37 @@ void SimpleUnfold(int NumEvts = -1,
         h3_efficiency_ptzjt->GetZaxis()->SetRange(i+1, i+1);      
         h2_efficiency_zjt_ptbinned[i-1] = (TH2D *)h3_efficiency_ptzjt->Project3D("yx");
         h2_efficiency_zjt_ptbinned[i-1]->SetStats(0);
-        h2_efficiency_zjt_ptbinned[i-1]->SetName(Form("zjt_efficiency_pt%d", i));
+        h2_efficiency_zjt_ptbinned[i-1]->SetName(Form("efficiency_zjt_pt%d", i));
         h2_efficiency_zjt_ptbinned[i-1]->Write(); 
 
         h3_efficiency_ptzr->GetZaxis()->SetRange(i+1, i+1); 
         h2_efficiency_zr_ptbinned[i-1] = (TH2D *)h3_efficiency_ptzr->Project3D("yx");
         h2_efficiency_zr_ptbinned[i-1]->SetStats(0);       
-        h2_efficiency_zr_ptbinned[i-1]->SetName(Form("zr_efficiency_pt%d",i)); 
+        h2_efficiency_zr_ptbinned[i-1]->SetName(Form("efficiency_zr_pt%d",i)); 
         h2_efficiency_zr_ptbinned[i-1]->Write();
         
         h3_efficiency_ptjtr->GetZaxis()->SetRange(i+1, i+1);        
         h2_efficiency_jtr_ptbinned[i-1] = (TH2D *)h3_efficiency_ptjtr->Project3D("yx");
         h2_efficiency_jtr_ptbinned[i-1]->SetStats(0);        
-        h2_efficiency_jtr_ptbinned[i-1]->SetName(Form("jtr_efficiency_pt%d",i));        
+        h2_efficiency_jtr_ptbinned[i-1]->SetName(Form("efficiency_jtr_pt%d",i));        
         h2_efficiency_jtr_ptbinned[i-1]->Write();
         
         h3_purity_ptzjt->GetZaxis()->SetRange(i+1, i+1);      
         h2_purity_zjt_ptbinned[i-1] = (TH2D *)h3_purity_ptzjt->Project3D("yx");
         h2_purity_zjt_ptbinned[i-1]->SetStats(0);                       
-        h2_purity_zjt_ptbinned[i-1]->SetName(Form("zjt_purity_pt%d",i)); 
+        h2_purity_zjt_ptbinned[i-1]->SetName(Form("purity_zjt_pt%d",i)); 
         h2_purity_zjt_ptbinned[i-1]->Write();         
 
         h3_purity_ptzr->GetZaxis()->SetRange(i+1, i+1);        
         h2_purity_zr_ptbinned[i-1] = (TH2D *)h3_purity_ptzr->Project3D("yx");
         h2_purity_zr_ptbinned[i-1]->SetStats(0);
-        h2_purity_zr_ptbinned[i-1]->SetName(Form("zr_purity_pt%d",i));
+        h2_purity_zr_ptbinned[i-1]->SetName(Form("purity_zr_pt%d",i));
         h2_purity_zr_ptbinned[i-1]->Write();        
         
         h3_purity_ptjtr->GetZaxis()->SetRange(i+1, i+1);        
         h2_purity_jtr_ptbinned[i-1] = (TH2D *)h3_purity_ptjtr->Project3D("yx");
         h2_purity_jtr_ptbinned[i-1]->SetStats(0);
-        h2_purity_jtr_ptbinned[i-1]->SetName(Form("jtr_purity_pt%d",i));
+        h2_purity_jtr_ptbinned[i-1]->SetName(Form("purity_jtr_pt%d",i));
         h2_purity_jtr_ptbinned[i-1]->Write();                        
     }   
     

@@ -12,7 +12,7 @@
 using namespace std;
 
 // All events: -1
-void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCut_user = false) {
+void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool onlysim9 = false, bool chargedJetCut_user = false) {
     
 //    BjetMCTree Tree(0, isMagUp, isMagDown);
 
@@ -125,16 +125,22 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool chargedJetCu
         str_charged = "_charge";
       TString str_tree;
 
+     TString str_simversion = "";     
+     if (onlysim9)
+     {
+        str_simversion = "_sim9";
+     }
+
     TString RecoHF = "OnlyOneRecoHF";
 
     TString extension;
-    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
     
 //    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_Mag + str_flavor;
 //    extension = TString("MCtree_") + str_level + str_mag + Form("_ev_%d", NumEvts)  + str_flavor;
 //    extension = TString("MCtree_") + str_level + Form("_ev_%d", NumEvts)  + str_flavor + RecoHF;
 
-    BjetMCTree Tree(0, dataset, false);
+    BjetMCTree Tree(0, dataset, false, onlysim9);
     
     cout << "Total number of events = " << Tree.fChain->GetEntries() << endl;
     if (NumEvts == -1) {

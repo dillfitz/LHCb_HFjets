@@ -11,8 +11,12 @@ void GetTotalSys(int NumEvts = -1,
                  int NumIters = 4)
 {
 
+  gROOT->ForceStyle();
+  gStyle->SetPaintTextFormat("3.3f");
+  gStyle->SetOptStat(0);
+
   TString string_matching, string_JES, string_JER;
-  TString string_closure, string_unfold, string_unfold_rev, extension, string_ghost, string_jetid;
+  TString string_closure, string_shapeclosure, string_unfold, string_unfold_rev, extension, string_ghost, string_jetid;
   TString string_trackingsysup, string_trackingsysdown, string_pidsysup, string_pidsysdown;
   TString string_trigsysup, string_trigsysdown, string_recselsys;
   TString string_itersysup, string_itersysdown;
@@ -76,6 +80,7 @@ void GetTotalSys(int NumEvts = -1,
   string_fitmodel = loc_hists + TString("signalsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
   string_recselsys = loc_hists + TString("recselsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   string_closure = "../../../root_files/BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
+  string_shapeclosure = "../../../root_files/BjetsMC/" + TString("shapeclosure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
   string_priorsys = loc_hists + TString("priorsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
   // string_closure = loc_hists + TString("closure") + Form("_ev_%d", NumEvts)
@@ -121,6 +126,7 @@ void GetTotalSys(int NumEvts = -1,
   TFile *file_recselsys = new TFile(string_recselsys + TString(".root"), "READ");
 
   TFile *file_closure = new TFile(string_closure + TString(".root"), "READ");
+  TFile *file_shapeclosure = new TFile(string_shapeclosure + TString(".root"), "READ");  
   TFile *file_priorsys = new TFile(string_priorsys + TString(".root"), "READ");
 
   TFile *file_save = new TFile(loc_hists + extension + ".root", "RECREATE");
@@ -139,6 +145,7 @@ void GetTotalSys(int NumEvts = -1,
                                 "Fit Model",
                                 "Rec. & Sel. Eff.",
                                 "nonclosure",
+                                "shapeclosure",
                                 "iter",
                                 "prior",
                                 "Total"};
@@ -151,7 +158,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_z_ptbinned_sys_sbsubnear[ptbinsize-1], *h1_z_ptbinned_sys_sbsubfar[ptbinsize-1], *h1_z_ptbinned_sys_sbsub[ptbinsize-1];         
   TH1D *h1_z_ptbinned_sys_iterhigh[ptbinsize-1], *h1_z_ptbinned_sys_iterlow[ptbinsize-1], *h1_z_ptbinned_sys_iter[ptbinsize-1];
   TH1D *h1_z_ptbinned_sys_closure[ptbinsize-1], *h1_z_ptbinned_sys_prior[ptbinsize-1], *h1_z_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH1D *h1_z_ptbinned_sys_shapeclosure[ptbinsize-1];
+
   TH1D *h1_z_ptbinned_sys_jetid_sq[ptbinsize-1], *h1_z_ptbinned_sys_jer_sq[ptbinsize-1], *h1_z_ptbinned_sys_jes_sq[ptbinsize-1];
   TH1D *h1_z_ptbinned_sys_trackingup_sq[ptbinsize-1], *h1_z_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h1_z_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH1D *h1_z_ptbinned_sys_pidup_sq[ptbinsize-1], *h1_z_ptbinned_sys_piddown_sq[ptbinsize-1], *h1_z_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -160,7 +168,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_z_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h1_z_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h1_z_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH1D *h1_z_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h1_z_ptbinned_sys_iterlow_sq[ptbinsize-1], *h1_z_ptbinned_sys_iter_sq[ptbinsize-1];
   TH1D *h1_z_ptbinned_sys_closure_sq[ptbinsize-1], *h1_z_ptbinned_sys_prior_sq[ptbinsize-1], *h1_z_ptbinned_sys_unfold_sq[ptbinsize-1];
-    
+  TH1D *h1_z_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
+
   TH1D *h1_jt_ptbinned_sys_jetid[ptbinsize-1], *h1_jt_ptbinned_sys_jer[ptbinsize-1], *h1_jt_ptbinned_sys_jes[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_trackingup[ptbinsize-1], *h1_jt_ptbinned_sys_trackingdown[ptbinsize-1], *h1_jt_ptbinned_sys_tracking[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_pidup[ptbinsize-1], *h1_jt_ptbinned_sys_piddown[ptbinsize-1], *h1_jt_ptbinned_sys_pid[ptbinsize-1];  
@@ -169,7 +178,9 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_jt_ptbinned_sys_sbsubnear[ptbinsize-1], *h1_jt_ptbinned_sys_sbsubfar[ptbinsize-1], *h1_jt_ptbinned_sys_sbsub[ptbinsize-1];         
   TH1D *h1_jt_ptbinned_sys_iterhigh[ptbinsize-1], *h1_jt_ptbinned_sys_iterlow[ptbinsize-1], *h1_jt_ptbinned_sys_iter[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_closure[ptbinsize-1], *h1_jt_ptbinned_sys_prior[ptbinsize-1], *h1_jt_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH1D *h1_jt_ptbinned_sys_shapeclosure[ptbinsize-1];
+
+
   TH1D *h1_jt_ptbinned_sys_jetid_sq[ptbinsize-1], *h1_jt_ptbinned_sys_jer_sq[ptbinsize-1], *h1_jt_ptbinned_sys_jes_sq[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_trackingup_sq[ptbinsize-1], *h1_jt_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h1_jt_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_pidup_sq[ptbinsize-1], *h1_jt_ptbinned_sys_piddown_sq[ptbinsize-1], *h1_jt_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -178,7 +189,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_jt_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h1_jt_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h1_jt_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH1D *h1_jt_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h1_jt_ptbinned_sys_iterlow_sq[ptbinsize-1], *h1_jt_ptbinned_sys_iter_sq[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_closure_sq[ptbinsize-1], *h1_jt_ptbinned_sys_prior_sq[ptbinsize-1], *h1_jt_ptbinned_sys_unfold_sq[ptbinsize-1];
-  
+  TH1D *h1_jt_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
+
   TH1D *h1_r_ptbinned_sys_jetid[ptbinsize-1], *h1_r_ptbinned_sys_jer[ptbinsize-1], *h1_r_ptbinned_sys_jes[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_trackingup[ptbinsize-1], *h1_r_ptbinned_sys_trackingdown[ptbinsize-1], *h1_r_ptbinned_sys_tracking[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_pidup[ptbinsize-1], *h1_r_ptbinned_sys_piddown[ptbinsize-1], *h1_r_ptbinned_sys_pid[ptbinsize-1];  
@@ -187,7 +199,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_r_ptbinned_sys_sbsubnear[ptbinsize-1], *h1_r_ptbinned_sys_sbsubfar[ptbinsize-1], *h1_r_ptbinned_sys_sbsub[ptbinsize-1];         
   TH1D *h1_r_ptbinned_sys_iterhigh[ptbinsize-1], *h1_r_ptbinned_sys_iterlow[ptbinsize-1], *h1_r_ptbinned_sys_iter[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_closure[ptbinsize-1], *h1_r_ptbinned_sys_prior[ptbinsize-1], *h1_r_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH1D *h1_r_ptbinned_sys_shapeclosure[ptbinsize-1];
+ 
   TH1D *h1_r_ptbinned_sys_jetid_sq[ptbinsize-1], *h1_r_ptbinned_sys_jer_sq[ptbinsize-1], *h1_r_ptbinned_sys_jes_sq[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_trackingup_sq[ptbinsize-1], *h1_r_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h1_r_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_pidup_sq[ptbinsize-1], *h1_r_ptbinned_sys_piddown_sq[ptbinsize-1], *h1_r_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -196,7 +209,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_r_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h1_r_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h1_r_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH1D *h1_r_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h1_r_ptbinned_sys_iterlow_sq[ptbinsize-1], *h1_r_ptbinned_sys_iter_sq[ptbinsize-1];
   TH1D *h1_r_ptbinned_sys_closure_sq[ptbinsize-1], *h1_r_ptbinned_sys_prior_sq[ptbinsize-1], *h1_r_ptbinned_sys_unfold_sq[ptbinsize-1]; 
-  
+  TH1D *h1_r_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
+ 
   
   TH2D *h2_zjt_ptbinned_sys_jetid[ptbinsize-1], *h2_zjt_ptbinned_sys_jer[ptbinsize-1], *h2_zjt_ptbinned_sys_jes[ptbinsize-1];
   TH2D *h2_zjt_ptbinned_sys_trackingup[ptbinsize-1], *h2_zjt_ptbinned_sys_trackingdown[ptbinsize-1], *h2_zjt_ptbinned_sys_tracking[ptbinsize-1];
@@ -206,7 +220,8 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_zjt_ptbinned_sys_sbsubnear[ptbinsize-1], *h2_zjt_ptbinned_sys_sbsubfar[ptbinsize-1], *h2_zjt_ptbinned_sys_sbsub[ptbinsize-1];         
   TH2D *h2_zjt_ptbinned_sys_iterhigh[ptbinsize-1], *h2_zjt_ptbinned_sys_iterlow[ptbinsize-1], *h2_zjt_ptbinned_sys_iter[ptbinsize-1];
   TH2D *h2_zjt_ptbinned_sys_closure[ptbinsize-1], *h2_zjt_ptbinned_sys_prior[ptbinsize-1], *h2_zjt_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH2D *h2_zjt_ptbinned_sys_shapeclosure[ptbinsize-1];
+
   TH2D *h2_zjt_ptbinned_sys_jetid_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_jer_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_jes_sq[ptbinsize-1];
   TH2D *h2_zjt_ptbinned_sys_trackingup_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH2D *h2_zjt_ptbinned_sys_pidup_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_piddown_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -215,7 +230,8 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_zjt_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH2D *h2_zjt_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_iterlow_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_iter_sq[ptbinsize-1];
   TH2D *h2_zjt_ptbinned_sys_closure_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_prior_sq[ptbinsize-1], *h2_zjt_ptbinned_sys_unfold_sq[ptbinsize-1];
-  
+  TH2D *h2_zjt_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
+
   TH2D *h2_zr_ptbinned_sys_jetid[ptbinsize-1], *h2_zr_ptbinned_sys_jer[ptbinsize-1], *h2_zr_ptbinned_sys_jes[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_trackingup[ptbinsize-1], *h2_zr_ptbinned_sys_trackingdown[ptbinsize-1], *h2_zr_ptbinned_sys_tracking[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_pidup[ptbinsize-1], *h2_zr_ptbinned_sys_piddown[ptbinsize-1], *h2_zr_ptbinned_sys_pid[ptbinsize-1];  
@@ -224,7 +240,8 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_zr_ptbinned_sys_sbsubnear[ptbinsize-1], *h2_zr_ptbinned_sys_sbsubfar[ptbinsize-1], *h2_zr_ptbinned_sys_sbsub[ptbinsize-1];         
   TH2D *h2_zr_ptbinned_sys_iterhigh[ptbinsize-1], *h2_zr_ptbinned_sys_iterlow[ptbinsize-1], *h2_zr_ptbinned_sys_iter[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_closure[ptbinsize-1], *h2_zr_ptbinned_sys_prior[ptbinsize-1], *h2_zr_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH2D *h2_zr_ptbinned_sys_shapeclosure[ptbinsize-1];
+
   TH2D *h2_zr_ptbinned_sys_jetid_sq[ptbinsize-1], *h2_zr_ptbinned_sys_jer_sq[ptbinsize-1], *h2_zr_ptbinned_sys_jes_sq[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_trackingup_sq[ptbinsize-1], *h2_zr_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h2_zr_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_pidup_sq[ptbinsize-1], *h2_zr_ptbinned_sys_piddown_sq[ptbinsize-1], *h2_zr_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -233,7 +250,8 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_zr_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h2_zr_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h2_zr_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH2D *h2_zr_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h2_zr_ptbinned_sys_iterlow_sq[ptbinsize-1], *h2_zr_ptbinned_sys_iter_sq[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_closure_sq[ptbinsize-1], *h2_zr_ptbinned_sys_prior_sq[ptbinsize-1], *h2_zr_ptbinned_sys_unfold_sq[ptbinsize-1];
-  
+  TH2D *h2_zr_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
+
   TH2D *h2_jtr_ptbinned_sys_jetid[ptbinsize-1], *h2_jtr_ptbinned_sys_jer[ptbinsize-1], *h2_jtr_ptbinned_sys_jes[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_trackingup[ptbinsize-1], *h2_jtr_ptbinned_sys_trackingdown[ptbinsize-1], *h2_jtr_ptbinned_sys_tracking[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_pidup[ptbinsize-1], *h2_jtr_ptbinned_sys_piddown[ptbinsize-1], *h2_jtr_ptbinned_sys_pid[ptbinsize-1];  
@@ -242,7 +260,8 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_jtr_ptbinned_sys_sbsubnear[ptbinsize-1], *h2_jtr_ptbinned_sys_sbsubfar[ptbinsize-1], *h2_jtr_ptbinned_sys_sbsub[ptbinsize-1];         
   TH2D *h2_jtr_ptbinned_sys_iterhigh[ptbinsize-1], *h2_jtr_ptbinned_sys_iterlow[ptbinsize-1], *h2_jtr_ptbinned_sys_iter[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_closure[ptbinsize-1], *h2_jtr_ptbinned_sys_prior[ptbinsize-1], *h2_jtr_ptbinned_sys_unfold[ptbinsize-1];
-  
+  TH2D *h2_jtr_ptbinned_sys_shapeclosure[ptbinsize-1];
+
   TH2D *h2_jtr_ptbinned_sys_jetid_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_jer_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_jes_sq[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_trackingup_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_trackingdown_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_tracking_sq[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_pidup_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_piddown_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_pid_sq[ptbinsize-1];  
@@ -251,6 +270,7 @@ void GetTotalSys(int NumEvts = -1,
   TH2D *h2_jtr_ptbinned_sys_sbsubnear_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_sbsubfar_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_sbsub_sq[ptbinsize-1];         
   TH2D *h2_jtr_ptbinned_sys_iterhigh_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_iterlow_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_iter_sq[ptbinsize-1];
   TH2D *h2_jtr_ptbinned_sys_closure_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_prior_sq[ptbinsize-1], *h2_jtr_ptbinned_sys_unfold_sq[ptbinsize-1];   
+  TH2D *h2_jtr_ptbinned_sys_shapeclosure_sq[ptbinsize-1];
 
   TH1D *h1_z_ptbinned_sys_total[ptbinsize-1];
   TH1D *h1_jt_ptbinned_sys_total[ptbinsize-1]; 
@@ -372,6 +392,13 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_closure[i-1] = (TH2D *)file_closure->Get(Form("zr_pt%d_closure_error", i));  
   h2_jtr_ptbinned_sys_closure[i-1] = (TH2D *)file_closure->Get(Form("jtr_pt%d_closure_error", i));    
 
+  h1_z_ptbinned_sys_shapeclosure[i-1] = (TH1D *)file_shapeclosure->Get(Form("z_pt%d_closure_error", i));
+  h1_jt_ptbinned_sys_shapeclosure[i-1] = (TH1D *)file_shapeclosure->Get(Form("jt_pt%d_closure_error", i));  
+  h1_r_ptbinned_sys_shapeclosure[i-1] = (TH1D *)file_shapeclosure->Get(Form("r_pt%d_closure_error", i));  
+  h2_zjt_ptbinned_sys_shapeclosure[i-1] = (TH2D *)file_shapeclosure->Get(Form("zjt_pt%d_closure_error", i));
+  h2_zr_ptbinned_sys_shapeclosure[i-1] = (TH2D *)file_shapeclosure->Get(Form("zr_pt%d_closure_error", i));  
+  h2_jtr_ptbinned_sys_shapeclosure[i-1] = (TH2D *)file_shapeclosure->Get(Form("jtr_pt%d_closure_error", i));  
+
   // TH2D *h2_ptktdR_sys_closure = (TH2D *)h2_ptktdR_sys_closure_up->Clone("h2_ptktdR_sys_closure");
   // h2_ptktdR_sys_closure->Add(h2_ptktdR_sys_closure_down);
   // h2_ptktdR_sys_closure->Scale(0.5);
@@ -389,13 +416,16 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_trigdown_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_trigdown[i-1]->Clone(Form("z_pt%d_sys_trigdown_sq", i));
   h1_z_ptbinned_sys_sbsubnear_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_sbsubnear[i-1]->Clone(Form("z_pt%d_sys_sbsubnear_sq", i));
   h1_z_ptbinned_sys_sbsubfar_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_sbsubfar[i-1]->Clone(Form("z_pt%d_sys_sbsubfar_sq", i));
+  h1_z_ptbinned_sys_fitmodel_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_fitmodel[i-1]->Clone(Form("z_pt%d_sys_fitmodel_sq", i));
   h1_z_ptbinned_sys_pidup_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_pidup[i-1]->Clone(Form("z_pt%d_sys_pidup_sq", i));
   h1_z_ptbinned_sys_piddown_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_piddown[i-1]->Clone(Form("z_pt%d_sys_piddown_sq", i));
   h1_z_ptbinned_sys_recsel_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_recsel[i-1]->Clone(Form("z_pt%d_sys_recsel_sq", i));
   h1_z_ptbinned_sys_iterhigh_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_iterhigh[i-1]->Clone(Form("z_pt%d_sys_iterhigh_sq", i));
   h1_z_ptbinned_sys_iterlow_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_iterlow[i-1]->Clone(Form("z_pt%d_sys_iterlow_sq", i));
   h1_z_ptbinned_sys_prior_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_prior[i-1]->Clone(Form("z_pt%d_sys_prior_sq", i));  
-  h1_z_ptbinned_sys_closure_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_closure[i-1]->Clone(Form("z_pt%d_sys_closure_sq", i));  
+  h1_z_ptbinned_sys_closure_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_closure[i-1]->Clone(Form("z_pt%d_sys_closure_sq", i));
+  h1_z_ptbinned_sys_shapeclosure_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_shapeclosure[i-1]->Clone(Form("z_pt%d_sys_shapeclosure_sq", i));  
+
   
   h1_jt_ptbinned_sys_jer_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_jer[i-1]->Clone(Form("jt_pt%d_sys_jer_sq", i));
   h1_jt_ptbinned_sys_jetid_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_jetid[i-1]->Clone(Form("jt_pt%d_sys_jetid_sq", i));
@@ -406,6 +436,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_trigdown_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_trigdown[i-1]->Clone(Form("jt_pt%d_sys_trigdown_sq", i));
   h1_jt_ptbinned_sys_sbsubnear_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_sbsubnear[i-1]->Clone(Form("jt_pt%d_sys_sbsubnear_sq", i));
   h1_jt_ptbinned_sys_sbsubfar_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_sbsubfar[i-1]->Clone(Form("jt_pt%d_sys_sbsubfar_sq", i));
+  h1_jt_ptbinned_sys_fitmodel_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_fitmodel[i-1]->Clone(Form("jt_pt%d_sys_fitmodel_sq", i));
   h1_jt_ptbinned_sys_pidup_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_pidup[i-1]->Clone(Form("jt_pt%d_sys_pidup_sq", i));
   h1_jt_ptbinned_sys_piddown_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_piddown[i-1]->Clone(Form("jt_pt%d_sys_piddown_sq", i));
   h1_jt_ptbinned_sys_recsel_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_recsel[i-1]->Clone(Form("jt_pt%d_sys_recsel_sq", i));
@@ -413,7 +444,8 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_iterlow_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_iterlow[i-1]->Clone(Form("jt_pt%d_sys_iterlow_sq", i));
   h1_jt_ptbinned_sys_prior_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_prior[i-1]->Clone(Form("jt_pt%d_sys_prior_sq", i));  
   h1_jt_ptbinned_sys_closure_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_closure[i-1]->Clone(Form("jt_pt%d_sys_closure_sq", i));    
-  
+  h1_jt_ptbinned_sys_shapeclosure_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_shapeclosure[i-1]->Clone(Form("jt_pt%d_sys_shapeclosure_sq", i));  
+
   h1_r_ptbinned_sys_jer_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_jer[i-1]->Clone(Form("r_pt%d_sys_jer_sq", i));
   h1_r_ptbinned_sys_jetid_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_jetid[i-1]->Clone(Form("r_pt%d_sys_jetid_sq", i));
   h1_r_ptbinned_sys_jes_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_jes[i-1]->Clone(Form("r_pt%d_sys_jes_sq",i));
@@ -423,6 +455,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_trigdown_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_trigdown[i-1]->Clone(Form("r_pt%d_sys_trigdown_sq", i));
   h1_r_ptbinned_sys_sbsubnear_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_sbsubnear[i-1]->Clone(Form("r_pt%d_sys_sbsubnear_sq", i));
   h1_r_ptbinned_sys_sbsubfar_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_sbsubfar[i-1]->Clone(Form("r_pt%d_sys_sbsubfar_sq", i));
+  h1_r_ptbinned_sys_fitmodel_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_fitmodel[i-1]->Clone(Form("r_pt%d_sys_fitmodel_sq", i));
   h1_r_ptbinned_sys_pidup_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_pidup[i-1]->Clone(Form("r_pt%d_sys_pidup_sq", i));
   h1_r_ptbinned_sys_piddown_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_piddown[i-1]->Clone(Form("r_pt%d_sys_piddown_sq", i));
   h1_r_ptbinned_sys_recsel_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_recsel[i-1]->Clone(Form("r_pt%d_sys_recsel_sq", i));
@@ -430,7 +463,8 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_iterlow_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_iterlow[i-1]->Clone(Form("r_pt%d_sys_iterlow_sq", i));
   h1_r_ptbinned_sys_prior_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_prior[i-1]->Clone(Form("r_pt%d_sys_prior_sq", i));  
   h1_r_ptbinned_sys_closure_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_closure[i-1]->Clone(Form("r_pt%d_sys_closure_sq", i));      
-  
+  h1_r_ptbinned_sys_shapeclosure_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_shapeclosure[i-1]->Clone(Form("r_pt%d_sys_shapeclosure_sq", i));  
+ 
 
   h2_zjt_ptbinned_sys_jer_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_jer[i-1]->Clone(Form("zjt_pt%d_sys_jer_sq", i));
   h2_zjt_ptbinned_sys_jetid_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_jetid[i-1]->Clone(Form("zjt_pt%d_sys_jetid_sq", i));
@@ -441,6 +475,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_trigdown_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_trigdown[i-1]->Clone(Form("zjt_pt%d_sys_trigdown_sq", i));
   h2_zjt_ptbinned_sys_sbsubnear_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_sbsubnear[i-1]->Clone(Form("zjt_pt%d_sys_sbsubnear_sq", i));
   h2_zjt_ptbinned_sys_sbsubfar_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_sbsubfar[i-1]->Clone(Form("zjt_pt%d_sys_sbsubfar_sq", i));
+  h2_zjt_ptbinned_sys_fitmodel_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_fitmodel[i-1]->Clone(Form("zjt_pt%d_sys_fitmodel_sq", i));
   h2_zjt_ptbinned_sys_pidup_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_pidup[i-1]->Clone(Form("zjt_pt%d_sys_pidup_sq", i));
   h2_zjt_ptbinned_sys_piddown_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_piddown[i-1]->Clone(Form("zjt_pt%d_sys_piddown_sq", i));
   h2_zjt_ptbinned_sys_recsel_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_recsel[i-1]->Clone(Form("zjt_pt%d_sys_recsel_sq", i));
@@ -448,7 +483,8 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_iterlow_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_iterlow[i-1]->Clone(Form("zjt_pt%d_sys_iterlow_sq", i));
   h2_zjt_ptbinned_sys_prior_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_prior[i-1]->Clone(Form("zjt_pt%d_sys_prior_sq", i));  
   h2_zjt_ptbinned_sys_closure_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_closure[i-1]->Clone(Form("zjt_pt%d_sys_closure_sq", i));  
-  
+  h2_zjt_ptbinned_sys_shapeclosure_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_shapeclosure[i-1]->Clone(Form("zjt_pt%d_sys_shapeclosure_sq", i));  
+
   h2_zr_ptbinned_sys_jer_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_jer[i-1]->Clone(Form("zr_pt%d_sys_jer_sq", i));
   h2_zr_ptbinned_sys_jetid_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_jetid[i-1]->Clone(Form("zr_pt%d_sys_jetid_sq", i));
   h2_zr_ptbinned_sys_jes_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_jes[i-1]->Clone(Form("zr_pt%d_sys_jes_sq",i));
@@ -458,6 +494,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_trigdown_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_trigdown[i-1]->Clone(Form("zr_pt%d_sys_trigdown_sq", i));
   h2_zr_ptbinned_sys_sbsubnear_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_sbsubnear[i-1]->Clone(Form("zr_pt%d_sys_sbsubnear_sq", i));
   h2_zr_ptbinned_sys_sbsubfar_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_sbsubfar[i-1]->Clone(Form("zr_pt%d_sys_sbsubfar_sq", i));
+  h2_zr_ptbinned_sys_fitmodel_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_fitmodel[i-1]->Clone(Form("zr_pt%d_sys_fitmodel_sq", i));
   h2_zr_ptbinned_sys_pidup_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_pidup[i-1]->Clone(Form("zr_pt%d_sys_pidup_sq", i));
   h2_zr_ptbinned_sys_piddown_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_piddown[i-1]->Clone(Form("zr_pt%d_sys_piddown_sq", i));
   h2_zr_ptbinned_sys_recsel_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_recsel[i-1]->Clone(Form("zr_pt%d_sys_recsel_sq", i));
@@ -465,7 +502,8 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_iterlow_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_iterlow[i-1]->Clone(Form("zr_pt%d_sys_iterlow_sq", i));
   h2_zr_ptbinned_sys_prior_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_prior[i-1]->Clone(Form("zr_pt%d_sys_prior_sq", i));  
   h2_zr_ptbinned_sys_closure_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_closure[i-1]->Clone(Form("zr_pt%d_sys_closure_sq", i));    
-  
+  h2_zr_ptbinned_sys_shapeclosure_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_shapeclosure[i-1]->Clone(Form("zr_pt%d_sys_shapeclosure_sq", i));    
+
   h2_jtr_ptbinned_sys_jer_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_jer[i-1]->Clone(Form("jtr_pt%d_sys_jer_sq", i));
   h2_jtr_ptbinned_sys_jetid_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_jetid[i-1]->Clone(Form("jtr_pt%d_sys_jetid_sq", i));
   h2_jtr_ptbinned_sys_jes_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_jes[i-1]->Clone(Form("jtr_pt%d_sys_jes_sq",i));
@@ -475,13 +513,15 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_trigdown_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_trigdown[i-1]->Clone(Form("jtr_pt%d_sys_trigdown_sq", i));
   h2_jtr_ptbinned_sys_sbsubnear_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_sbsubnear[i-1]->Clone(Form("jtr_pt%d_sys_sbsubnear_sq", i));
   h2_jtr_ptbinned_sys_sbsubfar_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_sbsubfar[i-1]->Clone(Form("jtr_pt%d_sys_sbsubfar_sq", i));
+  h2_jtr_ptbinned_sys_fitmodel_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_fitmodel[i-1]->Clone(Form("jtr_pt%d_sys_fitmodel_sq", i));
   h2_jtr_ptbinned_sys_pidup_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_pidup[i-1]->Clone(Form("jtr_pt%d_sys_pidup_sq", i));
   h2_jtr_ptbinned_sys_piddown_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_piddown[i-1]->Clone(Form("jtr_pt%d_sys_piddown_sq", i));
   h2_jtr_ptbinned_sys_recsel_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_recsel[i-1]->Clone(Form("jtr_pt%d_sys_recsel_sq", i));
   h2_jtr_ptbinned_sys_iterhigh_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_iterhigh[i-1]->Clone(Form("jtr_pt%d_sys_iterhigh_sq", i));
   h2_jtr_ptbinned_sys_iterlow_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_iterlow[i-1]->Clone(Form("jtr_pt%d_sys_iterlow_sq", i));
   h2_jtr_ptbinned_sys_prior_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_prior[i-1]->Clone(Form("jtr_pt%d_sys_prior_sq", i));  
-  h2_jtr_ptbinned_sys_closure_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_closure[i-1]->Clone(Form("jtr_pt%d_sys_closure_sq", i));      
+  h2_jtr_ptbinned_sys_closure_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_closure[i-1]->Clone(Form("jtr_pt%d_sys_closure_sq", i));  
+  h2_jtr_ptbinned_sys_shapeclosure_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_shapeclosure[i-1]->Clone(Form("jtr_pt%d_sys_shapeclosure_sq", i));      
   
   
   h1_z_ptbinned_sys_total[i-1] = (TH1D *)h1_z_ptbinned_sys_jer[i-1]->Clone(Form("z_pt%d_total_sys",i));
@@ -516,8 +556,9 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_sbsub_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_sbsubnear_sq[i-1]->Clone(Form("z_pt%d_sys_sbsub_sq",i));  
   h1_z_ptbinned_sys_sbsub_sq[i-1]->Add(h1_z_ptbinned_sys_sbsubnear_sq[i-1], h1_z_ptbinned_sys_sbsubfar_sq[i-1]);
   h1_z_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
-  h1_z_ptbinned_sys_sbsub[i-1] = (TH1D*)h1_z_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("z_pt%d_ratio",i));
+  h1_z_ptbinned_sys_sbsub[i-1] = (TH1D*)h1_z_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("z_pt%d_ratio",i));  
   GetSqrtHist(h1_z_ptbinned_sys_sbsub[i-1]);    
+  h1_z_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h1_z_ptbinned_sys_fitmodel[i-1], h1_z_ptbinned_sys_fitmodel[i-1]);
   h1_z_ptbinned_sys_pidup_sq[i-1]->Multiply(h1_z_ptbinned_sys_pidup[i-1], h1_z_ptbinned_sys_pidup[i-1]);
   h1_z_ptbinned_sys_piddown_sq[i-1]->Multiply(h1_z_ptbinned_sys_piddown[i-1], h1_z_ptbinned_sys_piddown[i-1]);
   h1_z_ptbinned_sys_pid_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_pidup_sq[i-1]->Clone(Form("z_pt%d_sys_pid_sq",i));  
@@ -533,10 +574,12 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_iter_sq[i-1]->Add(h1_z_ptbinned_sys_iterhigh_sq[i-1], h1_z_ptbinned_sys_iterlow_sq[i-1]);
   h1_z_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h1_z_ptbinned_sys_iter[i-1] = (TH1D*)h1_z_ptbinned_sys_iter_sq[i-1]->Clone(Form("z_pt%d_ratio",i));
-  GetSqrtHist(h1_z_ptbinned_sys_iter[i-1]);          
-  h1_z_ptbinned_sys_closure_sq[i-1]->Multiply(h1_z_ptbinned_sys_closure[i-1], h1_z_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h1_z_ptbinned_sys_iter[i-1]);   
 
+  h1_z_ptbinned_sys_closure_sq[i-1]->Multiply(h1_z_ptbinned_sys_closure[i-1], h1_z_ptbinned_sys_closure[i-1]);
+  h1_z_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h1_z_ptbinned_sys_shapeclosure[i-1], h1_z_ptbinned_sys_shapeclosure[i-1]);
   h1_z_ptbinned_sys_unfold_sq[i-1] = (TH1D *)h1_z_ptbinned_sys_closure_sq[i-1]->Clone(Form("z_pt%d_sys_unfold_sq", i));  
+  h1_z_ptbinned_sys_unfold_sq[i-1]->Add(h1_z_ptbinned_sys_shapeclosure_sq[i-1]);
   h1_z_ptbinned_sys_unfold_sq[i-1]->Add(h1_z_ptbinned_sys_prior_sq[i-1]);
   h1_z_ptbinned_sys_unfold_sq[i-1]->Add(h1_z_ptbinned_sys_iter_sq[i-1]);
   
@@ -546,6 +589,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_tracking_sq[i-1]);
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_trig_sq[i-1]);
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_sbsub_sq[i-1]);
+  h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_fitmodel_sq[i-1]);
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_pid_sq[i-1]);
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_recsel_sq[i-1]);
   h1_z_ptbinned_sys_total[i-1]->Add(h1_z_ptbinned_sys_unfold_sq[i-1]);
@@ -577,6 +621,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
   h1_jt_ptbinned_sys_sbsub[i-1] = (TH1D*)h1_jt_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("jt_pt%d_ratio",i));
   GetSqrtHist(h1_jt_ptbinned_sys_sbsub[i-1]);    
+  h1_jt_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h1_jt_ptbinned_sys_fitmodel[i-1], h1_jt_ptbinned_sys_fitmodel[i-1]);
   h1_jt_ptbinned_sys_pidup_sq[i-1]->Multiply(h1_jt_ptbinned_sys_pidup[i-1], h1_jt_ptbinned_sys_pidup[i-1]);
   h1_jt_ptbinned_sys_piddown_sq[i-1]->Multiply(h1_jt_ptbinned_sys_piddown[i-1], h1_jt_ptbinned_sys_piddown[i-1]);
   h1_jt_ptbinned_sys_pid_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_pidup_sq[i-1]->Clone(Form("jt_pt%d_sys_pid_sq",i));  
@@ -592,10 +637,12 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_iter_sq[i-1]->Add(h1_jt_ptbinned_sys_iterhigh_sq[i-1], h1_jt_ptbinned_sys_iterlow_sq[i-1]);
   h1_jt_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h1_jt_ptbinned_sys_iter[i-1] = (TH1D*)h1_jt_ptbinned_sys_iter_sq[i-1]->Clone(Form("jt_pt%d_ratio",i));
-  GetSqrtHist(h1_jt_ptbinned_sys_iter[i-1]);          
-  h1_jt_ptbinned_sys_closure_sq[i-1]->Multiply(h1_jt_ptbinned_sys_closure[i-1], h1_jt_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h1_jt_ptbinned_sys_iter[i-1]);  
 
-  h1_jt_ptbinned_sys_unfold_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_closure_sq[i-1]->Clone(Form("jt_pt%d_sys_unfold_sq", i));  
+  h1_jt_ptbinned_sys_closure_sq[i-1]->Multiply(h1_jt_ptbinned_sys_closure[i-1], h1_jt_ptbinned_sys_closure[i-1]);
+  h1_jt_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h1_jt_ptbinned_sys_shapeclosure[i-1], h1_jt_ptbinned_sys_shapeclosure[i-1]);
+  h1_jt_ptbinned_sys_unfold_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_closure_sq[i-1]->Clone(Form("jt_pt%d_sys_unfold_sq", i)); 
+  h1_jt_ptbinned_sys_unfold_sq[i-1]->Add(h1_jt_ptbinned_sys_shapeclosure_sq[i-1]);
   h1_jt_ptbinned_sys_unfold_sq[i-1]->Add(h1_jt_ptbinned_sys_prior_sq[i-1]);
   h1_jt_ptbinned_sys_unfold_sq[i-1]->Add(h1_jt_ptbinned_sys_iter_sq[i-1]);
   
@@ -605,6 +652,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_tracking_sq[i-1]);
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_trig_sq[i-1]);
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_sbsub_sq[i-1]);
+  h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_fitmodel_sq[i-1]);
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_pid_sq[i-1]);
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_recsel_sq[i-1]);
   h1_jt_ptbinned_sys_total[i-1]->Add(h1_jt_ptbinned_sys_unfold_sq[i-1]);
@@ -636,6 +684,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
   h1_r_ptbinned_sys_sbsub[i-1] = (TH1D*)h1_r_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("r_pt%d_ratio",i));
   GetSqrtHist(h1_r_ptbinned_sys_sbsub[i-1]);    
+  h1_r_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h1_r_ptbinned_sys_fitmodel[i-1], h1_r_ptbinned_sys_fitmodel[i-1]);
   h1_r_ptbinned_sys_pidup_sq[i-1]->Multiply(h1_r_ptbinned_sys_pidup[i-1], h1_r_ptbinned_sys_pidup[i-1]);
   h1_r_ptbinned_sys_piddown_sq[i-1]->Multiply(h1_r_ptbinned_sys_piddown[i-1], h1_r_ptbinned_sys_piddown[i-1]);
   h1_r_ptbinned_sys_pid_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_pidup_sq[i-1]->Clone(Form("r_pt%d_sys_pid_sq",i));  
@@ -651,10 +700,12 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_iter_sq[i-1]->Add(h1_r_ptbinned_sys_iterhigh_sq[i-1], h1_r_ptbinned_sys_iterlow_sq[i-1]);
   h1_r_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h1_r_ptbinned_sys_iter[i-1] = (TH1D*)h1_r_ptbinned_sys_iter_sq[i-1]->Clone(Form("r_pt%d_ratio",i));
-  GetSqrtHist(h1_r_ptbinned_sys_iter[i-1]);          
-  h1_r_ptbinned_sys_closure_sq[i-1]->Multiply(h1_r_ptbinned_sys_closure[i-1], h1_r_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h1_r_ptbinned_sys_iter[i-1]);    
 
+  h1_r_ptbinned_sys_closure_sq[i-1]->Multiply(h1_r_ptbinned_sys_closure[i-1], h1_r_ptbinned_sys_closure[i-1]);
+  h1_r_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h1_r_ptbinned_sys_shapeclosure[i-1], h1_r_ptbinned_sys_shapeclosure[i-1]);
   h1_r_ptbinned_sys_unfold_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_closure_sq[i-1]->Clone(Form("r_pt%d_sys_unfold_sq", i));  
+  h1_r_ptbinned_sys_unfold_sq[i-1]->Add(h1_r_ptbinned_sys_shapeclosure_sq[i-1]);
   h1_r_ptbinned_sys_unfold_sq[i-1]->Add(h1_r_ptbinned_sys_prior_sq[i-1]);
   h1_r_ptbinned_sys_unfold_sq[i-1]->Add(h1_r_ptbinned_sys_iter_sq[i-1]);
   
@@ -664,6 +715,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_tracking_sq[i-1]);
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_trig_sq[i-1]);
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_sbsub_sq[i-1]);
+  h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_fitmodel_sq[i-1]);
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_pid_sq[i-1]);
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_recsel_sq[i-1]);
   h1_r_ptbinned_sys_total[i-1]->Add(h1_r_ptbinned_sys_unfold_sq[i-1]);
@@ -695,6 +747,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
   h2_zjt_ptbinned_sys_sbsub[i-1] = (TH2D*)h2_zjt_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("zjt_pt%d_ratio",i));
   GetSqrtHist(h2_zjt_ptbinned_sys_sbsub[i-1]);    
+  h2_zjt_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_fitmodel[i-1], h2_zjt_ptbinned_sys_fitmodel[i-1]);
   h2_zjt_ptbinned_sys_pidup_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_pidup[i-1], h2_zjt_ptbinned_sys_pidup[i-1]);
   h2_zjt_ptbinned_sys_piddown_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_piddown[i-1], h2_zjt_ptbinned_sys_piddown[i-1]);
   h2_zjt_ptbinned_sys_pid_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_pidup_sq[i-1]->Clone(Form("zjt_pt%d_sys_pid_sq",i));  
@@ -710,10 +763,12 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_iter_sq[i-1]->Add(h2_zjt_ptbinned_sys_iterhigh_sq[i-1], h2_zjt_ptbinned_sys_iterlow_sq[i-1]);
   h2_zjt_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h2_zjt_ptbinned_sys_iter[i-1] = (TH2D*)h2_zjt_ptbinned_sys_iter_sq[i-1]->Clone(Form("zjt_pt%d_ratio",i));
-  GetSqrtHist(h2_zjt_ptbinned_sys_iter[i-1]);          
-  h2_zjt_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_closure[i-1], h2_zjt_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h2_zjt_ptbinned_sys_iter[i-1]);      
 
+  h2_zjt_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_closure[i-1], h2_zjt_ptbinned_sys_closure[i-1]);
+  h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_shapeclosure[i-1], h2_zjt_ptbinned_sys_shapeclosure[i-1]);
   h2_zjt_ptbinned_sys_unfold_sq[i-1] = (TH2D *)h2_zjt_ptbinned_sys_closure_sq[i-1]->Clone(Form("zjt_pt%d_sys_unfold_sq", i));  
+  h2_zjt_ptbinned_sys_unfold_sq[i-1]->Add(h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]);
   h2_zjt_ptbinned_sys_unfold_sq[i-1]->Add(h2_zjt_ptbinned_sys_prior_sq[i-1]);
   h2_zjt_ptbinned_sys_unfold_sq[i-1]->Add(h2_zjt_ptbinned_sys_iter_sq[i-1]);
   
@@ -723,6 +778,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_tracking_sq[i-1]);
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_trig_sq[i-1]);
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_sbsub_sq[i-1]);
+  h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_fitmodel_sq[i-1]);
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_pid_sq[i-1]);
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_recsel_sq[i-1]);
   h2_zjt_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_unfold_sq[i-1]);
@@ -754,6 +810,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
   h2_zr_ptbinned_sys_sbsub[i-1] = (TH2D*)h2_zr_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("zr_pt%d_ratio",i));
   GetSqrtHist(h2_zr_ptbinned_sys_sbsub[i-1]);    
+  h2_zr_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h2_zr_ptbinned_sys_fitmodel[i-1], h2_zr_ptbinned_sys_fitmodel[i-1]);
   h2_zr_ptbinned_sys_pidup_sq[i-1]->Multiply(h2_zr_ptbinned_sys_pidup[i-1], h2_zr_ptbinned_sys_pidup[i-1]);
   h2_zr_ptbinned_sys_piddown_sq[i-1]->Multiply(h2_zr_ptbinned_sys_piddown[i-1], h2_zr_ptbinned_sys_piddown[i-1]);
   h2_zr_ptbinned_sys_pid_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_pidup_sq[i-1]->Clone(Form("zr_pt%d_sys_pid_sq",i));  
@@ -769,10 +826,12 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_iter_sq[i-1]->Add(h2_zr_ptbinned_sys_iterhigh_sq[i-1], h2_zr_ptbinned_sys_iterlow_sq[i-1]);
   h2_zr_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h2_zr_ptbinned_sys_iter[i-1] = (TH2D*)h2_zr_ptbinned_sys_iter_sq[i-1]->Clone(Form("zr_pt%d_ratio",i));
-  GetSqrtHist(h2_zr_ptbinned_sys_iter[i-1]);          
-  h2_zr_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zr_ptbinned_sys_closure[i-1], h2_zr_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h2_zr_ptbinned_sys_iter[i-1]);    
 
-  h2_zr_ptbinned_sys_unfold_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_closure_sq[i-1]->Clone(Form("zr_pt%d_sys_unfold_sq", i));  
+  h2_zr_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zr_ptbinned_sys_closure[i-1], h2_zr_ptbinned_sys_closure[i-1]);
+  h2_zr_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h2_zr_ptbinned_sys_shapeclosure[i-1], h2_zr_ptbinned_sys_shapeclosure[i-1]);
+  h2_zr_ptbinned_sys_unfold_sq[i-1] = (TH2D *)h2_zr_ptbinned_sys_closure_sq[i-1]->Clone(Form("zr_pt%d_sys_unfold_sq", i)); 
+  h2_zr_ptbinned_sys_unfold_sq[i-1]->Add(h2_zr_ptbinned_sys_shapeclosure_sq[i-1]); 
   h2_zr_ptbinned_sys_unfold_sq[i-1]->Add(h2_zr_ptbinned_sys_prior_sq[i-1]);
   h2_zr_ptbinned_sys_unfold_sq[i-1]->Add(h2_zr_ptbinned_sys_iter_sq[i-1]);
   
@@ -782,6 +841,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_tracking_sq[i-1]);
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_trig_sq[i-1]);
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_sbsub_sq[i-1]);
+  h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_fitmodel_sq[i-1]);
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_pid_sq[i-1]);
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_recsel_sq[i-1]);
   h2_zr_ptbinned_sys_total[i-1]->Add(h2_zr_ptbinned_sys_unfold_sq[i-1]);
@@ -812,7 +872,8 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_sbsub_sq[i-1]->Add(h2_jtr_ptbinned_sys_sbsubnear_sq[i-1], h2_jtr_ptbinned_sys_sbsubfar_sq[i-1]);
   h2_jtr_ptbinned_sys_sbsub_sq[i-1]->Scale(1./2.);   
   h2_jtr_ptbinned_sys_sbsub[i-1] = (TH2D*)h2_jtr_ptbinned_sys_sbsub_sq[i-1]->Clone(Form("jtr_pt%d_ratio",i));
-  GetSqrtHist(h2_jtr_ptbinned_sys_sbsub[i-1]);    
+  GetSqrtHist(h2_jtr_ptbinned_sys_sbsub[i-1]);
+  h2_jtr_ptbinned_sys_fitmodel_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_fitmodel[i-1], h2_jtr_ptbinned_sys_fitmodel[i-1]);
   h2_jtr_ptbinned_sys_pidup_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_pidup[i-1], h2_jtr_ptbinned_sys_pidup[i-1]);
   h2_jtr_ptbinned_sys_piddown_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_piddown[i-1], h2_jtr_ptbinned_sys_piddown[i-1]);
   h2_jtr_ptbinned_sys_pid_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_pidup_sq[i-1]->Clone(Form("jtr_pt%d_sys_pid_sq",i));  
@@ -828,10 +889,12 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_iter_sq[i-1]->Add(h2_jtr_ptbinned_sys_iterhigh_sq[i-1], h2_jtr_ptbinned_sys_iterlow_sq[i-1]);
   h2_jtr_ptbinned_sys_iter_sq[i-1]->Scale(1./2.);
   h2_jtr_ptbinned_sys_iter[i-1] = (TH2D*)h2_jtr_ptbinned_sys_iter_sq[i-1]->Clone(Form("jtr_pt%d_ratio",i));
-  GetSqrtHist(h2_jtr_ptbinned_sys_iter[i-1]);          
-  h2_jtr_ptbinned_sys_closure_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_closure[i-1], h2_jtr_ptbinned_sys_closure[i-1]);
+  GetSqrtHist(h2_jtr_ptbinned_sys_iter[i-1]);    
 
-  h2_jtr_ptbinned_sys_unfold_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_closure_sq[i-1]->Clone(Form("jtr_pt%d_sys_unfold_sq", i));  
+  h2_jtr_ptbinned_sys_closure_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_closure[i-1], h2_jtr_ptbinned_sys_closure[i-1]);
+  h2_jtr_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h2_jtr_ptbinned_sys_shapeclosure[i-1], h2_jtr_ptbinned_sys_shapeclosure[i-1]);
+  h2_jtr_ptbinned_sys_unfold_sq[i-1] = (TH2D *)h2_jtr_ptbinned_sys_closure_sq[i-1]->Clone(Form("jtr_pt%d_sys_unfold_sq", i)); 
+  h2_jtr_ptbinned_sys_unfold_sq[i-1]->Add(h2_jtr_ptbinned_sys_shapeclosure_sq[i-1]); 
   h2_jtr_ptbinned_sys_unfold_sq[i-1]->Add(h2_jtr_ptbinned_sys_prior_sq[i-1]);
   h2_jtr_ptbinned_sys_unfold_sq[i-1]->Add(h2_jtr_ptbinned_sys_iter_sq[i-1]);
   
@@ -841,6 +904,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_tracking_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_trig_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_sbsub_sq[i-1]);
+  h2_jtr_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_fitmodel_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_pid_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_recsel_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_unfold_sq[i-1]);
@@ -858,6 +922,7 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_recsel[i-1]);
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_closure[i-1]);
+  vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_iter[i-1]);
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_prior[i-1]);
   vec_sys_z_ptbinned[i-1].push_back(h1_z_ptbinned_sys_total[i-1]);  
@@ -872,6 +937,7 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_recsel[i-1]);
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_closure[i-1]);
+  vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_iter[i-1]);
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_prior[i-1]);
   vec_sys_jt_ptbinned[i-1].push_back(h1_jt_ptbinned_sys_total[i-1]);     
@@ -886,6 +952,7 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_recsel[i-1]);
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_closure[i-1]);
+  vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_iter[i-1]);
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_prior[i-1]);
   vec_sys_r_ptbinned[i-1].push_back(h1_r_ptbinned_sys_total[i-1]);  
@@ -901,6 +968,7 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_recsel[i-1]);
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_closure[i-1]);
+  vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_iter[i-1]);
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_prior[i-1]);
   vec_sys_zjt_ptbinned[i-1].push_back(h2_zjt_ptbinned_sys_total[i-1]);  
@@ -915,6 +983,7 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_recsel[i-1]);
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_closure[i-1]);
+  vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_iter[i-1]);
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_prior[i-1]);
   vec_sys_zr_ptbinned[i-1].push_back(h2_zr_ptbinned_sys_total[i-1]);     
@@ -929,11 +998,11 @@ void GetTotalSys(int NumEvts = -1,
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_fitmodel[i-1]);  
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_recsel[i-1]);
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_closure[i-1]);
+  vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_shapeclosure[i-1]);
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_iter[i-1]);
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_prior[i-1]);
   vec_sys_jtr_ptbinned[i-1].push_back(h2_jtr_ptbinned_sys_total[i-1]);    
   
-  // Write relevant histograms to output file
   h1_z_ptbinned_sys_jetid[i-1]->SetName(Form("z_sys_jetid_pt%d", i));   
   h1_z_ptbinned_sys_jer[i-1]->SetName(Form("z_sys_jer_pt%d", i));   
   h1_z_ptbinned_sys_jes[i-1]->SetName(Form("z_sys_jes_pt%d", i));   
@@ -943,6 +1012,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_fitmodel[i-1]->SetName(Form("z_sys_fitmodel_pt%d", i));  
   h1_z_ptbinned_sys_recsel[i-1]->SetName(Form("z_sys_recsel_pt%d", i));       
   h1_z_ptbinned_sys_closure[i-1]->SetName(Form("z_sys_closure_pt%d", i)); 
+  h1_z_ptbinned_sys_shapeclosure[i-1]->SetName(Form("z_sys_shapeclosure_pt%d", i)); 
   h1_z_ptbinned_sys_iter[i-1]->SetName(Form("z_sys_iter_pt%d", i));    
   h1_z_ptbinned_sys_prior[i-1]->SetName(Form("z_sys_prior_pt%d", i));    
   h1_z_ptbinned_sys_total[i-1]->SetName(Form("z_sys_total_pt%d", i));    
@@ -956,6 +1026,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_fitmodel[i-1]->SetName(Form("jt_sys_fitmodel_pt%d", i));  
   h1_jt_ptbinned_sys_recsel[i-1]->SetName(Form("jt_sys_recsel_pt%d", i));       
   h1_jt_ptbinned_sys_closure[i-1]->SetName(Form("jt_sys_closure_pt%d", i)); 
+  h1_jt_ptbinned_sys_shapeclosure[i-1]->SetName(Form("jt_sys_shapeclosure_pt%d", i)); 
   h1_jt_ptbinned_sys_iter[i-1]->SetName(Form("jt_sys_iter_pt%d", i));    
   h1_jt_ptbinned_sys_prior[i-1]->SetName(Form("jt_sys_prior_pt%d", i));    
   h1_jt_ptbinned_sys_total[i-1]->SetName(Form("jt_sys_total_pt%d", i));    
@@ -969,6 +1040,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_fitmodel[i-1]->SetName(Form("r_sys_fitmodel_pt%d", i));  
   h1_r_ptbinned_sys_recsel[i-1]->SetName(Form("r_sys_recsel_pt%d", i));       
   h1_r_ptbinned_sys_closure[i-1]->SetName(Form("r_sys_closure_pt%d", i)); 
+  h1_r_ptbinned_sys_shapeclosure[i-1]->SetName(Form("r_sys_shapeclosure_pt%d", i)); 
   h1_r_ptbinned_sys_iter[i-1]->SetName(Form("r_sys_iter_pt%d", i));    
   h1_r_ptbinned_sys_prior[i-1]->SetName(Form("r_sys_prior_pt%d", i));    
   h1_r_ptbinned_sys_total[i-1]->SetName(Form("r_sys_total_pt%d", i));    
@@ -983,6 +1055,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_fitmodel[i-1]->SetName(Form("zjt_sys_fitmodel_pt%d", i));  
   h2_zjt_ptbinned_sys_recsel[i-1]->SetName(Form("zjt_sys_recsel_pt%d", i));       
   h2_zjt_ptbinned_sys_closure[i-1]->SetName(Form("zjt_sys_closure_pt%d", i)); 
+  h2_zjt_ptbinned_sys_shapeclosure[i-1]->SetName(Form("zjt_sys_shapeclosure_pt%d", i)); 
   h2_zjt_ptbinned_sys_iter[i-1]->SetName(Form("zjt_sys_iter_pt%d", i));    
   h2_zjt_ptbinned_sys_prior[i-1]->SetName(Form("zjt_sys_prior_pt%d", i));    
   h2_zjt_ptbinned_sys_total[i-1]->SetName(Form("zjt_sys_total_pt%d", i));    
@@ -996,6 +1069,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_fitmodel[i-1]->SetName(Form("zr_sys_fitmodel_pt%d", i));  
   h2_zr_ptbinned_sys_recsel[i-1]->SetName(Form("zr_sys_recsel_pt%d", i));       
   h2_zr_ptbinned_sys_closure[i-1]->SetName(Form("zr_sys_closure_pt%d", i)); 
+  h2_zr_ptbinned_sys_shapeclosure[i-1]->SetName(Form("zr_sys_shapeclosure_pt%d", i)); 
   h2_zr_ptbinned_sys_iter[i-1]->SetName(Form("zr_sys_iter_pt%d", i));    
   h2_zr_ptbinned_sys_prior[i-1]->SetName(Form("zr_sys_prior_pt%d", i));    
   h2_zr_ptbinned_sys_total[i-1]->SetName(Form("zr_sys_total_pt%d", i));    
@@ -1009,6 +1083,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_fitmodel[i-1]->SetName(Form("jtr_sys_fitmodel_pt%d", i));  
   h2_jtr_ptbinned_sys_recsel[i-1]->SetName(Form("jtr_sys_recsel_pt%d", i));       
   h2_jtr_ptbinned_sys_closure[i-1]->SetName(Form("jtr_sys_closure_pt%d", i)); 
+  h2_jtr_ptbinned_sys_shapeclosure[i-1]->SetName(Form("jtr_sys_shapeclosure_pt%d", i)); 
   h2_jtr_ptbinned_sys_iter[i-1]->SetName(Form("jtr_sys_iter_pt%d", i));    
   h2_jtr_ptbinned_sys_prior[i-1]->SetName(Form("jtr_sys_prior_pt%d", i));    
   h2_jtr_ptbinned_sys_total[i-1]->SetName(Form("jtr_sys_total_pt%d", i));        
@@ -1031,8 +1106,10 @@ void GetTotalSys(int NumEvts = -1,
   h1_z_ptbinned_sys_fitmodel[i-1]->Write();  
   h1_z_ptbinned_sys_recsel[i-1]->Write();       
   h1_z_ptbinned_sys_closure[i-1]->Write(); 
+  h1_z_ptbinned_sys_shapeclosure[i-1]->Write(); 
   h1_z_ptbinned_sys_iter[i-1]->Write();    
-  h1_z_ptbinned_sys_prior[i-1]->Write();    
+  h1_z_ptbinned_sys_prior[i-1]->Write(); 
+  h1_z_ptbinned_sys_total[i-1]->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
   h1_z_ptbinned_sys_total[i-1]->Write();    
   
   h1_jt_ptbinned_sys_jetid[i-1]->Write();   
@@ -1044,8 +1121,10 @@ void GetTotalSys(int NumEvts = -1,
   h1_jt_ptbinned_sys_fitmodel[i-1]->Write();  
   h1_jt_ptbinned_sys_recsel[i-1]->Write();       
   h1_jt_ptbinned_sys_closure[i-1]->Write(); 
+  h1_jt_ptbinned_sys_shapeclosure[i-1]->Write(); 
   h1_jt_ptbinned_sys_iter[i-1]->Write();    
-  h1_jt_ptbinned_sys_prior[i-1]->Write();    
+  h1_jt_ptbinned_sys_prior[i-1]->Write();
+  h1_jt_ptbinned_sys_total[i-1]->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
   h1_jt_ptbinned_sys_total[i-1]->Write();    
   
   h1_r_ptbinned_sys_jetid[i-1]->Write();   
@@ -1057,8 +1136,10 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_fitmodel[i-1]->Write();  
   h1_r_ptbinned_sys_recsel[i-1]->Write();       
   h1_r_ptbinned_sys_closure[i-1]->Write(); 
+  h1_r_ptbinned_sys_shapeclosure[i-1]->Write(); 
   h1_r_ptbinned_sys_iter[i-1]->Write();    
-  h1_r_ptbinned_sys_prior[i-1]->Write();    
+  h1_r_ptbinned_sys_prior[i-1]->Write();
+  h1_r_ptbinned_sys_total[i-1]->SetTitle(Form("%.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
   h1_r_ptbinned_sys_total[i-1]->Write();    
   
 
@@ -1071,8 +1152,11 @@ void GetTotalSys(int NumEvts = -1,
   h2_zjt_ptbinned_sys_fitmodel[i-1]->Write();  
   h2_zjt_ptbinned_sys_recsel[i-1]->Write();       
   h2_zjt_ptbinned_sys_closure[i-1]->Write(); 
+  h2_zjt_ptbinned_sys_shapeclosure[i-1]->Write(); 
   h2_zjt_ptbinned_sys_iter[i-1]->Write();    
   h2_zjt_ptbinned_sys_prior[i-1]->Write();    
+  h2_zjt_ptbinned_sys_total[i-1]->SetTitle(Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+  h2_zjt_ptbinned_sys_total[i-1]->SetOption("COLZ, text");
   h2_zjt_ptbinned_sys_total[i-1]->Write();    
   
   h2_zr_ptbinned_sys_jetid[i-1]->Write();   
@@ -1084,8 +1168,11 @@ void GetTotalSys(int NumEvts = -1,
   h2_zr_ptbinned_sys_fitmodel[i-1]->Write();  
   h2_zr_ptbinned_sys_recsel[i-1]->Write();       
   h2_zr_ptbinned_sys_closure[i-1]->Write(); 
+  h2_zr_ptbinned_sys_shapeclosure[i-1]->Write(); 
   h2_zr_ptbinned_sys_iter[i-1]->Write();    
-  h2_zr_ptbinned_sys_prior[i-1]->Write();    
+  h2_zr_ptbinned_sys_prior[i-1]->Write();   
+  h2_zr_ptbinned_sys_total[i-1]->SetTitle(Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+  h2_zr_ptbinned_sys_total[i-1]->SetOption("COLZ, text");
   h2_zr_ptbinned_sys_total[i-1]->Write();    
   
   h2_jtr_ptbinned_sys_jetid[i-1]->Write();   
@@ -1096,9 +1183,12 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_sbsub[i-1]->Write();   
   h2_jtr_ptbinned_sys_fitmodel[i-1]->Write();  
   h2_jtr_ptbinned_sys_recsel[i-1]->Write();       
-  h2_jtr_ptbinned_sys_closure[i-1]->Write(); 
+  h2_jtr_ptbinned_sys_closure[i-1]->Write();
+  h2_jtr_ptbinned_sys_shapeclosure[i-1]->Write();  
   h2_jtr_ptbinned_sys_iter[i-1]->Write();    
-  h2_jtr_ptbinned_sys_prior[i-1]->Write();    
+  h2_jtr_ptbinned_sys_prior[i-1]->Write();
+  h2_jtr_ptbinned_sys_total[i-1]->SetTitle(Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
+  h2_jtr_ptbinned_sys_total[i-1]->SetOption("COLZ, text");
   h2_jtr_ptbinned_sys_total[i-1]->Write();   
   
   }

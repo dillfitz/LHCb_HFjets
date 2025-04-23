@@ -30,6 +30,8 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
                    bool DoUnfoldPrior = false)
 {
 
+  gStyle->SetPaintTextFormat("3.3f");
+  
   TString string_data_nominal, string_data_test, string_unfold, string_unfold_test, extension;
   TString str_followHard, str_ghost, str_Mag, str_flavor;
   TString string_systype;
@@ -422,6 +424,8 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TH1D *h1_r_ptbinned_final_nominal[ptbinsize-1], *h1_r_ptbinned_final_test[ptbinsize-1];
   TH1D *h1_r_ptbinned_ratio[ptbinsize-1], *h1_r_ptbinned_diff[ptbinsize-1];    
     
+  TString systype = string_systype.Remove(string_systype.Length() -1);  
+  TString sys_title = "";
   for (int j=1; j < ptbinsize; ++j)
   {
 
@@ -487,7 +491,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h2_jtr_ptbinned_diff[j-1] = (TH2D*)h2_jtr_ptbinned_final_nominal[j-1]->Clone(Form("jtr_pt%d_diff", j));    
 
     h1_z_ptbinned_ratio[j-1] = (TH1D*)h1_z_ptbinned_final_nominal[j-1]->Clone(Form("z_pt%d_ratio", j));
-    h1_z_ptbinned_diff[j-1] = (TH1D*)h1_z_ptbinned_final_nominal[j-1]->Clone(Form("z_pt%d_diff", j));    
+    h1_z_ptbinned_diff[j-1] = (TH1D*)h1_z_ptbinned_final_nominal[j-1]->Clone(Form("z_pt%d_diff", j)); 
     
     h1_jt_ptbinned_ratio[j-1] = (TH1D*)h1_jt_ptbinned_final_nominal[j-1]->Clone(Form("jt_pt%d_ratio", j));
     h1_jt_ptbinned_diff[j-1] = (TH1D*)h1_jt_ptbinned_final_nominal[j-1]->Clone(Form("jt_pt%d_diff", j));   
@@ -496,77 +500,109 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h1_r_ptbinned_diff[j-1] = (TH1D*)h1_r_ptbinned_final_nominal[j-1]->Clone(Form("r_pt%d_diff", j));           
     
     /////////////////////   Compute ratios and pulls /////////////////////////////////
+  
+    sys_title = systype + Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]);
 
     h2_zjt_ptbinned_ratio[j-1]->Divide(h2_zjt_ptbinned_final_nominal[j-1], h2_zjt_ptbinned_final_test[j-1]);
     cout << " zjt Averaged Rel. Unc. = " << GetWeightedAverage(h2_zjt_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_zjt_ptbinned_ratio[j-1]);
+    h2_zjt_ptbinned_ratio[j-1]->SetOption("COLZ, text");
     h2_zjt_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("z");
     h2_zjt_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_zjt_ptbinned_ratio[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_zjt_ptbinned_ratio[j-1]->SetTitle(sys_title);   
     h2_zjt_ptbinned_ratio[j-1]->Write();
 
     h2_zjt_ptbinned_diff[j-1]->Add(h2_zjt_ptbinned_diff[j-1], h2_zjt_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h2_zjt_ptbinned_diff[j-1], h2_zjt_ptbinned_final_nominal[j-1], h2_zjt_ptbinned_final_test[j-1], rho);
+    h2_zjt_ptbinned_diff[j-1]->SetOption("COLZ, text");  
     h2_zjt_ptbinned_diff[j-1]->GetXaxis()->SetTitle("z");    
     h2_zjt_ptbinned_diff[j-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_zjt_ptbinned_diff[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_zjt_ptbinned_diff[j-1]->SetTitle(sys_title); 
     h2_zjt_ptbinned_diff[j-1]->Write();
         
     h2_zr_ptbinned_ratio[j-1]->Divide(h2_zr_ptbinned_ratio[j-1], h2_zr_ptbinned_final_test[j-1]);
     cout << "zr Averaged Rel. Unc. = " << GetWeightedAverage(h2_zr_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_zr_ptbinned_ratio[j-1]);
+    h2_zr_ptbinned_ratio[j-1]->SetOption("COLZ, text");  
     h2_zr_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("z");  
-    h2_zr_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("r");       
+    h2_zr_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("r");
+    h2_zr_ptbinned_ratio[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_zr_ptbinned_ratio[j-1]->SetTitle(sys_title);         
     h2_zr_ptbinned_ratio[j-1]->Write();
     
     h2_zr_ptbinned_diff[j-1]->Add(h2_zr_ptbinned_diff[j-1], h2_zr_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h2_zr_ptbinned_diff[j-1], h2_zr_ptbinned_final_nominal[j-1], h2_zr_ptbinned_final_test[j-1], rho); 
+    h2_zr_ptbinned_diff[j-1]->SetOption("COLZ, text");  
     h2_zr_ptbinned_diff[j-1]->GetXaxis()->SetTitle("z");        
-    h2_zr_ptbinned_diff[j-1]->GetYaxis()->SetTitle("r");       
+    h2_zr_ptbinned_diff[j-1]->GetYaxis()->SetTitle("r");
+    h2_zr_ptbinned_diff[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_zr_ptbinned_diff[j-1]->SetTitle(sys_title);          
     h2_zr_ptbinned_diff[j-1]->Write();
         
     h2_jtr_ptbinned_ratio[j-1]->Divide(h2_jtr_ptbinned_ratio[j-1], h2_jtr_ptbinned_final_test[j-1]);
     cout << "jtr Averaged Rel. Unc. = " << GetWeightedAverage(h2_jtr_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_jtr_ptbinned_ratio[j-1]);
+    h2_jtr_ptbinned_ratio[j-1]->SetOption("COLZ, text");  
     h2_jtr_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_jtr_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("r");      
+    h2_jtr_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_ptbinned_ratio[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_jtr_ptbinned_ratio[j-1]->SetTitle(sys_title);         
     h2_jtr_ptbinned_ratio[j-1]->Write();
     
     h2_jtr_ptbinned_diff[j-1]->Add(h2_jtr_ptbinned_diff[j-1], h2_jtr_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h2_jtr_ptbinned_diff[j-1], h2_jtr_ptbinned_final_nominal[j-1], h2_jtr_ptbinned_final_test[j-1], rho);
+    h2_jtr_ptbinned_diff[j-1]->SetOption("COLZ, text");  
     h2_jtr_ptbinned_diff[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_ptbinned_diff[j-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_ptbinned_diff[j-1]->GetZaxis()->SetTitle("#sigma_{sys}");
+    h2_jtr_ptbinned_diff[j-1]->SetTitle(sys_title);   
     h2_jtr_ptbinned_diff[j-1]->Write();   
 
     h1_z_ptbinned_ratio[j-1]->Divide(h1_z_ptbinned_ratio[j-1], h1_z_ptbinned_final_test[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_z_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_z_ptbinned_ratio[j-1]);
     h1_z_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("z");
+    h1_z_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_z_ptbinned_ratio[j-1]->SetTitle(sys_title);   
     h1_z_ptbinned_ratio[j-1]->Write();
 
     h1_z_ptbinned_diff[j-1]->Add(h1_z_ptbinned_diff[j-1], h1_z_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h1_z_ptbinned_diff[j-1], h1_z_ptbinned_final_nominal[j-1], h1_z_ptbinned_final_test[j-1], rho);
-    h1_z_ptbinned_diff[j-1]->GetXaxis()->SetTitle("z");        
+    h1_z_ptbinned_diff[j-1]->GetXaxis()->SetTitle("z");
+    h1_z_ptbinned_diff[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_z_ptbinned_diff[j-1]->SetTitle(sys_title);           
     h1_z_ptbinned_diff[j-1]->Write();
         
     h1_jt_ptbinned_ratio[j-1]->Divide(h1_jt_ptbinned_ratio[j-1], h1_jt_ptbinned_final_test[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_jt_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_jt_ptbinned_ratio[j-1]);
     h1_jt_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
+    h1_jt_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_jt_ptbinned_ratio[j-1]->SetTitle(sys_title);   
     h1_jt_ptbinned_ratio[j-1]->Write();
     
     h1_jt_ptbinned_diff[j-1]->Add(h1_jt_ptbinned_diff[j-1], h1_jt_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h1_jt_ptbinned_diff[j-1], h1_jt_ptbinned_final_nominal[j-1], h1_jt_ptbinned_final_test[j-1], rho); 
     h1_jt_ptbinned_diff[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
+    h1_jt_ptbinned_diff[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_jt_ptbinned_diff[j-1]->SetTitle(sys_title);   
     h1_jt_ptbinned_diff[j-1]->Write();
         
     h1_r_ptbinned_ratio[j-1]->Divide(h1_r_ptbinned_ratio[j-1], h1_r_ptbinned_final_test[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_r_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_r_ptbinned_ratio[j-1]);
-    h1_r_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("r");        
+    h1_r_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("r");
+    h1_r_ptbinned_ratio[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_r_ptbinned_ratio[j-1]->SetTitle(sys_title);             
     h1_r_ptbinned_ratio[j-1]->Write();
     
     h1_r_ptbinned_diff[j-1]->Add(h1_r_ptbinned_diff[j-1], h1_r_ptbinned_final_test[j-1], 1, -1);
     SetHistErrCorr(h1_r_ptbinned_diff[j-1], h1_r_ptbinned_final_nominal[j-1], h1_r_ptbinned_final_test[j-1], rho);   
-    h1_r_ptbinned_diff[j-1]->GetXaxis()->SetTitle("r");        
+    h1_r_ptbinned_diff[j-1]->GetXaxis()->SetTitle("r");    
+    h1_r_ptbinned_diff[j-1]->GetYaxis()->SetTitle("#sigma_{sys}");
+    h1_r_ptbinned_diff[j-1]->SetTitle(sys_title);     
     h1_r_ptbinned_diff[j-1]->Write();              
   }
 /*
