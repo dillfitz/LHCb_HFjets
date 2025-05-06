@@ -11,6 +11,7 @@ void GetTotalSys(int NumEvts = -1,
                  int NumIters = 4)
 {
 
+  const int sigfigs = 4;
   gROOT->ForceStyle();
   gStyle->SetPaintTextFormat("3.3f");
   gStyle->SetOptStat(0);
@@ -143,7 +144,7 @@ void GetTotalSys(int NumEvts = -1,
                                 "Trig. Eff.",
                                 "Sideband Var.",
                                 "Fit Model",
-                                "Rec. & Sel. Eff.",
+                                "Rec. Sel. Eff.",
                                 "nonclosure",
                                 "shapeclosure",
                                 "iter",
@@ -277,7 +278,8 @@ void GetTotalSys(int NumEvts = -1,
   TH1D *h1_r_ptbinned_sys_total[ptbinsize-1];   
   TH2D *h2_zjt_ptbinned_sys_total[ptbinsize-1];
   TH2D *h2_zr_ptbinned_sys_total[ptbinsize-1]; 
-  TH2D *h2_jtr_ptbinned_sys_total[ptbinsize-1];                                                     
+  TH2D *h2_jtr_ptbinned_sys_total[ptbinsize-1];    
+  
   for (int i = 1; i< ptbinsize; ++i)
   {                                
 
@@ -904,7 +906,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_tracking_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_trig_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_sbsub_sq[i-1]);
-  h2_jtr_ptbinned_sys_total[i-1]->Add(h2_zjt_ptbinned_sys_fitmodel_sq[i-1]);
+  h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_fitmodel_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_pid_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_recsel_sq[i-1]);
   h2_jtr_ptbinned_sys_total[i-1]->Add(h2_jtr_ptbinned_sys_unfold_sq[i-1]);
@@ -1087,7 +1089,7 @@ void GetTotalSys(int NumEvts = -1,
   h2_jtr_ptbinned_sys_iter[i-1]->SetName(Form("jtr_sys_iter_pt%d", i));    
   h2_jtr_ptbinned_sys_prior[i-1]->SetName(Form("jtr_sys_prior_pt%d", i));    
   h2_jtr_ptbinned_sys_total[i-1]->SetName(Form("jtr_sys_total_pt%d", i));        
-  
+  /*
   if (i==3)
   {
     for (int ibin = 0; ibin < h1_jt_ptbinned_sys_total[i-1]->GetNbinsX(); ++ibin)
@@ -1096,6 +1098,7 @@ void GetTotalSys(int NumEvts = -1,
       cout << " nonclosure sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_closure[i-1]->GetBinContent(ibin+1) << endl;      
     }
   }
+  */
   // Write relevant histograms to output file
   h1_z_ptbinned_sys_jetid[i-1]->Write();   
   h1_z_ptbinned_sys_jer[i-1]->Write();   
@@ -1249,8 +1252,23 @@ void GetTotalSys(int NumEvts = -1,
   plotfileC = plotfilePDF + TString("]");
   // c->SaveAs("plots/"+extension+".pdf");
 
+  double top = 0.85;
+  double step = 0.06;
+
+  ofstream textables;
+  textables.open("textables.txt");
+  textables << "\\begin{longtable}{ccc}\n";
+  textables << "    \\caption{Systematic uncertainties for $\\frac{1}{N_{j}}\\frac{dN}{dz}$ from Figure~\\ref{fig:z_total_sys_pt1}-\\ref{fig:z_total_sys_pt6}} \\\\\n";
+  textables << "    \\label{tab:z_sys_all}\n";
+  textables << "    \\ptj & sys type & min - max (relative sys) \\\\\n";
+  textables << "    \\hline\n";
   for (int i=1; i<ptbinsize; ++i)
   {
+    if (i!=1)
+    {
+      textables << "    \\hline\n";
+    }
+    textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << " & ";
   // Begin plotting
   //
   //
@@ -1265,20 +1283,20 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_z_ptbinned_sys_total[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_total[i-1]->SetMaximum(1.);
-  h1_z_ptbinned_sys_total[i-1]->SetMinimum(0.);
+  //h1_z_ptbinned_sys_total[i-1]->SetMaximum(1.);
+  //h1_z_ptbinned_sys_total[i-1]->SetMinimum(0.);
   h1_z_ptbinned_sys_total[i-1]->SetTitle("Total Systematic");
   
   ccan[ican]->cd(3);
   h1_z_ptbinned_sys_pidup[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_pidup[i-1]->SetMinimum(-0.1);
-  h1_z_ptbinned_sys_pidup[i-1]->SetMaximum(0.1);
+  //h1_z_ptbinned_sys_pidup[i-1]->SetMinimum(-0.1);
+  //h1_z_ptbinned_sys_pidup[i-1]->SetMaximum(0.1);
   h1_z_ptbinned_sys_pidup[i-1]->SetTitle("PID +1#sigma");
 
   ccan[ican]->cd(4);
   h1_z_ptbinned_sys_piddown[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_piddown[i-1]->SetMinimum(-0.1);
-  h1_z_ptbinned_sys_piddown[i-1]->SetMaximum(0.1);
+  //h1_z_ptbinned_sys_piddown[i-1]->SetMinimum(-0.1);
+  //h1_z_ptbinned_sys_piddown[i-1]->SetMaximum(0.1);
   h1_z_ptbinned_sys_piddown[i-1]->SetTitle("PID -1#sigma");  
 
   // h1_z_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -1306,27 +1324,27 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_z_ptbinned_sys_trigup[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_trigup[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_trigup[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_trigup[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_trigup[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_trigup[i-1]->SetTitle("Trig. +1#sigma");
   ccan[ican]->cd(2);
 
   h1_z_ptbinned_sys_trigdown[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_trigdown[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_trigdown[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_trigdown[i-1]->SetTitle("Trig. -1#sigma");
 
   ccan[ican]->cd(3);
   h1_z_ptbinned_sys_trackingup[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_trackingup[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_trackingup[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_trackingup[i-1]->SetTitle("Tracking +1#sigma");
 
   ccan[ican]->cd(4);
 
   h1_z_ptbinned_sys_trackingdown[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.3);
-  h1_z_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.3);
+  //h1_z_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.3);
+  //h1_z_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.3);
   h1_z_ptbinned_sys_trackingdown[i-1]->SetTitle("Tracking -1#sigma");
 
   // h1_z_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -1402,20 +1420,20 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_z_ptbinned_sys_jes[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_jes[i-1]->SetTitle("JES");
 
   ccan[ican]->cd(2);
   h1_z_ptbinned_sys_jer[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_jer[i-1]->SetTitle("JER");
   
   ccan[ican]->cd(3);
   h1_z_ptbinned_sys_jetid[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
-  h1_z_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
   h1_z_ptbinned_sys_jetid[i-1]->SetTitle("JetID efficiency");  
 
   // h1_z_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -1444,26 +1462,26 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_z_ptbinned_sys_sbsubnear[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_sbsubnear[i-1]->SetTitle("Sideband Var 1");
  
   ccan[ican]->cd(2);
   h1_z_ptbinned_sys_sbsubfar[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_sbsubfar[i-1]->SetTitle("Sideband Var 2");
    
   ccan[ican]->cd(3);
   h1_z_ptbinned_sys_fitmodel[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_fitmodel[i-1]->SetTitle("MassFit Model Var");
   
   ccan[ican]->cd(4);
   h1_z_ptbinned_sys_recsel[i-1]->Draw("COLZ TEXTE");
-  h1_z_ptbinned_sys_recsel[i-1]->SetMinimum(-0.5);
-  h1_z_ptbinned_sys_recsel[i-1]->SetMaximum(0.5);
+  //h1_z_ptbinned_sys_recsel[i-1]->SetMinimum(-0.5);
+  //h1_z_ptbinned_sys_recsel[i-1]->SetMaximum(0.5);
   h1_z_ptbinned_sys_recsel[i-1]->SetTitle("Rec. and Sel.");    
 
 
@@ -1501,10 +1519,31 @@ void GetTotalSys(int NumEvts = -1,
 
     THStack stack_ptz_ptbinned_sys("stack_ptz_ptbinned_sys%d", "");
 
+
+
     for (int j = 0; j < vec_sys_z_ptbinned[i-1].size(); j++)
     {
       SetHistErrorZero(vec_sys_z_ptbinned[i-1][j]);
       TH1D *h1_z_ptbinned_sys = (TH1D *)vec_sys_z_ptbinned[i-1][j];
+      TH1D *h1_z_ptbinned_sys_fortable = (TH1D*)h1_z_ptbinned_sys->Clone(Form("h1_z_pt%d_sys_fortable_%d",i,j));
+      for (int ibin = 0; ibin < h1_z_ptbinned_sys_fortable->GetNbinsX(); ++ibin )
+      {
+        if (ibin == 0) { h1_z_ptbinned_sys_fortable->SetBinContent(ibin+1, 0.); }
+        if (h1_z_ptbinned_sys_fortable->GetBinContent(ibin+1) < 0)
+        {
+          h1_z_ptbinned_sys_fortable->SetBinContent(ibin+1, fabs(h1_z_ptbinned_sys_fortable->GetBinContent(ibin+1)));
+        }
+
+
+      }
+      if (j==0)
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << vec_string[j] << " & " << h1_z_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_z_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
+      else
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << "                     & " << vec_string[j] << " & " << h1_z_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_z_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
       TH1D *h1_z_ptbinned_sys_sym = (TH1D *)h1_z_ptbinned_sys->Clone(Form("h1_z_pt%d_sys_sym%d",i,j));
       h1_z_ptbinned_sys_sym->Scale(-1);
 
@@ -1560,14 +1599,12 @@ void GetTotalSys(int NumEvts = -1,
       }
       legend_z_ptbinned->AddEntry(h1_z_ptbinned_sys, vec_string[j]);
       
-      h1_z_ptbinned_sys->SetMaximum(0.70);
-      h1_z_ptbinned_sys->SetMinimum(-0.70);
+      h1_z_ptbinned_sys->SetMaximum(1.0);
+      h1_z_ptbinned_sys->SetMinimum(-1.0);
     }
     
     legend_z_ptbinned->Draw("SAME");   
     
-    double top = 0.85;
-    double step = 0.06;
     Tl.DrawLatex(0.2, top, Form("pp #sqrt{s} = 13 TeV"));
     Tl.DrawLatex(0.2, top - 2 * step, Form("2.5 < #eta_{jet} < 4"));    
     Tl.DrawLatex(0.2, top - step, Form("%.1f < p_{T,jet} < %.1f", pt_binedges[i], pt_binedges[i+1]));  
@@ -1585,6 +1622,23 @@ void GetTotalSys(int NumEvts = -1,
       ccan[ican]->Print(plotfilePDF.Data());
     }
 
+  }
+  textables << "\\end{longtable}\n";
+
+  textables << "\\begin{longtable}{ccc}\n";
+  textables << "    \\caption{Systematic uncertainties for $\\frac{1}{N_{j}}\\frac{dN}{d\\jt}$ from Figure~\\ref{fig:jt_total_sys_pt1}-\\ref{fig:jt_total_sys_pt6}} \\\\\n";
+  textables << "    \\label{tab:jt_sys_all}\n";
+  textables << "    \\ptj & sys type & min - max (relative sys) \\\\\n";
+  textables << "    \\hline\n";
+  for (int i=1; i<ptbinsize; ++i)
+  {
+
+    if (i!=1)
+    {
+      textables << "    \\hline\n";
+    }
+    textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << " & ";
+
   ++ican;
   sprintf(buf, "ccan%d", ican);
   ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -1597,20 +1651,20 @@ void GetTotalSys(int NumEvts = -1,
   ccan[ican]->cd(1);  
 
   h1_jt_ptbinned_sys_total[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_total[i-1]->SetMaximum(1.);
-  h1_jt_ptbinned_sys_total[i-1]->SetMinimum(0.);
+  //h1_jt_ptbinned_sys_total[i-1]->SetMaximum(1.);
+  //h1_jt_ptbinned_sys_total[i-1]->SetMinimum(0.);
   h1_jt_ptbinned_sys_total[i-1]->SetTitle("Total Systematic");
   
   ccan[ican]->cd(3);
   h1_jt_ptbinned_sys_pidup[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_pidup[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_pidup[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_pidup[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_pidup[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_pidup[i-1]->SetTitle("PID +1#sigma");
 
   ccan[ican]->cd(4);
   h1_jt_ptbinned_sys_piddown[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_piddown[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_piddown[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_piddown[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_piddown[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_piddown[i-1]->SetTitle("PID -1#sigma");    
 
 
@@ -1639,27 +1693,27 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_jt_ptbinned_sys_trigup[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_trigup[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_trigup[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_trigup[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_trigup[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_trigup[i-1]->SetTitle("Trig. +1#sigma");
   ccan[ican]->cd(2);
 
   h1_jt_ptbinned_sys_trigdown[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_trigdown[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_trigdown[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_trigdown[i-1]->SetTitle("Trig. -1#sigma");
 
   ccan[ican]->cd(3);
   h1_jt_ptbinned_sys_trackingup[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_trackingup[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_trackingup[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_trackingup[i-1]->SetTitle("Tracking +1#sigma");
 
   ccan[ican]->cd(4);
 
   h1_jt_ptbinned_sys_trackingdown[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_trackingdown[i-1]->SetTitle("Tracking -1#sigma");
 
   // h1_z_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -1737,22 +1791,22 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_jt_ptbinned_sys_jes[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
-  h1_jt_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_jes[i-1]->SetTitle("JES");
 
 
   ccan[ican]->cd(2);
   h1_jt_ptbinned_sys_jer[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_jer[i-1]->SetTitle("JER");
   
   ccan[ican]->cd(3);
   h1_jt_ptbinned_sys_jetid[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
-  h1_jt_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
   h1_jt_ptbinned_sys_jetid[i-1]->SetTitle("JetID");  
 
   // h1_z_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -1784,26 +1838,26 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_jt_ptbinned_sys_sbsubnear[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_sbsubnear[i-1]->SetTitle("Sideband Var 1");
  
   ccan[ican]->cd(2);
   h1_jt_ptbinned_sys_sbsubfar[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_sbsubfar[i-1]->SetTitle("Sideband Var 2");
    
   ccan[ican]->cd(3);
   h1_jt_ptbinned_sys_fitmodel[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_fitmodel[i-1]->SetTitle("MassFit Model Var");
   
   ccan[ican]->cd(4);
   h1_jt_ptbinned_sys_recsel[i-1]->Draw("COLZ TEXTE");
-  h1_jt_ptbinned_sys_recsel[i-1]->SetMinimum(-0.5);
-  h1_jt_ptbinned_sys_recsel[i-1]->SetMaximum(0.5);
+  //h1_jt_ptbinned_sys_recsel[i-1]->SetMinimum(-0.5);
+  //h1_jt_ptbinned_sys_recsel[i-1]->SetMaximum(0.5);
   h1_jt_ptbinned_sys_recsel[i-1]->SetTitle("Rec. and Sel.");    
 
 
@@ -1845,6 +1899,22 @@ void GetTotalSys(int NumEvts = -1,
     {
       SetHistErrorZero(vec_sys_jt_ptbinned[i-1][j]);
       TH1D *h1_jt_ptbinned_sys = (TH1D *)vec_sys_jt_ptbinned[i-1][j];
+      TH1D *h1_jt_ptbinned_sys_fortable = (TH1D*)h1_jt_ptbinned_sys->Clone(Form("h1_jt_pt%d_sys_fortable_%d",i,j));
+      for (int ibin = 0; ibin < h1_jt_ptbinned_sys_fortable->GetNbinsX(); ++ibin )
+      {
+        if (h1_jt_ptbinned_sys_fortable->GetBinContent(ibin+1) < 0)
+        {
+          h1_jt_ptbinned_sys_fortable->SetBinContent(ibin+1, fabs(h1_jt_ptbinned_sys_fortable->GetBinContent(ibin+1)));
+        }
+      }
+      if (j==0)
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << vec_string[j] << " & " << h1_jt_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_jt_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
+      else
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << "                     & " << vec_string[j] << " & " << h1_jt_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_jt_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
       TH1D *h1_jt_ptbinned_sys_sym = (TH1D *)h1_jt_ptbinned_sys->Clone(Form("h1_jt_pt%d_sys_sym%d",i,j));
       h1_jt_ptbinned_sys_sym->Scale(-1);
 
@@ -1900,8 +1970,8 @@ void GetTotalSys(int NumEvts = -1,
       }
       legend_jt_ptbinned->AddEntry(h1_jt_ptbinned_sys, vec_string[j]);
       
-      h1_jt_ptbinned_sys->SetMaximum(0.70);
-      h1_jt_ptbinned_sys->SetMinimum(-0.70);
+      h1_jt_ptbinned_sys->SetMaximum(1.0);
+      h1_jt_ptbinned_sys->SetMinimum(-1.0);
     }
     
     legend_jt_ptbinned->Draw("SAME");    
@@ -1923,6 +1993,22 @@ void GetTotalSys(int NumEvts = -1,
       ccan[ican]->Print(plotfilePDF.Data());
     }   
     
+  }
+  textables << "\\end{longtable}\n";
+
+  textables << "\\begin{longtable}{ccc}\n";
+  textables << "    \\caption{Systematic uncertainties for $\\frac{1}{N_{j}}\\frac{dN}{dr}$ from Figure~\\ref{fig:r_total_sys_pt1}-\\ref{fig:r_total_sys_pt6}} \\\\\n";
+  textables << "    \\label{tab:r_sys_all}\n";
+  textables << "    \\ptj & sys type & min - max (relative sys) \\\\\n";
+  textables << "    \\hline\n";
+  for (int i=1; i<ptbinsize; ++i)
+  {
+
+  if (i!=1)
+  {
+    textables << "    \\hline\n";
+  }
+  textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << " & ";    
   ++ican;
   sprintf(buf, "ccan%d", ican);
   ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -1934,20 +2020,20 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_r_ptbinned_sys_total[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_total[i-1]->SetMaximum(1.);
-  h1_r_ptbinned_sys_total[i-1]->SetMinimum(0.);
+  //h1_r_ptbinned_sys_total[i-1]->SetMaximum(1.);
+  //h1_r_ptbinned_sys_total[i-1]->SetMinimum(0.);
   h1_r_ptbinned_sys_total[i-1]->SetTitle("Total Systematic");
   
   ccan[ican]->cd(3);
   h1_r_ptbinned_sys_pidup[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_pidup[i-1]->SetMinimum(-0.5);
-  h1_r_ptbinned_sys_pidup[i-1]->SetMaximum(0.5);
+  //h1_r_ptbinned_sys_pidup[i-1]->SetMinimum(-0.5);
+  //h1_r_ptbinned_sys_pidup[i-1]->SetMaximum(0.5);
   h1_r_ptbinned_sys_pidup[i-1]->SetTitle("PID +1#sigma");
 
   ccan[ican]->cd(4);
   h1_r_ptbinned_sys_piddown[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_piddown[i-1]->SetMinimum(-0.5);
-  h1_r_ptbinned_sys_piddown[i-1]->SetMaximum(0.5);
+  //h1_r_ptbinned_sys_piddown[i-1]->SetMinimum(-0.5);
+  //h1_r_ptbinned_sys_piddown[i-1]->SetMaximum(0.5);
   h1_r_ptbinned_sys_piddown[i-1]->SetTitle("PID -1#sigma");     
 
 
@@ -1976,27 +2062,27 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_r_ptbinned_sys_trigup[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_trigup[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_trigup[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_trigup[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_trigup[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_trigup[i-1]->SetTitle("Trig. +1#sigma");
   ccan[ican]->cd(2);
 
   h1_r_ptbinned_sys_trigdown[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_trigdown[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_trigdown[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_trigdown[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_trigdown[i-1]->SetTitle("Trig. -1#sigma");
 
   ccan[ican]->cd(3);
   h1_r_ptbinned_sys_trackingup[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_trackingup[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_trackingup[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_trackingup[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_trackingup[i-1]->SetTitle("Tracking +1#sigma");
 
   ccan[ican]->cd(4);
 
   h1_r_ptbinned_sys_trackingdown[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_trackingdown[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_trackingdown[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_trackingdown[i-1]->SetTitle("Tracking -1#sigma");
 
   // h1_r_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -2072,21 +2158,21 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_r_ptbinned_sys_jes[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
-  h1_r_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
+  //h1_r_ptbinned_sys_jes[i-1]->SetMinimum(-0.5);
+  //h1_r_ptbinned_sys_jes[i-1]->SetMaximum(0.5);
   h1_r_ptbinned_sys_jes[i-1]->SetTitle("JES");
 
 
   ccan[ican]->cd(2);
   h1_r_ptbinned_sys_jer[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
-  h1_r_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
+  //h1_r_ptbinned_sys_jer[i-1]->SetMinimum(-0.5);
+  //h1_r_ptbinned_sys_jer[i-1]->SetMaximum(0.5);
   h1_r_ptbinned_sys_jer[i-1]->SetTitle("JER");
   
   ccan[ican]->cd(3);
   h1_r_ptbinned_sys_jetid[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
-  h1_r_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
+  //h1_r_ptbinned_sys_jetid[i-1]->SetMaximum(0.5);
+  //h1_r_ptbinned_sys_jetid[i-1]->SetMinimum(-0.5);
   h1_r_ptbinned_sys_jetid[i-1]->SetTitle("JetID");  
 
   // h1_r_ptbinned_->SetTitle("Data+Purity+Unfold; ;");
@@ -2118,26 +2204,26 @@ void GetTotalSys(int NumEvts = -1,
 
   ccan[ican]->cd(1);
   h1_r_ptbinned_sys_sbsubnear[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_sbsubnear[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_sbsubnear[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_sbsubnear[i-1]->SetTitle("Sideband Var 1");
  
   ccan[ican]->cd(2);
   h1_r_ptbinned_sys_sbsubfar[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_sbsubfar[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_sbsubfar[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_sbsubfar[i-1]->SetTitle("Sideband Var 2");
    
   ccan[ican]->cd(3);
   h1_r_ptbinned_sys_fitmodel[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_fitmodel[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_fitmodel[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_fitmodel[i-1]->SetTitle("MassFit Model Var");
   
   ccan[ican]->cd(4);
   h1_r_ptbinned_sys_recsel[i-1]->Draw("COLZ TEXTE");
-  h1_r_ptbinned_sys_recsel[i-1]->SetMinimum(-0.3);
-  h1_r_ptbinned_sys_recsel[i-1]->SetMaximum(0.3);
+  //h1_r_ptbinned_sys_recsel[i-1]->SetMinimum(-0.3);
+  //h1_r_ptbinned_sys_recsel[i-1]->SetMaximum(0.3);
   h1_r_ptbinned_sys_recsel[i-1]->SetTitle("Rec. and Sel.");    
 
 
@@ -2179,6 +2265,23 @@ void GetTotalSys(int NumEvts = -1,
     {
       SetHistErrorZero(vec_sys_r_ptbinned[i-1][j]);
       TH1D *h1_r_ptbinned_sys = (TH1D *)vec_sys_r_ptbinned[i-1][j];
+      TH1D *h1_r_ptbinned_sys_fortable = (TH1D*)h1_r_ptbinned_sys->Clone(Form("h1_r_pt%d_sys_fortable_%d",i,j));
+      for (int ibin = 0; ibin < h1_r_ptbinned_sys_fortable->GetNbinsX(); ++ibin )
+      {
+        if (ibin+1 == rbinsize) { h1_r_ptbinned_sys_fortable->SetBinContent(ibin+1, 0.); }
+        if (h1_r_ptbinned_sys_fortable->GetBinContent(ibin+1) < 0)
+        {
+          h1_r_ptbinned_sys_fortable->SetBinContent(ibin+1, fabs(h1_r_ptbinned_sys_fortable->GetBinContent(ibin+1)));
+        }
+      }
+      if (j==0)
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << vec_string[j] << " & " << h1_r_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_r_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
+      else
+      {
+        textables << std::fixed << std::setprecision(sigfigs) << "                     & " << vec_string[j] << " & " << h1_r_ptbinned_sys_fortable->GetMinimum(0.) << " - " << h1_r_ptbinned_sys_fortable->GetMaximum() << "\\\\\n";
+      }
       TH1D *h1_r_ptbinned_sys_sym = (TH1D *)h1_r_ptbinned_sys->Clone(Form("h1_r_pt%d_sys_sym%d",i,j));
       h1_r_ptbinned_sys_sym->Scale(-1);
 
@@ -2234,8 +2337,8 @@ void GetTotalSys(int NumEvts = -1,
       }
       legend_r_ptbinned->AddEntry(h1_r_ptbinned_sys, vec_string[j]);
       
-      h1_r_ptbinned_sys->SetMaximum(0.70);
-      h1_r_ptbinned_sys->SetMinimum(-0.70);
+      h1_r_ptbinned_sys->SetMaximum(1.0);
+      h1_r_ptbinned_sys->SetMinimum(-1.0);
     }
     
     legend_r_ptbinned->Draw("SAME");    
@@ -2255,16 +2358,7 @@ void GetTotalSys(int NumEvts = -1,
     else
     {
       ccan[ican]->Print(plotfilePDF.Data());
-    }       
-    
-  if (i==3)
-  {
-    for (int ibin = 0; ibin < h1_jt_ptbinned_sys_total[i-1]->GetNbinsX(); ++ibin)
-    {
-      cout << " total sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_total[i-1]->GetBinContent(ibin+1) << endl;
-      cout << " nonclosure sys jT pt " << ibin << " : " << h1_jt_ptbinned_sys_closure[i-1]->GetBinContent(ibin+1) << endl;      
-    }
-  }      
+    }         
 
   //
   cout << "pt bin " << i << endl;
@@ -2273,6 +2367,9 @@ void GetTotalSys(int NumEvts = -1,
   //h1_jt_ptbinned_sys_total[i-1]->Write();
   //h1_r_ptbinned_sys_total[i-1]->Write();    
   } // end pt bin loop
+
+  textables << "\\end{longtable}\n";
+
   
   if (ican > -1)
   {

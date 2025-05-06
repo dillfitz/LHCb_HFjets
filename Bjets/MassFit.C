@@ -503,8 +503,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             }
             else
             {
-              sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.025, 0.001, 0.03);
-              sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.025, 0.001, 0.03); // CHANGE
+              sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.011, 0.001, 0.03);
+              sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.007, 0.001, 0.03); // CHANGE
             }            
             
         }
@@ -516,55 +516,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.003, 0.001, 0.05); // CHANGE
         }
 
-        // RooFormulaVar sigma2("sigma2", "width of gaussians", "sigma1*sigma_ratio", RooArgList(sigma1,sigma_ratio)); //CHANGE
-        // if(isData){
-        //   sigma2.setVal(0.01);
-        //   // sigma2.setConstant(kTRUE);
-        // }
         RooGaussian gauss1("gauss_sig1", "Signal component 1", HFMass, *mean, *sigma1);
         RooGaussian gauss2("gauss_sig2", "Signal component 2", HFMass, *mean, *sigma2);
-
-/*
-        mu_sig = new RooRealVar("mu_sig", "mu", 5.279, 5.27, 5.282);
-        alpha1_sig = new RooRealVar("alpha1_sig", "alpha1", 2., 0.01, 10.);
-        alpha2_sig = new RooRealVar("alpha2_sig", "alpha2", 2., 0.01, 10.);
-         p1_sig = new RooRealVar("p1_sig", "p1", 1., 0.6, 4.);
-         p2_sig = new RooRealVar("p2_sig", "p2", 1., 0.6, 4.);
-//        p1_sig = new RooRealVar("p1_sig", "p1", 2.);
-//        p2_sig = new RooRealVar("p2_sig", "p2", 3.);
-
-        p1_sig2 = new RooRealVar("p1_sig2", "p1", 2., 1., 6.);
-        p2_sig2 = new RooRealVar("p2_sig2", "p2", 3., 1., 6.);
-
-        // Or, Create signal from two Crystal Ball functions
-        // These parameters have been derived from simulation
-
-        if (isData && w_read != NULL)
-        {
-            mu_sig = (RooRealVar *)w_read->obj("mu_sig");
-            alpha1_sig = (RooRealVar *)w_read->obj("alpha1_sig");
-            alpha2_sig = (RooRealVar *)w_read->obj("alpha2_sig");
-            p1_sig = (RooRealVar *)w_read->obj("p1_sig");
-            p2_sig = (RooRealVar *)w_read->obj("p2_sig");
-            // mu_sig.setConstant(kTRUE);
-            alpha1_sig->setConstant(kTRUE);
-            alpha2_sig->setConstant(kTRUE);
-            p1_sig->setConstant(kTRUE);
-            p2_sig->setConstant(kTRUE);
-        }
-        else
-        {
-            mu_sig = new RooRealVar("mu_sig", "mu", 5.279, 5.27, 5.282);
-            alpha1_sig = new RooRealVar("alpha1_sig", "alpha1", 2., 0.01, 10.);
-            alpha2_sig = new RooRealVar("alpha2_sig", "alpha2", 2., 0.01, 10.);
-            // p1_sig = RooRealVar("p1_sig", "p1", 1., 0.6, 4.);
-            // p2_sig = RooRealVar("p2_sig", "p2", 1., 0.6, 4.);
-            p1_sig = new RooRealVar("p1_sig", "p1", 2.);
-            p2_sig = new RooRealVar("p2_sig", "p2", 3.);
-            p1_sig->setConstant(kTRUE);
-            p2_sig->setConstant(kTRUE);
-        }
-*/
 
         mu_sig = new RooRealVar("mu_sig", "mu", 5.279, 5.27, 5.282);
         alpha1_sig = new RooRealVar("alpha1_sig", "alpha1", 2., 0.01, 10.);
@@ -577,17 +530,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         p1_sig = new RooRealVar("p1_sig", "p1", 2., 1., 6.);
         p2_sig = new RooRealVar("p2_sig", "p2", 3., 1., 6.);
 
-        p1_sig2 = new RooRealVar("p1_sig2", "p1", 2., 1., 6.);
-        p2_sig2 = new RooRealVar("p2_sig2", "p2", 3., 1., 6.);
-        // p1_sig->setConstant(kTRUE);
-        // p2_sig->setConstant(kTRUE);
-        // p1_sig2->setConstant(kTRUE);
-        // p2_sig2->setConstant(kTRUE);
         // Or, Create signal from two Crystal Ball functions
         // These parameters have been derived from simulation
 
-        // else
-        //     return;
 
         if (isData && w_read != NULL)
         {
@@ -615,13 +560,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         // Number of signal events
         RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
 
-
-//        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0., 0., 0.);
-//        RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 400., 0., 1000000.);
-
         // Choose if you want two CB functions as signal, or two Gaussians.
 
-          //RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(nsig1));
+        //RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(nsig1));
         RooAddPdf sig("sig", "Signal", RooArgList(dcbPdf_sig1, dcbPdf_sig2), RooArgList(*nsig1));
         
         RooRealVar *sig2_m = new RooRealVar("sig2_m", "sig2_m", 5.279, 5.27, 5.282);
@@ -659,48 +600,9 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         //  8  p1           1.31970e+00   1.23509e-01   2.03443e-03  -8.27233e-01     │--------
         //  9  p2           2.27406e+00   2.53814e-02   1.32025e-03  -5.76613e-01     │RooDataHist::B_mass(HFMass)
         // 10  width        1.59333e-02   1.00715e-04   2.54854e-04  -1.31767e+00
-/*
+
         if (UseDTF && w_read_misid != NULL)
         {
-            // mu = RooRealVar("mu", "mu", 5.32697e+00);
-            // width = RooRealVar("width", "width", 1.59333e-02);
-            // alpha1 = RooRealVar("alpha1", "alpha1", 2.01441e+00);
-            // alpha2 = RooRealVar("alpha2", "alpha2", 5.70189e-01);
-            // p1 = RooRealVar("p1", "p1", 1.31970e+00);
-            // p2 = RooRealVar("p2", "p2", 2.27406e+00);
-            cout << "READING THE MIS ID PARAMS!" << endl;
-            mu = (RooRealVar *)w_read_misid->obj("mu");
-            width = (RooRealVar *)w_read_misid->obj("width");
-            alpha1 = (RooRealVar *)w_read_misid->obj("alpha1");
-            alpha2 = (RooRealVar *)w_read_misid->obj("alpha2");
-            p1 = (RooRealVar *)w_read_misid->obj("p1");
-            p2 = (RooRealVar *)w_read_misid->obj("p2");
-            mu->setConstant(kTRUE);
-            width->setConstant(kTRUE);
-            alpha1->setConstant(kTRUE);
-            alpha2->setConstant(kTRUE);
-            p1->setConstant(kTRUE);
-            p2->setConstant(kTRUE);
-            cout << "FINISHED READING THE MISID PARAMS!" << endl;
-        }
-        else
-        {
-            mu = new RooRealVar("mu", "mu", 5.33183e+00);
-            width = new RooRealVar("width", "width", 2.62897e-02);
-            alpha1 = new RooRealVar("alpha1", "alpha1", 1.72233e+00);
-            alpha2 = new RooRealVar("alpha2", "alpha2", 7.67677e-01);
-            p1 = new RooRealVar("p1", "p1", 1.73799e+00);
-            p2 = new RooRealVar("p2", "p2", 2.09840e+00);
-        }
-*/
-        if (UseDTF && w_read_misid != NULL)
-        {
-            // mu = RooRealVar("mu", "mu", 5.32697e+00);
-            // width = RooRealVar("width", "width", 1.59333e-02);
-            // alpha1 = RooRealVar("alpha1", "alpha1", 2.01441e+00);
-            // alpha2 = RooRealVar("alpha2", "alpha2", 5.70189e-01);
-            // p1 = RooRealVar("p1", "p1", 1.31970e+00);
-            // p2 = RooRealVar("p2", "p2", 2.27406e+00);
 
             mu = (RooRealVar *)w_read_misid->obj("mu");
             width = (RooRealVar *)w_read_misid->obj("width");
@@ -762,14 +664,6 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         // Build linear background PDF, for combinatoric background
         ///////////////////////////////////////////////////
 
-        // RooGenericPdf bkg("bkg", "Background", "a2*x +a1", RooArgSet(x, a2, a1));
-
-        // RooRealVar * a0("c0","coefficient #0", 1.0,-1.,1.) ;
-
-        // RooRealVar * a1("c1", "coefficient #1", -0.1, -1., -0.00001);
-        // RooRealVar * a2("c2", "coefficient #2", -0.1, -1., -0.001);
-        // RooChebychev bkg("bkg", "background p.d.f.", HFMass, RooArgList(a1, a2));
-
         RooRealVar *a2 = new RooRealVar("c2", "coefficient #2", -0.1, -1., -0.001);
         RooRealVar *a1 = new RooRealVar("exp_c", "exp_c", -2., -4, -0.1);
         RooExponential bkg("bkg", "bkg", HFMass, *a1);
@@ -810,15 +704,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         HFMass.setRange("Full", mass_low, mass_high);
 
         // Fit model to data
-        //  bkg.fitTo(B_mass, Range("comb1"));
-        //  a1.setConstant(kTRUE);
-        //  a2.setConstant(kTRUE);
-        // bkg_nosec.fitTo(B_mass, Range("comb1"));
-        // tanhpdf.fitTo(B_mass, Range("tanh"));
-        // res_comp1.fitTo(B_mass, Range("reso1"));
-        // res_comp2.fitTo(B_mass, Range("reso2"));
         RooAddPdf *model, *model_nosec;
-        // if(isData) model =new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig, tanhpdf), RooArgList(bkgfrac,tanhfrac));
         if (isData)
         {
             if (UseDTF)
@@ -842,9 +728,6 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             // model = new RooAddPdf("model", "g1+g2+a", RooArgList(sig2), RooArgList(*nsig));
         }
 
-
-        // model_nosec = new RooAddPdf("model_nosec", "g1+g2+a", RooArgList(bkg_nosec, sig_nosec, dcbPdf), RooArgList(nbkg_nosec, nsig_nosec, nres_nosec));
-        // model->fitTo(B_mass, Range("noSec"), PrintEvalErrors(-1), Save(true));
         model->fitTo(B_mass, PrintEvalErrors(-1), Save(true));
         // RooMsgService::instance().setSilentMode(true);
         // RooStats::SPlot *sData = new RooStats::SPlot("sData", "An SPlot",
@@ -886,8 +769,6 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         // exp_bkg.plotOn(xframe, LineColor(kMagenta));
 
         // Overlay the background+sig2 components of model with a dotted line
-        // model->plotOn(xframe, Components(RooArgSet(bkg, sig2)), LineStyle(kDotted));
-        // h1_mass_all->Draw("SAME");
         xframe->Draw("SAME");
         gPad->SetLogy();
         xframe->SetMinimum(1.);
@@ -911,19 +792,6 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         leg1->AddEntry((TObject *)0, Form("%.1f < p_{T}^{HF} < %.1f GeV", ptHF_binedges[i], ptHF_binedges[i + 1]), "");
 
         leg1->Draw("SAME");
-        // xframe->SetT
-        // xframe2->SetMaximum(+5) ;
-        // xframe2->Draw() ;
-
-        // ccan[ican]->cd(2);
-        // // RooPlot *xframe2 = x.frame();
-        // // B_mass.plotOn(xframe2);
-        // // model_nosec->plotOn(xframe2);
-        // // model_nosec->plotOn(xframe2, Components(bkg_nosec), LineStyle(kDashed), LineColor(kRed));
-        // // model_nosec->plotOn(xframe2, Components(sig_nosec), LineStyle(kSolid), LineColor(kGreen));
-        // // model_nosec->plotOn(xframe2, LineStyle(kSolid), LineColor(kBlue));
-        // xframe->Draw("SAME");
-        // leg1->Draw("SAME");
 
         ican = 1;
         ccan[ican]->cd(i + 1);
@@ -974,7 +842,16 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         cout << "sigma2 = " << sigma2->getVal() << endl;
 
         float MassMu = mu_sig->getVal();
-        float MassSigma = sigma2->getVal();
+        float MassSigma;
+        if (nsig1->getVal() > 0.5)
+            MassSigma = sigma1->getVal();
+        else
+            MassSigma = sigma2->getVal();
+
+        //if (sigma1->getVal() < sigma2->getVal())
+        //    MassSigma = sigma1->getVal();
+        //else
+        //    MassSigma = sigma2->getVal();        
         
         if (DoSystematic)
         {
@@ -984,12 +861,37 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
             cout << "MassSigma = " << sig2_t->getVal() << endl;
         }
         
+        /*
         float MassUp = MassMu + 3 * MassSigma;
         float MassDown = MassMu - 3 * MassSigma;
         Sideband1_Min = MassMu - 11 * MassSigma;
         Sideband1_Max = MassMu - 7 * MassSigma;
         Sideband2_Min = MassMu + 10 * MassSigma;
         Sideband2_Max = MassMu + 14 * MassSigma;
+        */
+        float MassUp, MassDown;
+        //if (i < 2)
+        //{
+        //    MassDown = MassMu - 2 * MassSigma;
+        //    MassUp = MassMu + 2 * MassSigma;
+        //}
+        if (i < 5)
+        {
+            MassDown = MassMu - 3 * MassSigma;
+            MassUp = MassMu + 3 * MassSigma;
+        }
+        else
+        {
+            MassDown = MassMu - 4 * MassSigma;
+            MassUp = MassMu + 4 * MassSigma;
+        }
+        
+        Sideband1_Min = (MassMu - 14 * MassSigma) > 5.15 ? (MassMu - 14 * MassSigma) : 5.15;
+        Sideband1_Max = (MassMu - 7 * MassSigma) > Sideband1_Min ? (MassMu - 7 * MassSigma) : 5.17;
+        // Sideband2_Min = MassMu + 10 * MassSigma;
+        // Sideband2_Max = MassMu + 14 * MassSigma;
+        Sideband2_Min = MassMu + 10 * MassSigma;
+        Sideband2_Max = MassMu + 25 * MassSigma;
         
         float Sideband1_Min_forSysNear = Sideband1_Min + MassSigma;
         float Sideband1_Max_forSysNear = Sideband1_Max;
@@ -1079,79 +981,77 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         h1_BkgScale_forSysNear->SetBinContent(i + 1, bkg_scale_forSysNear);
         h1_BkgScale_forSysFar->SetBinContent(i + 1, bkg_scale_forSysFar);
 
-                // Add a vertical dashed line at x = 2
+        // Add a vertical dashed line at x = 2
 
-                double x_linelow = MassDown;
-                TLine *linelow = new TLine(x_linelow, xframe->GetMinimum(), x_linelow, xframe->GetMaximum());
-                linelow->SetLineColorAlpha(kGreen + 1, 1.0);
-                linelow->SetLineStyle(3); // Dashed line
-                linelow->SetLineWidth(2);
-                double x_linehigh = MassUp;
-                TLine *linehigh = new TLine(x_linehigh, xframe->GetMinimum(), x_linehigh, xframe->GetMaximum());
-                linehigh->SetLineColorAlpha(kGreen + 1, 1.0);
-                linehigh->SetLineStyle(3); // Dashed line
-                linehigh->SetLineWidth(2);
+        double x_linelow = MassDown;
+        TLine *linelow = new TLine(x_linelow, xframe->GetMinimum(), x_linelow, xframe->GetMaximum());
+        linelow->SetLineColorAlpha(kGreen + 1, 1.0);
+        linelow->SetLineStyle(3); // Dashed line
+        linelow->SetLineWidth(2);
+        double x_linehigh = MassUp;
+        TLine *linehigh = new TLine(x_linehigh, xframe->GetMinimum(), x_linehigh, xframe->GetMaximum());
+        linehigh->SetLineColorAlpha(kGreen + 1, 1.0);
+        linehigh->SetLineStyle(3); // Dashed line
+        linehigh->SetLineWidth(2);
         
-                double x_sideline1low = Sideband1_Min;
-                TLine *sideline1low = new TLine(x_sideline1low, xframe->GetMinimum(), x_sideline1low, xframe->GetMaximum());
-                sideline1low->SetLineColorAlpha(kBlue + 1, 1.0);
-                sideline1low->SetLineStyle(3); // Dashed line
-                sideline1low->SetLineWidth(2);
-                double x_sideline1high = Sideband1_Max;
-                TLine *sideline1high = new TLine(x_sideline1high, xframe->GetMinimum(), x_sideline1high, xframe->GetMaximum());
-                sideline1high->SetLineColorAlpha(kBlue + 1, 1.0);
-                sideline1high->SetLineStyle(3); // Dashed line
-                sideline1high->SetLineWidth(2);
+        double x_sideline1low = Sideband1_Min;
+        TLine *sideline1low = new TLine(x_sideline1low, xframe->GetMinimum(), x_sideline1low, xframe->GetMaximum());
+        sideline1low->SetLineColorAlpha(kBlue + 1, 1.0);
+        sideline1low->SetLineStyle(3); // Dashed line
+        sideline1low->SetLineWidth(2);
+        double x_sideline1high = Sideband1_Max;
+        TLine *sideline1high = new TLine(x_sideline1high, xframe->GetMinimum(), x_sideline1high, xframe->GetMaximum());
+        sideline1high->SetLineColorAlpha(kBlue + 1, 1.0);
+        sideline1high->SetLineStyle(3); // Dashed line
+        sideline1high->SetLineWidth(2);
         
-                double x_sideline2low = Sideband2_Min;
-                TLine *sideline2low = new TLine(x_sideline2low, xframe->GetMinimum(), x_sideline2low, xframe->GetMaximum());
-                sideline2low->SetLineColorAlpha(kBlue + 1, 1.0);
-                sideline2low->SetLineStyle(3); // Dashed line
-                sideline2low->SetLineWidth(2);
-                double x_sideline2high = Sideband2_Max;
-                TLine *sideline2high = new TLine(x_sideline2high, xframe->GetMinimum(), x_sideline2high, xframe->GetMaximum());
-                sideline2high->SetLineColorAlpha(kBlue + 1, 1.0);
-                sideline2high->SetLineStyle(3); // Dashed line
-                sideline2high->SetLineWidth(2);
+        double x_sideline2low = Sideband2_Min;
+        TLine *sideline2low = new TLine(x_sideline2low, xframe->GetMinimum(), x_sideline2low, xframe->GetMaximum());
+        sideline2low->SetLineColorAlpha(kBlue + 1, 1.0);
+        sideline2low->SetLineStyle(3); // Dashed line
+        sideline2low->SetLineWidth(2);
+        double x_sideline2high = Sideband2_Max;
+        TLine *sideline2high = new TLine(x_sideline2high, xframe->GetMinimum(), x_sideline2high, xframe->GetMaximum());
+        sideline2high->SetLineColorAlpha(kBlue + 1, 1.0);
+        sideline2high->SetLineStyle(3); // Dashed line
+        sideline2high->SetLineWidth(2);
         
-                ican = 0;
-                ccan[ican]->cd(i + 1);
-                linelow->Draw("SAME");
-                linehigh->Draw("SAME");
-                sideline1low->Draw("SAME");
-                sideline1high->Draw("SAME");
-                sideline2low->Draw("SAME");
-                sideline2high->Draw("SAME");
+        ican = 0;
+        ccan[ican]->cd(i + 1);
+        linelow->Draw("SAME");
+        linehigh->Draw("SAME");
+        sideline1low->Draw("SAME");
+        sideline1high->Draw("SAME");
+        sideline2low->Draw("SAME");
+        sideline2high->Draw("SAME");
         
-                linelow->SetY1(xframe2->GetMinimum());
-                linehigh->SetY1(xframe2->GetMinimum());
-                sideline1low->SetY1(xframe2->GetMinimum());
-                sideline1high->SetY1(xframe2->GetMinimum());
-                sideline2low->SetY1(xframe2->GetMinimum());
-                sideline2high->SetY1(xframe2->GetMinimum());
+        linelow->SetY1(xframe2->GetMinimum());
+        linehigh->SetY1(xframe2->GetMinimum());
+        sideline1low->SetY1(xframe2->GetMinimum());
+        sideline1high->SetY1(xframe2->GetMinimum());
+        sideline2low->SetY1(xframe2->GetMinimum());
+        sideline2high->SetY1(xframe2->GetMinimum());
         
-                linelow->SetY2(xframe2->GetMaximum());
-                linehigh->SetY2(xframe2->GetMaximum());
-                sideline1low->SetY2(xframe2->GetMaximum());
-                sideline1high->SetY2(xframe2->GetMaximum());
-                sideline2low->SetY2(xframe2->GetMaximum());
-                sideline2high->SetY2(xframe2->GetMaximum());
+        linelow->SetY2(xframe2->GetMaximum());
+        linehigh->SetY2(xframe2->GetMaximum());
+        sideline1low->SetY2(xframe2->GetMaximum());
+        sideline1high->SetY2(xframe2->GetMaximum());
+        sideline2low->SetY2(xframe2->GetMaximum());
+        sideline2high->SetY2(xframe2->GetMaximum());
         
-                ican = 1;
-                ccan[ican]->cd(i + 1);
-                linelow->Draw("SAME");
-                linehigh->Draw("SAME");
-                sideline1low->Draw("SAME");
-                sideline1high->Draw("SAME");
-                sideline2low->Draw("SAME");
-                sideline2high->Draw("SAME");
+        ican = 1;
+        ccan[ican]->cd(i + 1);
+        linelow->Draw("SAME");
+        linehigh->Draw("SAME");
+        sideline1low->Draw("SAME");
+        sideline1high->Draw("SAME");
+        sideline2low->Draw("SAME");
+        sideline2high->Draw("SAME");
         
-        
-
         if (!DoSystematic)
         {
             SigParams
-                << mu_sig->getVal() << "," << sigma1->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << p1_sig2->getVal() << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << p2_sig2->getVal() << "," << nsig->getVal() << ", " << sig_frac << endl;
+                << mu_sig->getVal() << "," << sigma1->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << nsig->getVal() << ", " << sig_frac << endl;
         }
         else
             SigParams
@@ -1160,41 +1060,6 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         BkgParams << a1->getVal() << "," << nbkg->getVal() << endl;
         ResonantParams << mu->getVal() << "," << width->getVal() << "," << alpha1->getVal() << "," << p1->getVal() << "," << alpha2->getVal() << "," << p2->getVal() << "," << nsig->getVal() << endl;
     }
-    // model_nosec->fitTo(B_mass, Range("noSec"), PrintEvalErrors(-1), Save(true));
-
-    // ++ican;
-    // sprintf(buf, "ccan%d", ican);
-    // ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    // ccan[ican]->SetFillColor(10);
-    // // gPad->SetLeftMargin(0.16);
-    // // gPad->SetBottomMargin(0.06);
-    // ccan[ican]->cd();
-    // ccan[ican]->Divide(1, 2, 0.0001, 0.0001);
-
-    // RooPlot *xframe2 = HFMass.frame(Title("Pull Distribution"));
-    // xframe2->addPlotable(hpull, "P");
-
-    // ccan[ican]->cd(1);
-    // ;
-    // gPad->SetLeftMargin(0.15);
-    // xframe->GetYaxis()->SetTitleOffset(1.6);
-    // xframe->Draw();
-    // ccan[ican]->cd(2);
-    // ;
-    // gPad->SetLeftMargin(0.15);
-    // xframe->GetYaxis()->SetTitleOffset(1.6);
-    // xframe2->Draw();
-
-    // ccan[ican]->cd();
-    // ccan[ican]->Update();
-    // if (ican == 0)
-    // {
-    //   ccan[ican]->Print(plotfileO.Data());
-    // }
-    // else
-    // {
-    //   ccan[ican]->Print(plotfilePDF.Data());
-    // }
 
     ican = 0;
     ccan[ican]->cd();

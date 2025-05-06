@@ -20,7 +20,8 @@ void SPlotFit(int NumEvts = 10000,
               bool DoRecSelEff = 0,
               bool DoSystematic = 0,
               float ptmin_user = pTLow,
-              float ptmax_user = 250)
+              float ptmax_user = 250,
+              bool onlyL0DiMuon = true)
 {
     bool MCflag = !isData;
     followHardest = false;
@@ -109,6 +110,11 @@ void SPlotFit(int NumEvts = 10000,
     if (chargedJetCut)
         str_charged = "_charge";
 
+
+    TString str_L0 = "";
+    if (onlyL0DiMuon)
+        str_L0 = "_L0DiMuon";
+
     TString extension, extension_reco, extension_misid;
     TString extension_read, extension_RootFiles, extension_RootFilesMC;
     
@@ -121,7 +127,7 @@ void SPlotFit(int NumEvts = 10000,
     //extension_misid = TString("splotfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + Form("_%d", 91599);
     extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + Form("_%d", 91599);
 
-    extension = TString("splotfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
+    extension = TString("splotfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
 
     if (DoRecSelEff)
     {
@@ -136,7 +142,7 @@ void SPlotFit(int NumEvts = 10000,
     cout << extension << endl;
     cout << extension_reco << endl;
     // Setup Tree
-    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+    //extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
 
     // TFile fread(dir_deadcone + "hists/" + extension_read + ".root", "READ");
     //TFile fread(extension_RootFiles + extension_read + ".root", "READ");
@@ -159,14 +165,14 @@ void SPlotFit(int NumEvts = 10000,
                 str_Mag = "_MD";
             else if (Mag == 1)
                 str_Mag = "_MU";
-            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_L0 + Form("_%d", vec_datasets[i]);
             cout << extension_read << endl;
             BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
         }
     }
     else
     {
-        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
         BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
     }
     if (NumEvts > BTree->GetEntries())
@@ -234,10 +240,10 @@ void SPlotFit(int NumEvts = 10000,
 
     BTree->SetBranchAddress("TOS", &TOS);
 
-    float mass_low = 5.;
+    float mass_low = 5.15;
     float mass_high = 5.55;
     // if (UseDTF)
-    mass_low = 5.15;
+
 
     vector<TH1D *> h1_mass_HFpt;
     vector<float> vec_bkg_frac, vec_res_frac, vec_bkg_yield, vec_sig_yield;
@@ -249,6 +255,10 @@ void SPlotFit(int NumEvts = 10000,
     // int nBins[ptHFbinsize] = {100, 100, 100, 100, 100, 100};
     for (int i = 0; i < ptHFbinsize; i++)
     {
+        if (i >= ptHFbinsize - 2)
+            nBins = 60;
+        else
+            nBins = 80;
         TH1D *h1_temp = new TH1D(Form("h1_mass%d", i), "", nBins, mass_low, mass_high);
         h1_mass_HFpt.push_back(h1_temp);
         binsize = (mass_high - mass_low) / (float)nBins;
@@ -336,30 +346,17 @@ void SPlotFit(int NumEvts = 10000,
             continue;
         if (!isData)
         {
-            // cout << HFmeson.Pt() << ", " << tr_HFmeson.Pt() << endl;
-            // if (fabs(HFmeson.Pt() - tr_HFmeson.Pt()) / tr_HFmeson.Pt() > 0.05)
-            //     continue;
-            // cout << tr_HFmeson.M() << endl;
-            // cout<<isTrueBjet<<",";
             if (!isTrueBjet)
                 continue;
         }
-        // h1_mass->Fill(HFmeson.M());
-        // h1_mass_all->Fill(HFmeson.M());
-        // h1_mass->Fill(bmass);
-        // h1_mass_all->Fill(bmass);
+
+        if (bmass < mass_low || bmass > mass_high)
+            continue;
+
         HFmass.setVal(bmass);
         HFpt.setVal(HFmeson.Pt());
         dataSet.add(variables);
 
-        // for (int i = 0; i < ptHFbinsize; i++)
-        // {
-        //     if (HFmeson.Pt() > ptHF_binedges[i] && HFmeson.Pt() < ptHF_binedges[i + 1])
-        //     {
-        //         h1_mass_HFpt[i]->Fill(bmass);
-        //         break;
-        //     }
-        // }
     }
 
     //---- paint setup...
@@ -478,10 +475,6 @@ void SPlotFit(int NumEvts = 10000,
         RooRealVar *mu_sig2, *alpha1_sig2, *alpha2_sig2, *p1_sig2, *p2_sig2;
         RooRealVar *mu, *width, *alpha1, *alpha2, *p1, *p2;
 
-        // RooRealVar HFmass("HFmass", "HFmass", mass_low, mass_high);
-        // RooDataHist B_mass("B_mass", "B_mass", RooArgList(HFmass), h1_mass_HFpt[i], 1.);
-        // Convert to a binned dataset in pt
-
         // Select data in this pt range
         RooDataSet *data_pt_bin = (RooDataSet *)dataSet.reduce(Form("HFpt >= %f && HFpt < %f", ptHF_binedges[i], ptHF_binedges[i + 1]));
         RooDataHist B_mass("B_mass", "B_mass", RooArgSet(HFmass), *data_pt_bin);
@@ -495,8 +488,8 @@ void SPlotFit(int NumEvts = 10000,
         {
             sigma_ratio = new RooRealVar("sigma_ratio", "sigma_ratio", 1.52571 / 0.856549);
             mean = new RooRealVar("mean", "mean of gaussians", 5.27966, 5.27, 5.282);
-            sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.008, 0.001, 0.03);
-            sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.008, 0.001, 0.03); // CHANGE
+            sigma1 = new RooRealVar("sigma1", "width of gaussians", 0.011, 0.001, 0.03);
+            sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.007, 0.001, 0.03); // CHANGE
         }
         else
         {
@@ -506,11 +499,6 @@ void SPlotFit(int NumEvts = 10000,
             sigma2 = new RooRealVar("sigma2", "width of gaussians", 0.03, 0.001, 0.5); // CHANGE
         }
 
-        // RooFormulaVar sigma2("sigma2", "width of gaussians", "sigma1*sigma_ratio", RooArgList(sigma1,sigma_ratio)); //CHANGE
-        // if(isData){
-        //   sigma2.setVal(0.01);
-        //   // sigma2.setConstant(kTRUE);
-        // }
         RooGaussian gauss1("gauss_sig1", "Signal component 1", HFmass, *mean, *sigma1);
         RooGaussian gauss2("gauss_sig2", "Signal component 2", HFmass, *mean, *sigma2);
 
@@ -525,12 +513,6 @@ void SPlotFit(int NumEvts = 10000,
         p1_sig = new RooRealVar("p1_sig", "p1", 2., 1., 6.);
         p2_sig = new RooRealVar("p2_sig", "p2", 3., 1., 6.);
 
-        p1_sig2 = new RooRealVar("p1_sig2", "p1", 2., 1., 6.);
-        p2_sig2 = new RooRealVar("p2_sig2", "p2", 3., 1., 6.);
-        // p1_sig->setConstant(kTRUE);
-        // p2_sig->setConstant(kTRUE);
-        // p1_sig2->setConstant(kTRUE);
-        // p2_sig2->setConstant(kTRUE);
         // Or, Create signal from two Crystal Ball functions
         // These parameters have been derived from simulation
 
@@ -564,11 +546,11 @@ void SPlotFit(int NumEvts = 10000,
         // Number of signal events
         RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
         // RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0., 0., 0.);
-        if (isData && w_read != NULL)
-        {
-            nsig1 = (RooRealVar *)w_read->obj("nsig1");
-            nsig1->setConstant(kTRUE);
-        }
+        //if (isData && w_read != NULL)
+        //{
+        //    nsig1 = (RooRealVar *)w_read->obj("nsig1");
+            //nsig1->setConstant(kTRUE);
+        //}
         // Choose if you want two CB functions as signal, or two Gaussians.
 
         // RooAddPdf sig("sig", "Signal", RooArgList(gauss1, gauss2), RooArgList(*nsig1));
@@ -610,12 +592,6 @@ void SPlotFit(int NumEvts = 10000,
 
         if (UseDTF && w_read_misid != NULL)
         {
-            // mu = RooRealVar("mu", "mu", 5.32697e+00);
-            // width = RooRealVar("width", "width", 1.59333e-02);
-            // alpha1 = RooRealVar("alpha1", "alpha1", 2.01441e+00);
-            // alpha2 = RooRealVar("alpha2", "alpha2", 5.70189e-01);
-            // p1 = RooRealVar("p1", "p1", 1.31970e+00);
-            // p2 = RooRealVar("p2", "p2", 2.27406e+00);
 
             mu = (RooRealVar *)w_read_misid->obj("mu");
             width = (RooRealVar *)w_read_misid->obj("width");
@@ -677,14 +653,6 @@ void SPlotFit(int NumEvts = 10000,
         // Build linear background PDF, for combinatoric background
         ///////////////////////////////////////////////////
 
-        // RooGenericPdf bkg("bkg", "Background", "a2*x +a1", RooArgSet(x, a2, a1));
-
-        // RooRealVar * a0("c0","coefficient #0", 1.0,-1.,1.) ;
-
-        // RooRealVar * a1("c1", "coefficient #1", -0.1, -1., -0.00001);
-        // RooRealVar * a2("c2", "coefficient #2", -0.1, -1., -0.001);
-        // RooChebychev bkg("bkg", "background p.d.f.", HFmass, RooArgList(a1, a2));
-
         RooRealVar *a2 = new RooRealVar("c2", "coefficient #2", -0.1, -1., -0.001);
         RooRealVar *a1 = new RooRealVar("exp_c", "exp_c", -2., -4, -0.1);
         RooExponential bkg("bkg", "bkg", HFmass, *a1);
@@ -708,7 +676,7 @@ void SPlotFit(int NumEvts = 10000,
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
         RooRealVar *nsig_nosec = new RooRealVar("nsig_nosec", "fraction in signal", 500, 0., 1000000.);
-        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000);
+        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 1000, 0., 1000000);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
         RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.07 * nsig->getVal());
@@ -723,13 +691,6 @@ void SPlotFit(int NumEvts = 10000,
         HFmass.setRange("Full", mass_low, mass_high);
 
         // Fit model to data
-        //  bkg.fitTo(B_mass, Range("comb1"));
-        //  a1.setConstant(kTRUE);
-        //  a2.setConstant(kTRUE);
-        // bkg_nosec.fitTo(B_mass, Range("comb1"));
-        // tanhpdf.fitTo(B_mass, Range("tanh"));
-        // res_comp1.fitTo(B_mass, Range("reso1"));
-        // res_comp2.fitTo(B_mass, Range("reso2"));
         RooAddPdf *model, *model_nosec;
         // if(isData) model =new RooAddPdf("model", "g1+g2+a", RooArgList(bkg, sig, tanhpdf), RooArgList(bkgfrac,tanhfrac));
         if (isData)
@@ -755,8 +716,7 @@ void SPlotFit(int NumEvts = 10000,
             // model = new RooAddPdf("model", "g1+g2+a", RooArgList(sig2), RooArgList(*nsig));
         }
 
-        // model_nosec = new RooAddPdf("model_nosec", "g1+g2+a", RooArgList(bkg_nosec, sig_nosec, dcbPdf), RooArgList(nbkg_nosec, nsig_nosec, nres_nosec));
-        // model->fitTo(B_mass, Range("noSec"), PrintEvalErrors(-1), Save(true));
+        //model->fitTo(B_mass, PrintEvalErrors(-1), Save(true));
         RooFitResult *fitresult = model->fitTo(*data_pt_bin, RooFit::Extended(), RooFit::Save(), PrintEvalErrors(-1));
         RooStats::SPlot sPlot(Form("sPlot_pt_%d", i), "SPlot", *data_pt_bin, model, RooArgList(*nbkg, *nsig, *nres));
         int counter = 0;
@@ -808,14 +768,12 @@ void SPlotFit(int NumEvts = 10000,
                 continue;
             if (!isData)
             {
-                // cout << HFmeson.Pt() << ", " << tr_HFmeson.Pt() << endl;
-                // if (fabs(HFmeson.Pt() - tr_HFmeson.Pt()) / tr_HFmeson.Pt() > 0.05)
-                //     continue;
-                // cout << tr_HFmeson.M() << endl;
-                // cout<<isTrueBjet<<",";
                 if (!isTrueBjet)
                     continue;
             }
+
+            if (bmass < mass_low || bmass > mass_high)
+                continue;
 
             if (HFmeson.Pt() > ptHF_binedges[i] && HFmeson.Pt() < ptHF_binedges[i + 1])
             {
@@ -893,19 +851,6 @@ void SPlotFit(int NumEvts = 10000,
         leg1->AddEntry((TObject *)0, Form("%.1f < p_{T}^{HF} < %.1f GeV", ptHF_binedges[i], ptHF_binedges[i + 1]), "");
 
         leg1->Draw("SAME");
-        // xframe->SetT
-        // xframe2->SetMaximum(+5) ;
-        // xframe2->Draw() ;
-
-        // ccan[ican]->cd(2);
-        // // RooPlot *xframe2 = x.frame();
-        // // B_mass.plotOn(xframe2);
-        // // model_nosec->plotOn(xframe2);
-        // // model_nosec->plotOn(xframe2, Components(bkg_nosec), LineStyle(kDashed), LineColor(kRed));
-        // // model_nosec->plotOn(xframe2, Components(sig_nosec), LineStyle(kSolid), LineColor(kGreen));
-        // // model_nosec->plotOn(xframe2, LineStyle(kSolid), LineColor(kBlue));
-        // xframe->Draw("SAME");
-        // leg1->Draw("SAME");
 
         ican = 1;
         ccan[ican]->cd(i + 1);
@@ -1002,12 +947,14 @@ void SPlotFit(int NumEvts = 10000,
             MassDown = MassMu - 4 * MassSigma;
             MassUp = MassMu + 4 * MassSigma;
         }
+        
         Sideband1_Min = (MassMu - 14 * MassSigma) > 5.15 ? (MassMu - 14 * MassSigma) : 5.15;
         Sideband1_Max = (MassMu - 7 * MassSigma) > Sideband1_Min ? (MassMu - 7 * MassSigma) : 5.17;
         // Sideband2_Min = MassMu + 10 * MassSigma;
         // Sideband2_Max = MassMu + 14 * MassSigma;
         Sideband2_Min = MassMu + 10 * MassSigma;
-        Sideband2_Max = MassMu + 25 * MassSigma;
+        Sideband2_Max = (MassMu + 25 * MassSigma) < 5.55 ? (MassMu + 25 * MassSigma) : 5.55;
+        
 
         float Sideband1_Min_forSysNear = Sideband1_Min + MassSigma;
         float Sideband1_Max_forSysNear = Sideband1_Max;
@@ -1167,7 +1114,7 @@ void SPlotFit(int NumEvts = 10000,
         if (!DoSystematic)
         {
             SigParams
-                << mu_sig->getVal() << "," << sigma1->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << p1_sig2->getVal() << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << p2_sig2->getVal() << "," << nsig->getVal() << ", " << sig_frac << endl;
+                << mu_sig->getVal() << "," << sigma1->getVal() << "," << sigma2->getVal() << "," << alpha1_sig->getVal() << "," << p1_sig->getVal() << "," << "," << alpha2_sig->getVal() << "," << p2_sig->getVal() << "," << "," << nsig->getVal() << ", " << sig_frac << endl;
         }
         else
             SigParams
@@ -1176,41 +1123,6 @@ void SPlotFit(int NumEvts = 10000,
         BkgParams << a0_cheb->getVal() << "," << a1_cheb->getVal() << "," << a2_cheb->getVal() << "," << nbkg->getVal() << ", " << bkg_frac << endl;
         ResonantParams << mu->getVal() << "," << width->getVal() << "," << alpha1->getVal() << "," << p1->getVal() << "," << alpha2->getVal() << "," << p2->getVal() << "," << nres->getVal() << "," << res_frac << endl;
     }
-    // model_nosec->fitTo(B_mass, Range("noSec"), PrintEvalErrors(-1), Save(true));
-
-    // ++ican;
-    // sprintf(buf, "ccan%d", ican);
-    // ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    // ccan[ican]->SetFillColor(10);
-    // // gPad->SetLeftMargin(0.16);
-    // // gPad->SetBottomMargin(0.06);
-    // ccan[ican]->cd();
-    // ccan[ican]->Divide(1, 2, 0.0001, 0.0001);
-
-    // RooPlot *xframe2 = HFmass.frame(Title("Pull Distribution"));
-    // xframe2->addPlotable(hpull, "P");
-
-    // ccan[ican]->cd(1);
-    // ;
-    // gPad->SetLeftMargin(0.15);
-    // xframe->GetYaxis()->SetTitleOffset(1.6);
-    // xframe->Draw();
-    // ccan[ican]->cd(2);
-    // ;
-    // gPad->SetLeftMargin(0.15);
-    // xframe->GetYaxis()->SetTitleOffset(1.6);
-    // xframe2->Draw();
-
-    // ccan[ican]->cd();
-    // ccan[ican]->Update();
-    // if (ican == 0)
-    // {
-    //   ccan[ican]->Print(plotfileO.Data());
-    // }
-    // else
-    // {
-    //   ccan[ican]->Print(plotfilePDF.Data());
-    // }
 
     ican = 0;
     ccan[ican]->cd();

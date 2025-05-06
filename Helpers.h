@@ -590,8 +590,8 @@ void SetTruthStyle(TH1 *h, double markersize = 1.)
   if (h == NULL)
     return;
   h->SetMarkerStyle(kFullDiamond);
-  h->SetMarkerColor(kGreen);
-  h->SetLineColor(kGreen);
+  h->SetMarkerColor(kAzure-3);
+  h->SetLineColor(kAzure-3);
   h->SetMarkerSize(markersize);
 }
 void SubtractUnity(TH2D *h2)

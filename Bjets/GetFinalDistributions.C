@@ -1,6 +1,7 @@
 #include <TCanvas.h>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "Settings.h"
 #include "../Helpers.h"
 using namespace std;
@@ -8,8 +9,8 @@ using namespace std;
 void GetFinalDistributions(int NumEvts = -1,
                            int dataset = 91599,
                            bool WTA_cut = false)
-{
-
+{ 
+  const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
   TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_DTF(""), str_PID("");
   TString loc_rootfiles_data("../../root_files/Bjets/");
@@ -270,13 +271,13 @@ void GetFinalDistributions(int NumEvts = -1,
 
   // Begin plotting
   //
-  auto legend_stack_z = new TLegend(0.6, 0.67, 0.8, 0.87);
+  auto legend_stack_z = new TLegend(0.7, 0.67, 0.9, 0.87);
   legend_stack_z->SetTextSize(0.07);
   
-  auto legend_stack_jt = new TLegend(0.6, 0.67, 0.8, 0.87);
+  auto legend_stack_jt = new TLegend(0.7, 0.67, 0.9, 0.87);
   legend_stack_jt->SetTextSize(0.07);
   
-  auto legend_stack_r = new TLegend(0.6, 0.67, 0.8, 0.87);
+  auto legend_stack_r = new TLegend(0.7, 0.67, 0.9, 0.87);
   legend_stack_r->SetTextSize(0.07);  
   
   double left = 0.2;
@@ -286,6 +287,15 @@ void GetFinalDistributions(int NumEvts = -1,
   double top2d = 0.9 - step;
   double step2d = 0.06;
 
+  ofstream textables;
+  textables.open("textables.txt");
+  // z histograms // 
+  textables << "\\begin{longtable}{ccccc}\n";
+  textables << "    \\caption{Final results of $\\frac{1}{N_{j}}\\frac{dN}{dz}$ from Figure~\\ref{fig:z_final_pt1}-~\\ref{fig:z_final_pt6}}\\\\\n";
+  textables << "    \\label{tab:z_final}\n";
+  textables << "    \\ptj (GeV/c) & $z$ & $\\frac{1}{N_{j}}\\frac{dN}{dz}$ & $\\sigma_{stat}$ & $\\sigma_{sys}$\\\\\n";
+  textables << "    \\hline\n";
+  textables << "    \\hline\n";
   for (int i = 1; i < ptbinsize; i++)
   {
     ++ican;
@@ -293,83 +303,87 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
     ccan[ican]->SetFillColor(10);
 
+
     ccan[ican]->cd();
     ccan[ican]->Divide(1, 1, 0.0001, 0.0001);
     ccan[ican]->cd(1);
-    
+
+    TPad* top_pad = new TPad(Form("top_pad_%d_zpt", i), "Top pad", 0, 0.45, 1, 1);
+    top_pad->SetBottomMargin(0);
+    top_pad->SetLeftMargin(0.16);
+    top_pad->SetRightMargin(0.05);
+    top_pad->SetTicks(1, 1);
+    top_pad->Draw();
+
+    TPad* bot_pad = new TPad(Form("bot_pad_%d_zpt", i), "Bottom pad", 0, 0, 1, 0.45);
+    gStyle->cd();
+    gROOT->SetStyle(gStyle->GetName());
+    bot_pad->UseCurrentStyle();
+    bot_pad->SetTopMargin(0);
+    bot_pad->SetBottomMargin(0.25);
+    bot_pad->SetLeftMargin(0.16);
+    bot_pad->SetRightMargin(0.05);
+    bot_pad->SetTicks(1, 1);
+    bot_pad->Draw();
+
+    h2_ptz_truth->GetNbinsY();    
     h1_z_data[i-1] = (TH1D *)h2_ptz_data->ProjectionX(Form("z_data_pt%d",i), i+1, i+1);
     h1_z_truth[i-1] = (TH1D *)h2_ptz_truth->ProjectionX(Form("z_truth_pt%d",i), i+1, i+1);
     
     NormalizeHist(h1_z_data[i-1]);
-    NormalizeHist(h1_z_truth[i-1]); 
-        
+    NormalizeHist(h1_z_truth[i-1]);   
+       
     h1_z_sys[i-1] = (TH1D*)file_sys->Get(Form("z_sys_total_pt%d",i));   
     TH1D *h1_z_data_w_sys = (TH1D*)h1_z_data[i-1]->Clone("h1_z_data_w_sys");
     h1_z_sys[i-1]->Multiply(h1_z_sys[i-1], h1_z_data[i-1]);
+    if (i!=1)
+    {
+      textables << "    \\hline\n";
+    }
+    textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]);
     for (int ibin=0; ibin<h1_z_data_w_sys->GetNbinsX(); ++ibin)
     { 
       h1_z_data_w_sys->SetBinError(ibin+1, h1_z_sys[i-1]->GetBinContent(ibin+1));
-      std::cout << "stat error pt: " << i << " : " << h1_z_data[i-1]->GetBinError(ibin+1) << std::endl;
-      std::cout << "sys error pt: " << i << " : " << h1_z_data_w_sys->GetBinError(ibin+1) << std::endl;      
-      
+      if (ibin==0)
+        textables << " & " << Form("$%.2f<z<%.2f$", z_binedges[ibin], z_binedges[ibin+1]) << " & " << std::fixed << std::setprecision(sigfigs) << h1_z_data[i-1]->GetBinContent(ibin+1) << " & " << h1_z_data[i-1]->GetBinError(ibin+1) << " & " <<  h1_z_data_w_sys->GetBinError(ibin+1)  << " \\\\\n"; 
+      else
+        textables << "                     & " << Form("$%.2f<z<%.2f$", z_binedges[ibin], z_binedges[ibin+1]) << " & " << std::fixed << std::setprecision(sigfigs) << h1_z_data[i-1]->GetBinContent(ibin+1) << " & " << h1_z_data[i-1]->GetBinError(ibin+1) << " & " <<  h1_z_data_w_sys->GetBinError(ibin+1)  << " \\\\\n"; 
+      //std::cout << "stat error pt: " << i << " : " << h1_z_data[i-1]->GetBinError(ibin+1) << std::endl;
+      //std::cout << "sys error pt: " << i << " : " << h1_z_data_w_sys->GetBinError(ibin+1) << std::endl;      
     } 
     
-   
-/*    
-    h1_jt_data[i-1] = (TH1D *)h2_ptjt_data->ProjectionX(Form("jt_data_pt%d",i), i+1, i+1);
-    h1_jt_truth[i-1] = (TH1D *)h2_ptjt_truth->ProjectionX(Form("jt_truth_pt%d",i), i+1, i+1);
-    h1_jt_ratio_MCData[i-1] = (TH1D *)h2_ptjt_ratio_MCData->ProjectionX(Form("jt_ratio_MCData_pt%d",i), i+1, i+1);     
-        
-    h1_r_data[i-1] = (TH1D *)h2_ptr_data->ProjectionX(Form("r_data_pt%d",i), i+1, i+1);
-    h1_r_truth[i-1] = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_truth_pt%d",i), i+1, i+1);
-    h1_r_ratio_MCData[i-1] = (TH1D *)h2_ptr_ratio_MCData->ProjectionX(Form("r_ratio_MCData_pt%d",i), i+1, i+1);    
-*/
+     // Calcualte ratios to truth
+     TH1D *h1_z_data_stat_ratio = (TH1D *)h1_z_truth[i-1]->Clone("h1_z_data_stat_ratio");
+     h1_z_data_stat_ratio->Divide(h1_z_data[i-1]);
+     TH1D *h1_z_data_sys_ratio = (TH1D *)h1_z_truth[i-1]->Clone("h1_z_data_sys_ratio");
+     SetHistErrorZero(h1_z_data_sys_ratio);  // No sys. uncertainties on Pythia
+     h1_z_data_sys_ratio->Divide(h1_z_data_w_sys);
+    
     SetTruthStyle(h1_z_truth[i-1]);
     SetDataStyle(h1_z_data[i-1], 0.7);
-    //h1_z_data_w_sys->
+    SetDataStyle(h1_z_data_w_sys, 0.7);
+    SetDataStyle(h1_z_data_stat_ratio, 0.7);
+    SetDataStyle(h1_z_data_sys_ratio, 0.7);
     h1_z_data_w_sys->SetFillColorAlpha(16, 0.5);
     h1_z_data_w_sys->SetLineColorAlpha(0, 0.5);
     //h1_z_truth[i-1]->GetXaxis()->SetRange(1, h1_z_truth[i-1]->GetNbinsX() - 1);
-    rp[irp] = new TRatioPlot(h1_z_truth[i-1], h1_z_data[i-1]);
 
-    rp[irp]->SetH1DrawOpt("HIST P");
-    rp[irp]->SetH2DrawOpt("HIST P");
-    // rp[irp]->SetLineColor(kRed);
-    rp[irp]->Draw();
-    // ccan[ican]->Update();
-
-    rp[irp]->GetLowerRefGraph()->SetMinimum(0.0);
-    rp[irp]->GetLowerRefGraph()->SetMaximum(2.0);
-    rp[irp]->GetLowerRefYaxis()->SetLabelSize(0.03);
-    //SetTruthStyle(rp[irp]->GetLowerRefGraph());
-
-    rp[irp]->GetLowerRefYaxis()->SetTitle("MC/Data");
-    // rp[irp]->GetLowerRefGraph()->Draw("PAC");
-    // TGaxis::SetMaxDigits(3);
-    rp[irp]->GetUpperRefYaxis()->SetMaxDigits(2);
-    rp[irp]->GetUpperRefYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dz}");
-    rp[irp]->GetUpperRefYaxis()->SetTitleOffset(1.1);
-    rp[irp]->GetUpperRefYaxis()->SetRangeUser(0, h1_z_truth[i-1]->GetMaximum() * 2.3);
-    rp[irp]->GetUpperRefXaxis()->SetTickLength(0.);
-
-    rp[irp]->SetLeftMargin(0.16);
-    rp[irp]->SetLowBottomMargin(0.45);
-
-    gPad->Modified();
-    gPad->Update();
-    rp[irp]->GetUpperPad()->cd();
+    top_pad->cd();
+    h1_z_truth[i-1]->GetYaxis()->SetMaxDigits(2);
+    h1_z_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dz}");
+    h1_z_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
+    h1_z_truth[i-1]->GetYaxis()->SetRangeUser(0, 4.);    
+    h1_z_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
+    h1_z_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_z_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
+    h1_z_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);    
     h1_z_truth[i-1]->Draw("HIST SAME");
     h1_z_truth[i-1]->Draw("PE SAME");
-    //h1_ptktdR_data_stat->Draw("HIST SAME");
     h1_z_data_w_sys->Draw("PE2 SAME");
     h1_z_data[i-1]->Draw("PE SAME");    
-    // TGaxis *axis_dR = new TGaxis(gPad->GetUxmax(),gPad->GetUymax(),gPad->GetUxmin(),gPad->GetUymax(),jetradius/exp(dR_max), jetradius/exp(dR_min),510,"+L");
-    // TGaxis *axis_dR = new TGaxis(gPad->GetUxmax(),gPad->GetUymax(),gPad->GetUxmin(),gPad->GetUymax(),jetradius/exp(dR_max), jetradius/exp(dR_min) - 0.0001,510,"+L");
-    // axis_dR->SetLabelOffset(-0.01);
-    // Tl.DrawLatex(0.85, 0.95, Form("#DeltaR"));
-    // axis_dR->Draw("SAME");
-    // axis_dR->SetNdivisions(-510);
-    // Tl.DrawLatex(left, top + step, "#scale[1.4]{LHCb Unofficial}");
+ 
     lhcbName->Draw("SAME");
     Tl.DrawLatex(left, top + step, "#scale[1.2]{AK5 B^{#pm}-tagged jets}");
 
@@ -390,7 +404,31 @@ void GetFinalDistributions(int NumEvts = -1,
     {
       legend_stack_z->Draw("SAME");
     }
-    rp[irp]->GetUpperPad()->Update();
+
+    bot_pad->cd();
+    h1_z_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
+    h1_z_data_sys_ratio->GetYaxis()->SetTitleOffset(0.5);
+    h1_z_data_sys_ratio->GetYaxis()->SetTitleSize(0.1);
+    h1_z_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_z_data_sys_ratio->GetYaxis()->SetLabelSize(0.09);
+    h1_z_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_z_data_sys_ratio->GetXaxis()->SetTitleSize(0.12);
+    h1_z_data_sys_ratio->GetXaxis()->SetTitleOffset(0.85);
+    h1_z_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
+    h1_z_data_sys_ratio->GetXaxis()->SetLabelSize(0.09);
+    h1_z_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
+    h1_z_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_z_data_sys_ratio->GetYaxis()->ChangeLabel(-1, -1, 0);
+    h1_z_data_sys_ratio->SetMinimum(0.0);
+    h1_z_data_sys_ratio->SetMaximum(2.0);
+    h1_z_data_sys_ratio->SetFillColorAlpha(16, 0.5);
+    h1_z_data_sys_ratio->SetLineColorAlpha(0, 0.5);
+    h1_z_data_sys_ratio->Draw("PE2 SAME");
+    h1_z_data_stat_ratio->Draw("PE SAME");
+    TLine *line = new TLine(0.0, 1.0, 1.0, 1.0);
+    line->SetLineStyle(2);
+    line->Draw("SAME");
+
 
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -405,8 +443,17 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican]->SaveAs(Form(loc_plots + "z_final_w_sys_pt%d.png",i));
         
     ++irp;
-}     
-    // jT historgrams //
+  }     
+  textables << "\\end{longtable}\n";
+
+
+  // jT historgrams //
+  textables << "\\begin{longtable}{ccccc}\n";
+  textables << "    \\caption{Final results of $\\frac{1}{N_{j}}\\frac{dN}{d\\jt}$ from Figure~\\ref{fig:jt_final_pt1}-~\\ref{fig:jt_final_pt6}}\\\\\n";
+  textables << "    \\label{tab:jt_final}\n";
+  textables << "    \\ptj (GeV/c) & \\jt (GeV/c) & $\\frac{1}{N_{j}}\\frac{dN}{d\\jt}$ & $\\sigma_{stat}$ & $\\sigma_{sys}$\\\\\n";
+  textables << "    \\hline\n";
+  textables << "    \\hline\n";
   for (int i = 1; i < ptbinsize; i++)
   {    
     ++ican;
@@ -417,6 +464,24 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican]->cd();
     ccan[ican]->Divide(1, 1, 0.0001, 0.0001);
     ccan[ican]->cd(1);
+
+    TPad* top_pad = new TPad(Form("top_pad_%d_jtpt", i), "Top pad", 0, 0.45, 1, 1);
+    top_pad->SetBottomMargin(0);
+    top_pad->SetLeftMargin(0.16);
+    top_pad->SetRightMargin(0.05);
+    top_pad->SetTicks(1, 1);
+    top_pad->Draw();
+
+    TPad* bot_pad = new TPad(Form("bot_pad_%d_jtpt", i), "Bottom pad", 0, 0, 1, 0.45);
+    gStyle->cd();
+    gROOT->SetStyle(gStyle->GetName());
+    bot_pad->UseCurrentStyle();
+    bot_pad->SetTopMargin(0);
+    bot_pad->SetBottomMargin(0.25);
+    bot_pad->SetLeftMargin(0.16);
+    bot_pad->SetRightMargin(0.05);
+    bot_pad->SetTicks(1, 1);
+    bot_pad->Draw();
     
     h1_jt_data[i-1] = (TH1D *)h2_ptjt_data->ProjectionX(Form("jt_data_pt%d",i), i+1, i+1);
     h1_jt_truth[i-1] = (TH1D *)h2_ptjt_truth->ProjectionX(Form("jt_truth_pt%d",i), i+1, i+1);
@@ -425,72 +490,69 @@ void GetFinalDistributions(int NumEvts = -1,
     NormalizeHist(h1_jt_truth[i-1]); 
         
     h1_jt_sys[i-1] = (TH1D*)file_sys->Get(Form("jt_sys_total_pt%d",i));   
-    
+   /* 
     for (int ibin=0; ibin<h1_jt_sys[i-1]->GetNbinsX(); ++ibin)
     { 
       
       std::cout << "jt relative sys error pt: " << i << " : " << h1_jt_sys[i-1]->GetBinContent(ibin+1) << std::endl;    
       std::cout << "jt data point pt " << i << " : " << h1_jt_data[i-1]->GetBinContent(ibin+1) << std::endl;
       
-    }     
+    }
+   */        
     TH1D *h1_jt_data_w_sys = (TH1D*)h1_jt_data[i-1]->Clone("h1_jt_data_w_sys");
     h1_jt_sys[i-1]->Multiply(h1_jt_sys[i-1], h1_jt_data[i-1]);
+    if (i!=1)
+    {
+      textables << "    \\hline\n";
+    }
+    textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]);
     for (int ibin=0; ibin<h1_jt_data_w_sys->GetNbinsX(); ++ibin)
     { 
       h1_jt_data_w_sys->SetBinError(ibin+1, h1_jt_sys[i-1]->GetBinContent(ibin+1));
-      std::cout << "stat error pt: " << i << " : " << h1_jt_data[i-1]->GetBinError(ibin+1) << std::endl;
-      std::cout << "sys error pt: " << i << " : " << h1_jt_data_w_sys->GetBinError(ibin+1) << std::endl;      
+      if (h1_jt_data[i-1]->GetBinContent(ibin+1) == 0)
+      {
+        continue;
+      }
+      if (ibin==0)
+        textables << " & " << Form("$%.2f<\\jt<%.2f$", jt_binedges[ibin], jt_binedges[ibin+1]) << " & "  << std::fixed << std::setprecision(sigfigs) << h1_jt_data[i-1]->GetBinContent(ibin+1) << " & " << h1_jt_data[i-1]->GetBinError(ibin+1) << " & " << h1_jt_data_w_sys->GetBinError(ibin+1)  << " \\\\\n"; 
+      else
+        textables << "                     & " << Form("$%.2f<\\jt<%.2f$", jt_binedges[ibin], jt_binedges[ibin+1]) << " & "  << std::fixed << std::setprecision(sigfigs) << h1_jt_data[i-1]->GetBinContent(ibin+1) << " & " << h1_jt_data[i-1]->GetBinError(ibin+1) << " & " << h1_jt_data_w_sys->GetBinError(ibin+1) << " \\\\\n";       
+      //std::cout << "stat error pt: " << i << " : " << h1_jt_data[i-1]->GetBinError(ibin+1) << std::endl;
+      //std::cout << "sys error pt: " << i << " : " << h1_jt_data_w_sys->GetBinError(ibin+1) << std::endl;      
       
     } 
     
-   
-/*    
-    h1_jt_data[i-1] = (TH1D *)h2_ptjt_data->ProjectionX(Form("jt_data_pt%d",i), i+1, i+1);
-    h1_jt_truth[i-1] = (TH1D *)h2_ptjt_truth->ProjectionX(Form("jt_truth_pt%d",i), i+1, i+1);
-    h1_jt_ratio_MCData[i-1] = (TH1D *)h2_ptjt_ratio_MCData->ProjectionX(Form("jt_ratio_MCData_pt%d",i), i+1, i+1);     
-        
-    h1_r_data[i-1] = (TH1D *)h2_ptr_data->ProjectionX(Form("r_data_pt%d",i), i+1, i+1);
-    h1_r_truth[i-1] = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_truth_pt%d",i), i+1, i+1);
-    h1_r_ratio_MCData[i-1] = (TH1D *)h2_ptr_ratio_MCData->ProjectionX(Form("r_ratio_MCData_pt%d",i), i+1, i+1);    
-*/
+     // Calcualte ratios to truth
+     TH1D *h1_jt_data_stat_ratio = (TH1D *)h1_jt_truth[i-1]->Clone("h1_jt_data_stat_ratio");
+     h1_jt_data_stat_ratio->Divide(h1_jt_data[i-1]);
+     TH1D *h1_jt_data_sys_ratio = (TH1D *)h1_jt_truth[i-1]->Clone("h1_jt_data_sys_ratio");
+     SetHistErrorZero(h1_jt_data_sys_ratio);  // No sys. uncertainties on Pythia
+     h1_jt_data_sys_ratio->Divide(h1_jt_data_w_sys);
+       
+
     SetTruthStyle(h1_jt_truth[i-1]);
     SetDataStyle(h1_jt_data[i-1], 0.7);
+    SetDataStyle(h1_jt_data_w_sys, 0.7);
+    SetDataStyle(h1_jt_data_stat_ratio, 0.7);
+    SetDataStyle(h1_jt_data_sys_ratio, 0.7); 
     //h1_jt_data_w_sys->
     h1_jt_data_w_sys->SetFillColorAlpha(16, 0.5);
     h1_jt_data_w_sys->SetLineColorAlpha(0, 0.5);
     //h1_jt_truth[i-1]->GetXaxis()->SetRange(1, h1_jt_truth[i-1]->GetNbinsX() - 1);
-    rp[irp] = new TRatioPlot(h1_jt_truth[i-1], h1_jt_data[i-1]);
 
-    rp[irp]->SetH1DrawOpt("HIST P");
-    rp[irp]->SetH2DrawOpt("HIST P");
-    //rp[irp]->GetUpperPad()->SetLogy();
-    // rp[irp]->SetLineColor(kRed);
-    rp[irp]->Draw();
-
-    rp[irp]->GetLowerRefGraph()->SetMinimum(0.0);
-    rp[irp]->GetLowerRefGraph()->SetMaximum(2.0);
-    rp[irp]->GetLowerRefYaxis()->SetLabelSize(0.03);
-    //rp[irp]->GetUpperRefYaxis()->SetRangeUser(0.001, 5);
-    //SetTruthStyle(rp[irp]->GetLowerRefGraph());
-
-    rp[irp]->GetLowerRefYaxis()->SetTitle("MC/Data");
-    // rp[irp]->GetLowerRefGraph()->Draw("PAC");
-    // TGaxis::SetMaxDigits(3);
-    rp[irp]->GetUpperRefYaxis()->SetMaxDigits(2);
-    rp[irp]->GetUpperRefYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
-    rp[irp]->GetUpperRefYaxis()->SetTitleOffset(1.1);
-    rp[irp]->GetUpperRefYaxis()->SetRangeUser(0, h1_jt_truth[i-1]->GetMaximum() * 2.3);
-    rp[irp]->GetUpperRefXaxis()->SetTickLength(0.);
-
-    rp[irp]->SetLeftMargin(0.16);
-    rp[irp]->SetLowBottomMargin(0.45);
-
-    gPad->Modified();
-    gPad->Update();
-    rp[irp]->GetUpperPad()->cd();
-    gPad->SetLogy();
-
+    top_pad->cd();
+    top_pad->SetLogy();
+    h1_jt_truth[i-1]->GetYaxis()->SetMaxDigits(2);
     h1_jt_truth[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
+    h1_jt_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
+    h1_jt_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
+    h1_jt_truth[i-1]->GetYaxis()->SetRangeUser(0, 100.);    
+    h1_jt_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
+    h1_jt_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_jt_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
+    h1_jt_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_jt_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_jt_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
     h1_jt_truth[i-1]->SetMinimum(0.00000001);
     h1_jt_truth[i-1]->Draw("HIST SAME");
     h1_jt_truth[i-1]->Draw("PE SAME");
@@ -532,7 +594,31 @@ void GetFinalDistributions(int NumEvts = -1,
     }
  
 
-    rp[irp]->GetUpperPad()->Update();
+    // rp[irp]->GetUpperPad()->Update();
+
+    bot_pad->cd();
+    h1_jt_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
+    h1_jt_data_sys_ratio->GetYaxis()->SetTitleOffset(0.5);
+    h1_jt_data_sys_ratio->GetYaxis()->SetTitleSize(0.1);
+    h1_jt_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_jt_data_sys_ratio->GetYaxis()->SetLabelSize(0.09);
+    h1_jt_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_jt_data_sys_ratio->GetXaxis()->SetTitleSize(0.12);
+    h1_jt_data_sys_ratio->GetXaxis()->SetTitleOffset(0.85);
+    h1_jt_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
+    h1_jt_data_sys_ratio->GetXaxis()->SetLabelSize(0.09);
+    h1_jt_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
+    h1_jt_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_jt_data_sys_ratio->GetYaxis()->ChangeLabel(-1, -1, 0);
+    h1_jt_data_sys_ratio->SetMinimum(0.0);
+    h1_jt_data_sys_ratio->SetMaximum(2.0);
+    h1_jt_data_sys_ratio->SetFillColorAlpha(16, 0.5);
+    h1_jt_data_sys_ratio->SetLineColorAlpha(0, 0.5);
+    h1_jt_data_sys_ratio->Draw("PE2 SAME");
+    h1_jt_data_stat_ratio->Draw("PE SAME");
+    TLine *line_jt = new TLine(0.0, 1.0, 10.0, 1.0);
+    line_jt->SetLineStyle(2);
+    line_jt->Draw("SAME");
 
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -547,10 +633,19 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican]->SaveAs(Form(loc_plots + "jt_final_w_sys_pt%d.png",i));   
         
     ++irp;  
+
   }
-  // r histograms! // 
+  textables << "\\end{longtable}\n";
+
+  // r histograms //
+  textables << "\\begin{longtable}{ccccc}\n";
+  textables << "    \\caption{Final results of $\\frac{1}{N_{j}}\\frac{dN}{dr}$ from Figure~\\ref{fig:r_final_pt1}-~\\ref{fig:r_final_pt6}}\\\\\n";
+  textables << "    \\label{tab:r_final}\n";
+  textables << "    \\ptj (GeV/c) & $r$ & $\\frac{1}{N_{j}}\\frac{dN}{dr}$ & $\\sigma_{stat}$ & $\\sigma_{sys}$\\\\\n";
+  textables << "    \\hline\n";
+  textables << "    \\hline\n"; 
   for (int i = 1; i < ptbinsize; i++)
-  {    
+  {     
     ++ican;
     sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -560,6 +655,24 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican]->Divide(1, 1, 0.0001, 0.0001);
     ccan[ican]->cd(1);
     
+    TPad* top_pad = new TPad(Form("top_pad_%d_rpt", i), "Top pad", 0, 0.45, 1, 1);
+    top_pad->SetBottomMargin(0);
+    top_pad->SetLeftMargin(0.16);
+    top_pad->SetRightMargin(0.05);
+    top_pad->SetTicks(1, 1);
+    top_pad->Draw();
+
+    TPad* bot_pad = new TPad(Form("bot_pad_%d_rpt", i), "Bottom pad", 0, 0, 1, 0.45);
+    gStyle->cd();
+    gROOT->SetStyle(gStyle->GetName());
+    bot_pad->UseCurrentStyle();
+    bot_pad->SetTopMargin(0);
+    bot_pad->SetBottomMargin(0.25);
+    bot_pad->SetLeftMargin(0.16);
+    bot_pad->SetRightMargin(0.05);
+    bot_pad->SetTicks(1, 1);
+    bot_pad->Draw();
+
     h1_r_data[i-1] = (TH1D *)h2_ptr_data->ProjectionX(Form("r_data_pt%d",i), i+1, i+1);
     h1_r_truth[i-1] = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_truth_pt%d",i), i+1, i+1);
     
@@ -569,73 +682,64 @@ void GetFinalDistributions(int NumEvts = -1,
     h1_r_sys[i-1] = (TH1D*)file_sys->Get(Form("r_sys_total_pt%d",i));   
     TH1D *h1_r_data_w_sys = (TH1D*)h1_r_data[i-1]->Clone("h1_r_data_w_sys");
     h1_r_sys[i-1]->Multiply(h1_r_sys[i-1], h1_r_data[i-1]);
+    if (i!=1)
+    {
+      textables << "    \\hline\n";
+    }
+    textables << Form("    $%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]);   
     for (int ibin=0; ibin<h1_r_data_w_sys->GetNbinsX(); ++ibin)
     { 
       h1_r_data_w_sys->SetBinError(ibin+1, h1_r_sys[i-1]->GetBinContent(ibin+1));
-      std::cout << "stat error pt: " << i << " : " << h1_r_data[i-1]->GetBinError(ibin+1) << std::endl;
-      std::cout << "sys error pt: " << i << " : " << h1_r_data_w_sys->GetBinError(ibin+1) << std::endl;      
+      if (h1_r_data[i-1]->GetBinContent(ibin+1) == 0)
+      {
+        continue;
+      }
+      if (ibin==0)
+        textables << " & " << Form("$%.2f<r<%.2f$", r_binedges[ibin], r_binedges[ibin+1]) << " & "  << std::fixed << std::setprecision(sigfigs) << h1_r_data[i-1]->GetBinContent(ibin+1) << " & " << h1_r_data[i-1]->GetBinError(ibin+1) << " & " << h1_r_data_w_sys->GetBinError(ibin+1)  << " \\\\\n"; 
+      else
+        textables << "                     & " << Form("$%.2f<r<%.2f$", r_binedges[ibin], r_binedges[ibin+1]) << " & "  << std::fixed << std::setprecision(sigfigs) << h1_r_data[i-1]->GetBinContent(ibin+1) << " & " << h1_r_data[i-1]->GetBinError(ibin+1) << " & " << h1_r_data_w_sys->GetBinError(ibin+1) << " \\\\\n";       
+      //std::cout << "stat error pt: " << i << " : " << h1_r_data[i-1]->GetBinError(ibin+1) << std::endl;
+      //std::cout << "sys error pt: " << i << " : " << h1_r_data_w_sys->GetBinError(ibin+1) << std::endl;      
       
     } 
     
-   
-/*    
-    h1_r_data[i-1] = (TH1D *)h2_ptr_data->ProjectionX(Form("r_data_pt%d",i), i+1, i+1);
-    h1_r_truth[i-1] = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_truth_pt%d",i), i+1, i+1);
-    h1_r_ratio_MCData[i-1] = (TH1D *)h2_ptr_ratio_MCData->ProjectionX(Form("r_ratio_MCData_pt%d",i), i+1, i+1);     
+    // Calcualte ratios to truth
+    TH1D *h1_r_data_stat_ratio = (TH1D *)h1_r_truth[i-1]->Clone("h1_r_data_stat_ratio");
+    h1_r_data_stat_ratio->Divide(h1_r_data[i-1]);
+    TH1D *h1_r_data_sys_ratio = (TH1D *)h1_r_truth[i-1]->Clone("h1_r_data_sys_ratio");
+    SetHistErrorZero(h1_r_data_sys_ratio);  // No sys. uncertainties on Pythia
+    h1_r_data_sys_ratio->Divide(h1_r_data_w_sys);
         
-    h1_r_data[i-1] = (TH1D *)h2_ptr_data->ProjectionX(Form("r_data_pt%d",i), i+1, i+1);
-    h1_r_truth[i-1] = (TH1D *)h2_ptr_truth->ProjectionX(Form("r_truth_pt%d",i), i+1, i+1);
-    h1_r_ratio_MCData[i-1] = (TH1D *)h2_ptr_ratio_MCData->ProjectionX(Form("r_ratio_MCData_pt%d",i), i+1, i+1);    
-*/
     SetTruthStyle(h1_r_truth[i-1]);
     SetDataStyle(h1_r_data[i-1], 0.7);
-    //h1_r_data_w_sys->
+    SetDataStyle(h1_r_data_w_sys, 0.7);
+    SetDataStyle(h1_r_data_stat_ratio, 0.7);
+    SetDataStyle(h1_r_data_sys_ratio, 0.7);    
+
     h1_r_data_w_sys->SetFillColorAlpha(16, 0.5);
     h1_r_data_w_sys->SetLineColorAlpha(0, 0.5);
-    //h1_r_truth[i-1]->GetXaxis()->SetRange(1, h1_r_truth[i-1]->GetNbinsX() - 1);
-    rp[irp] = new TRatioPlot(h1_r_truth[i-1], h1_r_data[i-1]);
 
-    rp[irp]->SetH1DrawOpt("HIST P");
-    rp[irp]->SetH2DrawOpt("HIST P");
-    // rp[irp]->SetLineColor(kRed);
-    rp[irp]->Draw();
-    // ccan[ican]->Update();
+    top_pad->cd();
+    top_pad->SetLogy();
 
-    rp[irp]->GetLowerRefGraph()->SetMinimum(0.0);
-    rp[irp]->GetLowerRefGraph()->SetMaximum(2.0);
-    rp[irp]->GetLowerRefYaxis()->SetLabelSize(0.03);
-    //SetTruthStyle(rp[irp]->GetLowerRefGraph());
-
-    rp[irp]->GetLowerRefYaxis()->SetTitle("MC/Data");
-    // rp[irp]->GetLowerRefGraph()->Draw("PAC");
-    // TGaxis::SetMaxDigits(3);
-    rp[irp]->GetUpperRefYaxis()->SetMaxDigits(2);
-    rp[irp]->GetUpperRefYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dr}");
-    rp[irp]->GetUpperRefYaxis()->SetTitleOffset(1.1);
-    rp[irp]->GetUpperRefYaxis()->SetRangeUser(0, h1_r_truth[i-1]->GetMaximum() * 2.3);
-    rp[irp]->GetUpperRefXaxis()->SetTickLength(0.);
-
-    rp[irp]->SetLeftMargin(0.16);
-    rp[irp]->SetLowBottomMargin(0.45);
-
-    gPad->Modified();
-    gPad->Update();
-    rp[irp]->GetUpperPad()->cd();
-    gPad->SetLogy();
+    h1_r_truth[i-1]->GetYaxis()->SetMaxDigits(2);
+    h1_r_truth[i-1]->GetXaxis()->SetTitle("r");
+    h1_r_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dr}");
+    h1_r_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
+    h1_r_truth[i-1]->GetYaxis()->SetRangeUser(0, 100.);    
+    h1_r_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
+    h1_r_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_r_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
+    h1_r_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_r_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_r_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
     h1_r_truth[i-1]->SetMinimum(0.00001);
     h1_r_truth[i-1]->Draw("HIST SAME");
     h1_r_truth[i-1]->Draw("PE SAME");
-    //h1_ptktdR_data_stat->Draw("HIST SAME");
     h1_r_data_w_sys->SetMinimum(0.00001);
     h1_r_data[i-1]->SetMinimum(0.00001);
     h1_r_data_w_sys->Draw("PE2 SAME");    
     h1_r_data[i-1]->Draw("PE SAME");
-    // TGaxis *axis_dR = new TGaxis(gPad->GetUxmax(),gPad->GetUymax(),gPad->GetUxmin(),gPad->GetUymax(),jetradius/exp(dR_max), jetradius/exp(dR_min),510,"+L");
-    // TGaxis *axis_dR = new TGaxis(gPad->GetUxmax(),gPad->GetUymax(),gPad->GetUxmin(),gPad->GetUymax(),jetradius/exp(dR_max), jetradius/exp(dR_min) - 0.0001,510,"+L");
-    // axis_dR->SetLabelOffset(-0.01);
-    // Tl.DrawLatex(0.85, 0.95, Form("#DeltaR"));
-    // axis_dR->Draw("SAME");
-    // axis_dR->SetNdivisions(-510);
 
     // Tl.DrawLatex(left, top + step, "#scale[1.4]{LHCb Unofficial}");
     lhcbName->Draw("SAME");
@@ -659,7 +763,31 @@ void GetFinalDistributions(int NumEvts = -1,
       legend_stack_r->Draw("SAME");
     }
 
-    rp[irp]->GetUpperPad()->Update();
+    //rp[irp]->GetUpperPad()->Update();
+
+    bot_pad->cd();
+    h1_r_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
+    h1_r_data_sys_ratio->GetYaxis()->SetTitleOffset(0.5);
+    h1_r_data_sys_ratio->GetYaxis()->SetTitleSize(0.1);
+    h1_r_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
+    h1_r_data_sys_ratio->GetYaxis()->SetLabelSize(0.09);
+    h1_r_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
+    h1_r_data_sys_ratio->GetXaxis()->SetTitleSize(0.12);
+    h1_r_data_sys_ratio->GetXaxis()->SetTitleOffset(0.85);
+    h1_r_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
+    h1_r_data_sys_ratio->GetXaxis()->SetLabelSize(0.09);
+    h1_r_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
+    h1_r_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
+    h1_r_data_sys_ratio->GetYaxis()->ChangeLabel(-1, -1, 0);    
+    h1_r_data_sys_ratio->SetMinimum(0.0);
+    h1_r_data_sys_ratio->SetMaximum(2.0);
+    h1_r_data_sys_ratio->SetFillColorAlpha(16, 0.5);
+    h1_r_data_sys_ratio->SetLineColorAlpha(0, 0.5);
+    h1_r_data_sys_ratio->Draw("PE2 SAME");
+    h1_r_data_stat_ratio->Draw("PE SAME");
+    TLine *line_r = new TLine(0.0, 1.0, 0.5, 1.0);
+    line_r->SetLineStyle(2);
+    line_r->Draw("SAME");
 
     ccan[ican]->cd();
     ccan[ican]->Update();
@@ -674,9 +802,13 @@ void GetFinalDistributions(int NumEvts = -1,
     ccan[ican]->SaveAs(Form(loc_plots + "r_final_w_sys_pt%d.png",i));     
     ++irp;
   }  
-  
+  textables << "\\end{longtable}\n";
+
+  // zjt histos // 
   for (int i = 1; i < ptbinsize; i++)
   {
+    textables << "\\begin{sidewaystable}\n";
+    textables << "    \\centering\n";
     ++ican;
     sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -711,7 +843,172 @@ void GetFinalDistributions(int NumEvts = -1,
       }     
       
     } 
-        
+
+    // ( z , j t )   d a t a   t a b l e //
+    textables << "    \\caption{Final results for $\\frac{1}{N_{j}}\\frac{dN}{dzd\\jt}$ from " << Form("Figure~\\ref{fig:zjt_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zjt_final_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\frac{1}{N_{j}}\\frac{dN}{dzd\\jt}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }       
+    textables << "    \\end{tabularx}\n";
+
+    // ( z , j t )   s t a t   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{stat}$ corresponding to " << Form("Table~\\ref{tab:zjt_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zjt_final_sigma_stat_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{stat}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
+
+    // ( z , j t )   s y s   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:zjt_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zjt_final_sigma_sys_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{sys}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
+
     gPad->SetLogz();
     h2_zjt_data[i-1]->GetXaxis()->SetTitle("z");
     h2_zjt_data[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
@@ -764,11 +1061,16 @@ void GetFinalDistributions(int NumEvts = -1,
     {
       ccan[ican]->Print(plotfilePDF.Data());
     }
-    ccan[ican]->SaveAs(Form(loc_plots + "zjt_final_w_sys_pt%d.png",i));     
-  }     
+    ccan[ican]->SaveAs(Form(loc_plots + "zjt_final_w_sys_pt%d.png",i));   
+
+    textables << "\\end{sidewaystable}\n";  
+  }    
+ 
   // zr plots //
   for (int i = 1; i < ptbinsize; i++)
   {
+    textables << "\\begin{sidewaystable}\n";
+    textables << "    \\centering\n";
     ++ican;
     sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -803,6 +1105,171 @@ void GetFinalDistributions(int NumEvts = -1,
       }     
       
     } 
+
+       // ( z , r )   d a t a   t a b l e //
+       textables << "    \\caption{Final results for $\\frac{1}{N_{j}}\\frac{dN}{dzdr}$ from " << Form("Figure~\\ref{fig:zr_final_pt%d}}",i)<<"\n";
+       textables << "    " << Form("\\label{tab:zr_final_pt%d}",i) << "\n";
+       textables << "    \\tiny\n";
+       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\frac{1}{N_{j}}\\frac{dN}{dzdr}$}}\\\\\n";
+       textables << "        \\hline\n";
+       textables << "        \\hline\n"; 
+       textables << "        $r \\backslash z$ & "; 
+       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+       { 
+         if(ybin!=0)
+         {
+           if (ybin==1)
+           {
+             textables << "        \\hline\n";
+           }
+           textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+         }
+         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+         {
+           if (xbin==0) {continue;}
+           if (ybin==0)
+           {
+             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+             else
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+           }
+           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - \\\\\n";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+             }
+           }
+           else
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - &";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+             }
+           }
+         }           
+       }       
+       textables << "    \\end{tabularx}\n";
+   
+       // ( z , r )   s t a t   u n c   t a b l e //
+       textables << "    \\caption{Final results for $\\sigma_{stat}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
+       textables << "    " << Form("\\label{tab:zr_final_sigma_stat_pt%d}",i) << "\n";
+       textables << "    \\tiny\n";
+       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{stat}$}}\\\\\n";
+       textables << "        \\hline\n";
+       textables << "        \\hline\n"; 
+       textables << "        $r \\backslash z$ & "; 
+       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+       { 
+         if(ybin!=0)
+         {
+           if (ybin==1)
+           {
+             textables << "        \\hline\n";
+           }
+           textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+         }
+         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+         {
+           if (xbin==0) {continue;}
+           if (ybin==0)
+           {
+             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+             else
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+           }
+           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - \\\\\n";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+             }
+           }
+           else
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - &";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+             }
+           }
+         }           
+       }   
+       textables << "    \\end{tabularx}\n";
+   
+       // ( z , r )   s y s   u n c   t a b l e //
+       textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
+       textables << "    " << Form("\\label{tab:zr_final_sigma_sys_pt%d}",i) << "\n";
+       textables << "    \\tiny\n";
+       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{sys}$}}\\\\\n";
+       textables << "        \\hline\n";
+       textables << "        \\hline\n"; 
+       textables << "        $r \\backslash z$ & "; 
+       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+       { 
+         if(ybin!=0)
+         {
+           if (ybin==1)
+           {
+             textables << "        \\hline\n";
+           }
+           textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
+         }
+         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+         {
+           if (xbin==0) {continue;}
+           if (ybin==0)
+           {
+             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+             else
+               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+           }
+           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - \\\\\n";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+             }
+           }
+           else
+           {
+             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+             {
+               textables << " - &";
+             }
+             else
+             {
+               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+             }
+           }
+         }           
+       }   
+       textables << "    \\end{tabularx}\n";
         
     gPad->SetLogz();
     h2_zr_data[i-1]->SetMinimum(0.00001);  
@@ -856,11 +1323,15 @@ void GetFinalDistributions(int NumEvts = -1,
       ccan[ican]->Print(plotfilePDF.Data());
     }
     ccan[ican]->SaveAs(Form(loc_plots + "zr_final_w_sys_pt%d.png",i));
+    
+    textables << "\\end{sidewaystable}\n";  
   }      
   
   // jtr plots //
   for (int i = 1; i < ptbinsize; i++)
   {
+    textables << "\\begin{sidewaystable}\n";
+    textables << "    \\centering\n";
     ++ican;
     sprintf(buf, "ccan%d", ican);
     ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
@@ -894,7 +1365,169 @@ void GetFinalDistributions(int NumEvts = -1,
         //std::cout << "sys error pt: " << i << " : " << h1_r_data_w_sys->GetBinError(xbin+1) << std::endl; 
       }     
       
-    } 
+    }
+    
+    // ( j t , r  )   d a t a   t a b l e //
+    textables << "    \\caption{Final results for $\\frac{1}{N_{j}}\\frac{dN}{d\\jt dr}$ from " << Form("Figure~\\ref{fig:jtr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:jtr_final_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.7\\paperheight}{c|ccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{11}{c}{\\normalsize{$\\frac{1}{N_{j}}\\frac{dN}{d\\jt dr}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash r$ & "; 
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      if(xbin!=0)
+      {
+        if (xbin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[xbin], jt_binedges[xbin+1]) << " & "; 
+      }
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      {
+        if (xbin==0)
+        {
+          if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+        }
+        else if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }       
+    textables << "    \\end{tabularx}\n";
+
+    // ( j t , r )   s t a t   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{stat}$ corresponding to " << Form("Table~\\ref{tab:jtr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:jtr_final_sigma_stat_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.7\\paperheight}{c|ccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{11}{c}{\\normalsize{$\\sigma_{stat}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash r$ & "; 
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      if(xbin!=0)
+      {
+        if (xbin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[xbin], jt_binedges[xbin+1]) << " & "; 
+      }
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      {
+        if (xbin==0)
+        {
+          if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+        }
+        else if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
+
+    // ( j t  , r )   s y s   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:jtr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:jtr_final_sigma_sys_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.7\\paperheight}{c|ccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{11}{c}{\\normalsize{$\\sigma_{sys}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $\\jt \\backslash r$ & "; 
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      if(xbin!=0)
+      {
+        if (xbin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[xbin], jt_binedges[xbin+1]) << " & "; 
+      }
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      {
+        if (xbin==0)
+        {
+          if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+        }
+        else if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
         
     h2_jtr_data[i-1]->SetMinimum(0.00001);  
     h2_jtr_data[i-1]->SetMaximum(50.);        
@@ -948,6 +1581,8 @@ void GetFinalDistributions(int NumEvts = -1,
       ccan[ican]->Print(plotfilePDF.Data());
     }
     ccan[ican]->SaveAs(Form(loc_plots + "jtr_final_w_sys_pt%d.png",i));    
+
+    textables << "\\end{sidewaystable}\n";  
   }    
   
   if (ican > -1)

@@ -192,15 +192,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T,jet} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    
-    TH2D *h2_ptz_50_100 = new TH2D("ptz_50_100", ";z;p_{T,jet} [GeV/c]", zbinsize_50_100, z_binedges_50_100, ptbinsize, pt_binedges);
-    TH2D *h2_ptjt_50_100 = new TH2D("ptjt_50_100", ";j_{T} [GeV/c]; p_{T,jet} [GeV/c]", jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges);
-    TH2D *h2_ptr_50_100 = new TH2D("ptr_50_100", ";r; p_{T,jet} [GeV/c]", rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges);
-    
-    TH3D *h3_ptzjt_50_100 = new TH3D("ptzjt_50_100", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize_50_100, z_binedges_50_100, jtbinsize_50_100, jt_binedges_50_100, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr_50_100 = new TH3D("ptzr_50_100", ";z;r;p_{T,jet} [GeV/c]",  zbinsize_50_100, z_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr_50_100 = new TH3D("ptjtr_50_100", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize_50_100, jt_binedges_50_100, rbinsize_50_100, r_binedges_50_100, ptbinsize, pt_binedges );    
-    
+     
     TH3D *h3_ptzjt_gluon = new TH3D("ptzjt_gluon", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptzr_gluon = new TH3D("ptzr_gluon", ";z;r;p_{T,jet} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
     TH3D *h3_ptjtr_gluon = new TH3D("ptjtr_gluon", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -657,15 +649,7 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
       
       h3_ptzjt->Fill(truth_z, truth_jt, jet_pt);
       h3_ptzr->Fill(truth_z, truth_r, jet_pt);
-      h3_ptjtr->Fill(truth_jt, truth_r, jet_pt);
-      
-      h2_ptz_50_100->Fill(truth_z, jet_pt);
-      h2_ptjt_50_100->Fill(truth_jt, jet_pt);
-      h2_ptr_50_100->Fill(truth_r, jet_pt);
-      
-      h3_ptzjt_50_100->Fill(truth_z, truth_jt, jet_pt);
-      h3_ptzr_50_100->Fill(truth_z, truth_r, jet_pt);
-      h3_ptjtr_50_100->Fill(truth_jt, truth_r, jet_pt);      
+      h3_ptjtr->Fill(truth_jt, truth_r, jet_pt);    
       
       h2_zjt->Fill(truth_z, truth_jt);
       h2_zr->Fill(truth_z, truth_r);

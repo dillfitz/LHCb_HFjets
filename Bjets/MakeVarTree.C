@@ -201,8 +201,8 @@ void MakeVarTree(int NumEvts_user = -1,
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
 
-    extension_trig_MC = "HLT2Lines_jpsieff_reco_ev_-1_b_PID_99599.root";
-    extension_trig_Data = "HLT2Lines_jpsieff_data_ev_-1_b_PID_99599.root";
+    extension_trig_MC = "MC/jpsieff_reco_ev_-1_b_PID" + str_L0 +"_99599.root";
+    extension_trig_Data = "data/jpsieff_data_ev_-1_b_PID" + str_L0 + "_99599.root";
 
     TFile file_trigeffMC(extension_RootFilesTrig + extension_trig_MC, "READ");
     TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data, "READ");
@@ -304,9 +304,9 @@ void MakeVarTree(int NumEvts_user = -1,
     
     float pideff_K(1.0), pideff_mup(1.0), pideff_mum(1.0);
     float pideff_K_err(1.0), pideff_mup_err(1.0), pideff_mum_err(1.0);
-    float trkeff_K(1.0), trkeff_mup(1.0), trkeff_mum(1.0);
-    float trkeff_K_errhi(1.0), trkeff_mup_errhi(1.0), trkeff_mum_errhi(1.0);
-    float trkeff_K_errlo(1.0), trkeff_mup_errlo(1.0), trkeff_mum_errlo(1.0);
+    float trkeff_ratio_K(1.0), trkeff_ratio_mup(1.0), trkeff_ratio_mum(1.0);
+    float trkeff_ratio_K_errhi(1.0), trkeff_ratio_mup_errhi(1.0), trkeff_ratio_mum_errhi(1.0);
+    float trkeff_ratio_K_errlo(1.0), trkeff_ratio_mup_errlo(1.0), trkeff_ratio_mum_errlo(1.0);
     float trigeff_Data(1.0), trigeff_MC(1.0), trigeff_ratio(1.0);
     int Ndtr_neutral, Ndtr_charged;
     
@@ -507,16 +507,16 @@ void MakeVarTree(int NumEvts_user = -1,
     BTree->Branch("pideff_mum_err", &pideff_mum_err);
     BTree->Branch("pideff_mup_err", &pideff_mup_err);
 
-    BTree->Branch("trkeff_K", &trkeff_K);
-    BTree->Branch("trkeff_mup", &trkeff_mup);
-    BTree->Branch("trkeff_mum", &trkeff_mum);
+    BTree->Branch("trkeff_ratio_K", &trkeff_ratio_K);
+    BTree->Branch("trkeff_ratio_mup", &trkeff_ratio_mup);
+    BTree->Branch("trkeff_ratio_mum", &trkeff_ratio_mum);
 
-    BTree->Branch("trkeff_K_errhi", &trkeff_K_errhi);
-    BTree->Branch("trkeff_mup_errhi", &trkeff_mup_errhi);
-    BTree->Branch("trkeff_mum_errhi", &trkeff_mum_errhi);
-    BTree->Branch("trkeff_K_errlo", &trkeff_K_errlo);
-    BTree->Branch("trkeff_mup_errlo", &trkeff_mup_errlo);
-    BTree->Branch("trkeff_mum_errlo", &trkeff_mum_errlo);
+    BTree->Branch("trkeff_ratio_K_errhi", &trkeff_ratio_K_errhi);
+    BTree->Branch("trkeff_ratio_mup_errhi", &trkeff_ratio_mup_errhi);
+    BTree->Branch("trkeff_ratio_mum_errhi", &trkeff_ratio_mum_errhi);
+    BTree->Branch("trkeff_ratio_K_errlo", &trkeff_ratio_K_errlo);
+    BTree->Branch("trkeff_ratio_mup_errlo", &trkeff_ratio_mup_errlo);
+    BTree->Branch("trkeff_ratio_mum_errlo", &trkeff_ratio_mum_errlo);
 
     BTree->Branch("trigeff_Data", &trigeff_Data);
     BTree->Branch("trigeff_MC", &trigeff_MC);
@@ -1138,33 +1138,33 @@ void MakeVarTree(int NumEvts_user = -1,
             // cout << pideff_mum << ", " << pideff_mup << ", " << pideff_mum_err << ", " << pideff_mup_err << endl;
             // if (pideff_mum == 0)
             //     cout << p_mum << ", " << eta_mum << ", " << nTracks_new << endl;
-            trkeff_K = h2_ratio_trkeff_P_ETA->GetBinContent(h2_ratio_trkeff_P_ETA->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA->GetYaxis()->FindBin(eta_K));
-            trkeff_mup = h2_ratio_trkeff_P_ETA_Muon->GetBinContent(h2_ratio_trkeff_P_ETA_Muon->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon->GetYaxis()->FindBin(eta_mup));
-            trkeff_mum = h2_ratio_trkeff_P_ETA_Muon->GetBinContent(h2_ratio_trkeff_P_ETA_Muon->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon->GetYaxis()->FindBin(eta_mum));
+            trkeff_ratio_K = h2_ratio_trkeff_P_ETA->GetBinContent(h2_ratio_trkeff_P_ETA->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA->GetYaxis()->FindBin(eta_K));
+            trkeff_ratio_mup = h2_ratio_trkeff_P_ETA_Muon->GetBinContent(h2_ratio_trkeff_P_ETA_Muon->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon->GetYaxis()->FindBin(eta_mup));
+            trkeff_ratio_mum = h2_ratio_trkeff_P_ETA_Muon->GetBinContent(h2_ratio_trkeff_P_ETA_Muon->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon->GetYaxis()->FindBin(eta_mum));
             // double trkeff_K_DATA = h2_ratio_trkeff_P_ETA_DATA->GetBinContent(h2_ratio_trkeff_P_ETA_DATA->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_DATA->GetYaxis()->FindBin(eta_K));
             // double trkeff_K_MC = h2_ratio_trkeff_P_ETA_MC->GetBinContent(h2_ratio_trkeff_P_ETA_MC->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_MC->GetYaxis()->FindBin(eta_K));
-            // cout << trkeff_K << ", " << trkeff_K_DATA / trkeff_K_MC << ", " << trkeff_K_MC / trkeff_K_DATA << endl;
+            // cout << trkeff_ratio_K << ", " << trkeff_K_DATA / trkeff_K_MC << ", " << trkeff_K_MC / trkeff_K_DATA << endl;
 
-            trkeff_K_errhi = h2_ratio_trkeff_P_ETA_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_ERRHI->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_ERRHI->GetYaxis()->FindBin(eta_K));
-            trkeff_mup_errhi = h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetYaxis()->FindBin(eta_mup));
-            trkeff_mum_errhi = h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetYaxis()->FindBin(eta_mum));
+            trkeff_ratio_K_errhi = h2_ratio_trkeff_P_ETA_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_ERRHI->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_ERRHI->GetYaxis()->FindBin(eta_K));
+            trkeff_ratio_mup_errhi = h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetYaxis()->FindBin(eta_mup));
+            trkeff_ratio_mum_errhi = h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon_ERRHI->GetYaxis()->FindBin(eta_mum));
 
-            trkeff_K_errlo = h2_ratio_trkeff_P_ETA_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_ERRLO->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_ERRLO->GetYaxis()->FindBin(eta_K));
-            trkeff_mup_errlo = h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetYaxis()->FindBin(eta_mup));
-            trkeff_mum_errlo = h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetYaxis()->FindBin(eta_mum));
+            trkeff_ratio_K_errlo = h2_ratio_trkeff_P_ETA_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_ERRLO->GetXaxis()->FindBin(p_K), h2_ratio_trkeff_P_ETA_ERRLO->GetYaxis()->FindBin(eta_K));
+            trkeff_ratio_mup_errlo = h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetXaxis()->FindBin(p_mup), h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetYaxis()->FindBin(eta_mup));
+            trkeff_ratio_mum_errlo = h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetBinContent(h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetXaxis()->FindBin(p_mum), h2_ratio_trkeff_P_ETA_Muon_ERRLO->GetYaxis()->FindBin(eta_mum));
 
             if (Kmeson.P() > 100 && Kmeson.P() < 200 && Kmeson.Eta() < 2.5)
             {
-                trkeff_K_errhi = trkeff_K_errlo = 0.04;
+                trkeff_ratio_K_errhi = trkeff_ratio_K_errlo = 0.04;
             }
             if (Kmeson.P() < 10 && Kmeson.Eta() > 3.6)
             {
-                trkeff_K_errhi = trkeff_K_errlo = 0.06;
+                trkeff_ratio_K_errhi = trkeff_ratio_K_errlo = 0.06;
             }
 
-            if (pideff_K == 0 || trkeff_K == 0 || trkeff_mup == 0 || trkeff_mum == 0)
+            if (pideff_K == 0 || trkeff_ratio_K == 0 || trkeff_ratio_mup == 0 || trkeff_ratio_mum == 0)
             {
-                cout << pideff_K << ", " << trkeff_K << ", " << trkeff_mup << ", " << trkeff_mum << endl;
+                cout << pideff_K << ", " << trkeff_ratio_K << ", " << trkeff_ratio_mup << ", " << trkeff_ratio_mum << endl;
                 cout << p_K << ", " << eta_K << endl;
                 cout << p_mup << ", " << eta_mup << endl;
                 cout << p_mum << ", " << eta_mum << endl;
@@ -1173,11 +1173,11 @@ void MakeVarTree(int NumEvts_user = -1,
         }
         else
         {
-            pideff_K = pideff_mum = pideff_mup = trkeff_K = trkeff_mup = trkeff_mum = 1.0;
+            pideff_K = pideff_mum = pideff_mup = trkeff_ratio_K = trkeff_ratio_mup = trkeff_ratio_mum = 1.0;
         }
         
 //        cout << " ------------------------------------------------ " << endl;
-//         cout << "Trk Eff (K, mum, mup):" << trkeff_K << ", " << trkeff_mum << ", " << trkeff_mup << endl;
+//         cout << "Trk Eff (K, mum, mup):" << trkeff_ratio_K << ", " << trkeff_ratio_mum << ", " << trkeff_ratio_mup << endl;
 //         cout << "PID Eff (K, mum, mup):" << pideff_K << ", " << pideff_mum << ", " << pideff_mup << endl;
 //         cout << "Trig Eff (K, mum, mup):" << trigeff_ratio << endl;
 //          cout << " ------------------------------------------------ " << endl;

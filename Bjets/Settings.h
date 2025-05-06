@@ -8,6 +8,8 @@
 #include <TH1D.h>
 #include <TRandom3.h>
 
+int colors[10] = {1, 2, 3, 4, 6, 7, 8, 9, 41, 42};
+
 TString str_Mag = "";
 TString str_pT = "";
 TString str_level = "";
@@ -124,7 +126,7 @@ const int ptHFbinsize = 15;
 const int ptJpsibinsize = 14;
 
 const int HFetabinsize = 5;
-const int Jpsietabinsize = 5;
+const int Jpsietabinsize = 3;
 const int longptbinsize = 6;
 const int ptbinsize_truth = 4;
 const int etabinsize = 6;
@@ -154,7 +156,8 @@ double ptJpsi_binedges[ptJpsibinsize + 1] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 
 double eta_binedges[etabinsize + 1] = { 2.2, 2.5, 2.65, 2.9, 3.3, 4.0, 4.5 };
 
 double HFeta_binedges[HFetabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
-double Jpsieta_binedges[Jpsietabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
+//double Jpsieta_binedges[Jpsietabinsize + 1] =  { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5 };
+double Jpsieta_binedges[Jpsietabinsize + 1] = {2.0, 3.0, 3.5, 4.5};
 
 double pt_binedges[ptbinsize + 1] = {pTLow, 10, 12, 15, 20, 30, 50, 100.};
 double custompt_binedges[customptbinsize +1] = {pTLow, 15, 20, 30, 50, 100};
