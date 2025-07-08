@@ -10,8 +10,7 @@ void ClosureTest(int NumEvts = -1,
                  int dataset1 = 91599,
                  int dataset2 = 91599,
                  int NumIters = 4,  
-                 bool DoShapeClosure = false,               
-                 bool WTA_cut = false)
+                 bool DoShapeClosure = false)
 {
 
   gStyle->SetPaintTextFormat("3.3f");
@@ -22,7 +21,7 @@ void ClosureTest(int NumEvts = -1,
   const int nRuns =  DoShapeClosure ? 1 : 10;
   bool smear_by_data = (!DoShapeClosure);  
 
-  TString string_reco, string_data, string_truth, string_eff, string_unfold, extension, str_eta, str_pt, str_Nevts;
+  TString string_reco, string_data, string_truth, string_unfold, extension, str_eta, str_pt, str_Nevts;
   TString str_followHard, str_ghost, str_Mag1, str_Mag2, str_flavor, str_GS(""), str_WTA;
   TString loc_hists("../../root_files/");
   TString loc_plots("../../plots/");  
@@ -41,8 +40,6 @@ void ClosureTest(int NumEvts = -1,
   // int RegIDS = 5;
   str_DTF = DTF_cut ? "_DTF" : "";
   str_PID = PID_cut ? "_PID" : "";
-  str_WTA = WTA_cut ? "_WTA" : "";
-
 
   str_Mag1 = Mag1 == 0 ? "_MD" : Mag1 == 1 ? "_MU"
                                            : "";
@@ -68,19 +65,17 @@ void ClosureTest(int NumEvts = -1,
   str_pt = Form("_ptj_%d%d", int(pTLow), int(ptMax));
   str_Nevts = Form("_ev_%d", NumEvts);
 
-  string_reco = loc_hists + "BjetsMC/" + TString("reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
-  string_truth = loc_hists + "BjetsMC/" + TString("truth") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag1 + str_flavor + str_GS + str_WTA + Form("_%d", dataset1);  
-  string_eff = loc_hists + "BjetsMC/" + TString("efficiency_truth") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag2 + str_flavor + str_GS + str_WTA + Form("_%d", dataset2);
-  string_unfold = loc_hists + "BjetsMC/" + string_systype_unf + TString("unfold_reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag2 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset2); 
-  string_data = loc_hists + "Bjets/" + TString("data") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_%d", dataset1);
+  string_reco = loc_hists + "BjetsMC/" + TString("reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset1);
+  string_truth = loc_hists + "BjetsMC/" + TString("truth") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag1 + str_flavor + str_GS + Form("_%d", dataset1);
+  string_unfold = loc_hists + "BjetsMC/" + string_systype_unf + TString("unfold_reco") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag2 + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset2);
+  string_data = loc_hists + "Bjets/" + TString("data") + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset1);
   
   TString closure_str = DoShapeClosure ? "shapeclosure" : "closure";
-  extension = loc_hists + "BjetsMC/" + closure_str + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1) + Form("_%d", dataset2);
+  extension = loc_hists + "BjetsMC/" + closure_str + Form("_ev_%d", NumEvts) + str_pt + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag1 + str_flavor + str_DTF + str_PID + str_GS + Form("_iters_%d", NumIters) + Form("_%d", dataset1) + Form("_%d", dataset2);
 
 
   cout << string_reco + TString(".root") << endl;
   cout << string_truth + TString(".root") << endl;
-  cout << string_eff + TString(".root") << endl;
   cout << string_unfold + TString(".root") << endl;
   cout << string_data + TString(".root") << endl;
   cout << extension + TString(".root") << endl;
@@ -91,7 +86,6 @@ void ClosureTest(int NumEvts = -1,
   TFile *file_reco = new TFile(string_reco + TString(".root"), "READ"); 
   TFile *file_data = new TFile(string_data + TString(".root"), "READ");
   TFile *file_truth = new TFile(string_truth + TString(".root"), "READ"); 
-  TFile *file_eff = new TFile(string_eff + TString(".root"), "READ"); 
   TFile *file_unfold = new TFile(string_unfold + TString(".root"), "READ"); 
 
   TFile *file_write = new TFile(extension + TString(".root"), "RECREATE");
@@ -134,8 +128,6 @@ void ClosureTest(int NumEvts = -1,
   // TH3D * h3_purity_ptzdR = (TH3D*) file_unfold->Get("purity_ptHFzdR");
 
   /////////////////////   Get Response Matrices /////////////////////////////////
-
-  // RooUnfoldResponse * response_jetpt = (RooUnfoldResponse*)file_eff->Get("response_jetpt");
   RooUnfoldResponse *response_jetpt = (RooUnfoldResponse *)file_unfold->Get("Roo_response_jetpt");
   TH2 *h2_response_jetpt = (TH2 *)response_jetpt->Hresponse();
 

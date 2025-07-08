@@ -14,7 +14,7 @@
 using namespace std;
 
 void MakeJpsiTree(int NumEvts_user = -1, int dataset = 91599,
-                  bool isData = false,
+                  bool isData = true,
                   bool chargedJetCut_user = false)
 {
 

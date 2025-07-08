@@ -772,7 +772,7 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool onlysim9 = f
     c1->Modified();
     c1->Update();
     c1->Draw();
-    c1->SaveAs(plotextension + str_Mag + "_zb_zg_z.pdf");
+    //c1->SaveAs(plotextension + str_Mag + "_zb_zg_z.pdf");
     
 
     cout << "Total number of events processed = " << events << endl;

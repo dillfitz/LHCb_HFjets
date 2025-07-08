@@ -11,7 +11,7 @@ using namespace RooFit;
 
 void JpsiTrigEff(int NumEvts_user = -1, int dataset = 91599,
                  bool isData = true,
-                 int L0Choice = 2)
+                 bool L0MuonDiMuon = true)
 {
 
   int NumEvts = NumEvts_user;
@@ -113,10 +113,8 @@ void JpsiTrigEff(int NumEvts_user = -1, int dataset = 91599,
     else
       str_followHard = "_HF";
   }
-  if (L0Choice == 1)
-    str_L0 = "_L0Muon";
-  else if (L0Choice == 2)
-    str_L0 = "_L0DiMuon";
+  if (L0MuonDiMuon)
+    str_L0 = "_L0MuonDiMuon";
 
   if (ghostCut)
     str_ghost = Form("_ghost_%.1f", ghostProb);
@@ -381,12 +379,14 @@ void JpsiTrigEff(int NumEvts_user = -1, int dataset = 91599,
     bool TOS = (Jpsi_L0DiMuon_TOS || Jpsi_L0Muon_TOS) && Jpsi_Hlt1_TOS && (Jpsi_Hlt2DiMuonJPsi_TOS || Jpsi_Hlt2DiMuonJpsiHighPT_TOS || Jpsi_Hlt2DiMuonDetachedJPsi_TOS);
     bool TIS = (Jpsi_L0Electron_TIS || Jpsi_L0Hadron_TIS || Jpsi_L0Photon_TIS) && Jpsi_Hlt1Phys_TIS && Jpsi_Hlt2Phys_TIS;
 
-    if (L0Choice == 0)
+    if (L0MuonDiMuon)
+    {
       TOS = (Jpsi_L0DiMuon_TOS || Jpsi_L0Muon_TOS) && Jpsi_Hlt1_TOS && (Jpsi_Hlt2DiMuonJPsi_TOS || Jpsi_Hlt2DiMuonJpsiHighPT_TOS || Jpsi_Hlt2DiMuonDetachedJPsi_TOS);
-    else if (L0Choice == 1)
-      TOS = (Jpsi_L0Muon_TOS) && Jpsi_Hlt1_TOS && (Jpsi_Hlt2DiMuonJPsi_TOS || Jpsi_Hlt2DiMuonJpsiHighPT_TOS || Jpsi_Hlt2DiMuonDetachedJPsi_TOS);
-    else if (L0Choice == 2)
+    }
+    else
+    {
       TOS = (Jpsi_L0DiMuon_TOS) && Jpsi_Hlt1_TOS && (Jpsi_Hlt2DiMuonJPsi_TOS || Jpsi_Hlt2DiMuonJpsiHighPT_TOS || Jpsi_Hlt2DiMuonDetachedJPsi_TOS);
+    }
 
 
     // if (isData)

@@ -9,7 +9,7 @@
 //using namespace fastjet;
 using namespace std;
 
-void MakeVarTree(int NumEvts_user = -1, int dataset = 1510, bool isData = true,
+void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false,
                  bool chargedJetCut_user = false)
 {
 

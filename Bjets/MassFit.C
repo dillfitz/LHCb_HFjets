@@ -14,12 +14,13 @@
 
 using namespace RooFit;
 
-void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
+void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
              bool UseDTF = true,
              bool DoRecSelEff = 0,
              bool DoSystematic = 0,             
              float ptmin_user = pTLow,
-             float ptmax_user = 250.)
+             float ptmax_user = 250.,
+             bool L0MuonDiMuon = false)
 {
     bool MCflag = !isData;
     followHardest = false;
@@ -109,17 +110,23 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
     if (chargedJetCut)
         str_charged = "_charge";
 
+
+    TString str_L0 = "";
+    if (L0MuonDiMuon)
+        str_L0 = "_L0MuonDiMuon";
+
+
     TString extension, extension_reco, extension_misid;
     TString extension_read, extension_RootFiles, extension_RootFilesMC;
     
     extension_RootFiles = isData ? TString("../../root_files/Bjets/") : TString("../../root_files/BjetsMC/");
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
-    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
+    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
     
-    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + Form("_%d", 91599);
+    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", 91599);
 
-    extension = TString("massfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
+    extension = TString("massfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
     
     if (DoRecSelEff)
     {
@@ -161,14 +168,14 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
                 str_Mag = "_MD";
             else if (Mag == 1)
                 str_Mag = "_MU";
-            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_L0 + Form("_%d", vec_datasets[i]);
 
             BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
         }
     }
     else
     {
-        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
         BTree->Add(extension_RootFiles + extension_read + ".root/BTree");
     }
     if (NumEvts > BTree->GetEntries())
@@ -238,9 +245,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
     BTree->SetBranchAddress("TOS", &TOS);
 
-    float mass_low = 5.;
+    float mass_low = 5.15;
     float mass_high = 5.55;
-    mass_low = 5.15;
 
     vector<TH1D *> h1_mass_HFpt;
     vector<float> vec_bkg_frac, vec_res_frac, vec_bkg_yield, vec_sig_yield;
@@ -687,10 +693,10 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
         // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
         RooRealVar *nsig_nosec = new RooRealVar("nsig_nosec", "fraction in signal", 500, 0., 1000000.);
-        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 5000, 0., 1000000);
+        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 1000, 0., 1000000);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.07 * nsig->getVal());
+        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.00384 * nsig->getVal(), 0., 0.0384 * nsig->getVal());
         // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
         RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
 
@@ -870,11 +876,11 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         Sideband2_Max = MassMu + 14 * MassSigma;
         */
         float MassUp, MassDown;
-        //if (i < 2)
-        //{
-        //    MassDown = MassMu - 2 * MassSigma;
-        //    MassUp = MassMu + 2 * MassSigma;
-        //}
+        if (i < 2)
+        {
+            MassDown = MassMu - 2 * MassSigma;
+            MassUp = MassMu + 2 * MassSigma;
+        }
         if (i < 5)
         {
             MassDown = MassMu - 3 * MassSigma;
@@ -891,7 +897,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         // Sideband2_Min = MassMu + 10 * MassSigma;
         // Sideband2_Max = MassMu + 14 * MassSigma;
         Sideband2_Min = MassMu + 10 * MassSigma;
-        Sideband2_Max = MassMu + 25 * MassSigma;
+        Sideband2_Max = (MassMu + 25 * MassSigma) < 5.55 ? (MassMu + 25 * MassSigma) : 5.55;
         
         float Sideband1_Min_forSysNear = Sideband1_Min + MassSigma;
         float Sideband1_Max_forSysNear = Sideband1_Max;
@@ -983,6 +989,8 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
 
         // Add a vertical dashed line at x = 2
 
+        if (isData)
+        {
         double x_linelow = MassDown;
         TLine *linelow = new TLine(x_linelow, xframe->GetMinimum(), x_linelow, xframe->GetMaximum());
         linelow->SetLineColorAlpha(kGreen + 1, 1.0);
@@ -1047,6 +1055,7 @@ void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
         sideline1high->Draw("SAME");
         sideline2low->Draw("SAME");
         sideline2high->Draw("SAME");
+        }
         
         if (!DoSystematic)
         {

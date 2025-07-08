@@ -21,7 +21,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
                 bool DoSignalSys = false,
                 bool DoJetID = false,                                
                 bool SubtractGS = false,
-                bool onlyL0DiMuon = false)
+                bool sPlotFit = false,
+                bool L0MuonDiMuon = false)
 {
 
   bool MCflag = !isData;
@@ -130,8 +131,12 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     str_ghost = Form("_ghost_%.1f", ghostProb);
 
   TString str_L0 = "";
-  if (onlyL0DiMuon)
-    str_L0 = "_L0DiMuon";
+  if (L0MuonDiMuon)
+    str_L0 = "_L0MuonDiMuon";
+
+  TString str_sPlot = "";
+  if (sPlotFit)
+    str_sPlot = "_splotfit";
 
 
   TString str_tree;
@@ -142,7 +147,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TString extension_prefix, extension_trackeff;
   TString extension;
 
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_L0 + Form("_%d", dataset);
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
 
   // HFjetTree Tree(0, dataset, isData);
 
@@ -194,7 +199,15 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   /////////////////// Mass Fit Parameters /////////////////////////////////
   // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
   //TString massfit( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
-  TString massfit( TString("splotfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root"); 
+  TString massfit("");
+  if (sPlotFit)
+  {
+    massfit = TString("splotfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root"; 
+  }
+  else
+  {
+    massfit = TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root"; 
+  }
   //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
 
 
@@ -219,8 +232,11 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH1D *h1_BkgScale_forSysNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
   TH1D *h1_BkgScale_forSysFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
 
-  TTree *sWeightTree = (TTree *)f_massfit.Get("sWeightTree");
-
+  TTree *sWeightTree;
+  if (sPlotFit)
+  {
+    sWeightTree = (TTree *)f_massfit.Get("sWeightTree");
+  }
     
   /////////////////// Trigger Ratio (TISTOS/MC True) /////////////////////////////////
   ////////////////////////////////////////////////////
@@ -275,7 +291,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   }
   else
   {
-    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
+    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
     if (!DoRecSelEff && DoMassFit == 0 && DoSignalSys == 0)
     {   
       extension_read = extension_prefix + extension_read;
@@ -319,6 +335,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptr_uncorrected = new TH2D("ptr_uncorrected", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
+
+  TH2D *h2_ptz_uncorrected_nomasscond = new TH2D("ptz_uncorrected_nomasscond", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptjt_uncorrected_nomasscond = new TH2D("ptjt_uncorrected_nomasscond", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptr_uncorrected_nomasscond = new TH2D("ptr_uncorrected_nomasscond", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
   TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
   TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
@@ -346,6 +366,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH3D *h3_ptzr_comb = new TH3D("ptzr_comb ", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
   TH3D *h3_ptjtr_comb = new TH3D("ptjtr_comb", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
 
+  TH2D *h2_ptz_comb_nobkgweight = new TH2D("ptz_comb_nobkgweight", "", zbinsize, z_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptjt_comb_nobkgweight = new TH2D("ptjt_comb_nobkgweight", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
+  TH2D *h2_ptr_comb_nobkgweight = new TH2D("ptr_comb_nobkgweight", "", rbinsize, r_binedges, ptbinsize, pt_binedges);
+
   /// ------------------------------------------ END COMBINATORIAL --------------------------------------------- ///
 
   /// ------------------------------------------ QA --------------------------------------------- ///
@@ -368,8 +392,21 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH1D *h1_HF_rap = new TH1D("HF_rap", "", 12, etaMin - jetradius, etaMax + jetradius);
   TH1D *h1_HF_pt = new TH1D("HF_pT", "", 50, 0, 100);
   TH1D *h1_HF_phi = new TH1D("HF_phi", "", 20, -3.14, 3.14);
-  TH1D *h1_HF_mass = new TH1D("HF_mass", "", 80, 5.279 - 0.3, 5.279 + 0.3);
-  TH1D *h1_HF_mass_dtfcut = new TH1D("HF_mass_dtfcut", "", 80, 5.279 - 0.3, 5.279 + 0.3);
+  TH1D *h1_HF_mass = new TH1D("HF_mass", "", 80, 5.15, 5.55);
+  TH1D *h1_HF_mass_dtfcut = new TH1D("HF_mass_dtfcut", "", 80, 5.15, 5.55);
+  TH1D *h1_HF_mass_sweight = new TH1D("HF_mass_sweight", "", 80, 5.15, 5.55);
+  vector<TH1D *> h1_mass_HFpt, h1_mass_HFpt_sweight;
+
+  for (int i = 0; i < ptHFbinsize; i++)
+  {
+      TH1D *h1_temp = new TH1D(Form("HF_mass%d", i), "", 80, 5.15, 5.55);
+      TH1D *h1_temp_sweight = new TH1D(Form("HF_sweight_mass%d", i), "", 80, 5.15, 5.55);
+
+      h1_mass_HFpt.push_back(h1_temp);
+      h1_mass_HFpt_sweight.push_back(h1_temp_sweight);
+  }
+
+
 
   TH1D *h1_HFpt = new TH1D("h1_HFpt", "", ptHFbinsize, ptHF_binedges);
   TH2D *h2_HFptjetpt = new TH2D("h2_HFptjetpt", "", ptHFbinsize, ptHF_binedges, customptbinsize, custompt_binedges);
@@ -603,8 +640,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   BTree->SetBranchAddress("tr_r", &tr_r);
 
   float sweight;
-  sWeightTree->SetBranchAddress("sweight", &sweight);
-  
+  if (sPlotFit)
+  {
+    sWeightTree->SetBranchAddress("sweight", &sweight);
+  }
 
   int eventNum;
   int NumJets_zdR_comb = 0;
@@ -635,13 +674,15 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   // }
 
   cout << "Requested # of events : " << NumEvts << endl;
-  cout << "NumEvents in the sweight tree : " << sWeightTree->GetEntries() << std::endl; 
-  if (isData && NumEvts != sWeightTree->GetEntries())
+  if (sPlotFit)
   {
-    std::cout << "Different number of entries in sWeightTree vs. Data tree is different!" << std::endl;
-    return;
+    cout << "NumEvents in the sweight tree : " << sWeightTree->GetEntries() << std::endl; 
+    if (isData && !DoJetID && NumEvts != sWeightTree->GetEntries())
+    {
+      std::cout << "Different number of entries in sWeightTree vs. Data tree is different!" << std::endl;
+      return;
+    }
   }
-
   TRandom3 *randomGenerator = new TRandom3();
 
   //
@@ -650,7 +691,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   for (int ev = 0; ev < NumEvts; ev++)
   {
     BTree->GetEntry(ev);
-    if (isData)
+    if (isData && sPlotFit)
     {
       sWeightTree->GetEntry(ev);
     }
@@ -695,10 +736,13 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     }
 
 
-    float mass_low = 5.15;
-    float mass_high = 5.55;
-    if (bmass_dtf < mass_low || bmass_dtf > mass_high)
-      continue; 
+    if (sPlotFit)
+    {
+      float mass_low = 5.15;
+      float mass_high = 5.55;
+      if (bmass_dtf < mass_low || bmass_dtf > mass_high)
+        continue;
+    }
 
     //std:cout << "sweight : " << sweight << std::endl;
 
@@ -713,11 +757,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     HFmeson.SetPxPyPzE(HF_px, HF_py, HF_pz, HF_e);
     Jpsi = mup + mum;
     float HF_eta = HFmeson.Eta();
-    
-    float frag_z = HFmeson.Vect().Dot(HFjet.Vect()) / (HFjet.Vect().Mag2());
-    float frag_jt = HFmeson.Vect().Cross(HFjet.Vect()).Mag() / HFjet.Vect().Mag();
-    float frag_r = HFmeson.DeltaR(HFjet, true);
-    
 
     float event_weight = 1.0;
 
@@ -914,6 +953,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       h3_ptzr_comb->Fill(z, jt, jet_pt, event_weight * bkg_weight);
       h3_ptjtr_comb->Fill(jt, r,  jet_pt, event_weight * bkg_weight);
 
+      h2_ptz_comb_nobkgweight->Fill(z, jet_pt, event_weight);
+      h2_ptjt_comb_nobkgweight->Fill(jt, jet_pt, event_weight);
+      h2_ptr_comb_nobkgweight->Fill(r, jet_pt, event_weight);
+
       h1_jet_pt_comb->Fill(jet_pt, event_weight * bkg_weight);
         
     }
@@ -934,8 +977,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       h1_HF_rap->Fill(HFmeson.Rapidity());
       h1_HF_pt->Fill(HFmeson.Pt());
       h1_HF_phi->Fill(HFmeson.Phi());
-      h1_HF_mass->Fill(bmass_dtf);
-
       h1_nJetDtrs->Fill(ndtrs);
       h1_jet_eta->Fill(jet_eta);
       h1_jet_rap->Fill(jet_rap);
@@ -995,7 +1036,24 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       h2_ptjt_sweight->Fill(jt, jet_pt, event_weight*sweight);
       h2_ptr_sweight->Fill(r, jet_pt, event_weight*sweight);   
 
+      h2_ptz_uncorrected_nomasscond->Fill(z, jet_pt);
+      h2_ptjt_uncorrected_nomasscond->Fill(jt, jet_pt);
+      h2_ptr_uncorrected_nomasscond->Fill(r, jet_pt);
+
+      h1_HF_mass->Fill(bmass_dtf);
+      h1_HF_mass_sweight->Fill(bmass_dtf, sweight);
       h2_mB_mJpsi->Fill(bmass_dtf, Jpsi.M()); 
+
+      for (int i = 0; i < ptHFbinsize; i++)
+      {
+          if (HFmeson.Pt() > ptHF_binedges[i] && HFmeson.Pt() < ptHF_binedges[i + 1])
+          {
+              h1_mass_HFpt[i]->Fill(bmass_dtf);
+              h1_mass_HFpt_sweight[i]->Fill(bmass_dtf, sweight);
+              break;
+          }
+      }
+
     }
     
   } // end event loop
@@ -1066,6 +1124,25 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   THStack *hs_ptz_nobgsub = new THStack("z_evtweights_nosbsub_data_all", ";z;#frac{1}{N_{jets}}#frac{dN}{dz}");
   THStack *hs_ptjt_nobgsub = new THStack("jt_evtweights_nosbsub_data_all", ";j_{T} [GeV/c];#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
   THStack *hs_ptr_nobgsub = new THStack("r_evtweights_nosbsub_data_all", ";r;#frac{1}{N_{jets}}#frac{dN}{dr}");  
+  //vector<THStack> z_sbsub_inputs_pt;
+  for (int j = 1; j < ptbinsize; j++)
+  {
+    THStack *z_sbsub_inputs_temp = new THStack(Form("z_sbsub_inputs_pt%d", j),"");
+    TH1D *h1_temp_z_uncorr = (TH1D *)h2_ptz_uncorrected->ProjectionX(Form("z_uncorr_pt%d", j), j + 1, j + 1);
+    TH1D *h1_temp_z_comb = (TH1D *)h2_ptz_comb->ProjectionX(Form("z_comb_pt%d", j), j + 1, j + 1);
+    TH1D *h1_temp_z_comb_nobkgweight = (TH1D *)h2_ptz_comb_nobkgweight->ProjectionX(Form("z_comb_nobkgweight_pt%d", j), j + 1, j + 1);
+    h1_temp_z_uncorr->SetLineColor(kBlack);
+    h1_temp_z_uncorr->Sumw2();
+    h1_temp_z_uncorr->SetTitle("S+B");
+    h1_temp_z_comb->SetLineColor(kRed);
+    h1_temp_z_comb->SetTitle("B");
+    h1_temp_z_comb_nobkgweight->SetLineColor(kBlue);
+    h1_temp_z_comb_nobkgweight->SetTitle("sidebands");
+    z_sbsub_inputs_temp->Add(h1_temp_z_uncorr);
+    z_sbsub_inputs_temp->Add(h1_temp_z_comb);
+    z_sbsub_inputs_temp->Add(h1_temp_z_comb_nobkgweight);
+    z_sbsub_inputs_temp->Write();
+  }
   
   TH2D *h2_zjt_ptbinned_uncorrected[ptbinsize-1], *h2_zjt_ptbinned[ptbinsize-1];
   TH2D *h2_zr_ptbinned_uncorrected[ptbinsize-1], *h2_zr_ptbinned[ptbinsize-1];

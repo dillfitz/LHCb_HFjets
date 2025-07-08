@@ -14,11 +14,11 @@
 using namespace std;
 
 void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
-                   bool WTA_cut = false,
                    int NumIters = 4,
                    double rho = 0.,
-                   bool DoJER = false,
-                   bool DoJES = false,
+                   //bool DoJER = false,
+                   //bool DoJES = false,
+                   bool DoJESJER = false,
                    bool DoJetID = false,                   
                    int DoTrackEff = 0,
                    int DoPIDEff = 0,
@@ -60,10 +60,12 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   double ghostProb_test = ghostProb;
   int NumIters_test = NumIters;
 
-  if (DoJES)
-    string_systype = "JES_";
-  if (DoJER)
-    string_systype = "JER_";
+  //if (DoJES)
+  //  string_systype = "JES_";
+  //if (DoJER)
+  //  string_systype = "JER_";
+  if (DoJESJER)
+    string_systype = "JESJER_";
   if (DoJetID)
     string_systype = "jetid_";
   if (DoTrackEff == 1)
@@ -114,14 +116,11 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TString str_ghost2 = "";
 
   TString str_DTF(""), str_PID("");
-  TString str_WTA("");
 
   if (DTF_cut)
     str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
-  if (WTA_cut)
-    str_WTA = "_WTA";
 
   if (Mag1 == 0)
     str_Mag1 = "_MD";
@@ -164,16 +163,16 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     str_ghost2 = Form("_ghost_%.1f", ghostProb);
 
 
-  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset1);
-  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset2);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_unfold);
+  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + Form("_%d", dataset1);
+  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_DTF + str_PID  + Form("_%d", dataset2);
+  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + Form("_%d", dataset_unfold);
   if (DoTrackEff != 0 || DoPIDEff != 0 || DoTrigEff != 0 || DoMassFit != 0 || DoIterSys != 0)
   {
-    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + Form("_%d", dataset_test);
   }
   else
   {
-    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + str_WTA + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + Form("_%d", dataset_test);
   }
   // string_data = loc + "hists/data_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
   // string_unfold = loc + "hists/unfold_reco_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
@@ -190,7 +189,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   cout << string_unfold << endl;
   cout << string_unfold_test << endl;
 
-  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
+  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
 
   if (dataset1 != dataset2)
     extension += Form("_%d", dataset2);
@@ -503,7 +502,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   
     sys_title = systype + Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]);
 
-    h2_zjt_ptbinned_ratio[j-1]->Divide(h2_zjt_ptbinned_final_nominal[j-1], h2_zjt_ptbinned_final_test[j-1]);
+    h2_zjt_ptbinned_ratio[j-1]->Divide(h2_zjt_ptbinned_final_test[j-1], h2_zjt_ptbinned_final_nominal[j-1]);
     cout << " zjt Averaged Rel. Unc. = " << GetWeightedAverage(h2_zjt_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_zjt_ptbinned_ratio[j-1]);
     h2_zjt_ptbinned_ratio[j-1]->SetOption("COLZ, text");
@@ -522,7 +521,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h2_zjt_ptbinned_diff[j-1]->SetTitle(sys_title); 
     h2_zjt_ptbinned_diff[j-1]->Write();
         
-    h2_zr_ptbinned_ratio[j-1]->Divide(h2_zr_ptbinned_ratio[j-1], h2_zr_ptbinned_final_test[j-1]);
+    h2_zr_ptbinned_ratio[j-1]->Divide(h2_zr_ptbinned_final_test[j-1], h2_zr_ptbinned_final_nominal[j-1]);
     cout << "zr Averaged Rel. Unc. = " << GetWeightedAverage(h2_zr_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_zr_ptbinned_ratio[j-1]);
     h2_zr_ptbinned_ratio[j-1]->SetOption("COLZ, text");  
@@ -541,7 +540,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h2_zr_ptbinned_diff[j-1]->SetTitle(sys_title);          
     h2_zr_ptbinned_diff[j-1]->Write();
         
-    h2_jtr_ptbinned_ratio[j-1]->Divide(h2_jtr_ptbinned_ratio[j-1], h2_jtr_ptbinned_final_test[j-1]);
+    h2_jtr_ptbinned_ratio[j-1]->Divide(h2_jtr_ptbinned_final_test[j-1], h2_jtr_ptbinned_final_nominal[j-1]);
     cout << "jtr Averaged Rel. Unc. = " << GetWeightedAverage(h2_jtr_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h2_jtr_ptbinned_ratio[j-1]);
     h2_jtr_ptbinned_ratio[j-1]->SetOption("COLZ, text");  
@@ -560,7 +559,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h2_jtr_ptbinned_diff[j-1]->SetTitle(sys_title);   
     h2_jtr_ptbinned_diff[j-1]->Write();   
 
-    h1_z_ptbinned_ratio[j-1]->Divide(h1_z_ptbinned_ratio[j-1], h1_z_ptbinned_final_test[j-1]);
+    h1_z_ptbinned_ratio[j-1]->Divide(h1_z_ptbinned_final_test[j-1], h1_z_ptbinned_final_nominal[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_z_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_z_ptbinned_ratio[j-1]);
     h1_z_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("z");
@@ -575,7 +574,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h1_z_ptbinned_diff[j-1]->SetTitle(sys_title);           
     h1_z_ptbinned_diff[j-1]->Write();
         
-    h1_jt_ptbinned_ratio[j-1]->Divide(h1_jt_ptbinned_ratio[j-1], h1_jt_ptbinned_final_test[j-1]);
+    h1_jt_ptbinned_ratio[j-1]->Divide(h1_jt_ptbinned_final_test[j-1], h1_jt_ptbinned_final_nominal[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_jt_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_jt_ptbinned_ratio[j-1]);
     h1_jt_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
@@ -590,7 +589,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h1_jt_ptbinned_diff[j-1]->SetTitle(sys_title);   
     h1_jt_ptbinned_diff[j-1]->Write();
         
-    h1_r_ptbinned_ratio[j-1]->Divide(h1_r_ptbinned_ratio[j-1], h1_r_ptbinned_final_test[j-1]);
+    h1_r_ptbinned_ratio[j-1]->Divide(h1_r_ptbinned_final_test[j-1], h1_r_ptbinned_final_nominal[j-1]);
     cout << "Averaged Rel. Unc. = " << GetWeightedAverage(h1_r_ptbinned_ratio[j-1]) << endl;
     SubtractUnity(h1_r_ptbinned_ratio[j-1]);
     h1_r_ptbinned_ratio[j-1]->GetXaxis()->SetTitle("r");

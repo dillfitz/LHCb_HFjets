@@ -18,10 +18,11 @@ using namespace std;
 void MakeVarTree(int NumEvts_user = -1,
                  int dataset = 91599,
                  bool isData = true,
-                 bool DoJER = false,
-                 bool DoJES = false,
+                 //bool DoJER = false,
+                 //bool DoJES = false,
+                 bool DoJESJER = false,
                  bool DoJetID = false,
-                 bool onlyL0DiMuon = false)
+                 bool L0MuonDiMuon = false)
 {
 
     int NumEvts = NumEvts_user;
@@ -124,8 +125,8 @@ void MakeVarTree(int NumEvts_user = -1,
         str_ghost = Form("_ghost_%.1f", ghostProb);
 
     TString str_L0 = "";
-    if (onlyL0DiMuon)
-        str_L0 = "_L0DiMuon";
+    if (L0MuonDiMuon)
+        str_L0 = "_L0MuonDiMuon";
 
     // TString str_trees[5];
     // str_trees[0] = "TaggedDijets/DecayTree";
@@ -138,10 +139,12 @@ void MakeVarTree(int NumEvts_user = -1,
     
     extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
     
-    if (DoJES)
-        extension = TString("JES_") + extension;
-    if (DoJER)
-        extension = TString("JER_") + extension;
+    //if (DoJES)
+    //    extension = TString("JES_") + extension;
+    //if (DoJER)
+    //    extension = TString("JER_") + extension;
+    if (DoJESJER)
+        extension = TString("JESJER_") + extension;
     if (DoJetID)
         extension = TString("jetid_") + extension;
         
@@ -201,8 +204,8 @@ void MakeVarTree(int NumEvts_user = -1,
     TH2D *h2_trigeff_Data;
     TH2D *h2_trigeff_MC;
 
-    extension_trig_MC = "MC/jpsieff_reco_ev_-1_b_PID" + str_L0 +"_99599.root";
-    extension_trig_Data = "data/jpsieff_data_ev_-1_b_PID" + str_L0 + "_99599.root";
+    extension_trig_MC = "MC/jpsieff_reco_ev_-1_b_PID" + str_L0 +"_91599.root";
+    extension_trig_Data = "data/jpsieff_data_ev_-1_b_PID" + str_L0 + "_91599.root";
 
     TFile file_trigeffMC(extension_RootFilesTrig + extension_trig_MC, "READ");
     TFile file_trigeffData(extension_RootFilesTrig + extension_trig_Data, "READ");
@@ -651,9 +654,11 @@ void MakeVarTree(int NumEvts_user = -1,
             continue;
         // }
 
-        jpsi_L0 = onlyL0DiMuon ? Tree.Jpsi_L0DiMuonDecision_TOS : Tree.Jpsi_L0MuonDecision_TOS || Tree.Jpsi_L0DiMuonDecision_TOS;
-        mup_L0 = Tree.mup_L0MuonDecision_TOS || Tree.mup_L0DiMuonDecision_TOS;
-        mum_L0 = Tree.mum_L0MuonDecision_TOS || Tree.mum_L0DiMuonDecision_TOS;
+        jpsi_L0 = L0MuonDiMuon ? Tree.Jpsi_L0MuonDecision_TOS || Tree.Jpsi_L0DiMuonDecision_TOS : Tree.Jpsi_L0DiMuonDecision_TOS;
+        //mup_L0 = Tree.mup_L0MuonDecision_TOS || Tree.mup_L0DiMuonDecision_TOS;
+        //mum_L0 = Tree.mum_L0MuonDecision_TOS || Tree.mum_L0DiMuonDecision_TOS;
+        mup_L0 = Tree.mup_L0DiMuonDecision_TOS;
+        mum_L0 = Tree.mum_L0DiMuonDecision_TOS;
         jpsi_Hlt1 = Tree.Jpsi_Hlt1DiMuonHighMassDecision_TOS;
         jpsi_Hlt2 = Tree.Jpsi_Hlt2DiMuonDetachedJPsiDecision_TOS || Tree.Jpsi_Hlt2DiMuonJPsiHighPTDecision_TOS || Tree.Jpsi_Hlt2DiMuonJPsiDecision_TOS;
 
@@ -717,6 +722,7 @@ void MakeVarTree(int NumEvts_user = -1,
         Jpsi.SetPxPyPzE(Tree.Jpsi_PX / 1000., Tree.Jpsi_PY / 1000., Tree.Jpsi_PZ / 1000., Tree.Jpsi_PE / 1000.);
         tr_HFmeson = tr_mup + tr_mum + tr_Kmeson;
 
+        /*
         if (DoJES)
         {
             float rand = 0.976;
@@ -737,6 +743,40 @@ void MakeVarTree(int NumEvts_user = -1,
             HFjet.SetPz(HFjet.Pz() * rand);
             HFjet.SetE(HFjet.E() * rand);
             HFjet += HFmeson;
+        }
+        */
+
+        if (DoJESJER)
+        {
+            const int n_iters = n_smearing_iter;
+            for (int i_iter = 0; i_iter < n_iters; i_iter++)
+            {
+
+                // Reset HFjet using improved particle energy calculation
+                //HFjet.SetPxPyPzE(mom.px(), mom.py(), mom.pz(), mom.E());
+
+                double rand = 1;
+                //std::cout << "Jet mass before: " << HFjet.M() << '\n';
+
+                rand = get_JES_JER(HFjet.Pt(), myRNG);  // Standard inclusive Z+jet values
+                //rand = get_JES_JER(HFjet.Pt(), myRNG, DoJESJER);  // Low-multiplicity Z+jet values
+
+                // Testing for comparison to previous implementation
+                //rand = 0.976 * myRNG->Gaus(1, 0.114);
+
+                HFjet -= HFmeson;
+                //double newE2 = HFjet.E()*HFjet.E() + (rand*rand - 1) * HFjet.Pt()*HFjet.Pt();
+                double newE2 = HFjet.E()*HFjet.E() + (rand*rand - 1) * HFjet.P()*HFjet.P();
+                double newE = (newE2 < 0) ? 0 : std::sqrt(newE2);
+
+                //HFjet.SetPxPyPzE(HFjet.Px()*rand, HFjet.Py()*rand, HFjet.Pz(), newE);
+
+                HFjet.SetPxPyPzE(HFjet.Px()*rand, HFjet.Py()*rand, HFjet.Pz()*rand, newE);
+                // Testing for comparison to previous implementation
+                //HFjet.SetPxPyPzE(HFjet.Px()*rand, HFjet.Py()*rand, HFjet.Pz()*rand, HFjet.E()*rand);
+                HFjet += HFmeson;
+                //std::cout << "Jet mass after: " << HFjet.M() << '\n';
+            }
         }
 
         if (DoJetID)

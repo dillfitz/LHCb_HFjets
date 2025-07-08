@@ -7,8 +7,7 @@
 using namespace std;
 
 void GetFinalDistributions(int NumEvts = -1,
-                           int dataset = 91599,
-                           bool WTA_cut = false)
+                           int dataset = 91599)
 { 
   const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
@@ -54,15 +53,13 @@ void GetFinalDistributions(int NumEvts = -1,
   if (ghostCut)
     str_ghost = Form("_ghost_%.1f", ghostProb);
 
-  if (WTA_cut)
-    str_WTA = "_WTA";
-  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_WTA + Form("_%d", dataset);
+  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + Form("_%d", dataset);
 
-  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
-  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
+  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   
-  extension = TString("publish") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("publish") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   
 
   cout << string_final << endl;
@@ -378,7 +375,8 @@ void GetFinalDistributions(int NumEvts = -1,
     h1_z_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
     h1_z_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
     h1_z_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
-    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);    
+    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
+    h1_z_truth[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h1_z_truth[i-1]->Draw("HIST SAME");
     h1_z_truth[i-1]->Draw("PE SAME");
     h1_z_data_w_sys->Draw("PE2 SAME");
@@ -423,9 +421,10 @@ void GetFinalDistributions(int NumEvts = -1,
     h1_z_data_sys_ratio->SetMaximum(2.0);
     h1_z_data_sys_ratio->SetFillColorAlpha(16, 0.5);
     h1_z_data_sys_ratio->SetLineColorAlpha(0, 0.5);
+    h1_z_data_sys_ratio->GetXaxis()->SetRangeUser(0.1, 1.0);
     h1_z_data_sys_ratio->Draw("PE2 SAME");
     h1_z_data_stat_ratio->Draw("PE SAME");
-    TLine *line = new TLine(0.0, 1.0, 1.0, 1.0);
+    TLine *line = new TLine(0.1, 1.0, 1.0, 1.0);
     line->SetLineStyle(2);
     line->Draw("SAME");
 
@@ -734,6 +733,7 @@ void GetFinalDistributions(int NumEvts = -1,
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
     h1_r_truth[i-1]->SetMinimum(0.00001);
+    h1_r_truth[i-1]->GetXaxis()->SetRangeUser(0.0, 0.4);
     h1_r_truth[i-1]->Draw("HIST SAME");
     h1_r_truth[i-1]->Draw("PE SAME");
     h1_r_data_w_sys->SetMinimum(0.00001);
@@ -783,9 +783,10 @@ void GetFinalDistributions(int NumEvts = -1,
     h1_r_data_sys_ratio->SetMaximum(2.0);
     h1_r_data_sys_ratio->SetFillColorAlpha(16, 0.5);
     h1_r_data_sys_ratio->SetLineColorAlpha(0, 0.5);
+    h1_r_data_sys_ratio->GetXaxis()->SetRangeUser(0.0, 0.4);
     h1_r_data_sys_ratio->Draw("PE2 SAME");
     h1_r_data_stat_ratio->Draw("PE SAME");
-    TLine *line_r = new TLine(0.0, 1.0, 0.5, 1.0);
+    TLine *line_r = new TLine(0.0, 1.0, 0.4, 1.0);
     line_r->SetLineStyle(2);
     line_r->Draw("SAME");
 
@@ -1015,6 +1016,7 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zjt_data[i-1]->SetMinimum(0.00001);  
     h2_zjt_data[i-1]->SetMaximum(10.);      
     //h2_zjt_data[i-1]->GetYaxis()->SetLimits(0.0, 20.0);
+    h2_zjt_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zjt_data[i-1]->Draw("COLZ");
 
     lhcbName->Draw("SAME");
@@ -1028,7 +1030,8 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zjt_tot_unc[i-1]->SetMaximum(10.);        
     gPad->SetLogz();
     h2_zjt_tot_unc[i-1]->GetXaxis()->SetTitle("z");
-    h2_zjt_tot_unc[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");      
+    h2_zjt_tot_unc[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");  
+    h2_zjt_tot_unc[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);    
     h2_zjt_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
@@ -1037,16 +1040,19 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zjt_truth[i-1]->SetMaximum(10.);                  
     gPad->SetLogz();
     h2_zjt_truth[i-1]->GetXaxis()->SetTitle("z");
-    h2_zjt_truth[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");        
+    h2_zjt_truth[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_zjt_truth[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zjt_truth[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
     
     ccan[ican]->cd(4);
     h2_zjt_ratio_MCData[i-1] = (TH2D*)h2_zjt_truth[i-1]->Clone(Form("h2_zjt_ratio_pt%d",i));
-    h2_zjt_ratio_MCData[i-1]->Divide(h2_zjt_truth[i-1], h2_zjt_data[i-1]);    
+    h2_zjt_ratio_MCData[i-1]->Divide(h2_zjt_truth[i-1], h2_zjt_data[i-1]);
+    h2_zjt_ratio_MCData[i-1]->SetMaximum(3.);
     //h2_zjt_ratio_MCData[i-1]->SetMinimum(0.0001);        
     h2_zjt_ratio_MCData[i-1]->GetXaxis()->SetTitle("z");
-    h2_zjt_ratio_MCData[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");    
+    h2_zjt_ratio_MCData[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
+    h2_zjt_ratio_MCData[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zjt_ratio_MCData[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{MC/Data Ratio}");     
     
@@ -1276,6 +1282,8 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zr_data[i-1]->SetMaximum(200.);      
     h2_zr_data[i-1]->GetXaxis()->SetTitle("z");
     h2_zr_data[i-1]->GetYaxis()->SetTitle("r");
+    h2_zr_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
+    h2_zr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_data[i-1]->Draw("COLZ");
 
     lhcbName->Draw("SAME");
@@ -1289,7 +1297,9 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zr_tot_unc[i-1]->SetMaximum(200.);               
     gPad->SetLogz();
     h2_zr_tot_unc[i-1]->GetXaxis()->SetTitle("z");
-    h2_zr_tot_unc[i-1]->GetYaxis()->SetTitle("r");      
+    h2_zr_tot_unc[i-1]->GetYaxis()->SetTitle("r");
+    h2_zr_tot_unc[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
+    h2_zr_tot_unc[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
@@ -1298,16 +1308,21 @@ void GetFinalDistributions(int NumEvts = -1,
     h2_zr_truth[i-1]->SetMaximum(200.);                  
     gPad->SetLogz();
     h2_zr_truth[i-1]->GetXaxis()->SetTitle("z");
-    h2_zr_truth[i-1]->GetYaxis()->SetTitle("r");        
+    h2_zr_truth[i-1]->GetYaxis()->SetTitle("r");
+    h2_zr_truth[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
+    h2_zr_truth[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_truth[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
     
     ccan[ican]->cd(4);
     h2_zr_ratio_MCData[i-1] = (TH2D*)h2_zr_truth[i-1]->Clone(Form("h2_zr_ratio_pt%d",i));
     h2_zr_ratio_MCData[i-1]->Divide(h2_zr_truth[i-1], h2_zr_data[i-1]);    
-    //h2_zr_ratio_MCData[i-1]->SetMinimum(0.0001);        
+    //h2_zr_ratio_MCData[i-1]->SetMinimum(0.0001);
+    h2_zr_ratio_MCData[i-1]->SetMaximum(3.); 
     h2_zr_ratio_MCData[i-1]->GetXaxis()->SetTitle("z");
-    h2_zr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");    
+    h2_zr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");
+    h2_zr_ratio_MCData[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
+    h2_zr_ratio_MCData[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_ratio_MCData[i-1]->Draw("COLZ");
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{MC/Data Ratio}");     
     
@@ -1534,6 +1549,7 @@ void GetFinalDistributions(int NumEvts = -1,
     gPad->SetLogz();
     h2_jtr_data[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h2_jtr_data[i-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);  
     h2_jtr_data[i-1]->Draw("COLZ");
 
     lhcbName->Draw("SAME");
@@ -1543,31 +1559,35 @@ void GetFinalDistributions(int NumEvts = -1,
     //Tl.DrawLatex(left, top2d - 2 * step2d, "#scale[0.8]{}");  
     
     ccan[ican]->cd(2); 
-    h2_jtr_tot_unc[i-1]->SetMinimum(0.00001);  
-    h2_jtr_tot_unc[i-1]->SetMaximum(50.);          
+    h2_jtr_tot_unc[i-1]->SetMinimum(0.00001);
+    h2_jtr_tot_unc[i-1]->SetMaximum(50.);
     gPad->SetLogz();
     h2_jtr_tot_unc[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_jtr_tot_unc[i-1]->GetYaxis()->SetTitle("r");      
+    h2_jtr_tot_unc[i-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_tot_unc[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_jtr_tot_unc[i-1]->Draw("COLZ");  
     Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{Total uncertainty (statistical + systematic)}");     
     
     ccan[ican]->cd(3);
-    h2_jtr_truth[i-1]->SetMinimum(0.00001);  
-    h2_jtr_truth[i-1]->SetMaximum(50.);                     
+    h2_jtr_truth[i-1]->SetMinimum(0.00001);
+    h2_jtr_truth[i-1]->SetMaximum(50.);
     gPad->SetLogz();
     h2_jtr_truth[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_jtr_truth[i-1]->GetYaxis()->SetTitle("r");        
+    h2_jtr_truth[i-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_truth[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_jtr_truth[i-1]->Draw("COLZ");
-    Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}"); 
+    Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{PYTHIA8}");
     
     ccan[ican]->cd(4);
     h2_jtr_ratio_MCData[i-1] = (TH2D*)h2_jtr_truth[i-1]->Clone(Form("h2_jtr_ratio_pt%d",i));
     h2_jtr_ratio_MCData[i-1]->Divide(h2_jtr_truth[i-1], h2_jtr_data[i-1]);    
-    //h2_jtr_ratio_MCData[i-1]->SetMinimum(0.0001);        
+    //h2_jtr_ratio_MCData[i-1]->SetMinimum(0.0001);
+    h2_jtr_ratio_MCData[i-1]->SetMaximum(3.);
     h2_jtr_ratio_MCData[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_jtr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");    
+    h2_jtr_ratio_MCData[i-1]->GetYaxis()->SetTitle("r");
+    h2_jtr_ratio_MCData[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_jtr_ratio_MCData[i-1]->Draw("COLZ");
-    Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{MC/Data Ratio}");     
+    Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{MC/Data Ratio}");
     
     ccan[ican]->cd();
     //gPad->SetLogz();

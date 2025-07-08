@@ -11,7 +11,7 @@ void SPlotCompare()
     gStyle->SetOptStat(0);
     gROOT->ForceStyle();
     
-    TFile infile = TFile("../../root_files/Bjets/data_ev_-1_ptj_5100_eta_2.54.0_HF_ghost_0.4_b_PID_91599.root");
+    TFile infile = TFile("../../root_files/Bjets/data_ev_-1_ptj_5100_eta_2.54.0_HF_ghost_0.4_b_PID_splotfit_91599.root");
     //TFile infile = TFile("../../root_files/Bjets/data_ev_-1_ptj_10100_eta_2.54.0_HF_ghost_0.4_b_PID_91599.root");
     TFile outfile = TFile("../../root_files/Bjets/splot_compare.root", "RECREATE");
     
@@ -22,17 +22,19 @@ void SPlotCompare()
     NormalizeHist(ptz_sweight);
     TH2D *ptz_uncorrected = (TH2D*)infile.Get("ptz_uncorrected");
     NormalizeHist(ptz_uncorrected);
+    TH2D *ptz_uncorrected_nomasscond = (TH2D*)infile.Get("ptz_uncorrected_nomasscond");
+    NormalizeHist(ptz_uncorrected_nomasscond);
     TH2D *ptz_nobgsub = (TH2D*)infile.Get("ptz_nobgsub");
     NormalizeHist(ptz_nobgsub);
 
     TH2D *ptz_ratio = (TH2D*)ptz->Clone("ptz_ratio");
-    TH2D *ptz_ratio_uncorr_sweight = (TH2D*)ptz_uncorrected->Clone("ptz_ratio_uncorr_sweight");
+    TH2D *ptz_ratio_uncorr_sweight = (TH2D*)ptz_uncorrected_nomasscond->Clone("ptz_ratio_uncorr_sweight");
     TH2D *ptz_ratio_uncorr_sbsub = (TH2D*)ptz_uncorrected->Clone("ptz_ratio_uncorr_sbsub");
     TH2D *ptz_ratio_evtweight = (TH2D*)ptz_uncorrected->Clone("ptz_ratio_evtweight");
 
     ptz_ratio->Divide(ptz, ptz_sweight);
     ptz_ratio_evtweight->Divide(ptz_uncorrected, ptz_nobgsub);
-    ptz_ratio_uncorr_sweight->Divide(ptz_uncorrected, ptz_sweight);
+    ptz_ratio_uncorr_sweight->Divide(ptz_uncorrected_nomasscond, ptz_sweight);
     ptz_ratio_uncorr_sbsub->Divide(ptz_uncorrected, ptz);
 
     ptz_ratio->SetOption("COLZ, text");
@@ -121,17 +123,19 @@ void SPlotCompare()
     NormalizeHist(ptjt_sweight);
     TH2D *ptjt_uncorrected = (TH2D*)infile.Get("ptjt_uncorrected");
     NormalizeHist(ptjt_uncorrected);
+    TH2D *ptjt_uncorrected_nomasscond = (TH2D*)infile.Get("ptjt_uncorrected_nomasscond");
+    NormalizeHist(ptjt_uncorrected_nomasscond);
     TH2D *ptjt_nobgsub = (TH2D*)infile.Get("ptjt_nobgsub");
     NormalizeHist(ptjt_nobgsub);
 
     TH2D *ptjt_ratio = (TH2D*)ptjt->Clone("ptjt_ratio");
-    TH2D *ptjt_ratio_uncorr_sweight = (TH2D*)ptjt_uncorrected->Clone("ptjt_ratio_uncorr_sweight");
+    TH2D *ptjt_ratio_uncorr_sweight = (TH2D*)ptjt_uncorrected_nomasscond->Clone("ptjt_ratio_uncorr_sweight");
     TH2D *ptjt_ratio_uncorr_sbsub = (TH2D*)ptjt_uncorrected->Clone("ptjt_ratio_uncorr_sbsub");
     TH2D *ptjt_ratio_evtweight = (TH2D*)ptjt_uncorrected->Clone("ptjt_ratio_evtweight");
 
     ptjt_ratio->Divide(ptjt, ptjt_sweight);
     ptjt_ratio_evtweight->Divide(ptjt_uncorrected, ptjt_nobgsub);
-    ptjt_ratio_uncorr_sweight->Divide(ptjt_uncorrected, ptjt_sweight);
+    ptjt_ratio_uncorr_sweight->Divide(ptjt_uncorrected_nomasscond, ptjt_sweight);
     ptjt_ratio_uncorr_sbsub->Divide(ptjt_uncorrected, ptjt);
 
     ptjt_ratio->SetOption("COLZ, text");
@@ -221,17 +225,19 @@ void SPlotCompare()
     NormalizeHist(ptr_sweight);
     TH2D *ptr_uncorrected = (TH2D*)infile.Get("ptr_uncorrected");
     NormalizeHist(ptr_uncorrected);
+    TH2D *ptr_uncorrected_nomasscond = (TH2D*)infile.Get("ptr_uncorrected_nomasscond");
+    NormalizeHist(ptr_uncorrected_nomasscond);
     TH2D *ptr_nobgsub = (TH2D*)infile.Get("ptr_nobgsub");
     NormalizeHist(ptr_nobgsub);
 
     TH2D *ptr_ratio = (TH2D*)ptr->Clone("ptr_ratio");
-    TH2D *ptr_ratio_uncorr_sweight = (TH2D*)ptr_uncorrected->Clone("ptr_ratio_uncorr_sweight");
+    TH2D *ptr_ratio_uncorr_sweight = (TH2D*)ptr_uncorrected_nomasscond->Clone("ptr_ratio_uncorr_sweight");
     TH2D *ptr_ratio_uncorr_sbsub = (TH2D*)ptr_uncorrected->Clone("ptr_ratio_uncorr_sbsub");
     TH2D *ptr_ratio_evtweight = (TH2D*)ptr_uncorrected->Clone("ptr_ratio_evtweight");
 
     ptr_ratio->Divide(ptr, ptr_sweight);
     ptr_ratio_evtweight->Divide(ptr_uncorrected, ptr_nobgsub);
-    ptr_ratio_uncorr_sweight->Divide(ptr_uncorrected, ptr_sweight);
+    ptr_ratio_uncorr_sweight->Divide(ptr_uncorrected_nomasscond, ptr_sweight);
     ptr_ratio_uncorr_sbsub->Divide(ptr_uncorrected, ptr);
 
     ptr_ratio->SetOption("COLZ, text");

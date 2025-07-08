@@ -26,6 +26,9 @@ TString str_Nevts;
 TString str_DTF = "";
 TString str_PID = "";
 
+//const int n_smearing_iter = 25;
+const int n_smearing_iter = 1;
+
 
 bool pt_cut = true;
 bool Erad_cut = true;

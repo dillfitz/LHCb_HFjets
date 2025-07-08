@@ -13,15 +13,15 @@
 #include "../Helpers.h"
 using namespace RooFit;
 
-void SPlotFit(int NumEvts = 10000,
-              int dataset = 1510,
+void SPlotFit(int NumEvts = -1,
+              int dataset = 91599,
               bool isData = true,
               bool UseDTF = true,
               bool DoRecSelEff = 0,
               bool DoSystematic = 0,
               float ptmin_user = pTLow,
               float ptmax_user = 250,
-              bool onlyL0DiMuon = true)
+              bool L0MuonDiMuon = false)
 {
     bool MCflag = !isData;
     followHardest = false;
@@ -112,8 +112,8 @@ void SPlotFit(int NumEvts = 10000,
 
 
     TString str_L0 = "";
-    if (onlyL0DiMuon)
-        str_L0 = "_L0DiMuon";
+    if (L0MuonDiMuon)
+        str_L0 = "_L0MuonDiMuon";
 
     TString extension, extension_reco, extension_misid;
     TString extension_read, extension_RootFiles, extension_RootFilesMC;
@@ -122,10 +122,10 @@ void SPlotFit(int NumEvts = 10000,
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
     //extension_reco = TString("splotfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
-    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d", dataset);
+    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
     
     //extension_misid = TString("splotfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + Form("_%d", 91599);
-    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + Form("_%d", 91599);
+    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", 91599);
 
     extension = TString("splotfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
 
@@ -679,7 +679,7 @@ void SPlotFit(int NumEvts = 10000,
         RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 1000, 0., 1000000);
         RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
         RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.01 * nsig->getVal(), 20, 0.07 * nsig->getVal());
+        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 20, 0., 0.07 * nsig->getVal());
         // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
         RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
         // S a m p l e ,   f i t   a n d   p l o t   m o d e l

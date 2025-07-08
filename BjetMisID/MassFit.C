@@ -14,7 +14,7 @@
 
 using namespace RooFit;
 
-void MassFit(int NumEvts = 10000, int dataset = 1510, bool isData = true,
+void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = false,
              bool UseDTF = false,
              float ptmin_user = pTLow,
              float ptmax_user = 250)

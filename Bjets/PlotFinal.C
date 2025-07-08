@@ -13,7 +13,7 @@
 #include "../Helpers.h"
 using namespace std;
 
-void PlotFinal(int NumEvts = -1, int dataset = 91599, bool onlyL0DiMuon = false)
+void PlotFinal(int NumEvts = -1, int dataset = 91599, bool L0MuonDiMuon = false)
 {
   bool WTA_cut = false;
   TString string_data, string_data_test, string_unfold, string_unfold_test, extension;
@@ -78,8 +78,8 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599, bool onlyL0DiMuon = false)
 
 
   TString str_L0 = "";
-  if (onlyL0DiMuon)
-    str_L0 = "_L0DiMuon";
+  if (L0MuonDiMuon)
+    str_L0 = "_L0MuonDiMuon";
 
   string_data = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + str_L0 +  Form("_%d", dataset);
   string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + str_L0 + Form("_%d", dataset);
@@ -350,9 +350,9 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599, bool onlyL0DiMuon = false)
     rleg->AddEntry(h1_z_ptbinned_final[j-1], "corrected data", "lp");
     rleg->AddEntry(h1_z_ptbinned[j-1], "uncorrected data", "lp");
     rleg->Draw("same");
-    plotname = Form("r_compare_pt%d.png", j);
+    plotname = Form("r_compare_pt%d", j);
     plotname = plotdir + plotname;
-        plotname += str_L0;
+    plotname += str_L0;
     plotname += ".png";
     can_r[j-1]->SaveAs(plotname);
                      

@@ -19,13 +19,15 @@
 void SimpleUnfold(int NumEvts = -1,
                   int dataset = 91599,
                   bool SubtractGS = false,                  
-                  bool DoJES = false,
-                  bool DoJER = false,
+                  //bool DoJES = false,
+                  //bool DoJER = false,
+                  bool DoJESJER = false,
                   bool DoJetID = false,                  
                   bool DoRecSelEff = false,
                   bool DoSignalSys = false,
                   bool DoUnfoldPrior = false,
-                  bool onlyL0DiMuon = false)
+                  bool sPlotFit = false,
+                  bool L0MuonDiMuon = false)
 {
     // pt_cut = true;
     // pt_track_cut = false;
@@ -124,20 +126,26 @@ void SimpleUnfold(int NumEvts = -1,
         str_ghost = Form("_ghost_%.1f", ghostProb);
 
     TString str_L0 = "";
-    if (onlyL0DiMuon)
-      str_L0 = "_L0DiMuon";    
+    if (L0MuonDiMuon)
+      str_L0 = "_L0MuonDiMuon";
+
+    TString str_sPlot = "";
+    if (sPlotFit)
+      str_sPlot = "_splotfit";
 
 
     TString str_tree;   
     TString extension, extension_prefix;
-    extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_L0 + Form("_%d", dataset);
+    extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
     // if (isData)
     //   extension += "_forData";
     
-  if (DoJES)
-    extension_prefix = TString("JES_");
-  if (DoJER)
-    extension_prefix = TString("JER_");
+  //if (DoJES)
+  //  extension_prefix = TString("JES_");
+  //if (DoJER)
+  //  extension_prefix = TString("JER_");
+  if (DoJESJER)
+    extension_prefix = TString("JESJER_");
   if (DoJetID)
     extension_prefix = TString("jetid_");
   if (DoRecSelEff)
@@ -253,7 +261,15 @@ void SimpleUnfold(int NumEvts = -1,
     TH3D *h3_HFeff_HFptetajetpt = (TH3D *)file_decay->Get("efficiency_HFptetajetpt");
     
 //    /////////////////// Mass Fit Parameters /////////////////////////////////
-    TString extension_mass( TString("splotfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root");      
+    TString extension_mass("");
+    if (sPlotFit)
+    {
+      extension_mass = TString("splotfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root";
+    }
+    else
+    {
+      extension_mass = TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root";
+    }
     if (DoRecSelEff)
       extension_mass = "recselsys_" + extension_mass;
     if (DoSignalSys)
@@ -598,7 +614,7 @@ void SimpleUnfold(int NumEvts = -1,
         TLorentzVector HFjet(jet_px, jet_py, jet_pz, jet_e);
         TLorentzVector tr_HFjet(tr_jet_px, tr_jet_py, tr_jet_pz, tr_jet_e);
         
-        float reweight = 1.0;
+        float eff_weight = 1.0;
         float prior_weight = 1.0;
         
         if (DoUnfoldPrior)
@@ -606,6 +622,11 @@ void SimpleUnfold(int NumEvts = -1,
           prior_weight = h3_ptzjt_ratio->GetBinContent(h3_ptzjt_ratio->GetXaxis()->FindBin(z),
                                                        h3_ptzjt_ratio->GetYaxis()->FindBin(jt),
                                                        h3_ptzjt_ratio->GetZaxis()->FindBin(jet_pt));
+        }
+
+        if (DoJESJER) {
+          // Reweight by inverse of (number of smearing trials)
+          eff_weight = 1. / n_smearing_iter;
         }
         
         float bkg_weight = h1_BkgScale != NULL ? h1_BkgScale->GetBinContent(h1_BkgScale->FindBin(HFmeson.Pt())) : 1.0;
@@ -682,42 +703,42 @@ void SimpleUnfold(int NumEvts = -1,
             if (eventNumber == 6176925)
                 cout << jet_pt << ", " << jet_rap << ", " << tr_jet_pt << ", " << tr_jet_rap << endl;
             
-            h1_num_efficiency_jetpt->Fill(tr_jet_pt, reweight);
+            h1_num_efficiency_jetpt->Fill(tr_jet_pt, eff_weight);
                         
-            h2_num_efficiency_ptz->Fill(tr_z, tr_HFjet.Pt(), reweight);
-            h2_num_efficiency_ptjt->Fill(tr_jt, tr_HFjet.Pt(), reweight);
-            h2_num_efficiency_ptr->Fill(tr_r, tr_HFjet.Pt(), reweight);            
+            h2_num_efficiency_ptz->Fill(tr_z, tr_HFjet.Pt(), eff_weight);
+            h2_num_efficiency_ptjt->Fill(tr_jt, tr_HFjet.Pt(), eff_weight);
+            h2_num_efficiency_ptr->Fill(tr_r, tr_HFjet.Pt(), eff_weight);
                        
-            h3_num_efficiency_ptzjt->Fill(tr_z, tr_jt, tr_HFjet.Pt(), reweight);
-            h3_num_efficiency_ptzr->Fill(tr_z, tr_r, tr_HFjet.Pt(), reweight);
-            h3_num_efficiency_ptjtr->Fill( tr_jt, tr_r, tr_HFjet.Pt(), reweight);          
+            h3_num_efficiency_ptzjt->Fill(tr_z, tr_jt, tr_HFjet.Pt(), eff_weight);
+            h3_num_efficiency_ptzr->Fill(tr_z, tr_r, tr_HFjet.Pt(), eff_weight);
+            h3_num_efficiency_ptjtr->Fill( tr_jt, tr_r, tr_HFjet.Pt(), eff_weight);
         }
         
         if (denom_cond)
         {
-            h1_denom_purity_jetpt->Fill(jet_pt, reweight);
+            h1_denom_purity_jetpt->Fill(jet_pt, eff_weight);
             
-            h2_denom_purity_ptz->Fill(z, jet_pt, reweight);
-            h2_denom_purity_ptjt->Fill(jt, jet_pt, reweight);
-            h2_denom_purity_ptr->Fill(r, jet_pt, reweight);
+            h2_denom_purity_ptz->Fill(z, jet_pt, eff_weight);
+            h2_denom_purity_ptjt->Fill(jt, jet_pt, eff_weight);
+            h2_denom_purity_ptr->Fill(r, jet_pt, eff_weight);
             
-            h3_denom_purity_ptzjt->Fill(z, jt, jet_pt, reweight);
-            h3_denom_purity_ptzr->Fill(z, r, jet_pt, reweight);
-            h3_denom_purity_ptjtr->Fill(jt, r, jet_pt, reweight);
+            h3_denom_purity_ptzjt->Fill(z, jt, jet_pt, eff_weight);
+            h3_denom_purity_ptzr->Fill(z, r, jet_pt, eff_weight);
+            h3_denom_purity_ptjtr->Fill(jt, r, jet_pt, eff_weight);
         }    
 
         if (num_cond_pur)
         {
         
-            h1_num_purity_jetpt->Fill(jet_pt, reweight);
+            h1_num_purity_jetpt->Fill(jet_pt, eff_weight);
             
-            h2_num_purity_ptz->Fill(z, jet_pt, reweight);
-            h2_num_purity_ptjt->Fill(jt, jet_pt, reweight);
-            h2_num_purity_ptr->Fill(r, jet_pt, reweight);
+            h2_num_purity_ptz->Fill(z, jet_pt, eff_weight);
+            h2_num_purity_ptjt->Fill(jt, jet_pt, eff_weight);
+            h2_num_purity_ptr->Fill(r, jet_pt, eff_weight);
             
-            h3_num_purity_ptzjt->Fill(z, jt, jet_pt, reweight);
-            h3_num_purity_ptzr->Fill(z, r, jet_pt, reweight);
-            h3_num_purity_ptjtr->Fill(jt, r, jet_pt, reweight);  
+            h3_num_purity_ptzjt->Fill(z, jt, jet_pt, eff_weight);
+            h3_num_purity_ptzr->Fill(z, r, jet_pt, eff_weight);
+            h3_num_purity_ptjtr->Fill(jt, r, jet_pt, eff_weight);  
             NumTrueBjets++;              
         }
         
