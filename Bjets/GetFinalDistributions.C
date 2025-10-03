@@ -11,7 +11,7 @@ void GetFinalDistributions(int NumEvts = -1,
 { 
   const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
-  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_DTF(""), str_PID("");
+  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_PID("");
   TString loc_rootfiles_data("../../root_files/Bjets/");
   TString loc_rootfiles_MC("../../root_files/BjetsMC/");
   TString loc_plots("../../plots/Bjets/results/");
@@ -38,8 +38,6 @@ void GetFinalDistributions(int NumEvts = -1,
   else if (flavor == 5)
     str_flavor = "_b";
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
   if (flavor == 1)
@@ -55,21 +53,15 @@ void GetFinalDistributions(int NumEvts = -1,
 
   string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + Form("_%d", dataset);
 
-  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
-  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   
-  extension = TString("publish") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("publish") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   
 
   cout << string_final << endl;
   cout << string_truth << endl;
-  
-
-
-  //////////////////////////////////////////////////////////////////
-
-  // TH1D* h1_dR_empty = new TH1D("h1_ptktdR_empty", "", dR_bins, jetradius/exp(dR_min), jetradius/exp(dR_max));
 
   /////////////////////   Get Files /////////////////////////////////
 
@@ -937,7 +929,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
           }
         }
         else
@@ -948,7 +940,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
           }
         }
       }           
@@ -992,7 +984,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
           }
         }
         else
@@ -1003,7 +995,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
           }
         }
       }           
@@ -1112,170 +1104,170 @@ void GetFinalDistributions(int NumEvts = -1,
       
     } 
 
-       // ( z , r )   d a t a   t a b l e //
-       textables << "    \\caption{Final results for $\\frac{1}{N_{j}}\\frac{dN}{dzdr}$ from " << Form("Figure~\\ref{fig:zr_final_pt%d}}",i)<<"\n";
-       textables << "    " << Form("\\label{tab:zr_final_pt%d}",i) << "\n";
-       textables << "    \\tiny\n";
-       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
-       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\frac{1}{N_{j}}\\frac{dN}{dzdr}$}}\\\\\n";
-       textables << "        \\hline\n";
-       textables << "        \\hline\n"; 
-       textables << "        $r \\backslash z$ & "; 
-       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
-       { 
-         if(ybin!=0)
-         {
-           if (ybin==1)
-           {
-             textables << "        \\hline\n";
-           }
-           textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
-         }
-         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
-         {
-           if (xbin==0) {continue;}
-           if (ybin==0)
-           {
-             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
-             else
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
-           }
-           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - \\\\\n";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
-             }
-           }
-           else
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - &";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
-             }
-           }
-         }           
-       }       
-       textables << "    \\end{tabularx}\n";
-   
-       // ( z , r )   s t a t   u n c   t a b l e //
-       textables << "    \\caption{Final results for $\\sigma_{stat}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
-       textables << "    " << Form("\\label{tab:zr_final_sigma_stat_pt%d}",i) << "\n";
-       textables << "    \\tiny\n";
-       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
-       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{stat}$}}\\\\\n";
-       textables << "        \\hline\n";
-       textables << "        \\hline\n"; 
-       textables << "        $r \\backslash z$ & "; 
-       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
-       { 
-         if(ybin!=0)
-         {
-           if (ybin==1)
-           {
-             textables << "        \\hline\n";
-           }
-           textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
-         }
-         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
-         {
-           if (xbin==0) {continue;}
-           if (ybin==0)
-           {
-             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
-             else
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
-           }
-           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - \\\\\n";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
-             }
-           }
-           else
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - &";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
-             }
-           }
-         }           
-       }   
-       textables << "    \\end{tabularx}\n";
-   
-       // ( z , r )   s y s   u n c   t a b l e //
-       textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
-       textables << "    " << Form("\\label{tab:zr_final_sigma_sys_pt%d}",i) << "\n";
-       textables << "    \\tiny\n";
-       textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
-       textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{sys}$}}\\\\\n";
-       textables << "        \\hline\n";
-       textables << "        \\hline\n"; 
-       textables << "        $r \\backslash z$ & "; 
-       for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
-       { 
-         if(ybin!=0)
-         {
-           if (ybin==1)
-           {
-             textables << "        \\hline\n";
-           }
-           textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
-         }
-         for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
-         {
-           if (xbin==0) {continue;}
-           if (ybin==0)
-           {
-             if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
-             else
-               textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
-           }
-           else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - \\\\\n";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
-             }
-           }
-           else
-           {
-             if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
-             {
-               textables << " - &";
-             }
-             else
-             {
-               textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
-             }
-           }
-         }           
-       }   
-       textables << "    \\end{tabularx}\n";
+    // ( z , r )   d a t a   t a b l e //
+    textables << "    \\caption{Final results for $\\frac{1}{N_{j}}\\frac{dN}{dzdr}$ from " << Form("Figure~\\ref{fig:zr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zr_final_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\frac{1}{N_{j}}\\frac{dN}{dzdr}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $r \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }       
+    textables << "    \\end{tabularx}\n";
+
+    // ( z , r )   s t a t   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{stat}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zr_final_sigma_stat_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{stat}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $r \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", jt_binedges[ybin], jt_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
+
+    // ( z , r )   s y s   u n c   t a b l e //
+    textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:zr_final_pt%d}}",i)<<"\n";
+    textables << "    " << Form("\\label{tab:zr_final_sigma_sys_pt%d}",i) << "\n";
+    textables << "    \\tiny\n";
+    textables << "    \\begin{tabularx}{0.875\\paperheight}{c|cccccccccccccc}\n";
+    textables << "    " << Form("$%.1f<\\ptj<%.1f$", pt_binedges[i], pt_binedges[i+1]) << "& \\multicolumn{14}{c}{\\normalsize{$\\sigma_{sys}$}}\\\\\n";
+    textables << "        \\hline\n";
+    textables << "        \\hline\n"; 
+    textables << "        $r \\backslash z$ & "; 
+    for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+    { 
+      if(ybin!=0)
+      {
+        if (ybin==1)
+        {
+          textables << "        \\hline\n";
+        }
+        textables << "        " << Form("$%.2f-%.2f$", r_binedges[ybin], r_binedges[ybin+1]) << " & "; 
+      }
+      for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+      {
+        if (xbin==0) {continue;}
+        if (ybin==0)
+        {
+          if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << "\\\\\n"; 
+          else
+            textables << Form("$%.2f-%.2f$", z_binedges[xbin], z_binedges[xbin+1]) << " & "; 
+        }
+        else if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - \\\\\n";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+          }
+        }
+        else
+        {
+          if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+          {
+            textables << " - &";
+          }
+          else
+          {
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+          }
+        }
+      }           
+    }   
+    textables << "    \\end{tabularx}\n";
         
     gPad->SetLogz();
     h2_zr_data[i-1]->SetMinimum(0.00001);  
@@ -1472,7 +1464,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
           }
         }
         else
@@ -1483,14 +1475,14 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
           }
         }
       }           
     }   
     textables << "    \\end{tabularx}\n";
 
-    // ( j t  , r )   s y s   u n c   t a b l e //
+    // ( j t , r )   s y s   u n c   t a b l e //
     textables << "    \\caption{Final results for $\\sigma_{sys}$ corresponding to " << Form("Table~\\ref{tab:jtr_final_pt%d}}",i)<<"\n";
     textables << "    " << Form("\\label{tab:jtr_final_sigma_sys_pt%d}",i) << "\n";
     textables << "    \\tiny\n";
@@ -1526,7 +1518,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << "\\\\\n";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << "\\\\\n";
           }
         }
         else
@@ -1537,7 +1529,7 @@ void GetFinalDistributions(int NumEvts = -1,
           }
           else
           {
-            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << " & ";
+            textables << std::defaultfloat << std::setprecision(sigfigs) << h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1) << " & ";
           }
         }
       }           

@@ -240,7 +240,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = false,
         // if (!TOS)
         //     continue;
 
-        TLorentzVector HFmeson, HFjet, mum, mup, pion, jpsi, Bfromjet, tr_HFmeson;
+        TLorentzVector HFmeson, HFjet, mum, mup, pion, jpsi, tr_HFmeson;
 
         tr_HFmeson.SetPxPyPzE(tr_HF_px, tr_HF_py, tr_HF_pz, tr_HF_e);
         HFmeson.SetPxPyPzE(HF_px, HF_py, HF_pz, HF_e);

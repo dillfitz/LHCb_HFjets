@@ -46,11 +46,9 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599, bool L0MuonDiMuon = false)
   TString str_ghost1 = "";
 
 
-  TString str_DTF(""), str_PID("");
+  TString str_PID("");
   TString str_WTA("");
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
   if (WTA_cut)
@@ -81,13 +79,13 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599, bool L0MuonDiMuon = false)
   if (L0MuonDiMuon)
     str_L0 = "_L0MuonDiMuon";
 
-  string_data = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + str_L0 +  Form("_%d", dataset);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + str_WTA + str_L0 + Form("_%d", dataset);
+  string_data = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + str_WTA + str_L0 +  Form("_%d", dataset);
+  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_PID + str_WTA + str_L0 + Form("_%d", dataset);
 
   cout << string_data << endl;
   cout << string_unfold << endl;
 
-  extension = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + str_WTA + Form("_iters_%d", NumIters) + str_L0 + Form("_%d", dataset);
+  extension = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + str_WTA + Form("_iters_%d", NumIters) + str_L0 + Form("_%d", dataset);
 
   /////////////////////   Get Files /////////////////////////////////
 

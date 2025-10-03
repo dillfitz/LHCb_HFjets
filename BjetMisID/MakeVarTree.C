@@ -144,7 +144,6 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false
   float mum_px, mum_py, mum_pz, mum_e;
   float pi_px, pi_py, pi_pz, pi_e;
   float pi_PIDK;
-  float Bfromjet_px, Bfromjet_py, Bfromjet_pz, Bfromjet_e;
 
   float tr_jet_px, tr_jet_py, tr_jet_pz, tr_jet_e;
   float tr_mup_px, tr_mup_py, tr_mup_pz, tr_mup_e;
@@ -212,19 +211,6 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false
   BTree->Branch("tr_HF_py", &tr_HF_py);
   BTree->Branch("tr_HF_pz", &tr_HF_pz);
   BTree->Branch("tr_HF_e", &tr_HF_e);
-
-  BTree->Branch("Bfromjet_px", &Bfromjet_px);
-  BTree->Branch("Bfromjet_py", &Bfromjet_py);
-  BTree->Branch("Bfromjet_pz", &Bfromjet_pz);
-  BTree->Branch("Bfromjet_e", &Bfromjet_e);
-
-//  LundTree->Branch("tr_thetas", &tr_thetas);
-//  LundTree->Branch("tr_Erads", &tr_Erads);
-//  LundTree->Branch("tr_dRs", &tr_dRs);
-//  LundTree->Branch("tr_kts", &tr_kts);
-//  LundTree->Branch("tr_zs", &tr_zs);
-//  LundTree->Branch("tr_raps", &tr_raps);
-//  LundTree->Branch("tr_phis", &tr_phis);
 
   BTree->Branch("tr_jet_pt", &tr_jet_pt);
   BTree->Branch("tr_jet_eta", &tr_jet_eta);
@@ -363,28 +349,13 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false
     int NumHF = 0;
     for (int dtrs0 = 0; dtrs0 < Tree.Jet_Dtr_nrecodtr; dtrs0++)
     {
-      // cout<<(Tree.Jet_Dtr_PT[dtrs0]/HFjet.Pt()/1000.)<<",";
-      // cout<<Tree.Jet_Dtr_ID[dtrs0]<<",";
+
       float trchi2ndf = Tree.Jet_Dtr_TrackChi2[dtrs0] / Tree.Jet_Dtr_TrackNDF[dtrs0];
       TLorentzVector dtr(Tree.Jet_Dtr_PX[dtrs0] / 1000.,
                          Tree.Jet_Dtr_PY[dtrs0] / 1000.,
                          Tree.Jet_Dtr_PZ[dtrs0] / 1000.,
                          Tree.Jet_Dtr_E[dtrs0] / 1000.);
 
-//      bool dtrpass = true;
-//
-//      dtrpass = DtrCuts(dtr, Tree.Jet_Dtr_ThreeCharge[dtrs0], Tree.Jet_Dtr_ProbNNghost[dtrs0], trchi2ndf, chargedJetCut);
-//      if (abs(Tree.Jet_Dtr_ID[dtrs0]) == HF_pdgcode)
-//        dtrpass = true;
-//      if (!dtrpass)
-//        continue;
-//      jetdtrs.push_back(PseudoJet(Tree.Jet_Dtr_PX[dtrs0] / 1000.,
-//                                  Tree.Jet_Dtr_PY[dtrs0] / 1000.,
-//                                  Tree.Jet_Dtr_PZ[dtrs0] / 1000.,
-//                                  Tree.Jet_Dtr_E[dtrs0] / 1000.));
-//      jetdtrs.back().set_user_info(new MyInfo(Tree.Jet_Dtr_ID[dtrs0]));
-        
-      // cout<<Tree.Jet_Dtr_ID[dtrs0]<<" -- ";
       if (abs(Tree.Jet_Dtr_ID[dtrs0]) == HF_pdgcode)
       {
         hasHFhadron = true;
@@ -394,9 +365,7 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false
         Bfromjet_pz = Tree.Jet_Dtr_PZ[dtrs0] / 1000.;
         Bfromjet_e = Tree.Jet_Dtr_E[dtrs0] / 1000.;
       }
-      // jet_Nmcdtrs++;
     }
-    // cout<<endl;
     if (!hasHFhadron)
       continue;
     if (NumHF > 1)
@@ -411,19 +380,6 @@ void MakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool isData = false
                          Tree.Jet_mcjet_dtrPZ[dtrs0] / 1000.,
                          Tree.Jet_mcjet_dtrE[dtrs0] / 1000.);
 
-//      bool dtrpass = true;
-//
-//      dtrpass = DtrCuts(dtr, Tree.Jet_mcjet_dtrThreeCharge[dtrs0], 0, 0, chargedJetCut);
-//      if (abs(Tree.Jet_mcjet_dtrID[dtrs0]) == HF_pdgcode)
-//        dtrpass = true;
-//      if (!dtrpass)
-//        continue;
-
-//      tr_jetdtrs.push_back(PseudoJet(Tree.Jet_mcjet_dtrPX[dtrs0] / 1000.,
-//                                     Tree.Jet_mcjet_dtrPY[dtrs0] / 1000.,
-//                                     Tree.Jet_mcjet_dtrPZ[dtrs0] / 1000.,
-//                                     Tree.Jet_mcjet_dtrE[dtrs0] / 1000.));
-//      tr_jetdtrs.back().set_user_info(new MyInfo(Tree.Jet_mcjet_dtrID[dtrs0]));
       if (abs(Tree.Jet_mcjet_dtrID[dtrs0]) == HF_pdgcode)
       {
         tr_HFmeson.SetPxPyPzE(dtr.Px(),

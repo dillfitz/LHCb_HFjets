@@ -910,13 +910,8 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
   h2_zr->Draw("COLZ");
   h2_zr->SetLineColor(1);
   h2_zr->SetLineStyle(9);
-    
-//  if (flavor != 0)
-//    f1_theta_Erad->Draw("SAME");
-//  f1_kt_Erad->Draw("SAME");
 
   Tl.DrawLatex(.5, 0.8, Form("%.1f<p_{T,jet}<%.1f GeV", ptMin, ptMax));
-//  Tl.DrawLatex(.2, 0.72, Form("k_{T}>%.1f GeV", LambdaQCD));
   Tl.DrawLatex(.6, 0.64, Form("%.1f<#eta<%.1f", etaMin, etaMax));
   ccan[ican]->cd(3);
     

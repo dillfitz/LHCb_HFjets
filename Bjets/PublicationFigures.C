@@ -11,7 +11,7 @@ void PublicationFigures(int NumEvts = -1,
 { 
   const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
-  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_DTF(""), str_PID("");
+  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_PID("");
   TString loc_rootfiles_data("../../root_files/Bjets/");
   TString loc_rootfiles_MC("../../root_files/BjetsMC/");
   TString loc_plots("../../plots/Bjets/results/");
@@ -38,8 +38,6 @@ void PublicationFigures(int NumEvts = -1,
   else if (flavor == 5)
     str_flavor = "_b";
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
   if (flavor == 1)
@@ -55,22 +53,16 @@ void PublicationFigures(int NumEvts = -1,
 
   string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + Form("_%d", dataset);
 
-  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
-  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
+  string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
   
-  extension = TString("publish_use") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("publish_use") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
   
 
   cout << string_final << endl;
   cout << string_truth << endl;
   
-
-
-  //////////////////////////////////////////////////////////////////
-
-  // TH1D* h1_dR_empty = new TH1D("h1_ptktdR_empty", "", dR_bins, jetradius/exp(dR_min), jetradius/exp(dR_max));
-
   /////////////////////   Get Files /////////////////////////////////
 
   std::cout << "made it to get files" << std::endl;
@@ -269,13 +261,13 @@ void PublicationFigures(int NumEvts = -1,
   // Begin plotting
   //
   auto legend_stack_z = new TLegend(0.2, 0.3, 0.4, 0.6);
-  legend_stack_z->SetTextSize(0.12);
+  legend_stack_z->SetTextSize(0.08);
   
   auto legend_stack_jt = new TLegend(0.6, 0.3, 0.8, 0.6);
-  legend_stack_jt->SetTextSize(0.12);
+  legend_stack_jt->SetTextSize(0.08);
   
   auto legend_stack_r = new TLegend(0.2, 0.1, 0.4, 0.4);
-  legend_stack_r->SetTextSize(0.12);  
+  legend_stack_r->SetTextSize(0.08);  
   
   double left = 0.2;
   double step = 0.1;
@@ -288,7 +280,7 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
 
   std::cout << "made it after canvas divide" << std::endl;
@@ -357,14 +349,14 @@ void PublicationFigures(int NumEvts = -1,
     top_pad->cd();
     h1_z_truth[i-1]->GetYaxis()->SetMaxDigits(2);
     h1_z_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dz}");
-    h1_z_truth[i-1]->GetYaxis()->SetTitleOffset(0.45);
+    h1_z_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
     h1_z_truth[i-1]->GetYaxis()->SetRangeUser(0, 4.);    
-    h1_z_truth[i-1]->GetYaxis()->SetTitleSize(0.15);
+    h1_z_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
     h1_z_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_z_truth[i-1]->GetYaxis()->SetLabelSize(0.12);
+    h1_z_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
     h1_z_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
     h1_z_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
-    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);   
+    h1_z_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0); 
 
     h1_z_truth[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0); 
     //h1_z_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0); 
@@ -376,13 +368,13 @@ void PublicationFigures(int NumEvts = -1,
     h1_z_data_w_sys->Draw("PE2 SAME");
     h1_z_data[i-1]->Draw("PE SAME");    
  
-    Tl.DrawLatex(left, top, Form("#scale[2.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[2.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(left, top - step, "#scale[2.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(left, top - 2 * step, "#scale[2.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(left, top - 3 * step, "#scale[2.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top - step, "#scale[2.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2 * step, "#scale[2.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(left, top - 3 * step, "#scale[2.0]{pp #sqrt{s} = 13 TeV}");
     }
     else if (i == 2)
     {
@@ -401,14 +393,14 @@ void PublicationFigures(int NumEvts = -1,
     bot_pad->cd();
     h1_z_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
     h1_z_data_sys_ratio->GetYaxis()->SetTitleOffset(0.4);
-    h1_z_data_sys_ratio->GetYaxis()->SetTitleSize(0.15);
+    h1_z_data_sys_ratio->GetYaxis()->SetTitleSize(0.12);
     h1_z_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_z_data_sys_ratio->GetYaxis()->SetLabelSize(0.14);
+    h1_z_data_sys_ratio->GetYaxis()->SetLabelSize(0.1);
     h1_z_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
-    h1_z_data_sys_ratio->GetXaxis()->SetTitleSize(0.18);
+    h1_z_data_sys_ratio->GetXaxis()->SetTitleSize(0.15);
     h1_z_data_sys_ratio->GetXaxis()->SetTitleOffset(0.65);
     h1_z_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
-    h1_z_data_sys_ratio->GetXaxis()->SetLabelSize(0.14);
+    h1_z_data_sys_ratio->GetXaxis()->SetLabelSize(0.1);
     h1_z_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
     h1_z_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_z_data_sys_ratio->GetYaxis()->ChangeLabel(3, -1, 0);
@@ -446,7 +438,7 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   ccan[ican]->cd();
 
@@ -454,7 +446,7 @@ void PublicationFigures(int NumEvts = -1,
   // jT historgrams //
   top = 0.75;
   step = 0.175;
-  left = 0.6;
+  left = 0.525;
   for (int i = 1; i < ptbinsize; i++)
   {    
     sprintf(buf, "ccan%d", ican);
@@ -533,11 +525,11 @@ void PublicationFigures(int NumEvts = -1,
     h1_jt_truth[i-1]->GetYaxis()->SetMaxDigits(2);
     h1_jt_truth[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
     h1_jt_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dj_{T}}");
-    h1_jt_truth[i-1]->GetYaxis()->SetTitleOffset(0.45);
+    h1_jt_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
     h1_jt_truth[i-1]->GetYaxis()->SetRangeUser(0, 100.);    
-    h1_jt_truth[i-1]->GetYaxis()->SetTitleSize(0.15);
+    h1_jt_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
     h1_jt_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_jt_truth[i-1]->GetYaxis()->SetLabelSize(0.12);
+    h1_jt_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
     h1_jt_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
     h1_jt_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_jt_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
@@ -551,13 +543,13 @@ void PublicationFigures(int NumEvts = -1,
     h1_jt_data[i-1]->Draw("PE SAME");
       
 
-    Tl.DrawLatex(left, top, Form("#scale[2.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[2.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i == 1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(left, top - step, "#scale[2.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(left, top - 2 * step, "#scale[2.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(left, top - 3 * step, "#scale[2.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top - step, "#scale[2.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2 * step, "#scale[2.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(left, top - 3 * step, "#scale[2.0]{pp #sqrt{s} = 13 TeV}");
     }
     else if (i == 2)
     {
@@ -573,14 +565,14 @@ void PublicationFigures(int NumEvts = -1,
     bot_pad->cd();
     h1_jt_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
     h1_jt_data_sys_ratio->GetYaxis()->SetTitleOffset(0.4);
-    h1_jt_data_sys_ratio->GetYaxis()->SetTitleSize(0.15);
+    h1_jt_data_sys_ratio->GetYaxis()->SetTitleSize(0.12);
     h1_jt_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_jt_data_sys_ratio->GetYaxis()->SetLabelSize(0.14);
+    h1_jt_data_sys_ratio->GetYaxis()->SetLabelSize(0.1);
     h1_jt_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleSize(0.12);
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleOffset(0.9);
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
-    h1_jt_data_sys_ratio->GetXaxis()->SetLabelSize(0.14);
+    h1_jt_data_sys_ratio->GetXaxis()->SetLabelSize(0.1);
     h1_jt_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
     h1_jt_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_jt_data_sys_ratio->GetYaxis()->ChangeLabel(3, -1, 0);
@@ -615,7 +607,7 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   ccan[ican]->cd();
 
@@ -690,11 +682,11 @@ void PublicationFigures(int NumEvts = -1,
     h1_r_truth[i-1]->GetYaxis()->SetMaxDigits(2);
     h1_r_truth[i-1]->GetXaxis()->SetTitle("r");
     h1_r_truth[i-1]->GetYaxis()->SetTitle("#frac{1}{N_{jets}}#frac{dN}{dr}");
-    h1_r_truth[i-1]->GetYaxis()->SetTitleOffset(0.45);
+    h1_r_truth[i-1]->GetYaxis()->SetTitleOffset(0.65);
     h1_r_truth[i-1]->GetYaxis()->SetRangeUser(0, 100.);    
-    h1_r_truth[i-1]->GetYaxis()->SetTitleSize(0.15);
+    h1_r_truth[i-1]->GetYaxis()->SetTitleSize(0.1);
     h1_r_truth[i-1]->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_r_truth[i-1]->GetYaxis()->SetLabelSize(0.12);
+    h1_r_truth[i-1]->GetYaxis()->SetLabelSize(0.08);
     h1_r_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
@@ -707,13 +699,13 @@ void PublicationFigures(int NumEvts = -1,
     h1_r_data_w_sys->Draw("PE2 SAME");    
     h1_r_data[i-1]->Draw("PE SAME");
 
-    Tl.DrawLatex(left, top, Form("#scale[2.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[2.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(left, top - step, "#scale[2.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(left, top - 2 * step, "#scale[2.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(0.525, top - step, "#scale[2.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top - step, "#scale[2.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2 * step, "#scale[2.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(0.525, top - step, "#scale[2.0]{pp #sqrt{s} = 13 TeV}");
     }
     else if (i == 2)
     {
@@ -728,14 +720,14 @@ void PublicationFigures(int NumEvts = -1,
     bot_pad->cd();
     h1_r_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
     h1_r_data_sys_ratio->GetYaxis()->SetTitleOffset(0.4);
-    h1_r_data_sys_ratio->GetYaxis()->SetTitleSize(0.15);
+    h1_r_data_sys_ratio->GetYaxis()->SetTitleSize(0.12);
     h1_r_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
-    h1_r_data_sys_ratio->GetYaxis()->SetLabelSize(0.14);
+    h1_r_data_sys_ratio->GetYaxis()->SetLabelSize(0.1);
     h1_r_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
     h1_r_data_sys_ratio->GetXaxis()->SetTitleSize(0.18);
     h1_r_data_sys_ratio->GetXaxis()->SetTitleOffset(0.65);
     h1_r_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
-    h1_r_data_sys_ratio->GetXaxis()->SetLabelSize(0.14);
+    h1_r_data_sys_ratio->GetXaxis()->SetLabelSize(0.1);
     h1_r_data_sys_ratio->GetXaxis()->SetLabelFont(lhcbFont);
     h1_r_data_sys_ratio->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_r_data_sys_ratio->GetYaxis()->ChangeLabel(3, -1, 0);
@@ -772,14 +764,14 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->SetFillColor(10);
 
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   // zjt histos // 
   top = 0.8;
-  step = 0.15;
+  step = 0.075;
   left = 0.2;
   for (int i = 1; i < ptbinsize; i++)
   {
@@ -799,27 +791,27 @@ void PublicationFigures(int NumEvts = -1,
     gPad->SetLogz();
     h2_zjt_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zjt_data[i-1]->GetXaxis()->SetTitle("z");
-    h2_zjt_data[i-1]->GetXaxis()->SetTitleSize(0.07);
-    h2_zjt_data[i-1]->GetXaxis()->SetTitleOffset(0.65);
-    h2_zjt_data[i-1]->GetXaxis()->SetLabelSize(0.06);
+    h2_zjt_data[i-1]->GetXaxis()->SetTitleSize(0.05);
+    h2_zjt_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
+    h2_zjt_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_zjt_data[i-1]->GetYaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_zjt_data[i-1]->GetYaxis()->SetTitleSize(0.07);
-    h2_zjt_data[i-1]->GetYaxis()->SetTitleOffset(0.65);
-    h2_zjt_data[i-1]->GetYaxis()->SetLabelSize(0.06);
-    h2_zjt_data[i-1]->GetZaxis()->SetLabelSize(0.06);
+    h2_zjt_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    h2_zjt_data[i-1]->GetYaxis()->SetTitleOffset(0.85);
+    h2_zjt_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    h2_zjt_data[i-1]->GetZaxis()->SetLabelSize(0.04);
     h2_zjt_data[i-1]->SetMinimum(0.00001);  
     h2_zjt_data[i-1]->SetMaximum(10.);      
     //h2_zjt_data[i-1]->GetYaxis()->SetLimits(0.0, 20.0);
     h2_zjt_data[i-1]->Draw("COLZ");
 
     //lhcbName->Draw("SAME");
-    Tl.DrawLatex(left, top, Form("#scale[1.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(left, top - step, "#scale[1.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(0.55, top, "#scale[1.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(0.55, top - step, "#scale[1.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top - step, "#scale[1.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2*step, "#scale[1.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(left, top - 3*step, "#scale[1.0]{pp #sqrt{s} = 13 TeV}");
 
     }
     ccan[ican]->cd();
@@ -840,15 +832,15 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->SetFillColor(10);
 
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   // zr plots //
-  top = 0.8;
-  step = 0.15;
-  left = 0.5;
+  top = 0.85;
+  step = 0.075;
+  left = 0.465;
   for (int i = 1; i < ptbinsize; i++)
   {
     ccan[ican]->cd(i);
@@ -871,24 +863,24 @@ void PublicationFigures(int NumEvts = -1,
     h2_zr_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_data[i-1]->GetXaxis()->SetTitle("z");
-    h2_zr_data[i-1]->GetXaxis()->SetTitleSize(0.07);
-    h2_zr_data[i-1]->GetXaxis()->SetTitleOffset(0.65);
-    h2_zr_data[i-1]->GetXaxis()->SetLabelSize(0.06);
+    h2_zr_data[i-1]->GetXaxis()->SetTitleSize(0.05);
+    h2_zr_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
+    h2_zr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_zr_data[i-1]->GetYaxis()->SetTitle("r");
-    h2_zr_data[i-1]->GetYaxis()->SetTitleSize(0.07);
-    h2_zr_data[i-1]->GetYaxis()->SetTitleOffset(0.65);
-    h2_zr_data[i-1]->GetYaxis()->SetLabelSize(0.06);
-    h2_zr_data[i-1]->GetZaxis()->SetLabelSize(0.06);
+    h2_zr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    h2_zr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
+    h2_zr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    h2_zr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
     h2_zr_data[i-1]->Draw("COLZ");
 
     //lhcbName->Draw("SAME");
-    Tl.DrawLatex(left, top, Form("#scale[1.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(0.63, top - step, "#scale[1.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(0.2, top, "#scale[1.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(0.275, top - step, "#scale[1.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top - step, "#scale[1.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2*step, "#scale[1.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(left, top - 3*step, "#scale[1.0]{pp #sqrt{s} = 13 TeV}");
 
     }
     //Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{AK5 B^{#pm}-tagged jets              pp #sqrt{s} = 13 TeV}");    
@@ -912,16 +904,16 @@ void PublicationFigures(int NumEvts = -1,
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30*ican, 30*ican, 800, (8.5 / 11.) * 800);
+  ccan[ican] = new TCanvas(buf, buf, 800, 1100);
   ccan[ican]->SetFillColor(10);
 
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
 
   // jtr plots //
-  top = 0.8;
-  step = 0.15;
-  left = 0.5;
+  top = 0.85;
+  step = 0.075;
+  left = 0.475;
   for (int i = 1; i < ptbinsize; i++)
   {
     ccan[ican]->cd(i);
@@ -945,24 +937,24 @@ void PublicationFigures(int NumEvts = -1,
     gPad->SetLogz();
     h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_jtr_data[i-1]->GetXaxis()->SetTitle("j_{T} [GeV/c]");
-    h2_jtr_data[i-1]->GetXaxis()->SetTitleSize(0.065);
-    h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(0.8);
-    h2_jtr_data[i-1]->GetXaxis()->SetLabelSize(0.06);
+    h2_jtr_data[i-1]->GetXaxis()->SetTitleSize(0.05);
+    h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(1.0);
+    h2_jtr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_jtr_data[i-1]->GetYaxis()->SetTitle("r");
-    h2_jtr_data[i-1]->GetYaxis()->SetTitleSize(0.07);
-    h2_jtr_data[i-1]->GetYaxis()->SetTitleOffset(0.65);
-    h2_jtr_data[i-1]->GetYaxis()->SetLabelSize(0.06);
-    h2_jtr_data[i-1]->GetZaxis()->SetLabelSize(0.06);
+    h2_jtr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    h2_jtr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
+    h2_jtr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    h2_jtr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
     h2_jtr_data[i-1]->Draw("COLZ");
 
     //lhcbName->Draw("SAME");
-    Tl.DrawLatex(left, top, Form("#scale[1.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
-      Tl.DrawLatex(left, top - step, "#scale[1.5]{2.5 < #eta_{jet} < 4}");
-      Tl.DrawLatex(left, top - 2 * step, "#scale[1.5]{AK5 B^{#pm}-tagged jets}");
-      Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{pp #sqrt{s} = 13 TeV}");
+      Tl.DrawLatex(left, top -  step, "#scale[1.0]{2.5 < #eta_{jet} < 4}");
+      Tl.DrawLatex(left, top - 2 * step, "#scale[1.0]{AK5 B^{#pm}-tagged jets}");
+      Tl.DrawLatex(left, top - 3 * step, "#scale[1.0]{pp #sqrt{s} = 13 TeV}");
 
     }
 

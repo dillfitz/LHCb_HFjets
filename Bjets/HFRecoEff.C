@@ -65,7 +65,6 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   TString str_followHard = "";
   TString str_flavor = "";
   TString str_ghost = "";
-  TString str_DTF = "";
   TString str_PID = "";
   TString str_charged = "";
   TString str_GS = "";
@@ -95,8 +94,6 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
   else if (flavor == 5)
     str_flavor = "_b";
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
 
@@ -128,7 +125,7 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
 
   TString  extension_eff,  extension_prefix;
     
-  extension = TString("HFeff_") + str_level + Form("_ev_%d", NumEvts) + str_Mag + str_flavor + str_DTF + str_PID + str_GS + Form("_%d", dataset);
+  extension = TString("HFeff_") + str_level + Form("_ev_%d", NumEvts) + str_Mag + str_flavor + str_PID + str_GS + Form("_%d", dataset);
   extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
 
   cout << extension_eff << endl;
@@ -386,8 +383,6 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     Jpsi.SetPxPyPzE(Jpsi_px, Jpsi_py, Jpsi_pz, Jpsi_e);
       
     float JpsiMass = 3.0969; // GeV
-//    bool DTF_cond = (dtf_chi2ndf < 9) && (dtf_ctau > 0.3);
-    bool DTF_cond = (dtf_chi2ndf < 9) && (dtf_ctau > 0.3);
     bool PID_cond = (K_PIDK > 0);
 
     float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
@@ -422,8 +417,6 @@ void HFRecoEff(int NumEvts_user = 10000, int dataset = 1510,
     if (!TOS)
         continue;
     if (!mass_cond)
-      continue;
-    if (DTF_cut && !DTF_cond)
       continue;
 
     // Not implement in MC since PIDCalib has no MC/Data tables

@@ -51,19 +51,6 @@ void MCMakeVarTree(int NumEvts_user = -1, int dataset = 91599, bool onlysim9 = f
         mass_num = 0.001;
         followHardest = true; 
     }
-    
-//    if (NumEvts_user == -1) {
-//        NumEvts_user = Tree.fChain->GetEntries();
-//        NumEvts = NumEvts_user;
-//    } else {
-//        NumEvts = NumEvts_user;
-//    }
-
-// int NumEvts = NumEvts_user;
-//
-// int NumEvtsTruth = NumEvts_user;
-//
-// int NumEvts = Tree.fChain->GetEntries();
 
     TString extension_read, extension_RootFilesMC;
 

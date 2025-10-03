@@ -29,116 +29,107 @@ void SimpleUnfold(int NumEvts = -1,
                   bool sPlotFit = false,
                   bool L0MuonDiMuon = false)
 {
-    // pt_cut = true;
-    // pt_track_cut = false;
-    // bool isData = false;
-    followHardest = false;
-    truthLevel = false;
-    if (truthLevel)
-    {
-        ghostCut = false;
-    }
-    
-    
-    int year = (dataset / 10000) % 10;
-    int JetMeth = (dataset / 1000) % 10;
-    int flavor = (dataset / 100) % 10;
-    int ptRange = (dataset / 10) % 10;
-    int Mag = (dataset / 1) % 10;
-    int HF_pdgcode = -99;
-    
-    if (flavor == 5)
-    {
-        mass_num = 4.2;
-        HF_pdgcode = 521;
-    }
-    else if (flavor == 4)
-    {
-        mass_num = 1.25;
-        HF_pdgcode = 421;
-    }
-    else if (flavor == 1)
-    {
-        mass_num = 0.001;
-        followHardest = true;
-    }
-    
-    //
-    //  Naming Convention:
-    //  {$1}{$2}{$3}{$4}{$5}
-    //  $1: Year: 2016 = 6, 2017 = 7, 2018 = 8, All = 9
-    //  $2: jets or dijets: TaggedDijets = 1, else = 2
-    //  $3: flavor: b = 5, c = 4, udsg = 1
-    //  $4: pT: pt15pt20 = 0, pt20pt50 = 1, pt50 = 2, else = 3
-    //  $5: Magnet: MD = 0, MU = 1, Both = 9
-    TString str_Mag = "";
-    TString str_pT = "";
-    TString str_level = "";
-    TString str_followHard = "";
-    TString str_flavor = "";
-    TString str_ghost = "";
-    TString str_DTF = "";
-    TString str_PID = "";
-    TString str_year = "2016";
-    TString str_GS = "";
-    
-    
-    if (year == 6)
-        str_year = "2016";
-    else if (year == 7)
-        str_year = "2017";
-    else if (year == 8)
-        str_year = "2018";
-    
-    if (SubtractGS)
-        str_GS = "_GSsub";
-    
-    if (Mag == 0)
-        str_Mag = "_MD";
-    else if (Mag == 1)
-        str_Mag = "_MU";
-    
-    if (flavor == 1)
-        str_flavor = "_udsg";
-    else if (flavor == 4)
-        str_flavor = "_c";
-    else if (flavor == 5)
-        str_flavor = "_b";
-    
-    if (DTF_cut)
-        str_DTF = "_DTF";
-    if (PID_cut)
-        str_PID = "_PID";
-    
-    str_level = "reco";
-    
-    if (flavor == 1)
-        str_followHard = "_hard";
-    else
-    {
-        if (followHardest)
-            str_followHard = "_hard";
-        else
-            str_followHard = "_HF";
-    }
-    
-    if (ghostCut)
-        str_ghost = Form("_ghost_%.1f", ghostProb);
+  followHardest = false;
+  truthLevel = false;
+  if (truthLevel)
+  {
+      ghostCut = false;
+  }
+  
+  int year = (dataset / 10000) % 10;
+  int JetMeth = (dataset / 1000) % 10;
+  int flavor = (dataset / 100) % 10;
+  int ptRange = (dataset / 10) % 10;
+  int Mag = (dataset / 1) % 10;
+  int HF_pdgcode = -99;
+  
+  if (flavor == 5)
+  {
+      mass_num = 4.2;
+      HF_pdgcode = 521;
+  }
+  else if (flavor == 4)
+  {
+      mass_num = 1.25;
+      HF_pdgcode = 421;
+  }
+  else if (flavor == 1)
+  {
+      mass_num = 0.001;
+      followHardest = true;
+  }
+  
+  //
+  //  Naming Convention:
+  //  {$1}{$2}{$3}{$4}{$5}
+  //  $1: Year: 2016 = 6, 2017 = 7, 2018 = 8, All = 9
+  //  $2: jets or dijets: TaggedDijets = 1, else = 2
+  //  $3: flavor: b = 5, c = 4, udsg = 1
+  //  $4: pT: pt15pt20 = 0, pt20pt50 = 1, pt50 = 2, else = 3
+  //  $5: Magnet: MD = 0, MU = 1, Both = 9
+  TString str_Mag = "";
+  TString str_pT = "";
+  TString str_level = "";
+  TString str_followHard = "";
+  TString str_flavor = "";
+  TString str_ghost = "";
+  TString str_PID = "";
+  TString str_year = "2016";
+  TString str_GS = "";
+  
+  
+  if (year == 6)
+      str_year = "2016";
+  else if (year == 7)
+      str_year = "2017";
+  else if (year == 8)
+      str_year = "2018";
+  
+  if (SubtractGS)
+      str_GS = "_GSsub";
+  
+  if (Mag == 0)
+      str_Mag = "_MD";
+  else if (Mag == 1)
+      str_Mag = "_MU";
+  
+  if (flavor == 1)
+      str_flavor = "_udsg";
+  else if (flavor == 4)
+      str_flavor = "_c";
+  else if (flavor == 5)
+      str_flavor = "_b";
 
-    TString str_L0 = "";
-    if (L0MuonDiMuon)
-      str_L0 = "_L0MuonDiMuon";
+  if (PID_cut)
+      str_PID = "_PID";
+  
+  str_level = "reco";
+  
+  if (flavor == 1)
+      str_followHard = "_hard";
+  else
+  {
+      if (followHardest)
+          str_followHard = "_hard";
+      else
+          str_followHard = "_HF";
+  }
+  
+  if (ghostCut)
+      str_ghost = Form("_ghost_%.1f", ghostProb);
 
-    TString str_sPlot = "";
-    if (sPlotFit)
-      str_sPlot = "_splotfit";
+  TString str_L0 = "";
+  if (L0MuonDiMuon)
+    str_L0 = "_L0MuonDiMuon";
+
+  TString str_sPlot = "";
+  if (sPlotFit)
+    str_sPlot = "_splotfit";
 
 
-    TString str_tree;   
-    TString extension, extension_prefix;
-    extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
-    // if (isData)
-    //   extension += "_forData";
+  TString str_tree;   
+  TString extension, extension_prefix;
+  extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
     
   //if (DoJES)
   //  extension_prefix = TString("JES_");
@@ -154,12 +145,8 @@ void SimpleUnfold(int NumEvts = -1,
     extension_prefix = TString("signalsys_");
   if (DoUnfoldPrior)
     extension_prefix = TString("priorsys_");
-
-    // int NumEvts = 0;
-    // cout <<"Choose number of events (-1: All Events, or enter integer): ";
-    // cin>> NumEvts;
     
-    TString extension_read, extension_eff, extension_RootFilesMC, extension_RootFilesData;
+  TString extension_read, extension_eff, extension_RootFilesMC, extension_RootFilesData;
     
 
 
@@ -174,7 +161,7 @@ void SimpleUnfold(int NumEvts = -1,
     
     
     TFile *file_eff = new TFile(extension_RootFilesMC + extension_eff + TString(".root"), "READ");
-    TFile *file_decay = new TFile(extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_DTF + str_PID + Form("_%d.root", dataset), "READ");
+    TFile *file_decay = new TFile(extension_RootFilesMC + "HFeff_truth_ev_-1" + str_Mag + str_flavor + str_PID + Form("_%d.root", dataset), "READ");
 //    TFile *file_decay = new TFile("HFeff_truth_ev_-1_b_PID_91599.root" , "READ");
     
     TChain *BTree = new TChain("BTree", "");
@@ -488,13 +475,9 @@ void SimpleUnfold(int NumEvts = -1,
     TH1D *h1_chi2_true = new TH1D("h1_chi2_true", "", 20, -4., 4.);
     TH1D *h1_chi2_false = new TH1D("h1_chi2_false", "", 20, -4., 4.);
     
-    TH2D *h2_bdt_sv_mass_truepos = new TH2D("h2_bdt_sv_mass_truepos", "", 30, 0, 15., 30, 0, 4.);
-    TH2D *h2_bdt_z_truepos = new TH2D("h2_bdt_z_truepos", "", 30, 0, 15., 20, 0, 1.05);
     TH2D *h2_sv_mass_z_truepos = new TH2D("h2_sv_mass_z_truepos", "", 30, 0, 4., 20, 0, 1.05);
     TH2D *h2_sv_mass_ntrks_truepos = new TH2D("h2_sv_mass_ntrks_truepos", "", 30, 0, 4., 10, -0.5, 9.5);
     
-    TH2D *h2_bdt_sv_mass_falsepos = new TH2D("h2_bdt_sv_mass_falsepos", "", 30, 0, 15., 30, 0, 4.);
-    TH2D *h2_bdt_z_falsepos = new TH2D("h2_bdt_z_falsepos", "", 30, 0, 15., 20, 0, 1.05);
     TH2D *h2_sv_mass_z_falsepos = new TH2D("h2_sv_mass_z_falsepos", "", 30, 0, 4., 20, 0, 1.05);
     TH2D *h2_sv_mass_ntrks_falsepos = new TH2D("h2_sv_mass_ntrks_falsepos", "", 30, 0, 4., 10, -0.5, 9.5);
     
@@ -528,7 +511,7 @@ void SimpleUnfold(int NumEvts = -1,
     bool Hasbbbar, TOS;
     float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2, Jpsi_BPVDLS;;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
-    float sv_mass, sv_chi2, sv_ntrks, sv_cosine, bdt_mCor;
+    float sv_mass, sv_chi2, sv_ntrks, sv_cosine;
     int SVTag;
     float K_PIDK, chi2ndf_dtf, tau_dtf;
     
@@ -580,7 +563,6 @@ void SimpleUnfold(int NumEvts = -1,
     BTree->SetBranchAddress("sv_cosine", &sv_cosine);
     BTree->SetBranchAddress("sv_ipchi2", &sv_ipchi2);
     BTree->SetBranchAddress("sv_ntrks", &sv_ntrks);
-    BTree->SetBranchAddress("bdt_mCor", &bdt_mCor);
     BTree->SetBranchAddress("SVTag", &SVTag);
     BTree->SetBranchAddress("K_PIDK", &K_PIDK);
     
@@ -635,7 +617,6 @@ void SimpleUnfold(int NumEvts = -1,
         
         
         bool mass_cond = (bmass_dtf > MassLow && bmass_dtf < MassHigh);
-        bool DTF_cond = (chi2ndf_dtf < 9) && (tau_dtf > 0.3);
         bool PID_cond = (K_PIDK > 0);
         bool rap_cond = (jet_rap > etaMin && jet_rap < etaMax);
         bool pt_cond = (jet_pt > pTLow);
@@ -665,8 +646,6 @@ void SimpleUnfold(int NumEvts = -1,
         if (!TOS)
             continue;
         if (!mass_cond)
-            continue;
-        if (DTF_cut && !DTF_cond)
             continue;
         
         if (SubtractGS && Hasbbbar)

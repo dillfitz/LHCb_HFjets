@@ -115,10 +115,8 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TString str_flavor2 = "";
   TString str_ghost2 = "";
 
-  TString str_DTF(""), str_PID("");
+  TString str_PID("");
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
 
@@ -163,19 +161,18 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     str_ghost2 = Form("_ghost_%.1f", ghostProb);
 
 
-  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + Form("_%d", dataset1);
-  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_DTF + str_PID  + Form("_%d", dataset2);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_DTF + str_PID + Form("_%d", dataset_unfold);
+  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_%d", dataset1);
+  string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_PID  + Form("_%d", dataset2);
+  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_PID + Form("_%d", dataset_unfold);
   if (DoTrackEff != 0 || DoPIDEff != 0 || DoTrigEff != 0 || DoMassFit != 0 || DoIterSys != 0)
   {
-    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_PID + Form("_%d", dataset_test);
   }
   else
   {
-    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_DTF + str_PID + Form("_%d", dataset_test);
+    string_unfold_test = loc_rootfiles_MC + string_systype + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_PID + Form("_%d", dataset_test);
   }
-  // string_data = loc + "hists/data_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
-  // string_unfold = loc + "hists/unfold_reco_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
+
   if (DoJetID || (DoTrackEff != 0) || (DoPIDEff != 0) || (DoTrigEff != 0) || (DoMassFit != 0) || (DoRecSelEff) || (DoSignalSys))
   {
     string_data_test = loc_rootfiles_data + string_systype + string_data_test;
@@ -189,7 +186,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   cout << string_unfold << endl;
   cout << string_unfold_test << endl;
 
-  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
+  extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
 
   if (dataset1 != dataset2)
     extension += Form("_%d", dataset2);
@@ -427,8 +424,6 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   TString sys_title = "";
   for (int j=1; j < ptbinsize; ++j)
   {
-
-
     h3_ptzjt_final_nominal->GetZaxis()->SetRange(j+1, j+1);
     h3_ptzjt_final_test->GetZaxis()->SetRange(j+1, j+1); 
 
@@ -458,9 +453,6 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
     //h1_z_ptbinned_final_nominal[j-1]->GetXaxis()->SetRange(binlow, binhigh);
     //h1_z_ptbinned_final_test[j-1]->GetXaxis()->SetRange(binlow, binhigh);    
-
-    //NormalizeHist(h1_z_ptbinned[j-1]_final_nominal);
-    //NormalizeHist(h1_z_ptbinned[j-1]_final_test);
 
     NormalizeHist(h2_zjt_ptbinned_final_nominal[j-1]);    
     NormalizeHist(h2_zjt_ptbinned_final_test[j-1]);      
@@ -604,168 +596,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     h1_r_ptbinned_diff[j-1]->SetTitle(sys_title);     
     h1_r_ptbinned_diff[j-1]->Write();              
   }
-/*
-  /////////////////////   Create pull hists /////////////////////////////////
 
-  TH2D *h2_ptktdR_pull = (TH2D *)h2_ptktdR_final_nominal->Clone("ptktdR_pull");
-  TH1D *h1_ptktdR_pulldist = new TH1D("ptktdR_pulldist", "", 16, -4.5, 4.5);
-
-  TH2D *h2_ptzdR_pull = (TH2D *)h2_ptzdR_final_nominal->Clone("ptzdR_pull");
-  TH1D *h1_ptzdR_pulldist = new TH1D("ptzdR_pulldist", "", 16, -4.5, 4.5);
-
-  TH2D *h2_ptthetaErad_pull = (TH2D *)h2_ptthetaErad_final_nominal->Clone("ptthetaErad_pull");
-  TH1D *h1_ptthetaErad_pulldist = new TH1D("ptthetaErad_pulldist", "", 16, -4.5, 4.5);
-*/
-
-
-  //GetPulls(h2_ptktdR_diff, h2_ptktdR_pull, h1_ptktdR_pulldist);
-/*
-  //---- paint setup...
-  //
-  int ican = -1, iframe = -1, itext = -1;
-  TCanvas *ccan[1000];
-  TH1F *frame[1000];
-  TLatex *text[1000];
-  TRatioPlot *rp[1000];
-  for (int i = 0; i < 1000; i++)
-  {
-    text[i] = new TLatex();
-    text[i]->SetNDC(kTRUE);
-    text[i]->SetTextSize(0.06);
-  }
-  TLatex Tl;
-  Tl.SetNDC(kTRUE);
-  Tl.SetTextSize(0.04);
-  //
-  gStyle->SetOptStat(0);
-  // gStyle->SetPaperSize(TStyle::kUSLetter);
-  // gStyle->SetPadBottomMargin(0.08);
-  // gStyle->SetPadTopMargin(0.005);
-  gStyle->SetPadLeftMargin(0.13);
-  gStyle->SetPadRightMargin(0.13);
-  gStyle->SetLabelSize(0.05, "X");
-  gStyle->SetLabelSize(0.05, "Y");
-  gStyle->SetTitleXSize(0.055);
-  gStyle->SetTitleYSize(0.055);
-  gStyle->SetTitleOffset(0.55, "X");
-  gStyle->SetTitleOffset(1.5, "Y");
-  gStyle->SetStatW(0.2);
-  // gStyle->SetPalette(kBird);
-  gStyle->SetPalette(kBird);
-  gStyle->SetNumberContours(100);
-  gStyle->SetPaintTextFormat("4.5g");
-  // gStyle->SetErrorX(0);
-  gStyle->SetTitleStyle(0);
-  gStyle->SetStatStyle(0);
-  // gStyle->SetLineWidth(3);
-
-  //---- paint...
-  char buf[100];
-  char bufb[100];
-  TString rootfile;
-  TString plotfile;
-  TString plotfilePDF;
-  TString plotfileO;
-  TString plotfileC;
-  // TString OutputFileBase	= outbase+outinfo;
-  rootfile = loc_hists + extension + TString(".root");
-  plotfile = loc_plots + extension + TString(".ps");
-  plotfilePDF = loc_plots + extension + TString(".pdf");
-  plotfileO = plotfilePDF + TString("(");
-  plotfileC = plotfilePDF + TString("]");
-  // c->SaveAs("plots/"+extension+".pdf");
-
-  // Begin plotting
-  //
-
-  //
-
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  // gPad->SetLeftMargin(0.16);
-  // gPad->SetBottomMargin(0.06);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-
-  ccan[ican]->cd(1);
-  h2_ptktdR_final_test->Draw("COL0Z");
-
-  ccan[ican]->cd(2);
-  h1_ptktdR_pulldist->Draw("E SAME");
-  h1_ptktdR_pulldist->Draw("HIST SAME");
-  ccan[ican]->cd(3);
-  // h2_ktdR_diff->Set
-  h2_ptktdR_ratio->Draw("COL0Z TEXTE MIN0");
-  h2_ptktdR_ratio->SetMinimum(-0.1);
-  h2_ptktdR_ratio->SetMaximum(0.1);
-
-  ccan[ican]->cd(4);
-  h2_ptktdR_pull->Draw("COL0Z TEXT MIN0");
-  h2_ptktdR_pull->SetMaximum(4.);
-  h2_ptktdR_pull->SetMinimum(-4.);
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  //
-
-  ++ican;
-  sprintf(buf, "ccan%d", ican);
-  ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-  ccan[ican]->SetFillColor(10);
-  // gPad->SetLeftMargin(0.16);
-  // gPad->SetBottomMargin(0.06);
-  ccan[ican]->cd();
-  ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-
-  ccan[ican]->cd(1);
-  h2_ptzdR_final_test->Draw("COL0Z");
-
-  ccan[ican]->cd(2);
-  h1_ptzdR_pulldist->Draw("E SAME");
-  h1_ptzdR_pulldist->Draw("HIST SAME");
-  // h2_ktdR_->SetTitle("Data+Purity+Unfold; ;");
-  ccan[ican]->cd(3);
-  // h2_ktdR_diff->Set
-  h2_ptzdR_ratio->Draw("COL0Z TEXTE MIN0");
-  h2_ptzdR_ratio->SetMinimum(-0.1);
-  h2_ptzdR_ratio->SetMaximum(0.1);
-
-  ccan[ican]->cd(4);
-  h2_ptzdR_pull->Draw("COL0Z TEXT MIN0");
-  h2_ptzdR_pull->SetMaximum(4.);
-  h2_ptzdR_pull->SetMinimum(-4.);
-
-  ccan[ican]->cd();
-  ccan[ican]->Update();
-  if (ican == 0)
-  {
-    ccan[ican]->Print(plotfileO.Data());
-  }
-  else
-  {
-    ccan[ican]->Print(plotfilePDF.Data());
-  }
-  //
-
-  if (ican > -1)
-  {
-    cout << " You plotted " << ican + 1 << " canvasses......." << endl;
-    ccan[ican]->Print(plotfileC.Data());
-  }
-  //
-*/
   //file_save->Write();
   file_save->Close();
 }

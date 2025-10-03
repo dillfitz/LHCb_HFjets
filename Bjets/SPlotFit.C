@@ -324,7 +324,7 @@ void SPlotFit(int NumEvts = -1,
                 continue;
         }
 
-        TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, Bfromjet, tr_HFmeson;
+        TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, tr_HFmeson;
         mup.SetPxPyPzE(mup_px, mup_py, mup_pz, mup_e);
         mum.SetPxPyPzE(mum_px, mum_py, mum_pz, mum_e);
         Kmeson.SetPxPyPzE(K_px, K_py, K_pz, K_e);
@@ -746,7 +746,7 @@ void SPlotFit(int NumEvts = -1,
                     continue;
             }
 
-            TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, Bfromjet, tr_HFmeson;
+            TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, tr_HFmeson;
             mup.SetPxPyPzE(mup_px, mup_py, mup_pz, mup_e);
             mum.SetPxPyPzE(mum_px, mum_py, mum_pz, mum_e);
             Kmeson.SetPxPyPzE(K_px, K_py, K_pz, K_e);

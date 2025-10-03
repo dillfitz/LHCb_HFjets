@@ -22,7 +22,7 @@ void GetTotalSys(int NumEvts = -1,
   TString string_itersysup, string_itersysdown;
   TString string_massfitsysnear, string_massfitsysfar, string_fitmodel;
   TString string_priorsys;
-  TString str_followHard, str_ghost, str_Mag, str_flavor, str_DTF(""), str_PID("");
+  TString str_followHard, str_ghost, str_Mag, str_flavor, str_PID("");
   TString loc_hists("../../../root_files/Bjets/Systematics/");
   TString loc_plots("../../../plots/Bjets/Systematics/");
 
@@ -44,8 +44,6 @@ void GetTotalSys(int NumEvts = -1,
   else if (flavor == 5)
     str_flavor = "_b";
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
   if (PID_cut)
     str_PID = "_PID";
 
@@ -62,47 +60,30 @@ void GetTotalSys(int NumEvts = -1,
   if (chargedJetCut)
     str_charged = "_charge";
 
-  string_JESJER = loc_hists + TString("JESJER_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  //string_JER = loc_hists + TString("JER_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  //string_JES = loc_hists + TString("JES_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_jetid = loc_hists + TString("jetid_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_trackingsysup = loc_hists + TString("trackingsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_trackingsysdown = loc_hists + TString("trackingsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_pidsysup = loc_hists + TString("pidsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_pidsysdown = loc_hists + TString("pidsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_trigsysup = loc_hists + TString("trigsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_trigsysdown = loc_hists + TString("trigsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_itersysup = loc_hists + TString("itersysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_itersysdown = loc_hists + TString("itersysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_massfitsysnear = loc_hists + TString("massfitsysnear_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_massfitsysfar = loc_hists + TString("massfitsysfar_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_fitmodel = loc_hists + TString("signalsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_recselsys = loc_hists + TString("recselsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
-  string_closure = "../../../root_files/BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
-  string_shapeclosure = "../../../root_files/BjetsMC/" + TString("shapeclosure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
-  string_priorsys = loc_hists + TString("priorsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_JESJER = loc_hists + TString("JESJER_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  //string_JER = loc_hists + TString("JER_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  //string_JES = loc_hists + TString("JES_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_jetid = loc_hists + TString("jetid_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_trackingsysup = loc_hists + TString("trackingsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_trackingsysdown = loc_hists + TString("trackingsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_pidsysup = loc_hists + TString("pidsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_pidsysdown = loc_hists + TString("pidsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_trigsysup = loc_hists + TString("trigsysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_trigsysdown = loc_hists + TString("trigsysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_itersysup = loc_hists + TString("itersysup_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_itersysdown = loc_hists + TString("itersysdown_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_massfitsysnear = loc_hists + TString("massfitsysnear_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_massfitsysfar = loc_hists + TString("massfitsysfar_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_fitmodel = loc_hists + TString("signalsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_recselsys = loc_hists + TString("recselsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  string_closure = "../../../root_files/BjetsMC/" + TString("closure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
+  string_shapeclosure = "../../../root_files/BjetsMC/" + TString("shapeclosure") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", 91599) + Form("_%d", 91599);
+  string_priorsys = loc_hists + TString("priorsys_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
-  // string_closure = loc_hists + TString("closure") + Form("_ev_%d", NumEvts)
-  //           + Form("_ptj_%d%d", int(ptMin), int(ptMax))
-  //           + Form("_eta_%.1f%.1f", etaMin, etaMax)
-  //           +  str_followHard
-  //           +  str_ghost
-  //           +  Form("_dR_%.2f", minimum_dR)
-  //           + "MD"
-  //           + str_flavor +  Form("_%d", 1) + Form("_%d", 1)
-  //           + Form("_%d", 93190) +  Form("_%d", 93191);
-
-  // string_reco = loc + "hists/reco_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
-  // string_data = loc + "hists/data_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
-  // string_truth = loc + "hists/truth_ev_-1_ptj_20150_eta_2.54.0_hard_udsg_93139.root";
-  // string_eff = loc + "hists/eff_truth_ev_-1_ptj_20150_eta_2.54.0_hard_udsg_93139.root";
-  // string_unfold = loc + "hists/unfold_reco_ev_-1_ptj_20150_eta_2.54.0_hard_ghost_0.5_udsg_93139.root";
-
-  extension = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_DTF + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
   cout << string_closure << endl;
-  //cout << string_JER << endl;
-  //cout << string_JES << endl;
+
   /////////////////////   Get Files /////////////////////////////////
 
   TFile *file_jetid = new TFile(string_jetid + TString(".root"), "READ");

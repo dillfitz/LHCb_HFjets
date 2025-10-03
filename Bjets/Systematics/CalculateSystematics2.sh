@@ -31,6 +31,7 @@ commands=(
   "root -l -b -q 'GetSystematic.C(-1, 91599, 91599, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0)'"
   #Prior
   "root -l -b -q 'GetSystematic.C(-1, 91599, 91599, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1)'"
+)
 
 # Create a new tmux session
 tmux new-session -d -s mysessionCalculateSystematics2

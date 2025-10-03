@@ -60,7 +60,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     TString str_flavor = "";
     TString str_ghost = "";
     TString str_charged = "";
-    TString str_DTF = "";
     TString str_PID = "";
     TString str_year = "";
 
@@ -70,8 +69,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         str_year = "2017";
     else if (year == 8)
         str_year = "2018";
-    if (DTF_cut)
-        str_DTF = "_DTF";
     if (PID_cut)
         str_PID = "_PID";
 
@@ -122,11 +119,11 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     extension_RootFiles = isData ? TString("../../root_files/Bjets/") : TString("../../root_files/BjetsMC/");
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     
-    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
+    extension_reco = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_PID + str_L0 + Form("_%d", dataset);
     
-    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", 91599);
+    extension_misid = TString("massfit_") + "reco" + Form("_ev_%d", -1) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_flavor + str_PID + str_L0 + Form("_%d", 91599);
 
-    extension = TString("massfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_DTF + str_PID + str_L0 + Form("_%d", dataset);
+    extension = TString("massfit_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_charged + str_Mag + str_flavor + str_PID + str_L0 + Form("_%d", dataset);
     
     if (DoRecSelEff)
     {
@@ -137,18 +134,12 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     if (DoSystematic)
     {
         extension = "sys_" + extension;
-        // extension_reco = "recselsys_" + extension_reco;
     }
     
     
     cout << extension << endl;
     cout << extension_reco << endl;
     // Setup Tree
-
-    
-//    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
-//
-//    TFile fread(extension_RootFiles + extension_read + ".root", "READ");
 
     TChain *BTree = new TChain("BTree", "B-jets Tree Variables");
     vector<int> vec_datasets;
@@ -182,17 +173,16 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         NumEvts = BTree->GetEntries();
     if (NumEvts == -1)
         NumEvts = BTree->GetEntries();
-    cout << BTree->GetEntries() << endl;
+    cout << "Number of entries : " << BTree->GetEntries() << endl;
     
     float mup_px, mup_py, mup_pz, mup_e;
     float mum_px, mum_py, mum_pz, mum_e;
     float K_px, K_py, K_pz, K_e, K_PIDK;
-    float jet_pt, bmass_dtf, chi2ndf_dtf, tau_dtf;
+    float jet_pt, bmass_dtf;
     float HF_px, HF_py, HF_pz, HF_e;
     float tr_HF_px, tr_HF_py, tr_HF_pz, tr_HF_e;
     float Jpsi_CHI2NDOF, Jpsi_BPVDLS, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2;
     float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
-    float dphi;
     float jet_eta, jet_rap;
     bool isTrueBjet, TOS;
     int nSV;
@@ -236,11 +226,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     BTree->SetBranchAddress("jet_eta", &jet_eta);
     BTree->SetBranchAddress("jet_rap", &jet_rap);    
 
-    BTree->SetBranchAddress("dphi", &dphi);
     BTree->SetBranchAddress("nSV", &nSV);
     BTree->SetBranchAddress("bmass_dtf", &bmass_dtf);
-    BTree->SetBranchAddress("chi2ndf_dtf", &chi2ndf_dtf);
-    BTree->SetBranchAddress("tau_dtf", &tau_dtf);
     BTree->SetBranchAddress("isTrueBjet", &isTrueBjet);
 
     BTree->SetBranchAddress("TOS", &TOS);
@@ -318,7 +305,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
 
         }
 
-        TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, Bfromjet, tr_HFmeson;
+        TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, tr_HFmeson;
         mup.SetPxPyPzE(mup_px, mup_py, mup_pz, mup_e);
         mum.SetPxPyPzE(mum_px, mum_py, mum_pz, mum_e);
         Kmeson.SetPxPyPzE(K_px, K_py, K_pz, K_e);
@@ -332,22 +319,13 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         if (UseDTF)
             bmass = bmass_dtf;
         bool PID_cond = (K_PIDK > 0);
-        bool DTF_cond = (chi2ndf_dtf < 9) && (tau_dtf > 0.3);
-
-        if (!DTF_cond && DTF_cut)
-            continue;
         if (!PID_cond && PID_cut)
             continue;
         if (!isData)
         {
-            // if (fabs(HFmeson.Pt() - tr_HFmeson.Pt()) / tr_HFmeson.Pt() > 0.02)
-            //     continue;
-            // cout<<isTrueBjet<<",";
             if (!isTrueBjet)
                 continue;
         }
-        // h1_mass->Fill(HFmeson.M());
-        // h1_mass_all->Fill(HFmeson.M());
         h1_mass->Fill(bmass);
         h1_mass_all->Fill(bmass);
 
@@ -469,9 +447,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         binsize = (mass_high - mass_low) / (float)nBins;
 
         TFile *file_workspace = new TFile( extension_RootFilesMC + Form("workspace%d_", i) + extension_reco + ".root", "READ");
-        
-//        TFile *file_workspace_misid = new TFile(Form("../BjetMisID/hists/workspace%d_", i) + extension_misid + ".root", "READ");
-        // Need to create these workspaces for both misID and reco! 
         TFile *file_workspace_misid = new TFile(extension_RootFilesMC + TString("MisID/") + Form("workspace%d_", i) + extension_misid + TString(".root"), "READ");
         
         std::cout <<  extension_RootFilesMC << Form("workspace%d_", i) << extension_reco << ".root" << std::endl;
@@ -563,7 +538,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         RooCrystalBall dcbPdf_sig1("dcbPdf_sig1", "floatSidedCB_sig1", HFMass, *mu_sig, *sigma1, *alpha1_sig, *p1_sig, *alpha2_sig, *p2_sig);
         RooCrystalBall dcbPdf_sig2("dcbPdf_sig2", "floatSidedCB_sig2", HFMass, *mu_sig, *sigma2, *alpha1_sig, *p1_sig, *alpha2_sig, *p2_sig);
 
-        // Number of signal events
         RooRealVar *nsig1 = new RooRealVar("nsig1", "fraction of component 1 in signal", 0.3, 0., 1.);
 
         // Choose if you want two CB functions as signal, or two Gaussians.
@@ -577,35 +551,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         RooRealVar *sig2_t = new RooRealVar("sig2_t", "sig2_t", 0.02, 0.001, 0.3);
 
         RooGenericPdf sig2("student-t", "", "tgamma((sig2_n+1)/2)/(tgamma(sig2_n/2)*sqrt(TMath::Pi()*sig2_n)*sig2_t) * pow(1+(1/sig2_n * pow((HFMass-sig2_m)/sig2_t, 2)), (-1-sig2_n)/2)", RooArgList(HFMass, *sig2_m, *sig2_n, *sig2_t));
-
-        
-
-        //
-        // RooRealVar mean_nosec("mean_nosec", "mean of gaussians", 5.279, 5.25, 5.285);
-        // RooRealVar sigma1_nosec("sigma1_nosec", "width of gaussians", 0.05, 0, 0.1);
-        // RooRealVar sigma2_nosec("sigma2_nosec", "width of gaussians", 0.01, 0, 0.1);
-        //
-        // RooGaussian sig1_nosec("sig1", "Signal component 1", HFMass, mean_nosec, sigma1_nosec);
-        // RooGaussian sig2_nosec("sig2", "Signal component 2", HFMass, mean_nosec, sigma2_nosec);
-        //
-        // RooRealVar nsig1_nosec("nsig1_nosec", "fraction of component 1 in signal", 0.3, 0., 1.);
-        // RooAddPdf sig_nosec("sig_nosec", "Signal", RooArgList(sig1_nosec, sig2_nosec), RooArgList(nsig1_nosec));
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // build resonant structure, values from simulation with Jpsi fixed to its mass
-        ///////////////////////////////////////////////////
-        // EXT PARAMETER                                INTERNAL      INTERNAL        │
-        // NO.   NAME      VALUE            ERROR       STEP SIZE       VALUE         │p.d.f.s
-        //  1  a1           5.82768e+00   1.70615e-08   5.16495e-07  -1.08317e+00     │-------
-        //  2  a2          -9.99999e-01   6.19314e-02   1.47440e-01  -1.57207e+00     │RooCrystalBall::dcbPdf_sig1[ x=HFMass x0=mu_sig sigmaL=sigma1
-        //  3  alpha1       2.01441e+00   3.24539e-02   1.02160e-03  -6.39903e-01     │ sigmaR=sigma1 alphaL=alpha1_sig nL=p1_sig alphaR=alpha2_sig
-        //  4  alpha2       5.70189e-01   5.50017e-03   5.10050e-04  -1.08856e+00     │nR=p2_sig ] = 0.00214893
-        //  5  mu           5.32697e+00   1.04802e-04   8.24657e-05   2.56748e-01     │RooAddPdf::model[ nsig * dcbPdf_sig1 ] = 0.00214893
-        //  6  nbkg         9.68910e+01   3.49620e+02   2.81877e-03  -1.55111e+00     │
-        //  7  nsig         9.17769e+04   4.78325e+02   4.91049e-04  -9.55229e-01     │datasets
-        //  8  p1           1.31970e+00   1.23509e-01   2.03443e-03  -8.27233e-01     │--------
-        //  9  p2           2.27406e+00   2.53814e-02   1.32025e-03  -5.76613e-01     │RooDataHist::B_mass(HFMass)
-        // 10  width        1.59333e-02   1.00715e-04   2.54854e-04  -1.31767e+00
 
         if (UseDTF && w_read_misid != NULL)
         {
@@ -636,36 +581,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
 
         RooCrystalBall dcbPdf("dcbPdf", "floatSidedCB", HFMass, *mu, *width, *alpha1, *p1, *alpha2, *p2);
 
-        //
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Build argus background PDF, I can't get this to work, so DISREGARD FOR NOW!
-        /////////////////////////////////////////////////////////////////////////////////
-
-        RooRealVar *m_arg = new RooRealVar("m_arg", "m", 5.15, 5.1, 5.17); // The peak position of the Argus function
-        RooRealVar *c_arg = new RooRealVar("c_arg", "c", -20, -30, -1);    // The curvature parameter of the Argus function
-        RooRealVar *n_arg = new RooRealVar("n_arg", "n", 0.5);             // The power-law index of the Argus function
-
-        RooRealVar *mean_arg = new RooRealVar("mean_arg", "mean", 0); // The mean of the Gaussian function
-        // RooFormulaVar sigma_arg = new RooRealVar("sigma_arg", "sigma", "sqrt(sigma1*sigma1*nsig1 + (1-nsig1)*sigma2*sigma2)", RooArgList(sigma1, sigma2, nsig1));  // The standard deviation of the Gaussian function
-        RooRealVar *sigma_arg = new RooRealVar("sigma_arg", "sigma", 0.01, 0.001, 0.05);
-
-        // Create the Argus function and the Gaussian function
-        RooArgusBG argus("argus", "argus", HFMass, *m_arg, *c_arg, *n_arg);
-        RooGaussian gauss_arg("gauss_arg", "Signal component 2", HFMass, *mean_arg, *sigma_arg);
-
-        RooFFTConvPdf argxgauss("argxgauss", "argus (X) gauss", HFMass, argus, gauss_arg);
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Build tanh background PDF, left shoulder background
-        ///////////////////////////////////////////////////
-
-        RooRealVar *b1 = new RooRealVar("b1", "scale", 0.015, 0.001, 0.04);
-        RooRealVar *b2 = new RooRealVar("b2", "scale", 0.015, 0.001, 0.07);
-        RooRealVar *s1 = new RooRealVar("s1", "shift", 5.14, 5.12, 5.16);
-        RooRealVar *s2 = new RooRealVar("s2", "shift", 4.95, 4.92, 4.96);
-        RooGenericPdf tanhpdf("tanhpdf", "tanhpdf", "1 - tanh((HFMass-s1)/b1)", RooArgSet(HFMass, *b1, *s1));
-        // RooGenericPdf tanhpdf("tanhpdf", "tanhpdf", "tanh((x-s2)/b2) - tanh((x-s1)/b1)", RooArgSet(x, b1, b2, s1, s2));
-
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Build linear background PDF, for combinatoric background
         ///////////////////////////////////////////////////
@@ -688,29 +603,18 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         // Fractions
         ///////////////////////////////////////////////////
 
-        // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
-        RooRealVar *nsig = new RooRealVar("nsig", "fraction in signal", 10000, 0., 10000000.);
-
-        // RooRealVar nsig2("nsig2", "fraction of component 2 in signal", 0.6, 0., 1.);
-        RooRealVar *nsig_nosec = new RooRealVar("nsig_nosec", "fraction in signal", 500, 0., 1000000.);
-        RooRealVar *nbkg = new RooRealVar("nbkg", "fraction of background", 1000, 0., 1000000);
-        RooRealVar *nbkg_nosec = new RooRealVar("nbkg_nosec", "fraction of background", 200, 0., 1000000);
-        RooRealVar *ntanh = new RooRealVar("ntanh", "fraction of background", 200, 0., 1000000);
-        RooRealVar *nres = new RooRealVar("nres", "fraction of background", 0.00384 * nsig->getVal(), 0., 0.0384 * nsig->getVal());
-        // RooFormulaVar nres("nres", "resonant bkg", "0.0384*nsig", RooArgList(nsig)); // CHANGE
-        RooRealVar *nres_nosec = new RooRealVar("nres_nosec", "fraction of background", 200, 0., 1000000);
-
+        RooRealVar *nsig = new RooRealVar("nsig", "normalization for signal", 10000, 0., 10000000.);
+        RooRealVar *nbkg = new RooRealVar("nbkg", "normalization for background", 1000, 0., 1000000);
+        RooRealVar *nres = new RooRealVar("nres", "normalization for  background", 0.00384 * nsig->getVal(), 0., 0.0384 * nsig->getVal());
 
         // S a m p l e ,   f i t   a n d   p l o t   m o d e l
         // ---------------------------------------------------
         HFMass.setRange("comb1", 5.55, 5.78);
         HFMass.setRange("comb2", RooConst(mass_low), RooConst(mass_low + 0.1));
-        HFMass.setRange("tanh", 5.05, 5.2);
-        HFMass.setRange("noSec", 5.18, 5.6);
         HFMass.setRange("Full", mass_low, mass_high);
 
         // Fit model to data
-        RooAddPdf *model, *model_nosec;
+        RooAddPdf *model;
         if (isData)
         {
             if (UseDTF)
@@ -735,9 +639,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         }
 
         model->fitTo(B_mass, PrintEvalErrors(-1), Save(true));
-        // RooMsgService::instance().setSilentMode(true);
-        // RooStats::SPlot *sData = new RooStats::SPlot("sData", "An SPlot",
-        //                                              B_mass, model, RooArgList(nsig, nbkg, nres));
 
         // Begin plotting
         //
@@ -749,20 +650,13 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         RooPlot *xframe = HFMass.frame(Title(Form(";M_{#mu#muK} [GeV];Events/(%.1f MeV) ", binsize * 1000.)));
         xframe->SetTitleOffset(0.7, "Y");
         xframe->SetTitleOffset(0.9, "X");
-        // model->paramOn(xframe, Layout(0.6, 0.9, 0.9));
-        // xframe->getAttText()->SetTextSize(0.02);
+
         B_mass.plotOn(xframe, Name("B_mass"));
         // model->plotOn(xframe);
 
         // Overlay the background component of model with a dashed line
         model->plotOn(xframe, Name("sig"), Components(sig), LineStyle(5), LineColor(kGreen + 2), LineWidth(1.));
-        // sig.plotOn(xframe, Name("sig"), LineStyle(kSolid), LineColor(kGreen), Range("Full"));
-        // model->plotOn(xframe, Components(sig2), LineStyle(kSolid), LineColor(kMagenta));
-        model->plotOn(xframe, Name("tanhpdf"), Components(tanhpdf), FillColor(TColor::GetColorTransparent(kCyan, 0.7)), FillStyle(4070), LineWidth(0), DrawOption("F"));
-        model->plotOn(xframe, Name("argxgauss"), Components(argxgauss), FillColor(kCyan), DrawOption("F"));
-        model->plotOn(xframe, Name("bkg"), Components(bkg), LineStyle(kDashed), LineColor(kBlue), LineWidth(1.));
         model->plotOn(xframe, Name("bkg_cheb"), Components(bkg_cheb), LineStyle(kDashed), LineColor(kBlue), LineWidth(1.));
-        // model->plotOn(xframe, Name("exp_bkg"), Components(exp_bkg), LineStyle(kDashed), LineColor(kBlue));
         model->plotOn(xframe, Name("dcbPdf"), Components(dcbPdf), FillColor(TColor::GetColorTransparent(kMagenta, 0.7)), FillStyle(3165), LineWidth(0), DrawOption("F"));
         model->plotOn(xframe, Name("model"), LineStyle(kSolid), LineColor(kRed), LineWidth(1.));
         RooHist *hpull = xframe->pullHist();
@@ -772,7 +666,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         else
             chi2 = xframe->chiSquare(10);
 
-        // exp_bkg.plotOn(xframe, LineColor(kMagenta));
 
         // Overlay the background+sig2 components of model with a dotted line
         xframe->Draw("SAME");
@@ -781,8 +674,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
 
         TLegend *leg1 = new TLegend(0.6, 0.5, 0.7, 0.87);
         leg1->SetTextSize(0.05);
-        // leg1->SetFillColor(kWhite);
-        // leg1->SetLineColor(kWhite);
         leg1->SetBorderSize(0);
         leg1->AddEntry("B_mass", "Data", "PE");
         leg1->AddEntry("model", "Fit model", "L");
@@ -790,10 +681,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         leg1->AddEntry("bkg", "Comb bkg", "L");
         if (isData)
         {
-            // leg1->AddEntry("tanhpdf", "Part. Rec. bkg.", "F");
             leg1->AddEntry("dcbPdf", "misID bkg", "F");
         }
-        // leg1->AddEntry((TObject*)0, "", "");
         leg1->AddEntry((TObject *)0, Form("#chi^{2}/ndf = %.2f", chi2), "");
         leg1->AddEntry((TObject *)0, Form("%.1f < p_{T}^{HF} < %.1f GeV", ptHF_binedges[i], ptHF_binedges[i + 1]), "");
 
@@ -812,36 +701,21 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
 
         // Overlay the background component of model with a dashed line
         model->plotOn(xframe2, Name("sig"), Components(sig), LineStyle(5), LineColor(kGreen + 2), LineWidth(1.));
-        // sig.plotOn(xframe2, Name("sig"), LineStyle(kSolid), LineColor(kGreen), Range("Full"));
-        // model->plotOn(xframe2, Components(sig2), LineStyle(kSolid), LineColor(kMagenta));
-        model->plotOn(xframe2, Name("tanhpdf"), Components(tanhpdf), FillColor(TColor::GetColorTransparent(kCyan, 0.7)), FillStyle(4070), LineWidth(0), DrawOption("F"));
-        model->plotOn(xframe2, Name("argxgauss"), Components(argxgauss), FillColor(kCyan), DrawOption("F"));
-        model->plotOn(xframe2, Name("bkg"), Components(bkg), LineStyle(kDashed), LineColor(kBlue), LineWidth(1.));
         model->plotOn(xframe2, Name("bkg_cheb"), Components(bkg_cheb), LineStyle(kDashed), LineColor(kBlue), LineWidth(1.));
-        // model->plotOn(xframe2, Name("exp_bkg"), Components(exp_bkg), LineStyle(kDashed), LineColor(kBlue));
         model->plotOn(xframe2, Name("dcbPdf"), Components(dcbPdf), FillColor(TColor::GetColorTransparent(kMagenta, 0.7)), FillStyle(3165), LineWidth(0), DrawOption("F"));
         model->plotOn(xframe2, Name("model"), LineStyle(kSolid), LineColor(kRed), LineWidth(1.));
 
-        // exp_bkg.plotOn(xframe2, LineColor(kMagenta));
-
-        // Overlay the background+sig2 components of model with a dotted line
-        // model->plotOn(xframe2, Components(RooArgSet(bkg, sig2)), LineStyle(kDotted));
-        // h1_mass_all->Draw("SAME");
         xframe2->Draw("SAME");
-        // gPad->SetLogy();
         xframe2->SetMinimum(0.);
         leg1->Draw("SAME");
 
         RooWorkspace *w = new RooWorkspace(Form("w%d", i), Form("workspace%d", i));
-        // w->import(sign);
-        // w->import(bkgn);
         w->import(*model);
         w->import(B_mass);
         w->Print();
         w->writeToFile(Form(extension_RootFiles + "workspace%d_", i) + extension + ".root");
 
         cout << "Chi2/dof = " << chi2 << endl;
-        cout << sigma_arg->getVal() << endl;
         cout << "a1 = " << a1->getVal() << endl;
         cout << "a2 = " << a2->getVal() << endl;
         cout << "sigma1 = " << sigma1->getVal() << endl;
@@ -852,12 +726,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         if (nsig1->getVal() > 0.5)
             MassSigma = sigma1->getVal();
         else
-            MassSigma = sigma2->getVal();
-
-        //if (sigma1->getVal() < sigma2->getVal())
-        //    MassSigma = sigma1->getVal();
-        //else
-        //    MassSigma = sigma2->getVal();        
+            MassSigma = sigma2->getVal();     
         
         if (DoSystematic)
         {
@@ -894,8 +763,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         
         Sideband1_Min = (MassMu - 14 * MassSigma) > 5.15 ? (MassMu - 14 * MassSigma) : 5.15;
         Sideband1_Max = (MassMu - 7 * MassSigma) > Sideband1_Min ? (MassMu - 7 * MassSigma) : 5.17;
-        // Sideband2_Min = MassMu + 10 * MassSigma;
-        // Sideband2_Max = MassMu + 14 * MassSigma;
+
         Sideband2_Min = MassMu + 10 * MassSigma;
         Sideband2_Max = (MassMu + 25 * MassSigma) < 5.55 ? (MassMu + 25 * MassSigma) : 5.55;
         
@@ -922,10 +790,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         HFMass.setRange("sideband1_forSysFar", Sideband1_Min_forSysFar, Sideband1_Max_forSysFar);
         HFMass.setRange("sideband2_forSysFar", Sideband2_Min_forSysFar, Sideband2_Max_forSysFar);
 
-        // HFMass.setRange("signal", MassMin, MassMax);
-        
-        // intsigX = sig->createIntegral(*HFMass, NormSet(*HFMass), Range("signal"));
-        // intbkgX = bkg->createIntegral(*HFMass, NormSet(*HFMass), Range("signal"));
         RooAbsReal *intsigX;
         RooAbsReal *intbkgX, *intresX, *intbkgSide, *intbkgSideLeft, *intbkgSideRight;
         intsigX = sig.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
@@ -951,8 +815,6 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         float bkg_scale = intbkgX->getVal() / intbkgSide->getVal();
         float bkg_scale_forSysNear = intbkgX->getVal() / intbkgSide_forSysNear->getVal();
         float bkg_scale_forSysFar = intbkgX->getVal() / intbkgSide_forSysFar->getVal();        
-        // cout << "Bkg Yield = " << intbkgX->getVal() << endl;
-        // cout << "Sig Yield = " << intsigX->getVal() << endl;
         cout << "Signal Yield = " << sig_yield << endl;
         cout << "Bkg Fraction = " << bkg_frac << endl;
         cout << "Bkg Fraction = " << res_frac << endl;

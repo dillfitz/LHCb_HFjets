@@ -36,14 +36,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   int Mag = (dataset / 1) % 10;
   int HF_pdgcode = -99;
 
-  int dataset_closure;
-  if (Mag == 0)
-    dataset_closure = dataset + 1;
-  else if (Mag == 1)
-    dataset_closure = dataset - 1;
-  else
-    dataset_closure = dataset;
-
   if (flavor == 5)
   {
     mass_num = 4.2;
@@ -75,7 +67,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TString str_flavor = "";
   TString str_ghost = "";
   TString str_year = "";
-  TString str_DTF = "";
   TString str_PID = "";
   TString str_GS = "";
 
@@ -101,8 +92,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   else if (flavor == 5)
     str_flavor = "_b";
 
-  if (DTF_cut)
-    str_DTF = "_DTF";
+
   if (PID_cut)
     str_PID = "_PID";
 
@@ -141,19 +131,13 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
 
   TString str_tree;
   TString extension_RootFilesMC, extension_RootFiles;
-  TString extension_read, extension_wspace, extension_eff;
+  TString extension_read, extension_eff;
   TString eff_path;
 
   TString extension_prefix, extension_trackeff;
   TString extension;
 
-  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_DTF + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
-
-  // HFjetTree Tree(0, dataset, isData);
-
-  // int NumEvts = 0;
-  // cout <<"Choose number of events (-1: All Events, or enter integer): ";
-  // cin>> NumEvts;
+  extension = str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
     
   extension_RootFilesMC = TString("../../root_files/BjetsMC/");
   extension_RootFiles = isData ?  TString("../../root_files/Bjets/") : extension_RootFilesMC;
@@ -163,7 +147,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   float minimum_dR = 0.1;
 
   extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
-  //extension_wspace = TString("workspace_massfit_") + str_level + Form("_ev_%d", -1) + Form("_ptj_%d%d",pTLow, int(250)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_ghost + str_Mag + str_flavor + Form("_%d", dataset);
 
   if (DoJetID)
     extension_prefix = TString("jetid_");    
@@ -190,15 +173,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     extension_prefix = TString("massfitsysfar_");
   
 
-
-  //cout << extension_read << endl;
-
   extension = extension_prefix + extension;
   extension_trackeff = "trackEff_" + str_year + "_Ratio_Full_Long_method";
 
   /////////////////// Mass Fit Parameters /////////////////////////////////
-  // massfit_data_ev_-1_ptj_12250_eta_2.54.0_ghost_0.5_b_PID_91599.root
-  //TString massfit( TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + "_91599.root"); 
   TString massfit("");
   if (sPlotFit)
   {
@@ -208,8 +186,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   {
     massfit = TString("massfit_data_ev_-1") + Form("_ptj_%d%d", int(pTLow), int(250.)) + "_eta_2.54.0_ghost_0.4_b" + str_PID + str_L0 + "_91599.root"; 
   }
-  //TString recostr = TString("massfit_reco_ev_-1_ptj_7250_eta_2.54.0_ghost_0.5") + str_Mag + TString("_b_PID_") + Form("%d.root", dataset);
-
 
     
   if (DoRecSelEff)
@@ -406,15 +382,12 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       h1_mass_HFpt_sweight.push_back(h1_temp_sweight);
   }
 
-
-
   TH1D *h1_HFpt = new TH1D("h1_HFpt", "", ptHFbinsize, ptHF_binedges);
   TH2D *h2_HFptjetpt = new TH2D("h2_HFptjetpt", "", ptHFbinsize, ptHF_binedges, customptbinsize, custompt_binedges);
   TH2D *h2_HFptrap = new TH2D("h2_HFptrap", "", ptHFbinsize, ptHF_binedges, etabinsize, eta_binedges);
   TH3D *h3_HFptjetptrap = new TH3D("h3_HFptjetptrap", "", ptHFbinsize, ptHF_binedges, fineptbinsize, finept_binedges, etabinsize, eta_binedges);
 
   TH2D *h2_mB_mJpsi = new TH2D("mB_mJpsi", ";m_{#mu #mu K}; m_{#mu #mu}", 40, 5.15, 5.55, 40, 2.997, 3.197);
-  TH1D *h1_nJetDtrs = new TH1D("nJetDtrs", "", 40, -0.5, 39.5);
 
   TH1D *h1_nSPDHits = new TH1D("nSPDHits", ";N_{SPD};", 100, 0., 1000.);
   
@@ -427,11 +400,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   h2_ptjt_nobgsub = (TH2D*)h2_ptjt->Clone("ptjt_nobgsub");            
   h2_ptr_nobgsub = (TH2D*)h2_ptr->Clone("ptr_nobgsub");     
    
-    
-  unsigned long long last_eventNum = 0;
-  float last_jetpT = 0.;
-  int event_counter = 0;
-    
+        
   vector<float> *dtr_pt(0), *dtr_rap(0), *dtr_id(0), *dtr_3charge(0);
   vector<float> *sv_ipchi2(0), *sv_keys(0), *sv_pids(0);
 
@@ -448,7 +417,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   float K_CHI2NDOF, K_GHOSTPROB, K_IPCHI2;
   float Jpsi_CHI2NDOF, Jpsi_CHI2, Jpsi_FDCHI2, Jpsi_IPCHI2, Jpsi_BPVDLS;
   float Bu_CHI2NDOF, Bu_CHI2, Bu_IPCHI2;
-  float Bfromjet_px, Bfromjet_py, Bfromjet_pz, Bfromjet_e;
   float K_PIDK;
   int nTracks;
 
@@ -461,20 +429,15 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   double tr_z, tr_jt, tr_r;
   double zg, jtg, rg;
 
-
-  int nsplits, ndtrs, ndtrs_noghost, NumSubJets;
-  int tr_nsplits, tr_ndtrs;
-  bool isTrueBjet, isBacktoBack, HFHardest, Hasbbbar, TOS;
-  float dphi, bmass_dtf, Bmass_1, Bmass_2;
-  int nSV, nSV_test, NumBHads_tr;
+  bool isTrueBjet, Hasbbbar, TOS;
+  float bmass_dtf;
+  int nSV, NumBHads_tr;
   float jpsi_ipchi2;
   int eventNumber;
-  float sv_mass, sv_chi2, sv_ntrks, sv_cosine, bdt_mCor;
+  float sv_mass, sv_chi2, sv_ntrks, sv_cosine;
   int SVTag;
   float chi2ndf_dtf, tau_dtf;
-  int Ndtr_charged, Ndtr_neutral;
   int nSPDHits;
-  // TLorentzVector
     
   float pideff_K(1.0), pideff_mup(1.0), pideff_mum(1.0);
   float pideff_K_err(1.0), pideff_mup_err(1.0), pideff_mum_err(1.0);
@@ -489,8 +452,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   BTree->SetBranchAddress("dtr_rap", &dtr_rap);
   BTree->SetBranchAddress("dtr_id", &dtr_id);
   BTree->SetBranchAddress("dtr_3charge", &dtr_3charge);
-  BTree->SetBranchAddress("Ndtr_neutral", &Ndtr_neutral);
-  BTree->SetBranchAddress("Ndtr_charged", &Ndtr_charged);
 
   BTree->SetBranchAddress("jet_pt", &jet_pt);
   BTree->SetBranchAddress("jet_eta", &jet_eta);
@@ -511,10 +472,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   BTree->SetBranchAddress("Bu_CHI2", &Bu_CHI2);
   BTree->SetBranchAddress("Bu_CHI2NDOF", &Bu_CHI2NDOF);
     
-  BTree->SetBranchAddress("ndtrs", &ndtrs);
-  BTree->SetBranchAddress("ndtrs_noghost", &ndtrs_noghost);
-  BTree->SetBranchAddress("nsplits", &nsplits);
-
   BTree->SetBranchAddress("mum_px", &mum_px);
   BTree->SetBranchAddress("mum_py", &mum_py);
   BTree->SetBranchAddress("mum_pz", &mum_pz);
@@ -548,10 +505,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     
   BTree->SetBranchAddress("jpsi_ipchi2", &jpsi_ipchi2);
 
-  BTree->SetBranchAddress("Bfromjet_px", &Bfromjet_px);
-  BTree->SetBranchAddress("Bfromjet_py", &Bfromjet_py);
-  BTree->SetBranchAddress("Bfromjet_pz", &Bfromjet_pz);
-  BTree->SetBranchAddress("Bfromjet_e", &Bfromjet_e);
 
   BTree->SetBranchAddress("tr_jet_pt", &tr_jet_pt);
   BTree->SetBranchAddress("tr_jet_eta", &tr_jet_eta);
@@ -577,30 +530,21 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   BTree->SetBranchAddress("tr_K_pz", &tr_K_pz);
   BTree->SetBranchAddress("tr_K_e", &tr_K_e);
 
-  BTree->SetBranchAddress("tr_ndtrs", &tr_ndtrs);
-  BTree->SetBranchAddress("tr_nsplits", &tr_nsplits);
   BTree->SetBranchAddress("isTrueBjet", &isTrueBjet);
 
-  BTree->SetBranchAddress("dphi", &dphi);
-
   BTree->SetBranchAddress("nSV", &nSV);
-  BTree->SetBranchAddress("nSV_test", &nSV_test);
   BTree->SetBranchAddress("sv_mass", &sv_mass);
   BTree->SetBranchAddress("sv_chi2", &sv_chi2);
   BTree->SetBranchAddress("sv_cosine", &sv_cosine);
   BTree->SetBranchAddress("sv_ntrks", &sv_ntrks);
   BTree->SetBranchAddress("sv_ipchi2", &sv_ipchi2);
   BTree->SetBranchAddress("sv_keys", &sv_keys);
-  BTree->SetBranchAddress("sv_pids", &sv_pids);
-  BTree->SetBranchAddress("bdt_mCor", &bdt_mCor);
-    
+  BTree->SetBranchAddress("sv_pids", &sv_pids);    
   BTree->SetBranchAddress("SVTag", &SVTag);
     
-  BTree->SetBranchAddress("HFHardest", &HFHardest);
   BTree->SetBranchAddress("bmass_dtf", &bmass_dtf);
   BTree->SetBranchAddress("chi2ndf_dtf", &chi2ndf_dtf);
   BTree->SetBranchAddress("tau_dtf", &tau_dtf);
-  // BTree->SetBranchAddress("NumSubJets", &NumSubJets);
   BTree->SetBranchAddress("NumBHads_tr", &NumBHads_tr);
   BTree->SetBranchAddress("Hasbbbar", &Hasbbbar);
   BTree->SetBranchAddress("K_PIDK", &K_PIDK);
@@ -646,32 +590,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   }
 
   int eventNum;
-  int NumJets_zdR_comb = 0;
-  int NumJets_ktdR_comb = 0;
-
-  int NumJets_zdR_gluon = 0;
-  int NumJets_ktdR_gluon = 0;
-
-  int NumJets_zdR = 0;
-  int NumJets_ktdR = 0;
-
-  int N_SV = 0;
-  int N_BacktoBack = 0;
-  int N_SV_and_BacktoBack = 0;
-
-  int N_hardest = 0;
-  int N_NotHardest = 0;
-
-  int NumTwoHFInJet = 0;
-  int NumTwoCand = 0;
-
-  float MassMu = 5.27940;
-  float MassSigma = 1.32479e-02;
-  // if (dataset == 90599)
-  // {
-  //   MassMu = 5.27907e+00;
-  //   MassSigma = 3.08492e-02;
-  // }
 
   cout << "Requested # of events : " << NumEvts << endl;
   if (sPlotFit)
@@ -683,8 +601,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       return;
     }
   }
-  TRandom3 *randomGenerator = new TRandom3();
 
+  int nan_counter = 0;
   //
   // Event loop
   //
@@ -702,21 +620,14 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     if (ev % 100000 == 0)
       cout << "Executing event " << ev << endl;
 
-    // if (jet_pt > 50. && jet_pt < 52.)
-    // {
-    //   cout << eventNumber << endl;
-    //   cout << jet_pt << ", " << jet_rap << ", " << HF_pt << endl;
-    // }
-    TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi, Bfromjet;
+    TLorentzVector HFmeson, HFjet, mum, mup, Kmeson, Jpsi;
     TLorentzVector tr_HFmeson, tr_HFjet, tr_mum, tr_mup, tr_Kmeson, tr_Jpsi;
     HFjet.SetPxPyPzE(jet_px, jet_py, jet_pz, jet_e);
     mup.SetPxPyPzE(mup_px, mup_py, mup_pz, mup_e);
     mum.SetPxPyPzE(mum_px, mum_py, mum_pz, mum_e);
     Kmeson.SetPxPyPzE(K_px, K_py, K_pz, K_e);
-    Bfromjet.SetPxPyPzE(Bfromjet_px, Bfromjet_py, Bfromjet_pz, Bfromjet_e);
 
     bool pt_cond = (jet_pt > pTLow);
-
     bool rap_cond = (jet_rap > etaMin && jet_rap < etaMax);
 
     if (!TOS)
@@ -761,9 +672,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     float event_weight = 1.0;
 
     float reweight = 1.0;
-    float emission_weight = 1.0;
-    float event_eff = 1.0;
-    float event_pur = 1.0;
     float bkg_weight = h1_BkgScale != NULL ? h1_BkgScale->GetBinContent(h1_BkgScale->FindBin(HFmeson.Pt())) : 1.0;
     float MassHigh = h1_MassMax != NULL ? h1_MassMax->GetBinContent(h1_MassMax->FindBin(HFmeson.Pt())) : 5.31;
     float MassLow = h1_MassMin != NULL ? h1_MassMin->GetBinContent(h1_MassMin->FindBin(HFmeson.Pt())) : 5.24;
@@ -774,20 +682,20 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     float Sideband2Max = h1_Sideband2Max != NULL ? h1_Sideband2Max->GetBinContent(h1_Sideband2Max->FindBin(HFmeson.Pt())) : 5.31;
     
     //  Set Trigger Correction Weight
-    if (isData && h2_trigeff_Data != NULL)
+    if (isData && h2_trigeff_ratio != NULL)
     {
       double rap = (Jpsi.Rapidity() > 2.00) ? Jpsi.Rapidity() : 2.1;
       double pt = (Jpsi.Pt() > 2.00) ? Jpsi.Pt() : 2.1;
       trigeff_ratio = h2_trigeff_ratio->GetBinContent(h2_trigeff_ratio->GetXaxis()->FindBin(pt), h2_trigeff_ratio->GetYaxis()->FindBin(rap));
-      // trigeff_Data = h2_trigeff_Data->GetBinContent(h2_trigeff_Data->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_Data->GetYaxis()->FindBin(rap));
-      // trigeff_MC = h2_trigeff_MC->GetBinContent(h2_trigeff_MC->GetXaxis()->FindBin(Jpsi.Pt()), h2_trigeff_MC->GetYaxis()->FindBin(rap));
-      // trigeff_ratio = trigeff_Data / trigeff_MC;
-      // cout << trigeff_ratio << ", ";
       if (std::isnan(trigeff_ratio) || std::isinf(trigeff_ratio) || trigeff_ratio == 0)
         trigeff_ratio = trigeff_Data = trigeff_MC = 1.0;
     }
     else
     {
+      if (isData)
+      {
+        std::cout << "h2_trigeff_ratio is NULL! Setting ratio to 1.0, need to investigate" << std::endl;
+      }
       trigeff_ratio = 1.0;
     }
     
@@ -817,25 +725,13 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       Sideband2Max = h1_Sideband2Max_forSysFar != NULL ? h1_Sideband2Max_forSysFar->GetBinContent(h1_Sideband2Max_forSysFar->FindBin(HFmeson.Pt())) : 5.31;
       bkg_weight = h1_BkgScale_forSysFar != NULL ? h1_BkgScale_forSysFar->GetBinContent(h1_BkgScale_forSysFar->FindBin(HFmeson.Pt())) : 1.0;
     }
-    
-    
-    // cout << "Mass Range = [" << MassLow << ", " << MassHigh << "]"
-    //      << ", " << HFmeson.Pt() << endl;
-    // cout << bkg_weight << ", " << MassLow << ", " << MassHigh << endl;
 
     bool PID_cond = (K_PIDK > 0);
-    bool DTF_cond = (chi2ndf_dtf < 9) && (tau_dtf > 0.3);
     bool mass_cond = (bmass_dtf > MassLow && bmass_dtf < MassHigh);
     bool bkg_cond = (bmass_dtf > Sideband1Min && bmass_dtf < Sideband1Max) || (bmass_dtf > Sideband2Min && bmass_dtf < Sideband2Max);
     bool gluon_cond = mass_cond && Hasbbbar;
     bool SV_cond = (nSV > 0) && mass_cond && sv_mass > 0.4;
     bool signal_cond = mass_cond;
-    if (DTF_cut)
-    {
-      signal_cond = signal_cond && DTF_cond;
-      bkg_cond = bkg_cond && DTF_cond;
-      SV_cond = SV_cond && DTF_cond;
-    }
     if (PID_cut && isData)
     {
       signal_cond = signal_cond && PID_cond;
@@ -880,7 +776,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     }
     if (DoRecSelEff)
     {
-      // cout << Bu_IPCHI2 << ", " << Bu_CHI2 << ", " << Jpsi_CHI2 << ", " << Jpsi_CHI2NDOF << ", " << sqrt(Jpsi_FDCHI2) << endl;
       if (Bu_IPCHI2 > 22)
         continue;
       if (Bu_CHI2 > 42)
@@ -911,13 +806,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     }
 
       
-    //     cout << " ------------------------------------------------ " << endl;
-    //     cout << "Evt Pur:"<< event_pur << ", Event Eff:" << event_eff << endl;
-    //     cout << "Trk Eff (K, mum, mup):" << trkeff_ratio_K << ", " << trkeff_ratio_mum << ", " << trkeff_ratio_mup << endl;
-    //     cout << "PID Eff (K, mum, mup):" << pideff_K << ", " << pideff_mum << ", " << pideff_mup << endl;
-    //     cout << "Trig Eff (K, mum, mup):" << trigeff_ratio << endl;
-    //     cout << " ------------------------------------------------ " << endl;
-      
          
     event_weight = (1./ (trkeff_ratio_K * trkeff_ratio_mum * trkeff_ratio_mup * pideff_mum * pideff_mup * trigeff_ratio));       
     
@@ -925,14 +813,17 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     //  event_weight *= (1. / (pideff_K));
     
     if (std::isinf(event_weight) || std::isnan(event_weight))
+    {
+      // This seems to happen less than .01% of the time, so it is negligible
+      //std::cout << "trkeff_ratio_K : " << trkeff_ratio_K << " trkeff_ratio_mum : " << trkeff_ratio_mum << " trkeff_ratio_mup : " << trkeff_ratio_mup << " pideff_mum : " << pideff_mum << " pideff_mup : " << pideff_mup << " pideff_K : " << pideff_K << " trigeff_ratio : " << trigeff_ratio << std::endl; 
+      //std::cout << "entry number : " << ev << " event number : " << eventNumber <<  std::endl;
+      //std::cout << "event_weight : " << event_weight << " is_inf or is_nan -- setting to 1.0, need to investigate" << std::endl;
+      //nan_counter++;
       event_weight = 1.0;
+    }
 
     float dphi_HF_jet = checkphi(checkphi(HFmeson.Phi()) - checkphi(HFjet.Phi()));
     float dy_HF_jet = HFjet.Eta() - HFmeson.Rapidity();
-    // h1_HF_mass->Fill(HFmeson.M());
-    if (DTF_cond)
-      h1_HF_mass_dtfcut->Fill(bmass_dtf);
-
 
     if (bkg_cond)
     {
@@ -977,7 +868,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       h1_HF_rap->Fill(HFmeson.Rapidity());
       h1_HF_pt->Fill(HFmeson.Pt());
       h1_HF_phi->Fill(HFmeson.Phi());
-      h1_nJetDtrs->Fill(ndtrs);
       h1_jet_eta->Fill(jet_eta);
       h1_jet_rap->Fill(jet_rap);
       h1_jet_phi->Fill(HFjet.Phi());
@@ -1057,6 +947,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     }
     
   } // end event loop
+
+  //std::cout << " number of events (entries) : " << NumEvts << std::endl;
+  //std::cout << " number of nan events (entries) : " << nan_counter << std::endl;
+  //std::cout << " fraction of nan events (entries) : " << nan_counter / NumEvts << std::endl;
 
   ///////////////// ////////////////
   // Background Subtraction
@@ -1469,524 +1363,6 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   SetRecoStyle(h1_jt_comb);
   SetRecoStyle(h1_r_comb);
 
-
-/*
-  //---- paint setup...
-  //
-  int ican = -1, iframe = -1, itext = -1;
-  TCanvas *ccan[1000];
-  TH1F *frame[1000];
-  TLatex *text[1000];
-  for (int i = 0; i < 1000; i++)
-  {
-    text[i] = new TLatex();
-    text[i]->SetNDC(kTRUE);
-    text[i]->SetTextSize(0.06);
-  }
-  TLatex Tl;
-  Tl.SetNDC(kTRUE);
-  Tl.SetTextSize(0.04);
-
-  //---- paint...
-
-  char buf[100];
-  char bufb[100];
-  
-    
-    TString rootfile;
-    TString plotfile;
-    TString plotfilePDF;
-    TString plotfileO;
-    TString plotfileC;
-    // TString OutputFileBase    = outbase+outinfo;
-    TString plotextension = isData ? TString("../../plots/Bjets/") : TString("../../plots/BjetsMC/");
-    rootfile = extension_RootFilesMC + extension + TString(".root");
-    plotfile = plotextension + extension + TString(".ps");
-    
-    plotfilePDF = plotextension + extension + TString(".pdf");
-    plotfileO = plotfilePDF + TString("(");
-    plotfileC = plotfilePDF + TString("]");
-  // c->SaveAs("plots/"+extension+".pdf");
-
-    ++ican;
-    sprintf(buf, "ccan%d", ican);
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->SetFillColor(10);
-    gPad->SetLeftMargin(0.16);
-    gPad->SetBottomMargin(0.06);
-    gPad->SetRightMargin(0.15);
-    ccan[ican]->cd();
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-    
-    cout <<" start of z plots " << endl;
-    ccan[ican]->cd(1);
-    auto legend_zpt_raw= new TLegend(0.15, 0.5, 0.5, 0.85);
-    legend_zpt_raw ->SetTextSize(0.03);
-    legend_zpt_raw ->SetBorderSize(0);
-    legend_zpt_raw ->SetFillStyle(0);
-    legend_zpt_raw ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptz_uncorrected->ProjectionX(Form("z_pt%d_raw", i), i + 1, i + 1); 
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);        
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_zpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_zpt_raw -> Draw("SAME");  
-     
-    ccan[ican]->cd(2);  
-    if (isData)
-    { 
-      auto legend_zpt_nobgsub= new TLegend(0.15, 0.5, 0.5, 0.85);
-      legend_zpt_nobgsub ->SetTextSize(0.03);
-      legend_zpt_nobgsub ->SetBorderSize(0);
-      legend_zpt_nobgsub ->SetFillStyle(0);
-      legend_zpt_nobgsub ->SetFillColor(3);
-      for (int i = 1; i < ptbinsize; i++)
-      {
-        TH1D *h1_temp = (TH1D *)h2_ptz_nobgsub->ProjectionX(Form("z_pt%d_nobgsub", i), i + 1, i + 1); 
-        h1_temp->SetStats(0);
-        NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        if (i!=5) 
-        {
-          h1_temp->SetMarkerColor(i);
-          h1_temp->SetLineColor(i);
-        }
-        else
-        {
-          h1_temp->SetMarkerColor(i*i+3);
-          h1_temp->SetLineColor(i*i+3);
-        }
-        h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);        
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-  
-        legend_zpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-      }
-      
-      legend_zpt_nobgsub -> Draw("SAME");       
-    }   
-
-    ccan[ican]->cd(3);
-    auto legend_zpt = new TLegend(0.15, 0.5, 0.5, 0.85);
-    legend_zpt ->SetTextSize(0.03);
-    legend_zpt ->SetBorderSize(0);
-    legend_zpt ->SetFillStyle(0);
-    legend_zpt ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptz->ProjectionX(Form("z_pt%d", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("z");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_zpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_zpt -> Draw("SAME");        
-
-    ccan[ican]->cd(4);
-    auto legend_zpt_final = new TLegend(0.15, 0.5, 0.5, 0.85);
-    legend_zpt_final ->SetTextSize(0.03);
-    legend_zpt_final ->SetBorderSize(0);
-    legend_zpt_final ->SetFillStyle(0);
-    legend_zpt_final ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptz_final->ProjectionX(Form("z_pt%d_final", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("z");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->GetYaxis()->SetRangeUser(0.0, 4.0);
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_zpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_zpt_final -> Draw("SAME");    
-  
-    ccan[ican]->cd();
-    ccan[ican]->Update();
-
-     
-    if (ican == 0)
-    {
-      ccan[ican]->Print(plotfileO.Data());
-    }
-    else
-    {
-      ccan[ican]->Print(plotfilePDF.Data());
-    }
-    
- 
-     // jT pT   
-    ++ican; 
-    sprintf(buf, "ccan%d", ican);
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->SetFillColor(10);
-    gPad->SetLeftMargin(0.16);
-    gPad->SetBottomMargin(0.06);
-    gPad->SetRightMargin(0.15);
-    ccan[ican]->cd();
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);     
-   
-    ccan[ican]->cd(1);
-    gPad->SetLogy();        
-    auto legend_jtpt_raw= new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_jtpt_raw ->SetTextSize(0.03);
-    legend_jtpt_raw ->SetBorderSize(0);
-    legend_jtpt_raw ->SetFillStyle(0);
-    legend_jtpt_raw ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt_uncorrected->ProjectionX(Form("jt_pt%d_raw", i), i + 1, i + 1); 
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->SetMaximum(20.0);            
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_jtpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_jtpt_raw -> Draw("SAME");
-     
-    ccan[ican]->cd(2); 
-    gPad->SetLogy();         
-    if (isData)
-    {
-      auto legend_jtpt_nobgsub= new TLegend(0.45, 0.6, 0.75, 0.9);
-      legend_jtpt_nobgsub ->SetTextSize(0.03);
-      legend_jtpt_nobgsub ->SetBorderSize(0);
-      legend_jtpt_nobgsub ->SetFillStyle(0);
-      legend_jtpt_nobgsub ->SetFillColor(3);  
-      for (int i = 1; i < ptbinsize; i++)
-      {
-        TH1D *h1_temp = (TH1D *)h2_ptjt_nobgsub->ProjectionX(Form("jt_pt%d_nobgsub", i), i + 1, i + 1); 
-        h1_temp->SetStats(0);
-        NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        if (i!=5) 
-        {
-          h1_temp->SetMarkerColor(i);
-          h1_temp->SetLineColor(i);
-        }
-        else
-        {
-          h1_temp->SetMarkerColor(i*i+3);
-          h1_temp->SetLineColor(i*i+3);
-        }  
-        h1_temp->SetMaximum(20.0);             
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-  
-        legend_jtpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-      }
-      
-      legend_jtpt_nobgsub -> Draw("SAME");
-    }      
-
-    ccan[ican]->cd(3);
-    gPad->SetLogy();        
-    auto legend_jtpt = new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_jtpt ->SetTextSize(0.03);
-    legend_jtpt ->SetBorderSize(0);
-    legend_jtpt ->SetFillStyle(0);
-    legend_jtpt ->SetFillColor(3); 
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt->ProjectionX(Form("jt_pt%d", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->SetMaximum(20.0);       
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_jtpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_jtpt -> Draw("SAME");        
-
-    ccan[ican]->cd(4);
-    gPad->SetLogy();        
-    auto legend_jtpt_final = new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_jtpt_final ->SetTextSize(0.03);
-    legend_jtpt_final ->SetBorderSize(0);
-    legend_jtpt_final ->SetFillStyle(0);
-    legend_jtpt_final ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptjt_final->ProjectionX(Form("jt_pt%d_final", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("j_{T} [GeV/c]");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->SetMaximum(20.0);       
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_jtpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_jtpt_final -> Draw("SAME");   
-
- 
-    ccan[ican]->cd();
-    ccan[ican]->Update();
-
-    if (ican == 0)
-    {
-      ccan[ican]->Print(plotfileO.Data());
-    }
-    else
-    {
-      ccan[ican]->Print(plotfilePDF.Data());
-    }    
-  
-    ++ican;        
-    
-    // r histograms //
-    ccan[ican] = new TCanvas(buf, buf, 30 * ican, 30 * ican, 800, (8.5 / 11.) * 800);
-    ccan[ican]->cd();    
-    ccan[ican]->SetFillColor(10);    
-    ccan[ican]->Divide(2, 2, 0.0001, 0.0001);
-    ccan[ican]->cd(1);     
-    gPad->SetLogy();    
-            
-    ccan[ican]->cd(1);
-    auto legend_rpt_raw= new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_rpt_raw ->SetTextSize(0.03);
-    legend_rpt_raw ->SetBorderSize(0);
-    legend_rpt_raw ->SetFillStyle(0);
-    legend_rpt_raw ->SetFillColor(3); 
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr_uncorrected->ProjectionX(Form("r_pt%d_raw", i), i + 1, i + 1); 
-      h1_temp->SetStats(0);
-      NormalizeHist(h1_temp);
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }    
-      h1_temp->SetMaximum(800.0);               
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-  
-      legend_rpt_raw->AddEntry(h1_temp, Form(" %.1f < uncorrected p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_rpt_raw -> Draw("SAME");
-     
-    ccan[ican]->cd(2);
-    gPad->SetLogy();            
-    if (isData)
-    {
-      auto legend_rpt_nobgsub= new TLegend(0.45, 0.6, 0.75, 0.9);
-      legend_rpt_nobgsub ->SetTextSize(0.03);
-      legend_rpt_nobgsub ->SetBorderSize(0);
-      legend_rpt_nobgsub ->SetFillStyle(0);
-      legend_rpt_nobgsub ->SetFillColor(3);
-      for (int i = 1; i < ptbinsize; i++)
-      {
-        TH1D *h1_temp = (TH1D *)h2_ptr_nobgsub->ProjectionX(Form("r_pt%d_nobgsub", i), i + 1, i + 1); 
-        h1_temp->SetStats(0);
-        NormalizeHist(h1_temp);
-        h1_temp->SetMarkerStyle(i + 20);
-        if (i!=5) 
-        {
-          h1_temp->SetMarkerColor(i);
-          h1_temp->SetLineColor(i);
-        }
-        else
-        {
-          h1_temp->SetMarkerColor(i*i+3);
-          h1_temp->SetLineColor(i*i+3);
-        }        
-        h1_temp->SetMaximum(800.0);
-        h1_temp->Draw("P E SAME");
-        h1_temp->Draw("HIST SAME");
-  
-        legend_rpt_nobgsub->AddEntry(h1_temp, Form(" %.1f < no sb sub p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-      }
-      
-      legend_rpt_nobgsub -> Draw("SAME");
-    }   
-      
-    ccan[ican]->cd(3);
-    gPad->SetLogy();       
-    auto legend_rpt = new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_rpt ->SetTextSize(0.03);
-    legend_rpt ->SetBorderSize(0);
-    legend_rpt ->SetFillStyle(0);
-    legend_rpt ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr->ProjectionX(Form("r_pt%d", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("r");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->SetMaximum(800.0);       
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_rpt->AddEntry(h1_temp, Form(" %.1f < p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_rpt -> Draw("SAME");        
-
-    ccan[ican]->cd(4);
-    gPad->SetLogy();       
-    auto legend_rpt_final = new TLegend(0.45, 0.6, 0.75, 0.9);
-    legend_rpt_final ->SetTextSize(0.03);
-    legend_rpt_final ->SetBorderSize(0);
-    legend_rpt_final ->SetFillStyle(0);
-    legend_rpt_final ->SetFillColor(3);
-    for (int i = 1; i < ptbinsize; i++)
-    {
-      TH1D *h1_temp = (TH1D *)h2_ptr_final->ProjectionX(Form("r_pt%d_final", i), i + 1, i + 1);
-      h1_temp->SetStats(0);   
-      h1_temp->GetXaxis()->SetTitle("r");   
-      NormalizeHist(h1_temp);    
-      h1_temp->SetMarkerStyle(i + 20);
-      if (i!=5) 
-      {
-        h1_temp->SetMarkerColor(i);
-        h1_temp->SetLineColor(i);
-      }
-      else
-      {
-        h1_temp->SetMarkerColor(i*i+3);
-        h1_temp->SetLineColor(i*i+3);
-      }
-      h1_temp->SetMaximum(800.0);       
-      h1_temp->Draw("P E SAME");
-      h1_temp->Draw("HIST SAME");
-
-      
-      legend_rpt_final->AddEntry(h1_temp, Form(" %.1f < Unfolded p_{T, jet} < %.1f GeV", pt_binedges[i], pt_binedges[i + 1]));
-
-    }
-    legend_rpt_final -> Draw("SAME");  
-      
-    ccan[ican]->cd();
-    ccan[ican]->Update();
-
-    if (ican == 0)
-    {
-      ccan[ican]->Print(plotfileO.Data());
-    }
-    else
-    {
-      ccan[ican]->Print(plotfilePDF.Data());
-    }    
-    
-*/
   f.Write();
   f.Close();
-  /*
-  if (ican > -1)
-  {
-    cout << " You plotted " << ican + 1 << " canvasses......." << endl;
-    ccan[ican]->Print(plotfileC.Data());
-  }
-  */
 }
