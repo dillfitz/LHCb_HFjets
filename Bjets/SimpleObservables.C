@@ -809,8 +809,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
          
     event_weight = (1./ (trkeff_ratio_K * trkeff_ratio_mum * trkeff_ratio_mup * pideff_mum * pideff_mup * trigeff_ratio));       
     
-    //if (PID_cut)
-    //  event_weight *= (1. / (pideff_K));
+    if (PID_cut)
+      event_weight *= (1. / (pideff_K));
     
     if (std::isinf(event_weight) || std::isnan(event_weight))
     {

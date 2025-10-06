@@ -356,10 +356,10 @@ void ClosureTest(int NumEvts = -1,
       for (int x = 1; x <= h1_z_ptbinned_closure_error[j-1]->GetNbinsX(); ++x)
       {
         double sumContent = h1_z_ptbinned_closure_error[j-1]->GetBinContent(x);
-        h1_z_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+        h1_z_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
         double sumError = h1_z_ptbinned_closure_error[j-1]->GetBinError(x);
-        h1_z_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+        h1_z_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
       }
       h1_z_ptbinned_closure_error[j-1]->Write();                      
     }
@@ -533,10 +533,10 @@ void ClosureTest(int NumEvts = -1,
       for (int x = 1; x <= h1_jt_ptbinned_closure_error[j-1]->GetNbinsX(); ++x)
       {
         double sumContent = h1_jt_ptbinned_closure_error[j-1]->GetBinContent(x);
-        h1_jt_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+        h1_jt_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
         double sumError = h1_jt_ptbinned_closure_error[j-1]->GetBinError(x);
-        h1_jt_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+        h1_jt_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
       }
       h1_jt_ptbinned_closure_error[j-1]->Write();                
     }
@@ -713,10 +713,10 @@ void ClosureTest(int NumEvts = -1,
       for (int x = 1; x <= h1_r_ptbinned_closure_error[j-1]->GetNbinsX(); ++x)
       {
         double sumContent = h1_r_ptbinned_closure_error[j-1]->GetBinContent(x);
-        h1_r_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+        h1_r_ptbinned_closure_error[j-1]->SetBinContent(x, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
         double sumError = h1_r_ptbinned_closure_error[j-1]->GetBinError(x);
-        h1_r_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+        h1_r_ptbinned_closure_error[j-1]->SetBinError(x, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
       }   
       h1_r_ptbinned_closure_error[j-1]->Write();                
     }
@@ -934,10 +934,10 @@ void ClosureTest(int NumEvts = -1,
         for (int y = 1; y <= h2_zjt_ptbinned_closure_error[j-1]->GetNbinsY(); ++y)
         {      
           double sumContent = h2_zjt_ptbinned_closure_error[j-1]->GetBinContent(x, y);
-          h2_zjt_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+          h2_zjt_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
           double sumError = h2_zjt_ptbinned_closure_error[j-1]->GetBinError(x, y);
-          h2_zjt_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+          h2_zjt_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
         }
       }
       h2_zjt_ptbinned_closure_error[j-1]->Write();                
@@ -1154,10 +1154,10 @@ void ClosureTest(int NumEvts = -1,
         for (int y = 1; y <= h2_zr_ptbinned_closure_error[j-1]->GetNbinsY(); ++y)
         {      
           double sumContent = h2_zr_ptbinned_closure_error[j-1]->GetBinContent(x, y);
-          h2_zr_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+          h2_zr_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
           double sumError = h2_zr_ptbinned_closure_error[j-1]->GetBinError(x, y);
-          h2_zr_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+          h2_zr_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
         }
       }
       h2_zr_ptbinned_closure_error[j-1]->Write();                
@@ -1355,10 +1355,10 @@ void ClosureTest(int NumEvts = -1,
         for (int y = 1; y <= h2_jtr_ptbinned_closure_error[j-1]->GetNbinsY(); ++y)
         {      
           double sumContent = h2_jtr_ptbinned_closure_error[j-1]->GetBinContent(x, y);
-          h2_jtr_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns - 1));
+          h2_jtr_ptbinned_closure_error[j-1]->SetBinContent(x, y, TMath::Sqrt(sumContent) / TMath::Sqrt(nRuns));
 
           double sumError = h2_jtr_ptbinned_closure_error[j-1]->GetBinError(x, y);
-          h2_jtr_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns - 1));
+          h2_jtr_ptbinned_closure_error[j-1]->SetBinError(x, y, TMath::Sqrt(sumError) / TMath::Sqrt(nRuns));
         }
       }  
       h2_jtr_ptbinned_closure_error[j-1]->Write();                
