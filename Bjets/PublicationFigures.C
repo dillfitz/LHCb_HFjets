@@ -7,11 +7,12 @@
 using namespace std;
 
 void PublicationFigures(int NumEvts = -1,
-                           int dataset = 91599)
+                        int dataset = 91599,
+                        bool onlysim9 = true)
 { 
   const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
-  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_PID("");
+  TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_PID(""), str_simversion("");
   TString loc_rootfiles_data("../../root_files/Bjets/");
   TString loc_rootfiles_MC("../../root_files/BjetsMC/");
   TString loc_plots("../../plots/Bjets/results/");
@@ -51,13 +52,20 @@ void PublicationFigures(int NumEvts = -1,
   if (ghostCut)
     str_ghost = Form("_ghost_%.1f", ghostProb);
 
-  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + Form("_%d", dataset);
+  TString str_pythia = "Pythia 8";
+  if (onlysim9)
+  {
+    str_simversion = "_sim9";
+    str_pythia += ".186";
+  }
+
+  string_truth = TString("truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
 
   string_final = TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
 
   string_sys = TString("total_sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost  + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);  
   
-  extension = TString("publish_use") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset);
+  extension = TString("publish_use") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + Form("_iters_%d", NumIters) + str_simversion + Form("_%d", dataset);
   
 
   cout << string_final << endl;
@@ -382,7 +390,7 @@ void PublicationFigures(int NumEvts = -1,
       legend_stack_z->SetFillStyle(0);
       legend_stack_z->SetFillColor(3);
       legend_stack_z->AddEntry(h1_z_data[i-1], "Data");
-      legend_stack_z->AddEntry(h1_z_truth[i-1], "PYTHIA8");
+      legend_stack_z->AddEntry(h1_z_truth[i-1], str_pythia);
       legend_stack_z->Draw("SAME");
     }
     //else
@@ -557,7 +565,7 @@ void PublicationFigures(int NumEvts = -1,
       legend_stack_jt->SetFillStyle(0);
       legend_stack_jt->SetFillColor(3);
       legend_stack_jt->AddEntry(h1_jt_data[i-1], "Data");
-      legend_stack_jt->AddEntry(h1_jt_truth[i-1], "PYTHIA8");
+      legend_stack_jt->AddEntry(h1_jt_truth[i-1], str_pythia);
       legend_stack_jt->Draw("SAME");
     }
  
@@ -713,7 +721,7 @@ void PublicationFigures(int NumEvts = -1,
       legend_stack_r->SetFillStyle(0);
       legend_stack_r->SetFillColor(3);
       legend_stack_r->AddEntry(h1_r_data[i-1], "Data");
-      legend_stack_r->AddEntry(h1_r_truth[i-1], "PYTHIA8");
+      legend_stack_r->AddEntry(h1_r_truth[i-1], str_pythia);
       legend_stack_r->Draw("SAME");
     }
 
@@ -827,7 +835,7 @@ void PublicationFigures(int NumEvts = -1,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }
-  ccan[ican]->SaveAs(TString(loc_plots + "zjt_final_w_sys_.png"));  
+  ccan[ican]->SaveAs(TString(loc_plots + "zjt_final_w_sys.png"));  
  
 
   ++ican;

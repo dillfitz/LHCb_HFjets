@@ -22,7 +22,8 @@ void MakeVarTree(int NumEvts_user = -1,
                  //bool DoJES = false,
                  bool DoJESJER = false,
                  bool DoJetID = false,
-                 bool L0MuonDiMuon = false)
+                 bool L0MuonDiMuon = false,
+                 bool onlysim9 = false)
 {
 
     int NumEvts = NumEvts_user;
@@ -125,11 +126,17 @@ void MakeVarTree(int NumEvts_user = -1,
     if (L0MuonDiMuon)
         str_L0 = "_L0MuonDiMuon";
 
+    TString str_simversion = "";     
+    if (onlysim9)
+    {
+        str_simversion = "_sim9";
+    }    
+
     TString str_tree;
     TString extension_read, extension_RootFilesMC, extension_RootFilesData, extension_RootFiles;
     TString extension, extension_eff;
     
-    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
+    extension = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + str_simversion + Form("_%d", dataset);
     
     //if (DoJES)
     //    extension = TString("JES_") + extension;
@@ -205,7 +212,7 @@ void MakeVarTree(int NumEvts_user = -1,
     TH2D *h2_trigeff_ratio = (TH2D *)h2_trigeff_Data->Clone("h2_trigeff_ratio");
     h2_trigeff_ratio->Divide(h2_trigeff_MC);
 
-    BjetTree Tree(0, dataset, isData);
+    BjetTree Tree(0, dataset, isData, onlysim9);
 
     cout << "Total number of events = " << Tree.fChain->GetEntries() << endl;
     if (NumEvts == -1)

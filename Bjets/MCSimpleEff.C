@@ -8,7 +8,8 @@ using namespace std;
 
 void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
                  bool chargedJetCut_user = false,
-                 bool SubtractGS = false) {
+                 bool SubtractGS = false,
+                 bool onlysim9 = false) {
     
     bool MCflag = true;
     followHardest = false;
@@ -104,6 +105,12 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     if (ghostCut)
       str_ghost = Form("_ghost_%.1f", ghostProb);
 
+    TString str_simversion = "";     
+    if (onlysim9)
+    {
+      str_simversion = "_sim9";
+    }    
+
     if (chargedJetCut)
       str_charged = "_charge";
     // TString str_trees[5];
@@ -119,12 +126,12 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
 
     // This should be the file from MCMakeVarTree
     
-    extension = TString("efficiency_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+    extension = TString("efficiency_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_GS + str_simversion + Form("_%d", dataset);
     
 //    extension_read = TString("MCtree_") + str_level + str_mag + Form("_ev_%d", NumEvtsTrue3) + str_flavor;
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
 
-    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
 
 //    TFile fread(extension_RootFilesMC  + extension_read + ".root", "READ");
 //    TTree *BTree = (TTree *)fread.Get("BTree");
@@ -150,7 +157,7 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
           str_Mag = "_MD";
         else if (Mag == 1)
           str_Mag = "_MU";
-        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", vec_datasets[i]);
+        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", vec_datasets[i]);
         // extension_read = extension_prefix + extension_read;
         cout << extension_read << endl;
         BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");
@@ -158,7 +165,7 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     }
     else
     {
-      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + Form("_%d", dataset);
+      extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_charged + str_Mag + str_flavor + str_simversion + Form("_%d", dataset);
       // extension_read = extension_prefix + extension_read;
       cout << extension_read << endl;
       BTree->Add(extension_RootFilesMC  + extension_read + ".root/BTree");

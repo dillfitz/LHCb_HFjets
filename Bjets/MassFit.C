@@ -12,6 +12,10 @@
 #include "Settings.h"
 #include "../Helpers.h"
 
+#include <sstream>
+#include <fstream>
+#include <iostream>
+
 using namespace RooFit;
 
 void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
@@ -438,6 +442,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     // ---------------------------------------
 
     // Declare observable x
+    std::string latexFileName = "fit_results.tex";
+    std::ofstream latexFile(latexFileName);
     for (int i = 0; i < ptHFbinsize; i++)
     {
         if (i >= ptHFbinsize - 2)
@@ -638,7 +644,19 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             // model = new RooAddPdf("model", "g1+g2+a", RooArgList(sig2), RooArgList(*nsig));
         }
 
-        model->fitTo(B_mass, PrintEvalErrors(-1), Save(true));
+        // Capture LaTeX output
+        RooFitResult* result =  model->fitTo(B_mass, PrintEvalErrors(-1), Save(true));
+        RooArgSet params_final = result->floatParsFinal();
+        std::streambuf* oldCoutBuffer = std::cout.rdbuf();
+        std::cout.rdbuf(latexFile.rdbuf());  // Redirect cout to outFile
+        latexFile << "\\begin{table}[H]\n";
+        latexFile << "    \\centering\n";
+        latexFile << "    \\caption{Fit result for " << ptHF_binedges[i] << " $ < \\pthf < $ " << ptHF_binedges[i+1] << "}\n";
+        latexFile << "    \\label{tab:fit_results_pthf" << i+1 << "}\n";
+        params_final.printLatex();
+        latexFile << "\\end{table}\n";
+        std::cout.rdbuf(oldCoutBuffer);
+
 
         // Begin plotting
         //
@@ -931,6 +949,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         BkgParams << a1->getVal() << "," << nbkg->getVal() << endl;
         ResonantParams << mu->getVal() << "," << width->getVal() << "," << alpha1->getVal() << "," << p1->getVal() << "," << alpha2->getVal() << "," << p2->getVal() << "," << nsig->getVal() << endl;
     }
+    latexFile.close();
 
     ican = 0;
     ccan[ican]->cd();
@@ -962,12 +981,22 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         ccan[ican]->Print(plotfileC.Data());
     }
 
+    latexFile.open(latexFileName, std::ios::app);
+    latexFile << setprecision(3);
+    latexFile << "\\begin{table}[H]\n";
+    latexFile << "    \\centering\n";
+    latexFile << "    \\caption{Fraction of combinatorial and resonant background in each \\pthf bin}\n";
+    latexFile << "    \\label{tab:fit_fractions}\n";
+    latexFile << "    \\begin{tabular}{ccc}\n";
+    latexFile << "        \\pthf & Comb bkg fraction & Res bkg fraction \\\\\n";
     for (int i = 0; i < vec_bkg_frac.size(); i++)
     {
-        cout << ptHF_binedges[i] << " < pT < " << ptHF_binedges[i + 1] << ": Signal = " << vec_sig_yield[i] << ", Background = " << vec_bkg_yield[i]
-             << ", Bkg Frac = " << vec_bkg_frac[i] * 100 << " %"
-             << ", Res Frac = " << vec_res_frac[i] * 100 << " %" << endl;
+        latexFile << "        " << ptHF_binedges[i] << " $< \\pt <$ " << ptHF_binedges[i + 1] << " & "
+                  << vec_bkg_frac[i] * 100 << "\\%" << " & " << vec_res_frac[i] * 100 << "\\% \\\\\n";
     }
+    latexFile << "    \\end{tabular}\n";
+    latexFile << "\\end{table}\n";
+    latexFile.close();
     float sigyield = std::accumulate(vec_sig_yield.begin(), vec_sig_yield.end(), 0);
     cout << "Total Signal Yield = " << sigyield << endl;
 

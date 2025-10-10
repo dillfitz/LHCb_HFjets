@@ -147,7 +147,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH1D *h1_jetpt_smear = (TH1D *)h1_jetpt_reco->Clone(Form("jetpt_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -249,7 +249,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptz_smear = (TH2D *)h2_ptz->Clone(Form("ptz_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -443,7 +443,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptjt_smear = (TH2D *)h2_ptjt->Clone(Form("ptjt_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -619,7 +619,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH2D *h2_ptr_smear = (TH2D *)h2_ptr->Clone(Form("ptr_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -819,7 +819,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptzjt_smear = (TH3D *)h3_ptzjt->Clone(Form("ptzjt_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -1039,7 +1039,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptzr_smear = (TH3D *)h3_ptzr->Clone(Form("ptzr_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {
@@ -1241,7 +1241,7 @@ void ClosureTest(int NumEvts = -1,
   for (int i = 0; i < nRuns; i++)
   {
     TH3D *h3_ptjtr_smear = (TH3D *)h3_ptjtr->Clone(Form("ptjtr_smear%d", i));
-    myRNG->SetSeed();
+    //myRNG->SetSeed();
     //myRNG->SetSeed(fixSmear);
     if (smear_by_data)
     {

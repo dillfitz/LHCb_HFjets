@@ -27,7 +27,8 @@ void SimpleUnfold(int NumEvts = -1,
                   bool DoSignalSys = false,
                   bool DoUnfoldPrior = false,
                   bool sPlotFit = false,
-                  bool L0MuonDiMuon = false)
+                  bool L0MuonDiMuon = false,
+                  bool onlysim9 = false)
 {
   followHardest = false;
   truthLevel = false;
@@ -126,10 +127,15 @@ void SimpleUnfold(int NumEvts = -1,
   if (sPlotFit)
     str_sPlot = "_splotfit";
 
+  TString str_simversion = "";     
+  if (onlysim9)
+  {
+    str_simversion = "_sim9";
+  }    
 
   TString str_tree;   
   TString extension, extension_prefix;
-  extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + str_GS + str_sPlot + str_L0 + Form("_%d", dataset);
+  extension = TString("unfold_") + str_level + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_PID + str_GS + str_sPlot + str_L0 + str_simversion + Form("_%d", dataset);
     
   //if (DoJES)
   //  extension_prefix = TString("JES_");
@@ -153,8 +159,8 @@ void SimpleUnfold(int NumEvts = -1,
     extension_RootFilesMC = TString("../../root_files/BjetsMC/");
     extension_RootFilesData = TString("../../root_files/Bjets/");    
     
-    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
-    extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_GS + Form("_%d", dataset);
+    extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + str_simversion + Form("_%d", dataset);
+    extension_eff = TString("efficiency_truth") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_Mag + str_flavor + str_GS + str_simversion + Form("_%d", dataset);
     
 
     extension = extension_prefix + extension;
@@ -183,7 +189,7 @@ void SimpleUnfold(int NumEvts = -1,
                 str_Mag = "_MD";
             else if (Mag == 1)
                 str_Mag = "_MU";
-            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", vec_datasets[i]);
+            extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + str_simversion + Form("_%d", vec_datasets[i]);
             if (!(DoRecSelEff || DoSignalSys || DoUnfoldPrior))        
             {
               extension_read = extension_prefix + extension_read;
@@ -194,7 +200,7 @@ void SimpleUnfold(int NumEvts = -1,
     }
     else
     {
-        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + Form("_%d", dataset);
+        extension_read = TString("tree_") + str_level + Form("_ev_%d", NumEvts) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard + str_ghost + str_Mag + str_flavor + str_L0 + str_simversion + Form("_%d", dataset);
         if (!(DoRecSelEff || DoSignalSys || DoUnfoldPrior))        
         {
           extension_read = extension_prefix + extension_read;
@@ -770,7 +776,22 @@ void SimpleUnfold(int NumEvts = -1,
     TH2 *h2_response_ptzjt = response_ptzjt->Hresponse();
     TH2 *h2_response_ptzr = response_ptzr->Hresponse();
     TH2 *h2_response_ptjtr = response_ptjtr->Hresponse();
-        
+
+    h2_response_jetpt->GetXaxis()->SetTitle("reco p_{T}^{j} [GeV/c]");
+    h2_response_jetpt->GetYaxis()->SetTitle("truth p_{T}^{j} [GeV/c]");
+    h2_response_ptz->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptz->GetYaxis()->SetTitle("truth bin # (flattened)");
+    h2_response_ptjt->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptjt->GetYaxis()->SetTitle("truth bin # (flattened)");
+    h2_response_ptr->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptr->GetYaxis()->SetTitle("truth bin # (flattened)");
+    h2_response_ptzjt->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptzjt->GetYaxis()->SetTitle("truth bin # (flattened)");
+    h2_response_ptzr->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptzr->GetYaxis()->SetTitle("truth bin # (flattened)");
+    h2_response_ptjtr->GetXaxis()->SetTitle("reco bin # (flattened)");
+    h2_response_ptjtr->GetYaxis()->SetTitle("truth bin # (flattened)");
+
     h2_response_jetpt->Write("response_jetpt");
     
     h2_response_ptz->Write("response_ptz");
