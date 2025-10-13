@@ -347,36 +347,36 @@ void MCSimpleEff(int NumEvts = -1, int dataset = 91599,
     // 3D Efficiencies/Purities of 2D Observables vs jet_pt; 6D Response Matrices (324 - 357)
     /// Q: Is Ibrahim's "matched obsv." is my "truth obsv." ?
 
-    TH3D *h3_ptzjt = new TH3D("ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_truthptzjt = new TH3D("truthptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_efficiency_ptzjt = new TH3D("num_efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_efficiency_ptzjt = new TH3D("denom_efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_efficiency_ptzjt = new TH3D("efficiency_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_purity_ptzjt = new TH3D("num_purity_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_purity_ptzjt = new TH3D("denom_purity_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_purity_ptzjt = new TH3D("purity_ptzjt", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt = new TH3D("ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_truthptzjt = new TH3D("truthptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptzjt = new TH3D("num_efficiency_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_efficiency_ptzjt = new TH3D("denom_efficiency_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_efficiency_ptzjt = new TH3D("efficiency_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptzjt = new TH3D("num_purity_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptzjt = new TH3D("denom_purity_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptzjt = new TH3D("purity_ptzjt", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
     
     RooUnfoldResponse *response_ptzjt = new RooUnfoldResponse(h3_ptzjt, h3_truthptzjt, "response_ptzjt");
     
-    TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_truthptzr = new TH3D("truthptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_efficiency_ptzr = new TH3D("num_efficiency_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_efficiency_ptzr = new TH3D("denom_efficiency_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_efficiency_ptzr = new TH3D("efficiency_ptzr", "", zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_purity_ptzr = new TH3D("num_purity_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_purity_ptzr = new TH3D("denom_purity_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_purity_ptzr = new TH3D("purity_ptzr", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr = new TH3D("ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_truthptzr = new TH3D("truthptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptzr = new TH3D("num_efficiency_ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_efficiency_ptzr = new TH3D("denom_efficiency_ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_efficiency_ptzr = new TH3D("efficiency_ptzr", "", zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptzr = new TH3D("num_purity_ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptzr = new TH3D("denom_purity_ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptzr = new TH3D("purity_ptzr", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
 
     RooUnfoldResponse *response_ptzr = new RooUnfoldResponse(h3_ptzr, h3_truthptzr, "response_ptzr");
     
-    TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_truthptjtr = new TH3D("truthptjtr", "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_efficiency_ptjtr = new TH3D("num_efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_efficiency_ptjtr = new TH3D("denom_efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize,  pt_binedges );
-    TH3D *h3_efficiency_ptjtr = new TH3D("efficiency_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_num_purity_ptjtr = new TH3D("num_purity_ptjtr", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_denom_purity_ptjtr = new TH3D("denom_purity_ptjtr", "", jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_purity_ptjtr = new TH3D("purity_ptjtr", "", jtbinsize, jt_binedges, rbinsize, r_binedges,  ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr = new TH3D("ptjtr", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_truthptjtr = new TH3D("truthptjtr", "", jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_efficiency_ptjtr = new TH3D("num_efficiency_ptjtr", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_efficiency_ptjtr = new TH3D("denom_efficiency_ptjtr", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize,  pt_binedges );
+    TH3D *h3_efficiency_ptjtr = new TH3D("efficiency_ptjtr", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_num_purity_ptjtr = new TH3D("num_purity_ptjtr", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_denom_purity_ptjtr = new TH3D("denom_purity_ptjtr", "", jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_purity_ptjtr = new TH3D("purity_ptjtr", "", jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D,  ptbinsize, pt_binedges );
 
     RooUnfoldResponse *response_ptjtr = new RooUnfoldResponse(h3_ptjtr, h3_truthptjtr, "response_ptjtr");
     

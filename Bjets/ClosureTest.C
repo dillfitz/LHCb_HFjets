@@ -753,8 +753,11 @@ void ClosureTest(int NumEvts = -1,
   h3_ptzjt_final = (TH3D *)unfold_ptzjt.Hreco();
   // Divide by efficiency  
   h3_ptzjt_final->Divide(h3_ptzjt_final, h3_eff_ptzjt);
-  //
-  //
+
+  int binlowz2D = h3_ptzjt->GetXaxis()->FindBin(z_binedges2D[0]);
+  int binhighz2D = h3_ptzjt->GetXaxis()->FindBin(z_binedges2D[zbinsize2D-1]);
+  int binlowjt2D = h3_ptzjt->GetYaxis()->FindBin(jt_binedges2D[0]);
+  int binhighjt2D = h3_ptzjt->GetYaxis()->FindBin(jt_binedges2D[jtbinsize2D-1]);
 
   h3_ptzjt_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
   h3_ptzjt_truth->GetZaxis()->SetRangeUser(ptMin, ptMax);
@@ -768,10 +771,10 @@ void ClosureTest(int NumEvts = -1,
   TH2D *h2_zjt_truth = (TH2D *)h3_ptzjt_truth->Project3D("yx");
   h2_zjt_truth->SetName("zjt_truth");
   //
-  h2_zjt_final->GetYaxis()->SetRange(binlowjt, binhighjt);
-  h2_zjt_final->GetXaxis()->SetRange(binlowz, binhighz);
-  h2_zjt_truth->GetYaxis()->SetRange(binlowjt, binhighjt);
-  h2_zjt_truth->GetXaxis()->SetRange(binlowz, binhighz);
+  h2_zjt_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+  h2_zjt_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
+  h2_zjt_truth->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+  h2_zjt_truth->GetXaxis()->SetRange(binlowz2D, binhighz2D);
   
   
   // This will depend on results of 1D jet unfolding
@@ -793,11 +796,11 @@ void ClosureTest(int NumEvts = -1,
   h2_zjt_ratio->Divide(h2_zjt, h2_zjt_truth);
   h2_zjt_ratio_final->Divide(h2_zjt_final, h2_zjt_truth);
 
-  h2_zjt_ratio_final->GetYaxis()->SetRange(binlowjt, binhighjt);
-  h2_zjt_ratio_final->GetXaxis()->SetRange(binlowz, binhighz);
+  h2_zjt_ratio_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+  h2_zjt_ratio_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
-  //h2_zjt_pull_final->GetYaxis()->SetRange(binlowjt, binhighjt);      
-  //h2_zjt_pull_final->GetXaxis()->SetRange(binlowz, binhighz);
+  //h2_zjt_pull_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);      
+  //h2_zjt_pull_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
   //GetPullsRatio(h2_zjt_ratio, h2_zjt_pull, h1_zjt_pulldist);
   //GetPullsRatio(h2_zjt_ratio_final, h2_zjt_pull_final, h1_zjt_pulldist_final);
@@ -837,19 +840,19 @@ void ClosureTest(int NumEvts = -1,
     TH2D *h2_zjt_smear = (TH2D *)h3_ptzjt_smear->Project3D("yx");
     h2_zjt_smear->SetName(Form("zjt_smear%d", i));
 
-    h2_zjt_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
-    h2_zjt_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    h2_zjt_smear->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+    h2_zjt_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
     //h2_zjt_smear->Scale(1. / Njets_final, "width");
     NormalizeHist(h2_zjt_smear);
     TH2D *h2_zjt_ratio_smear = (TH2D *)h2_zjt_smear->Clone(Form("zjt_ratio_smear%d", i));
     //TH2D *h2_zjt_pull_smear = (TH2D *)h2_zjt_smear->Clone(Form("h2_zjt_pull_smear%d", i));
     h2_zjt_ratio_smear->Divide(h2_zjt_smear, h2_zjt_truth); 
 
-    h2_zjt_ratio_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
-    h2_zjt_ratio_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    h2_zjt_ratio_smear->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+    h2_zjt_ratio_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
-    //h2_zjt_pull_smear->GetYaxis()->SetRange(binlowjt, binhighjt);
-    //h2_zjt_pull_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    //h2_zjt_pull_smear->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+    //h2_zjt_pull_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
     h2_zjt_ratio_smear->SetOption("COLZ, text");    
     h2_zjt_ratio_smear->Write();      
     //h2_zjt_pull_smear->Write(); 
@@ -864,12 +867,12 @@ void ClosureTest(int NumEvts = -1,
       h2_zjt_ptbinned[j-1]->SetName(Form("zjt_smear%d_pt%d", i,j)); 
       h2_zjt_truth_ptbinned[j-1] = (TH2D *)h3_ptzjt_truth->Project3D("yx");
       h2_zjt_truth_ptbinned[j-1]->SetName(Form("zjt_truth_smear%d_pt%d", i,j));
-      h2_zjt_ptbinned[j-1]->GetXaxis()->SetRange(binlowz, binhighz);
-      h2_zjt_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz, binhighz);
+      h2_zjt_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
+      h2_zjt_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zjt_ptbinned[j-1]->GetXaxis()->SetTitle("z");
       h2_zjt_truth_ptbinned[j-1]->GetXaxis()->SetTitle("z");
-      h2_zjt_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt, binhighjt);
-      h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt, binhighjt);
+      h2_zjt_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
+      h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_zjt_ptbinned[j-1]->GetYaxis()->SetTitle("j_{T}");
       h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetTitle("j_{T}");        
         
@@ -977,6 +980,9 @@ void ClosureTest(int NumEvts = -1,
   // Divide by efficiency  
   h3_ptzr_final->Divide(h3_ptzr_final, h3_eff_ptzr);
 
+  int binlowr2D = h3_ptzjt->GetYaxis()->FindBin(r_binedges2D[0]);
+  int binhighr2D = h3_ptzjt->GetYaxis()->FindBin(r_binedges2D[rbinsize2D-1]);
+
   h3_ptzr_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
   h3_ptzr_truth->GetZaxis()->SetRangeUser(ptMin, ptMax);
 
@@ -989,10 +995,10 @@ void ClosureTest(int NumEvts = -1,
   TH2D *h2_zr_truth = (TH2D *)h3_ptzr_truth->Project3D("yx");
   h2_zr_truth->SetName("zr_truth");
   //
-  h2_zr_final->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_zr_final->GetXaxis()->SetRange(binlowz, binhighz);
-  h2_zr_truth->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_zr_truth->GetXaxis()->SetRange(binlowz, binhighz);
+  h2_zr_final->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_zr_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
+  h2_zr_truth->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_zr_truth->GetXaxis()->SetRange(binlowz2D, binhighz2D);
   
   
   // This will depend on results of 1D jet unfolding
@@ -1014,11 +1020,11 @@ void ClosureTest(int NumEvts = -1,
   h2_zr_ratio->Divide(h2_zr, h2_zr_truth);
   h2_zr_ratio_final->Divide(h2_zr_final, h2_zr_truth);
 
-  h2_zr_ratio_final->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_zr_ratio_final->GetXaxis()->SetRange(binlowz, binhighz);
+  h2_zr_ratio_final->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_zr_ratio_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
-  //h2_zr_pull_final->GetYaxis()->SetRange(binlowr, binhighr);
-  //h2_zr_pull_final->GetXaxis()->SetRange(binlowz, binhighz);
+  //h2_zr_pull_final->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  //h2_zr_pull_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
   //GetPullsRatio(h2_zr_ratio, h2_zr_pull, h1_zr_pulldist);
   //GetPullsRatio(h2_zr_ratio_final, h2_zr_pull_final, h1_zr_pulldist_final);
@@ -1057,19 +1063,19 @@ void ClosureTest(int NumEvts = -1,
     TH2D *h2_zr_smear = (TH2D *)h3_ptzr_smear->Project3D("yx");
     h2_zr_smear->SetName(Form("zr_smear%d", i));
 
-    h2_zr_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    h2_zr_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    h2_zr_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    h2_zr_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
     //h2_zr_smear->Scale(1. / Njets_final, "width");
     NormalizeHist(h2_zr_smear);
     TH2D *h2_zr_ratio_smear = (TH2D *)h2_zr_smear->Clone(Form("zr_ratio_smear%d", i));
     //TH2D *h2_zr_pull_smear = (TH2D *)h2_zr_smear->Clone(Form("h2_zr_pull_smear%d", i));
     h2_zr_ratio_smear->Divide(h2_zr_smear, h2_zr_truth); 
 
-    h2_zr_ratio_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    h2_zr_ratio_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    h2_zr_ratio_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    h2_zr_ratio_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
-    //h2_zr_pull_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    //h2_zr_pull_smear->GetXaxis()->SetRange(binlowz, binhighz);
+    //h2_zr_pull_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    //h2_zr_pull_smear->GetXaxis()->SetRange(binlowz2D, binhighz2D);
     h2_zr_ratio_smear->SetOption("COLZ, text");
     h2_zr_ratio_smear->Write();      
     //h2_zr_pull_smear->Write();   
@@ -1084,12 +1090,12 @@ void ClosureTest(int NumEvts = -1,
       h2_zr_ptbinned[j-1]->SetName(Form("zr_smear%d_pt%d", i,j));
       h2_zr_truth_ptbinned[j-1] = (TH2D *)h3_ptzr_truth->Project3D("yx");
       h2_zr_truth_ptbinned[j-1]->SetName(Form("zr_truth_smear%d_pt%d", i,j));
-      h2_zr_ptbinned[j-1]->GetXaxis()->SetRange(binlowz, binhighz);
-      h2_zr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz, binhighz);
+      h2_zr_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
+      h2_zr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zr_ptbinned[j-1]->GetXaxis()->SetTitle("z");
       h2_zr_truth_ptbinned[j-1]->GetXaxis()->SetTitle("z");
-      h2_zr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr, binhighr);
-      h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr, binhighr);
+      h2_zr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+      h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_zr_ptbinned[j-1]->GetYaxis()->SetTitle("r");
       h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");        
         
@@ -1210,10 +1216,10 @@ void ClosureTest(int NumEvts = -1,
   TH2D *h2_jtr_truth = (TH2D *)h3_ptjtr_truth->Project3D("yx");
   h2_jtr_truth->SetName("jtr_truth");
   //
-  h2_jtr_final->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_jtr_final->GetXaxis()->SetRange(binlowjt, binhighjt);
-  h2_jtr_truth->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_jtr_truth->GetXaxis()->SetRange(binlowjt, binhighjt);
+  h2_jtr_final->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_jtr_final->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
+  h2_jtr_truth->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_jtr_truth->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
   
   
   // This will depend on results of 1D jet unfolding
@@ -1228,8 +1234,8 @@ void ClosureTest(int NumEvts = -1,
   h2_jtr_ratio->Divide(h2_jtr, h2_jtr_truth);
   h2_jtr_ratio_final->Divide(h2_jtr_final, h2_jtr_truth);
 
-  h2_jtr_ratio_final->GetYaxis()->SetRange(binlowr, binhighr);
-  h2_jtr_ratio_final->GetXaxis()->SetRange(binlowjt, binhighjt);
+  h2_jtr_ratio_final->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+  h2_jtr_ratio_final->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
  
   h2_jtr_ratio_final->SetOption("COLZ, text");
   h2_jtr_ratio_final->Write();   
@@ -1259,19 +1265,19 @@ void ClosureTest(int NumEvts = -1,
     TH2D *h2_jtr_smear = (TH2D *)h3_ptjtr_smear->Project3D("yx");
     h2_jtr_smear->SetName(Form("jtr_smear%d", i));
 
-    h2_jtr_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    h2_jtr_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
+    h2_jtr_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    h2_jtr_smear->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
     //h2_jtr_smear->Scale(1. / Njets_final, "width");
     NormalizeHist(h2_jtr_smear);
     TH2D *h2_jtr_ratio_smear = (TH2D *)h2_jtr_smear->Clone(Form("jtr_ratio_smear%d", i));
     //TH2D *h2_jtr_pull_smear = (TH2D *)h2_jtr_smear->Clone(Form("h2_jtr_pull_smear%d", i));
     h2_jtr_ratio_smear->Divide(h2_jtr_smear, h2_jtr_truth); 
 
-    h2_jtr_ratio_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    h2_jtr_ratio_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
+    h2_jtr_ratio_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    h2_jtr_ratio_smear->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
 
-    //h2_jtr_pull_smear->GetYaxis()->SetRange(binlowr, binhighr);
-    //h2_jtr_pull_smear->GetXaxis()->SetRange(binlowjt, binhighjt);
+    //h2_jtr_pull_smear->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+    //h2_jtr_pull_smear->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
     h2_jtr_ratio_smear->SetOption("COLZ, text");
     h2_jtr_ratio_smear->Write();      
     //h2_jtr_pull_smear->Write();     
@@ -1285,12 +1291,12 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_ptbinned[j-1]->SetName(Form("jtr_smear%d_pt%d", i,j));
       h2_jtr_truth_ptbinned[j-1] = (TH2D *)h3_ptjtr_truth->Project3D("yx");
       h2_jtr_truth_ptbinned[j-1]->SetName(Form("jtr_truth_smear%d_pt%d", i,j));
-      h2_jtr_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt, binhighjt);
-      h2_jtr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt, binhighjt);
+      h2_jtr_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
+      h2_jtr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_jtr_ptbinned[j-1]->GetXaxis()->SetTitle("j_{T}");
       h2_jtr_truth_ptbinned[j-1]->GetXaxis()->SetTitle("j_{T}");
-      h2_jtr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr, binhighr);
-      h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr, binhighr);
+      h2_jtr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
+      h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_jtr_ptbinned[j-1]->GetYaxis()->SetTitle("r");
       h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");        
         

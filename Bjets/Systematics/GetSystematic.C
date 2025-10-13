@@ -161,9 +161,10 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     str_ghost2 = Form("_ghost_%.1f", ghostProb);
 
 
-  string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_%d", dataset1);
+  //string_data_nominal = loc_rootfiles_data + TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_%d", dataset1);
+  string_data_nominal = loc_rootfiles_data + TString("corrected_data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
   string_data_test = TString("data") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + str_ghost2 + str_Mag2 + str_flavor2 + str_PID  + Form("_%d", dataset2);
-  string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_PID + Form("_%d", dataset_unfold);
+  //string_unfold = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_flavor1 + str_PID + Form("_%d", dataset_unfold);
   if (DoTrackEff != 0 || DoPIDEff != 0 || DoTrigEff != 0 || DoMassFit != 0 || DoIterSys != 0)
   {
     string_unfold_test = loc_rootfiles_MC + TString("unfold_reco") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(pTLow), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard2 + Form("_ghost_%.1f", ghostProb_test) + str_flavor2 + str_PID + Form("_%d", dataset_test);
@@ -183,7 +184,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
   }
   cout << string_data_nominal << endl;
   cout << string_data_test << endl;
-  cout << string_unfold << endl;
+  //cout << string_unfold << endl;
   cout << string_unfold_test << endl;
 
   extension = string_systype + TString("sys") + Form("_ev_%d", NumEvts) + Form("_ptj_%d%d", int(ptMin), int(ptMax)) + Form("_eta_%.1f%.1f", etaMin, etaMax) + str_followHard1 + str_ghost1 + str_Mag1 + str_flavor1 + str_PID + Form("_iters_%d", NumIters) + Form("_%d", dataset1);
@@ -194,7 +195,7 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   TFile *file_data_nominal = new TFile(string_data_nominal + TString(".root"), "READ");
   TFile *file_data_test = new TFile(string_data_test + TString(".root"), "READ");
-  TFile *file_unfold = new TFile(string_unfold + TString(".root"), "READ");
+  //TFile *file_unfold = new TFile(string_unfold + TString(".root"), "READ");
   TFile *file_unfold_test = new TFile(string_unfold_test + TString(".root"), "READ");
 
   TFile *file_save = new TFile(loc_rootfiles_data + "Systematics/" + extension + ".root", "RECREATE");
@@ -202,110 +203,110 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   /////////////////////   Create observable histograms /////////////////////////////////
 
-  TH3D *h3_ptzjt_nominal = (TH3D *)file_data_nominal->Get("ptzjt");
+  TH3D *h3_ptzjt_final_nominal = (TH3D *)file_data_nominal->Get("ptzjt_final");
   TH3D *h3_ptzjt_test = (TH3D *)file_data_test->Get("ptzjt");
-  TH3D *h3_ptzjt_final_nominal = (TH3D *)h3_ptzjt_nominal->Clone("ptzjt_final_nominal");
+  //TH3D *h3_ptzjt_final_nominal = (TH3D *)h3_ptzjt_nominal->Clone("ptzjt_final_nominal");
   TH3D *h3_ptzjt_final_test = (TH3D *)h3_ptzjt_test->Clone("ptzjt_final_test");
   
-  TH3D *h3_ptzr_nominal = (TH3D *)file_data_nominal->Get("ptzr");
+  TH3D *h3_ptzr_final_nominal = (TH3D *)file_data_nominal->Get("ptzr_final");
   TH3D *h3_ptzr_test = (TH3D *)file_data_test->Get("ptzr");   
-  TH3D *h3_ptzr_final_nominal = (TH3D *)h3_ptzr_nominal->Clone("ptzr_final_nominal");
+  //TH3D *h3_ptzr_final_nominal = (TH3D *)h3_ptzr_nominal->Clone("ptzr_final_nominal");
   TH3D *h3_ptzr_final_test = (TH3D *)h3_ptzr_test->Clone("ptzr_final_test");  
   
-  TH3D *h3_ptjtr_nominal = (TH3D *)file_data_nominal->Get("ptjtr");
+  TH3D *h3_ptjtr_final_nominal = (TH3D *)file_data_nominal->Get("ptjtr_final");
   TH3D *h3_ptjtr_test = (TH3D *)file_data_test->Get("ptjtr");
-  TH3D *h3_ptjtr_final_nominal = (TH3D *)h3_ptjtr_nominal->Clone("ptjtr_final_nominal");
+  //TH3D *h3_ptjtr_final_nominal = (TH3D *)h3_ptjtr_nominal->Clone("ptjtr_final_nominal");
   TH3D *h3_ptjtr_final_test = (TH3D *)h3_ptjtr_test->Clone("ptjtr_final_test");   
     
   
-  TH2D *h2_ptz_nominal = (TH2D *)file_data_nominal->Get("ptz");
+  TH2D *h2_ptz_final_nominal = (TH2D *)file_data_nominal->Get("ptz_final");
   TH2D *h2_ptz_test = (TH2D *)file_data_test->Get("ptz");
-  TH2D *h2_ptz_final_nominal = (TH2D *)h2_ptz_nominal->Clone("ptz_final_nominal");
+  //TH2D *h2_ptz_final_nominal = (TH2D *)h2_ptz_nominal->Clone("ptz_final_nominal");
   TH2D *h2_ptz_final_test = (TH2D *)h2_ptz_test->Clone("ptz_final_test");
   
-  TH2D *h2_ptjt_nominal = (TH2D *)file_data_nominal->Get("ptjt");
+  TH2D *h2_ptjt_final_nominal = (TH2D *)file_data_nominal->Get("ptjt_final");
   TH2D *h2_ptjt_test = (TH2D *)file_data_test->Get("ptjt");   
-  TH2D *h2_ptjt_final_nominal = (TH2D *)h2_ptjt_nominal->Clone("ptjt_final_nominal");
+  //TH2D *h2_ptjt_final_nominal = (TH2D *)h2_ptjt_nominal->Clone("ptjt_final_nominal");
   TH2D *h2_ptjt_final_test = (TH2D *)h2_ptjt_test->Clone("ptjt_final_test");  
   
-  TH2D *h2_ptr_nominal = (TH2D *)file_data_nominal->Get("ptr");
+  TH2D *h2_ptr_final_nominal = (TH2D *)file_data_nominal->Get("ptr_final");
   TH2D *h2_ptr_test = (TH2D *)file_data_test->Get("ptr");
-  TH2D *h2_ptr_final_nominal = (TH2D *)h2_ptr_nominal->Clone("ptr_final_nominal");
+  //TH2D *h2_ptr_final_nominal = (TH2D *)h2_ptr_nominal->Clone("ptr_final_nominal");
   TH2D *h2_ptr_final_test = (TH2D *)h2_ptr_test->Clone("ptr_final_test");   
 
 
   /////////////////////   Get Efficiency Hists /////////////////////////////////
 
-  TH3D *h3_eff_ptzjt_nominal = (TH3D *)file_unfold->Get("efficiency_ptzjt");
+  //TH3D *h3_eff_ptzjt_nominal = (TH3D *)file_unfold->Get("efficiency_ptzjt");
   TH3D *h3_eff_ptzjt_test = (TH3D *)file_unfold_test->Get("efficiency_ptzjt");
-  TH3D *h3_purity_ptzjt_nominal = (TH3D *)file_unfold->Get("purity_ptzjt");
+  //TH3D *h3_purity_ptzjt_nominal = (TH3D *)file_unfold->Get("purity_ptzjt");
   TH3D *h3_purity_ptzjt_test = (TH3D *)file_unfold_test->Get("purity_ptzjt"); 
   
-  TH3D *h3_eff_ptzr_nominal = (TH3D *)file_unfold->Get("efficiency_ptzr");
+  //TH3D *h3_eff_ptzr_nominal = (TH3D *)file_unfold->Get("efficiency_ptzr");
   TH3D *h3_eff_ptzr_test = (TH3D *)file_unfold_test->Get("efficiency_ptzr");
-  TH3D *h3_purity_ptzr_nominal = (TH3D *)file_unfold->Get("purity_ptzr");
+  //TH3D *h3_purity_ptzr_nominal = (TH3D *)file_unfold->Get("purity_ptzr");
   TH3D *h3_purity_ptzr_test = (TH3D *)file_unfold_test->Get("purity_ptzr");      
   
-  TH3D *h3_eff_ptjtr_nominal = (TH3D *)file_unfold->Get("efficiency_ptjtr");
+  //TH3D *h3_eff_ptjtr_nominal = (TH3D *)file_unfold->Get("efficiency_ptjtr");
   TH3D *h3_eff_ptjtr_test = (TH3D *)file_unfold_test->Get("efficiency_ptjtr");
-  TH3D *h3_purity_ptjtr_nominal = (TH3D *)file_unfold->Get("purity_ptjtr");
+  //TH3D *h3_purity_ptjtr_nominal = (TH3D *)file_unfold->Get("purity_ptjtr");
   TH3D *h3_purity_ptjtr_test = (TH3D *)file_unfold_test->Get("purity_ptjtr");    
 
-  TH2D *h2_eff_ptz_nominal = (TH2D *)file_unfold->Get("efficiency_ptz");
+  //TH2D *h2_eff_ptz_nominal = (TH2D *)file_unfold->Get("efficiency_ptz");
   TH2D *h2_eff_ptz_test = (TH2D *)file_unfold_test->Get("efficiency_ptz");
-  TH2D *h2_purity_ptz_nominal = (TH2D *)file_unfold->Get("purity_ptz");
+  //TH2D *h2_purity_ptz_nominal = (TH2D *)file_unfold->Get("purity_ptz");
   TH2D *h2_purity_ptz_test = (TH2D *)file_unfold_test->Get("purity_ptz"); 
   
-  TH2D *h2_eff_ptjt_nominal = (TH2D *)file_unfold->Get("efficiency_ptjt");
+  //TH2D *h2_eff_ptjt_nominal = (TH2D *)file_unfold->Get("efficiency_ptjt");
   TH2D *h2_eff_ptjt_test = (TH2D *)file_unfold_test->Get("efficiency_ptjt");
-  TH2D *h2_purity_ptjt_nominal = (TH2D *)file_unfold->Get("purity_ptjt");
+  //TH2D *h2_purity_ptjt_nominal = (TH2D *)file_unfold->Get("purity_ptjt");
   TH2D *h2_purity_ptjt_test = (TH2D *)file_unfold_test->Get("purity_ptjt");      
   
-  TH2D *h2_eff_ptr_nominal = (TH2D *)file_unfold->Get("efficiency_ptr");
+  //TH2D *h2_eff_ptr_nominal = (TH2D *)file_unfold->Get("efficiency_ptr");
   TH2D *h2_eff_ptr_test = (TH2D *)file_unfold_test->Get("efficiency_ptr");
-  TH2D *h2_purity_ptr_nominal = (TH2D *)file_unfold->Get("purity_ptr");
+  //TH2D *h2_purity_ptr_nominal = (TH2D *)file_unfold->Get("purity_ptr");
   TH2D *h2_purity_ptr_test = (TH2D *)file_unfold_test->Get("purity_ptr");    
 
 
   /////////////////////   Get Response Matrices /////////////////////////////////
 
-  RooUnfoldResponse *response_ptzjt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzjt");
+  //RooUnfoldResponse *response_ptzjt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzjt");
   RooUnfoldResponse *response_ptzjt_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptzjt");
   
-  RooUnfoldResponse *response_ptzr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzr");
+  //RooUnfoldResponse *response_ptzr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptzr");
   RooUnfoldResponse *response_ptzr_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptzr");
   
-  RooUnfoldResponse *response_ptjtr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjtr");
+  //RooUnfoldResponse *response_ptjtr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjtr");
   RooUnfoldResponse *response_ptjtr_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptjtr");      
   
-  RooUnfoldResponse *response_ptz_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
+  //RooUnfoldResponse *response_ptz_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptz");
   RooUnfoldResponse *response_ptz_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptz");
   
-  RooUnfoldResponse *response_ptjt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjt");
+  //RooUnfoldResponse *response_ptjt_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptjt");
   RooUnfoldResponse *response_ptjt_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptjt");
   
-  RooUnfoldResponse *response_ptr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptr");
+  //RooUnfoldResponse *response_ptr_nominal = (RooUnfoldResponse *)file_unfold->Get("Roo_response_ptr");
   RooUnfoldResponse *response_ptr_test = (RooUnfoldResponse *)file_unfold_test->Get("Roo_response_ptr");    
  
 
   /////////////////////  Correct Purities /////////////////////////////////
 
-  h3_ptzjt_final_nominal->Multiply(h3_ptzjt_final_nominal, h3_purity_ptzjt_nominal);
+  //h3_ptzjt_final_nominal->Multiply(h3_ptzjt_final_nominal, h3_purity_ptzjt_nominal);
   h3_ptzjt_final_test->Multiply(h3_ptzjt_final_test, h3_purity_ptzjt_test);
   
-  h3_ptzr_final_nominal->Multiply(h3_ptzr_final_nominal, h3_purity_ptzr_nominal);
+  //h3_ptzr_final_nominal->Multiply(h3_ptzr_final_nominal, h3_purity_ptzr_nominal);
   h3_ptzr_final_test->Multiply(h3_ptzr_final_test, h3_purity_ptzr_test);
   
-  h3_ptjtr_final_nominal->Multiply(h3_ptjtr_final_nominal, h3_purity_ptjtr_nominal);
+  //h3_ptjtr_final_nominal->Multiply(h3_ptjtr_final_nominal, h3_purity_ptjtr_nominal);
   h3_ptjtr_final_test->Multiply(h3_ptjtr_final_test, h3_purity_ptjtr_test);    
 
-  h2_ptz_final_nominal->Multiply(h2_ptz_final_nominal, h2_purity_ptz_nominal);
+  //h2_ptz_final_nominal->Multiply(h2_ptz_final_nominal, h2_purity_ptz_nominal);
   h2_ptz_final_test->Multiply(h2_ptz_final_test, h2_purity_ptz_test);
   
-  h2_ptjt_final_nominal->Multiply(h2_ptjt_final_nominal, h2_purity_ptjt_nominal);
+  //h2_ptjt_final_nominal->Multiply(h2_ptjt_final_nominal, h2_purity_ptjt_nominal);
   h2_ptjt_final_test->Multiply(h2_ptjt_final_test, h2_purity_ptjt_test);
   
-  h2_ptr_final_nominal->Multiply(h2_ptr_final_nominal, h2_purity_ptr_nominal);
+  //h2_ptr_final_nominal->Multiply(h2_ptr_final_nominal, h2_purity_ptr_nominal);
   h2_ptr_final_test->Multiply(h2_ptr_final_test, h2_purity_ptr_test);      
   
 
@@ -315,74 +316,107 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
 
   /////////////////////   Create Unfold Objects and unfold /////////////////////////////////
 
-  RooUnfoldBayes unfold_ptzjt_nominal(response_ptzjt_nominal, h3_ptzjt_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptzjt_nominal(response_ptzjt_nominal, h3_ptzjt_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptzjt_test(response_ptzjt_test, h3_ptzjt_final_test, NumIters_test);
   
-  RooUnfoldBayes unfold_ptzr_nominal(response_ptzr_nominal, h3_ptzr_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptzr_nominal(response_ptzr_nominal, h3_ptzr_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptzr_test(response_ptzr_test, h3_ptzr_final_test, NumIters_test);  
 
-  RooUnfoldBayes unfold_ptjtr_nominal(response_ptjtr_nominal, h3_ptjtr_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptjtr_nominal(response_ptjtr_nominal, h3_ptjtr_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptjtr_test(response_ptjtr_test, h3_ptjtr_final_test, NumIters_test);   
  
-  RooUnfoldBayes unfold_ptz_nominal(response_ptz_nominal, h2_ptz_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptz_nominal(response_ptz_nominal, h2_ptz_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptz_test(response_ptz_test, h2_ptz_final_test, NumIters_test);
   
-  RooUnfoldBayes unfold_ptjt_nominal(response_ptjt_nominal, h2_ptjt_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptjt_nominal(response_ptjt_nominal, h2_ptjt_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptjt_test(response_ptjt_test, h2_ptjt_final_test, NumIters_test);  
 
-  RooUnfoldBayes unfold_ptr_nominal(response_ptr_nominal, h2_ptr_final_nominal, NumIters);
+  //RooUnfoldBayes unfold_ptr_nominal(response_ptr_nominal, h2_ptr_final_nominal, NumIters);
   RooUnfoldBayes unfold_ptr_test(response_ptr_test, h2_ptr_final_test, NumIters_test);  
 
   cout << "Unfold successful" << endl;
   /////////////////////   Get Unfolded Distribution /////////////////////////////////
   // h1_jetpt_reco_purity_unfold = (TH1D*) unfold1D.Hreco();
 
-  h3_ptzjt_final_nominal = (TH3D *)unfold_ptzjt_nominal.Hreco();
+  //h3_ptzjt_final_nominal = (TH3D *)unfold_ptzjt_nominal.Hreco();
   h3_ptzjt_final_test = (TH3D *)unfold_ptzjt_test.Hreco();
   
-  h3_ptzr_final_nominal = (TH3D *)unfold_ptzr_nominal.Hreco();
+  //h3_ptzr_final_nominal = (TH3D *)unfold_ptzr_nominal.Hreco();
   h3_ptzr_final_test = (TH3D *)unfold_ptzr_test.Hreco();
   
-  h3_ptjtr_final_nominal = (TH3D *)unfold_ptjtr_nominal.Hreco();
+  //h3_ptjtr_final_nominal = (TH3D *)unfold_ptjtr_nominal.Hreco();
   h3_ptjtr_final_test = (TH3D *)unfold_ptjtr_test.Hreco();     
   
-  h2_ptz_final_nominal = (TH2D *)unfold_ptz_nominal.Hreco();
+  //h2_ptz_final_nominal = (TH2D *)unfold_ptz_nominal.Hreco();
   h2_ptz_final_test = (TH2D *)unfold_ptz_test.Hreco();
   
-  h2_ptjt_final_nominal = (TH2D *)unfold_ptjt_nominal.Hreco();
+  //h2_ptjt_final_nominal = (TH2D *)unfold_ptjt_nominal.Hreco();
   h2_ptjt_final_test = (TH2D *)unfold_ptjt_test.Hreco();
   
-  h2_ptr_final_nominal = (TH2D *)unfold_ptr_nominal.Hreco();
+  //h2_ptr_final_nominal = (TH2D *)unfold_ptr_nominal.Hreco();
   h2_ptr_final_test = (TH2D *)unfold_ptr_test.Hreco();    
  
 
   cout << "Got Unfolded Dist" << endl;
   /////////////////////  Correct for efficiency if needed /////////////////////////////////
 
-  h3_ptzjt_final_nominal->Divide(h3_ptzjt_final_nominal, h3_eff_ptzjt_nominal);
+  //h3_ptzjt_final_nominal->Divide(h3_ptzjt_final_nominal, h3_eff_ptzjt_nominal);
   h3_ptzjt_final_test->Divide(h3_ptzjt_final_test, h3_eff_ptzjt_test);
   
-  h3_ptzr_final_nominal->Divide(h3_ptzr_final_nominal, h3_eff_ptzr_nominal);
+  //h3_ptzr_final_nominal->Divide(h3_ptzr_final_nominal, h3_eff_ptzr_nominal);
   h3_ptzr_final_test->Divide(h3_ptzr_final_test, h3_eff_ptzr_test);
   
-  h3_ptjtr_final_nominal->Divide(h3_ptjtr_final_nominal, h3_eff_ptjtr_nominal);
+  //h3_ptjtr_final_nominal->Divide(h3_ptjtr_final_nominal, h3_eff_ptjtr_nominal);
   h3_ptjtr_final_test->Divide(h3_ptjtr_final_test, h3_eff_ptjtr_test); 
 
-  h2_ptz_final_nominal->Divide(h2_ptz_final_nominal, h2_eff_ptz_nominal);
+  //h2_ptz_final_nominal->Divide(h2_ptz_final_nominal, h2_eff_ptz_nominal);
   h2_ptz_final_test->Divide(h2_ptz_final_test, h2_eff_ptz_test);
   
-  h2_ptjt_final_nominal->Divide(h2_ptjt_final_nominal, h2_eff_ptjt_nominal);
+  //h2_ptjt_final_nominal->Divide(h2_ptjt_final_nominal, h2_eff_ptjt_nominal);
   h2_ptjt_final_test->Divide(h2_ptjt_final_test, h2_eff_ptjt_test);
   
-  h2_ptr_final_nominal->Divide(h2_ptr_final_nominal, h2_eff_ptr_nominal);
-  h2_ptr_final_test->Divide(h2_ptr_final_test, h2_eff_ptr_test);    
+  //h2_ptr_final_nominal->Divide(h2_ptr_final_nominal, h2_eff_ptr_nominal);
+  h2_ptr_final_test->Divide(h2_ptr_final_test, h2_eff_ptr_test);
   
   
   cout << "Corrected for Eff" << endl;
+
+
+  /////////////////////  Combine last 2 z bins to include z=1.0 entries in the 0.95-1.0 bin /////////////////////////////////
+
+  for (int iy = 1; iy <= h3_ptzjt_final_test->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzjt_final_test->GetNbinsZ(); iz++)
+    {
+      h3_ptzjt_final_test->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzjt_final_test->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzjt_final_test->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzjt_final_test->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzjt_final_test->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzjt_final_test->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzjt_final_test->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzjt_final_test->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }
+  
+  for (int iy = 1; iy <= h3_ptzr_final_test->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzr_final_test->GetNbinsZ(); iz++)
+    {
+      h3_ptzr_final_test->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzr_final_test->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzr_final_test->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzr_final_test->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzr_final_test->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzr_final_test->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzr_final_test->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzr_final_test->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }  
+  
+  for (int iy = 1; iy <= h2_ptz_final_test->GetNbinsY(); iy++)
+  {
+    h2_ptz_final_test->SetBinContent(zbinsize-1, iy, h2_ptz_final_test->GetBinContent(zbinsize-1, iy) + h2_ptz_final_test->GetBinContent(zbinsize, iy));
+    h2_ptz_final_test->SetBinError(zbinsize-1, iy, sqrt(pow(h2_ptz_final_test->GetBinError(zbinsize-1, iy),2) + pow(h2_ptz_final_test->GetBinError(zbinsize, iy),2)));
+    h2_ptz_final_test->SetBinContent(zbinsize, iy, 0.);
+    h2_ptz_final_test->SetBinError(zbinsize, iy, 0.); 
+  }
   /////////////////////   Normalize histograms /////////////////////////////////
 
-  int binlow = h2_ptz_nominal->GetYaxis()->FindBin(ptMin + 0.1);
-  int binhigh = h2_ptz_nominal->GetYaxis()->FindBin(ptMax - 0.1); 
+  int binlow = h2_ptz_final_nominal->GetYaxis()->FindBin(ptMin + 0.1);
+  int binhigh = h2_ptz_final_nominal->GetYaxis()->FindBin(ptMax - 0.1); 
 
   h3_ptzjt_final_nominal->GetZaxis()->SetRange(binlow, binhigh);
   h3_ptzjt_final_test->GetZaxis()->SetRange(binlow, binhigh);

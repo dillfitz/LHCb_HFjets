@@ -68,9 +68,13 @@ const int etabinsize = 6;
 const int pbinsize = 20;
 const int nTracksbinsize = 5;
 
-const int zbinsize = 15;
+const int zbinsize = 16;
 const int jtbinsize = 18;
 const int rbinsize = 11;
+
+const int zbinsize2D = 9;
+const int jtbinsize2D = 9;
+const int rbinsize2D = 9;
 
 const int zbinsize_50_100 = 7; // N bins = len(binedges) - 1
 const int jtbinsize_50_100 = 10;
@@ -92,13 +96,16 @@ double pt_binedges[ptbinsize + 1] = {pTLow, 10, 12, 15, 20, 30, 50, ptMax};
 double custompt_binedges[customptbinsize +1] = {pTLow, 15, 20, 30, 50, ptMax};
 double finept_binedges[fineptbinsize +1] = {pTLow, 15, 20, 30, 40, 50, 60, 70, 80, 100, 200};
 double longpt_binedges[longptbinsize + 1] = {15, 17, 20, 30, 40, 50, ptMax};
-
 double p_binedges[pbinsize + 1] = {2, 3, 4, 5, 7.5, 10, 12.5, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 250, 300, 500, 1000};
 double nTrack_binedges[nTracksbinsize + 1] = {0, 100, 200, 300, 400, 500};
 
-double z_binedges[zbinsize + 1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0};
+double z_binedges[zbinsize + 1] = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0, 1.1};
 double jt_binedges[jtbinsize + 1 ] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 10.0};
 double r_binedges[rbinsize +1 ] = {0.0, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5};
+
+double z_binedges2D[zbinsize2D + 1] = {0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1};
+double jt_binedges2D[jtbinsize2D + 1 ] = {0.0, 0.5, 1.0, 1.50, 2.0, 3.0, 4.0, 5.0, 7.0, 10.0};
+double r_binedges2D[rbinsize2D +1 ] = {0.0, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5};
 
 double z_binedges_50_100[zbinsize_50_100 + 1] = {0.0, 0.1, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0};
 double jt_binedges_50_100[jtbinsize_50_100 + 1 ] = {0.0, 0.5, 1.0, 1.50, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0};

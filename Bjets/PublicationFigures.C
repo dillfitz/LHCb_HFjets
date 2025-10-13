@@ -112,6 +112,38 @@ void PublicationFigures(int NumEvts = -1,
   TH2D *h2_zjt_sys[ptbinsize-1], *h2_zr_sys[ptbinsize-1], *h2_jtr_sys[ptbinsize-1];    
   TH2D *h2_zjt_tot_unc[ptbinsize-1], *h2_zr_tot_unc[ptbinsize-1], *h2_jtr_tot_unc[ptbinsize-1];     
 
+  /////////////////////  Combine last 2 z bins to include z=1.0 entries in the previous bin /////////////////////////////////
+
+  for (int iy = 1; iy <= h3_ptzjt_truth->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzjt_truth->GetNbinsZ(); iz++)
+    {
+      h3_ptzjt_truth->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzjt_truth->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzjt_truth->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzjt_truth->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzjt_truth->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzjt_truth->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzjt_truth->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzjt_truth->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }
+  
+  for (int iy = 1; iy <= h3_ptzr_truth->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzr_truth->GetNbinsZ(); iz++)
+    {
+      h3_ptzr_truth->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzr_truth->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzr_truth->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzr_truth->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzr_truth->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzr_truth->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzr_truth->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzr_truth->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }  
+  
+  for (int iy = 1; iy <= h2_ptz_truth->GetNbinsY(); iy++)
+  {
+    h2_ptz_truth->SetBinContent(zbinsize-1, iy, h2_ptz_truth->GetBinContent(zbinsize-1, iy) + h2_ptz_truth->GetBinContent(zbinsize, iy));
+    h2_ptz_truth->SetBinError(zbinsize-1, iy, sqrt(pow(h2_ptz_truth->GetBinError(zbinsize-1, iy),2) + pow(h2_ptz_truth->GetBinError(zbinsize, iy),2)));
+    h2_ptz_truth->SetBinContent(zbinsize, iy, 0.);
+    h2_ptz_truth->SetBinError(zbinsize, iy, 0.); 
+  }
+
   // h2_ptktdR_truth->GetYaxis()->SetRange(1, ktbinsize);
 
   // NormalizeHist(h2_ptktdR_truth);

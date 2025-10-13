@@ -189,7 +189,38 @@ void PlotFinal(int NumEvts = -1, int dataset = 91599, bool L0MuonDiMuon = false)
 
   
   cout << "Corrected for Eff" << endl;
+
+  /////////////////////  Combine last 2 z bins to include z=1.0 entries in the 0.95-1.0 bin /////////////////////////////////
+
+  for (int iy = 1; iy <= h3_ptzjt_final->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzjt_final->GetNbinsZ(); iz++)
+    {
+      h3_ptzjt_final->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzjt_final->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzjt_final->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzjt_final->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzjt_final->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzjt_final->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzjt_final->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzjt_final->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }
   
+  for (int iy = 1; iy <= h3_ptzr_final->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzr_final->GetNbinsZ(); iz++)
+    {
+      h3_ptzr_final->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzr_final->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzr_final->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzr_final->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzr_final->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzr_final->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzr_final->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzr_final->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }  
+  
+  for (int iy = 1; iy <= h2_ptz_final->GetNbinsY(); iy++)
+  {
+    h2_ptz_final->SetBinContent(zbinsize-1, iy, h2_ptz_final->GetBinContent(zbinsize-1, iy) + h2_ptz_final->GetBinContent(zbinsize, iy));
+    h2_ptz_final->SetBinError(zbinsize-1, iy, sqrt(pow(h2_ptz_final->GetBinError(zbinsize-1, iy),2) + pow(h2_ptz_final->GetBinError(zbinsize, iy),2)));
+    h2_ptz_final->SetBinContent(zbinsize, iy, 0.);
+    h2_ptz_final->SetBinError(zbinsize, iy, 0.); 
+  }
   
   /////////////////////   Write corrected histograms out for later processing ////////////////////
   

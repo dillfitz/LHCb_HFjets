@@ -301,12 +301,12 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH2D *h2_ptjt_sweight = new TH2D("ptjt_sweight", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptr_sweight = new TH2D("ptr_sweight", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
-  TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptzjt_sweight = new TH3D("ptzjt_sweight", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptzr_sweight = new TH3D("ptzr_sweight", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptjtr_sweight = new TH3D("ptjtr_sweight", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+  TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T} [GeV/c]",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptzjt_sweight = new TH3D("ptzjt_sweight", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptzr_sweight = new TH3D("ptzr_sweight", ";z;r;p_{T} [GeV/c]",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptjtr_sweight = new TH3D("ptjtr_sweight", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
     
   TH2D *h2_ptz_uncorrected = new TH2D("ptz_uncorrected", ";z;p_{T,jet} [GeV/c]", zbinsize, z_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptjt_uncorrected = new TH2D("ptjt_uncorrected", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
@@ -316,9 +316,9 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH2D *h2_ptjt_uncorrected_nomasscond = new TH2D("ptjt_uncorrected_nomasscond", ";j_{T} [GeV/c];p_{T,jet} [GeV/c]", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptr_uncorrected_nomasscond = new TH2D("ptr_uncorrected_nomasscond", ";r;p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
-  TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z;r;p_{T} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptjtr_uncorrected = new TH3D("ptjtr_uncorrected", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );    
+  TH3D *h3_ptzjt_uncorrected = new TH3D("ptzjt_uncorrected", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptzr_uncorrected = new TH3D("ptzr_uncorrected", ";z;r;p_{T} [GeV/c]",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptjtr_uncorrected = new TH3D("ptjtr_uncorrected", ";j_{T} [GeV/c];r;p_{T} [GeV/c]",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );    
      
   TH1D *h1_z_ptHFcut_g5 = new TH1D("z_ptHFcut_g5", ";z;", zbinsize, z_binedges);
   TH1D *h1_z_ptHFcut_l5 = new TH1D("z_ptHFcut_l5", ";z;", zbinsize, z_binedges);    
@@ -338,9 +338,9 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH2D *h2_ptjt_comb = new TH2D("ptjt_comb", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptr_comb = new TH2D("ptr_comb", "", rbinsize, r_binedges, ptbinsize, pt_binedges);
     
-  TH3D *h3_ptzjt_comb = new TH3D("ptzjt_comb", "", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptzr_comb = new TH3D("ptzr_comb ", "",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-  TH3D *h3_ptjtr_comb = new TH3D("ptjtr_comb", "",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+  TH3D *h3_ptzjt_comb = new TH3D("ptzjt_comb", "", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptzr_comb = new TH3D("ptzr_comb ", "",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+  TH3D *h3_ptjtr_comb = new TH3D("ptjtr_comb", "",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
 
   TH2D *h2_ptz_comb_nobkgweight = new TH2D("ptz_comb_nobkgweight", "", zbinsize, z_binedges, ptbinsize, pt_binedges);
   TH2D *h2_ptjt_comb_nobkgweight = new TH2D("ptjt_comb_nobkgweight", "", jtbinsize, jt_binedges, ptbinsize, pt_binedges);

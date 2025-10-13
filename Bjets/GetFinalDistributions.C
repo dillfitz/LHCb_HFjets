@@ -114,17 +114,47 @@ void GetFinalDistributions(int NumEvts = -1,
   TH2D *h2_zjt_sys[ptbinsize-1], *h2_zr_sys[ptbinsize-1], *h2_jtr_sys[ptbinsize-1];    
   TH2D *h2_zjt_tot_unc[ptbinsize-1], *h2_zr_tot_unc[ptbinsize-1], *h2_jtr_tot_unc[ptbinsize-1];     
 
-  TRatioPlot *rp[10000];
-  // h2_ptktdR_truth->GetYaxis()->SetRange(1, ktbinsize);
 
-  // NormalizeHist(h2_ptktdR_truth);
-  // NormalizeHist(h2_ptzdR_truth);
+  /////////////////////  Combine last 2 z bins to include z=1.0 entries in the 0.95-1.0 bin /////////////////////////////////
+
+  for (int iy = 1; iy <= h3_ptzjt_truth->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzjt_truth->GetNbinsZ(); iz++)
+    {
+      h3_ptzjt_truth->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzjt_truth->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzjt_truth->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzjt_truth->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzjt_truth->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzjt_truth->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzjt_truth->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzjt_truth->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }
+  
+  for (int iy = 1; iy <= h3_ptzr_truth->GetNbinsY(); iy++)
+  {
+    for (int iz = 1; iz <= h3_ptzr_truth->GetNbinsZ(); iz++)
+    {
+      h3_ptzr_truth->SetBinContent(zbinsize2D-1, iy, iz, h3_ptzr_truth->GetBinContent(zbinsize2D-1, iy, iz) + h3_ptzr_truth->GetBinContent(zbinsize2D, iy, iz));
+      h3_ptzr_truth->SetBinError(zbinsize2D-1, iy, iz, sqrt(pow(h3_ptzr_truth->GetBinError(zbinsize2D-1, iy, iz),2) + pow(h3_ptzr_truth->GetBinError(zbinsize2D, iy, iz),2)));
+      h3_ptzr_truth->SetBinContent(zbinsize2D, iy, iz, 0.);
+      h3_ptzr_truth->SetBinError(zbinsize2D, iy, iz, 0.);
+    }
+  }  
+  
+  for (int iy = 1; iy <= h2_ptz_truth->GetNbinsY(); iy++)
+  {
+    std::cout << " Bin content for 0.95 - 1.0 : " << h2_ptz_truth->GetBinContent(zbinsize-1, iy) << " Bin error for 0.95 - 1.0 : " << h2_ptz_truth->GetBinError(zbinsize-1, iy) << std::endl;
+    std::cout << " Bin content for 1.0 - 1.1 : " << h2_ptz_truth->GetBinContent(zbinsize, iy) << " Bin error for 1.0 - 1.1 : " << h2_ptz_truth->GetBinError(zbinsize, iy) << std::endl;
+    h2_ptz_truth->SetBinContent(zbinsize-1, iy, h2_ptz_truth->GetBinContent(zbinsize-1, iy) + h2_ptz_truth->GetBinContent(zbinsize, iy));
+    h2_ptz_truth->SetBinError(zbinsize-1, iy, sqrt(pow(h2_ptz_truth->GetBinError(zbinsize-1, iy),2) + pow(h2_ptz_truth->GetBinError(zbinsize, iy),2)));
+    //std::cout << " Bin error for 0.95 - 1.0 : " << h2_ptz_truth->GetBinError(zbinsize-1) << " 1.0 - 1.1 : " << h2_ptz_truth->GetBinError(zbinsize) << std::endl;
+    h2_ptz_truth->SetBinContent(zbinsize, iy, 0.);
+    h2_ptz_truth->SetBinError(zbinsize, iy, 0.); 
+  }
+
   ////
 
   //---- paint setup...
   //
   int ican = -1, iframe = -1, itext = -1;
-  int irp = 0;
   TCanvas *ccan[1000];
   TH1F *frame[1000];
   TLatex *text[1000];
@@ -445,7 +475,6 @@ void GetFinalDistributions(int NumEvts = -1,
     }
     ccan[ican]->SaveAs(Form(loc_plots + "z_final_w_sys_pt%d.png",i));
         
-    ++irp;
   }     
   textables << "\\end{longtable}\n";
 
@@ -597,8 +626,6 @@ void GetFinalDistributions(int NumEvts = -1,
     }
  
 
-    // rp[irp]->GetUpperPad()->Update();
-
     bot_pad->cd();
     h1_jt_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
     h1_jt_data_sys_ratio->GetYaxis()->SetTitleOffset(0.5);
@@ -635,8 +662,6 @@ void GetFinalDistributions(int NumEvts = -1,
     }      
     ccan[ican]->SaveAs(Form(loc_plots + "jt_final_w_sys_pt%d.png",i));   
         
-    ++irp;  
-
   }
   textables << "\\end{longtable}\n";
 
@@ -767,7 +792,6 @@ void GetFinalDistributions(int NumEvts = -1,
       legend_stack_r->Draw("SAME");
     }
 
-    //rp[irp]->GetUpperPad()->Update();
 
     bot_pad->cd();
     h1_r_data_sys_ratio->GetYaxis()->SetTitle("Sim/Data");
@@ -805,7 +829,6 @@ void GetFinalDistributions(int NumEvts = -1,
       ccan[ican]->Print(plotfilePDF.Data());
     }
     ccan[ican]->SaveAs(Form(loc_plots + "r_final_w_sys_pt%d.png",i));     
-    ++irp;
   }  
   textables << "\\end{longtable}\n";
 

@@ -189,13 +189,13 @@ void MCSimpleObservables(int NumEvts = -1, int dataset = 91599,
     TH2D *h2_ptr_gluon = new TH2D("h2_ptr_gluon", ";r; p_{T,jet} [GeV/c]", rbinsize, r_binedges, ptbinsize, pt_binedges);  
     TH2D *h2_ptr_gluon_ratio = (TH2D*)h2_ptr_gluon->Clone("h2_ptr_gluon_ratio");         
       
-    TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T,jet} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt = new TH3D("ptzjt", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr = new TH3D("ptzr", ";z;r;p_{T,jet} [GeV/c]",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr = new TH3D("ptjtr", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
      
-    TH3D *h3_ptzjt_gluon = new TH3D("ptzjt_gluon", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize, z_binedges, jtbinsize, jt_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptzr_gluon = new TH3D("ptzr_gluon", ";z;r;p_{T,jet} [GeV/c]",  zbinsize, z_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
-    TH3D *h3_ptjtr_gluon = new TH3D("ptjtr_gluon", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize, jt_binedges, rbinsize, r_binedges, ptbinsize, pt_binedges );
+    TH3D *h3_ptzjt_gluon = new TH3D("ptzjt_gluon", ";z;j_{T} [GeV/c];p_{T,jet} [GeV/c]", zbinsize2D, z_binedges2D, jtbinsize2D, jt_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_ptzr_gluon = new TH3D("ptzr_gluon", ";z;r;p_{T,jet} [GeV/c]",  zbinsize2D, z_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
+    TH3D *h3_ptjtr_gluon = new TH3D("ptjtr_gluon", ";j_{T} [GeV/c];r;p_{T,jet} [GeV/c]",  jtbinsize2D, jt_binedges2D, rbinsize2D, r_binedges2D, ptbinsize, pt_binedges );
     
 //    TH1D *h1_frag_jt = new TH1D("frag_jt", "", 30, 0, 12);
 //    TH1D *h1_frag_z = new TH1D("frag_z", "", zbinsize, z_binedges);
