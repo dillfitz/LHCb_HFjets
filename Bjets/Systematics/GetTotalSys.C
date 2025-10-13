@@ -654,18 +654,19 @@ void GetTotalSys(int NumEvts = -1,
   GetSqrtHist(h1_jt_ptbinned_sys_iter[i-1]);  
 
   // Combine unfolding uncertainties
-  for (int xi = 0; xi < h1_jt_ptbinned_sys_closure[i-1]->GetNbinsX(); ++xi)
-  {
-    h1_jt_ptbinned_sys_closure[i-1]->SetBinContent(xi, h1_jt_ptbinned_sys_closure[i-1]->GetBinContent(xi) - h1_jt_ptbinned_sys_closure[i-1]->GetBinError(xi));
-  }
-  for (int xi = 0; xi < h1_z_ptbinned_sys_shapeclosure[i-1]->GetNbinsX(); ++xi)
-  {
-    h1_jt_ptbinned_sys_shapeclosure[i-1]->SetBinContent(xi, h1_jt_ptbinned_sys_shapeclosure[i-1]->GetBinContent(xi) - h1_jt_ptbinned_sys_shapeclosure[i-1]->GetBinError(xi));
-  }
-  MakeHistPositive(h1_jt_ptbinned_sys_closure[i-1]);
-  MakeHistPositive(h1_jt_ptbinned_sys_shapeclosure[i-1]);
   h1_jt_ptbinned_sys_closure_sq[i-1]->Multiply(h1_jt_ptbinned_sys_closure[i-1], h1_jt_ptbinned_sys_closure[i-1]);
   h1_jt_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h1_jt_ptbinned_sys_shapeclosure[i-1], h1_jt_ptbinned_sys_shapeclosure[i-1]);
+
+  for (int xi = 0; xi < h1_jt_ptbinned_sys_closure_sq[i-1]->GetNbinsX(); ++xi)
+  {
+    h1_jt_ptbinned_sys_closure_sq[i-1]->SetBinContent(xi, h1_jt_ptbinned_sys_closure_sq[i-1]->GetBinContent(xi) - h1_jt_ptbinned_sys_closure_sq[i-1]->GetBinError(xi));
+  }
+  for (int xi = 0; xi < h1_z_ptbinned_sys_shapeclosure_sq[i-1]->GetNbinsX(); ++xi)
+  {
+    h1_jt_ptbinned_sys_shapeclosure_sq[i-1]->SetBinContent(xi, h1_jt_ptbinned_sys_shapeclosure_sq[i-1]->GetBinContent(xi) - h1_jt_ptbinned_sys_shapeclosure_sq[i-1]->GetBinError(xi));
+  }
+  MakeHistPositive(h1_jt_ptbinned_sys_closure_sq[i-1]);
+  MakeHistPositive(h1_jt_ptbinned_sys_shapeclosure_sq[i-1]);
   h1_jt_ptbinned_sys_unfold_sq[i-1] = (TH1D *)h1_jt_ptbinned_sys_closure_sq[i-1]->Clone(Form("jt_pt%d_sys_unfold_sq", i)); 
   h1_jt_ptbinned_sys_unfold_sq[i-1]->Add(h1_jt_ptbinned_sys_shapeclosure_sq[i-1]);
   h1_jt_ptbinned_sys_unfold_sq[i-1]->Add(h1_jt_ptbinned_sys_prior_sq[i-1]);

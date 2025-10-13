@@ -980,8 +980,8 @@ void ClosureTest(int NumEvts = -1,
   // Divide by efficiency  
   h3_ptzr_final->Divide(h3_ptzr_final, h3_eff_ptzr);
 
-  int binlowr2D = h3_ptzjt->GetYaxis()->FindBin(r_binedges2D[0]);
-  int binhighr2D = h3_ptzjt->GetYaxis()->FindBin(r_binedges2D[rbinsize2D-1]);
+  int binlowr2D = h3_ptzr->GetYaxis()->FindBin(r_binedges2D[0]);
+  int binhighr2D = h3_ptzr->GetYaxis()->FindBin(r_binedges2D[rbinsize2D-1]);
 
   h3_ptzr_final->GetZaxis()->SetRangeUser(ptMin, ptMax);
   h3_ptzr_truth->GetZaxis()->SetRangeUser(ptMin, ptMax);
