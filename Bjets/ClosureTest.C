@@ -785,12 +785,12 @@ void ClosureTest(int NumEvts = -1,
 
   TH2D *h2_zjt_ratio = (TH2D *)h2_zjt->Clone("h2_zjt_ratio");
   TH2D *h2_zjt_ratio_final = (TH2D *)h2_zjt->Clone("h2_zjt_ratio_final");
-  //TH2D *h2_zjt_pull_final = (TH2D *)h2_zjt->Clone("h2_zjt_pull_final");
+  TH2D *h2_zjt_pullratio_final = (TH2D *)h2_zjt->Clone("h2_zjt_pullratio_final");
 
   //TH2D *h2_zjt_pull = (TH2D *)h2_zjt_truth->Clone("zjt_pull");
 
   //TH1D *h1_zjt_pulldist = new TH1D("zjt_pulldist", "", 20, -4.5, 4.5);
-  //TH1D *h1_zjt_pulldist_final = new TH1D("zjt_pulldist_final", "", 20, -4.5, 4.5);
+  TH1D *h1_zjt_pulldist_final = new TH1D("zjt_pulldist_final", "", 20, -4.5, 4.5);
   //TH1D *h1_ptzjt_pulldist_vecfinal = new TH1D("ptzjt_pulldist_vecfinal", "", 20, -4.5, 4.5);
 
   h2_zjt_ratio->Divide(h2_zjt, h2_zjt_truth);
@@ -799,11 +799,11 @@ void ClosureTest(int NumEvts = -1,
   h2_zjt_ratio_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
   h2_zjt_ratio_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
-  //h2_zjt_pull_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);      
-  //h2_zjt_pull_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
+  h2_zjt_pullratio_final->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);      
+  h2_zjt_pullratio_final->GetXaxis()->SetRange(binlowz2D, binhighz2D);
 
   //GetPullsRatio(h2_zjt_ratio, h2_zjt_pull, h1_zjt_pulldist);
-  //GetPullsRatio(h2_zjt_ratio_final, h2_zjt_pull_final, h1_zjt_pulldist_final);
+  GetPullsRatio(h2_zjt_ratio_final, h2_zjt_pullratio_final, h1_zjt_pulldist_final);
 
   //double zjt_pullperf1 = GetPullPerformance(h2_zjt_pull, 1);
   //double zjt_pullperf2 = GetPullPerformance(h2_zjt_pull, 2);
@@ -813,6 +813,10 @@ void ClosureTest(int NumEvts = -1,
   
   h2_zjt_ratio_final->SetOption("COLZ, text");  
   h2_zjt_ratio_final->Write();
+
+  h2_zjt_pullratio_final->SetOption("COLZ, text");
+  h2_zjt_pullratio_final->Write();
+  h1_zjt_pulldist_final->Write();
 
   
   ////////////////////////////////////
@@ -858,7 +862,8 @@ void ClosureTest(int NumEvts = -1,
     //h2_zjt_pull_smear->Write(); 
     
     // pT bins [5-10, 10-12, 12-15, 15-20, 20-30, 30-50, 50-100]
-    TH2D *h2_zjt_ptbinned[ptbinsize-1], *h2_zjt_truth_ptbinned[ptbinsize-1], *h2_zjt_ptbinned_ratio[ptbinsize-1];
+    TH2D *h2_zjt_ptbinned[ptbinsize-1], *h2_zjt_truth_ptbinned[ptbinsize-1], *h2_zjt_ptbinned_ratio[ptbinsize-1], *h2_zjt_ptbinned_pullratio[ptbinsize-1];
+    TH1D *h1_zjt_ptbinned_pulldist[ptbinsize-1];
     for (int j=1; j < ptbinsize; ++j)
     {
       h3_ptzjt_smear->GetZaxis()->SetRange(j+1, j+1);
@@ -867,6 +872,10 @@ void ClosureTest(int NumEvts = -1,
       h2_zjt_ptbinned[j-1]->SetName(Form("zjt_smear%d_pt%d", i,j)); 
       h2_zjt_truth_ptbinned[j-1] = (TH2D *)h3_ptzjt_truth->Project3D("yx");
       h2_zjt_truth_ptbinned[j-1]->SetName(Form("zjt_truth_smear%d_pt%d", i,j));
+      h2_zjt_ptbinned_pullratio[j-1] = (TH2D *)h2_zjt_ptbinned[j-1]->Clone(Form("zjt_pullratio_smear%d_pt%d", i, j));
+      h1_zjt_ptbinned_pulldist[j-1] = new TH1D(Form("zjt_pulldist_smear%d_pt%d", i, j), ";pulls", 20, -4.5, 4.5);
+
+
       h2_zjt_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zjt_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zjt_ptbinned[j-1]->GetXaxis()->SetTitle("z");
@@ -874,7 +883,9 @@ void ClosureTest(int NumEvts = -1,
       h2_zjt_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_zjt_ptbinned[j-1]->GetYaxis()->SetTitle("j_{T}");
-      h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetTitle("j_{T}");        
+      h2_zjt_truth_ptbinned[j-1]->GetYaxis()->SetTitle("j_{T}");    
+      h2_zjt_ptbinned_pullratio[j-1]->GetYaxis()->SetRange(binlowjt2D, binhighjt2D);      
+      h2_zjt_ptbinned_pullratio[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);    
         
       //h2_zjt_ptbinned[j-1]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
       //h2_zjt_truth_ptbinned[j-1]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
@@ -883,7 +894,13 @@ void ClosureTest(int NumEvts = -1,
       h2_zjt_ptbinned_ratio[j-1] = (TH2D *)h2_zjt_ptbinned[j-1]->Clone(Form("zjt_ratio_smear%d_pt%d", i,j));
       h2_zjt_ptbinned_ratio[j-1]->Divide(h2_zjt_ptbinned[j-1], h2_zjt_truth_ptbinned[j-1]);     
       h2_zjt_ptbinned_ratio[j-1]->SetOption("COLZ, text");         
-      h2_zjt_ptbinned_ratio[j-1]->Write();     
+      h2_zjt_ptbinned_ratio[j-1]->Write();
+      
+      GetPullsRatio(h2_zjt_ptbinned_ratio[j-1], h2_zjt_ptbinned_pullratio[j-1], h1_zjt_ptbinned_pulldist[j-1]);
+      h2_zjt_ptbinned_pullratio[j-1]->SetOption("COLZ, text");
+      h2_zjt_ptbinned_pullratio[j-1]->Write();
+      h1_zjt_ptbinned_pulldist[j-1]->Write();
+
         
       sys_title = DoShapeClosure ? "shape nonclosure" : "nonclosure";
       sys_title += Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]);        
@@ -1081,7 +1098,8 @@ void ClosureTest(int NumEvts = -1,
     //h2_zr_pull_smear->Write();   
 
     // pT bins [5-10, 10-12, 12-15, 15-20, 20-30, 30-50, 50-100]
-    TH2D *h2_zr_ptbinned[ptbinsize-1], *h2_zr_truth_ptbinned[ptbinsize-1], *h2_zr_ptbinned_ratio[ptbinsize-1];
+    TH2D *h2_zr_ptbinned[ptbinsize-1], *h2_zr_truth_ptbinned[ptbinsize-1], *h2_zr_ptbinned_ratio[ptbinsize-1], *h2_zr_ptbinned_pullratio[ptbinsize-1];
+    TH1D *h1_zr_ptbinned_pulldist[ptbinsize-1];
     for (int j=1; j < ptbinsize; ++j)
     {
       h3_ptzr_smear->GetZaxis()->SetRange(j+1, j+1);
@@ -1090,6 +1108,9 @@ void ClosureTest(int NumEvts = -1,
       h2_zr_ptbinned[j-1]->SetName(Form("zr_smear%d_pt%d", i,j));
       h2_zr_truth_ptbinned[j-1] = (TH2D *)h3_ptzr_truth->Project3D("yx");
       h2_zr_truth_ptbinned[j-1]->SetName(Form("zr_truth_smear%d_pt%d", i,j));
+      h2_zr_ptbinned_pullratio[j-1] = (TH2D *)h2_zr_ptbinned[j-1]->Clone(Form("zr_pullratio_smear%d_pt%d", i, j));
+      h1_zr_ptbinned_pulldist[j-1] = new TH1D(Form("zr_pulldist_smear%d_pt%d", i, j), ";pulls", 20, -4.5, 4.5);
+
       h2_zr_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);
       h2_zr_ptbinned[j-1]->GetXaxis()->SetTitle("z");
@@ -1097,7 +1118,9 @@ void ClosureTest(int NumEvts = -1,
       h2_zr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_zr_ptbinned[j-1]->GetYaxis()->SetTitle("r");
-      h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");        
+      h2_zr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");
+      h2_zr_ptbinned_pullratio[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);      
+      h2_zr_ptbinned_pullratio[j-1]->GetXaxis()->SetRange(binlowz2D, binhighz2D);           
         
       //h2_zr_ptbinned[j-1]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
       //h2_zr_truth_ptbinned[j-1]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
@@ -1106,7 +1129,12 @@ void ClosureTest(int NumEvts = -1,
       h2_zr_ptbinned_ratio[j-1] = (TH2D *)h2_zr_ptbinned[j-1]->Clone(Form("zr_ratio_smear%d_pt%d", i,j));
       h2_zr_ptbinned_ratio[j-1]->Divide(h2_zr_ptbinned[j-1], h2_zr_truth_ptbinned[j-1]);     
       h2_zr_ptbinned_ratio[j-1]->SetOption("COLZ, text");         
-      h2_zr_ptbinned_ratio[j-1]->Write();        
+      h2_zr_ptbinned_ratio[j-1]->Write();   
+      
+      GetPullsRatio(h2_zr_ptbinned_ratio[j-1], h2_zr_ptbinned_pullratio[j-1], h1_zr_ptbinned_pulldist[j-1]);
+      h2_zr_ptbinned_pullratio[j-1]->SetOption("COLZ, text");
+      h2_zr_ptbinned_pullratio[j-1]->Write();
+      h1_zr_ptbinned_pulldist[j-1]->Write();
 
       sys_title = DoShapeClosure ? "shape nonclosure" : "nonclosure";
       sys_title += Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]);          
@@ -1282,7 +1310,8 @@ void ClosureTest(int NumEvts = -1,
     h2_jtr_ratio_smear->Write();      
     //h2_jtr_pull_smear->Write();     
     
-    TH2D *h2_jtr_ptbinned[ptbinsize-1], *h2_jtr_truth_ptbinned[ptbinsize-1], *h2_jtr_ptbinned_ratio[ptbinsize-1];
+    TH2D *h2_jtr_ptbinned[ptbinsize-1], *h2_jtr_truth_ptbinned[ptbinsize-1], *h2_jtr_ptbinned_ratio[ptbinsize-1], *h2_jtr_ptbinned_pullratio[ptbinsize-1];
+    TH1D *h1_jtr_ptbinned_pulldist[ptbinsize-1];
     for (int j=1; j < ptbinsize; ++j)
     {
       h3_ptjtr_smear->GetZaxis()->SetRange(j+1, j+1);
@@ -1291,6 +1320,9 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_ptbinned[j-1]->SetName(Form("jtr_smear%d_pt%d", i,j));
       h2_jtr_truth_ptbinned[j-1] = (TH2D *)h3_ptjtr_truth->Project3D("yx");
       h2_jtr_truth_ptbinned[j-1]->SetName(Form("jtr_truth_smear%d_pt%d", i,j));
+      h2_jtr_ptbinned_pullratio[j-1] = (TH2D *)h2_jtr_ptbinned[j-1]->Clone(Form("jtr_pullratio_smear%d_pt%d", i, j));
+      h1_jtr_ptbinned_pulldist[j-1] = new TH1D(Form("jtr_pulldist_smear%d_pt%d", i, j), ";pulls", 20, -4.5, 4.5);
+
       h2_jtr_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_jtr_truth_ptbinned[j-1]->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);
       h2_jtr_ptbinned[j-1]->GetXaxis()->SetTitle("j_{T}");
@@ -1298,7 +1330,10 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);
       h2_jtr_ptbinned[j-1]->GetYaxis()->SetTitle("r");
-      h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");        
+      h2_jtr_truth_ptbinned[j-1]->GetYaxis()->SetTitle("r");
+      h2_jtr_ptbinned_pullratio[j-1]->GetYaxis()->SetRange(binlowr2D, binhighr2D);      
+      h2_jtr_ptbinned_pullratio[j-1]->GetXaxis()->SetRange(binlowjt2D, binhighjt2D);   
+              
         
       //h2_jtr_ptbinned[j-1]->Scale(1./h1_jetpt_final->Integral(j+1, j+1));
       //h2_jtr_truth_ptbinned[j-1]->Scale(1./h1_jetpt_truth->Integral(j+1, j+1));
@@ -1308,7 +1343,12 @@ void ClosureTest(int NumEvts = -1,
       h2_jtr_ptbinned_ratio[j-1]->Divide(h2_jtr_ptbinned[j-1], h2_jtr_truth_ptbinned[j-1]);     
       h2_jtr_ptbinned_ratio[j-1]->SetOption("COLZ, text");        
       //h2_jtr_ptbinned_ratio[j-1]->Write(Form("zjt_ratio_smear%d_pt%d", i,j));
-      h2_jtr_ptbinned_ratio[j-1]->Write();           
+      h2_jtr_ptbinned_ratio[j-1]->Write();     
+      
+      GetPullsRatio(h2_jtr_ptbinned_ratio[j-1], h2_jtr_ptbinned_pullratio[j-1], h1_jtr_ptbinned_pulldist[j-1]);
+      h2_jtr_ptbinned_pullratio[j-1]->SetOption("COLZ, text");
+      h2_jtr_ptbinned_pullratio[j-1]->Write();
+      h1_jtr_ptbinned_pulldist[j-1]->Write();
       
       sys_title = DoShapeClosure ? "shape nonclosure" : "nonclosure";
       sys_title += Form(" %.1f < p_{T, j} < %.1f GeV", pt_binedges[j], pt_binedges[j + 1]);          

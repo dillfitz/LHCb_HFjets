@@ -176,6 +176,25 @@ void GetPullsRatio(TH2 *hvals, TH2 *hpull, TH1 *h1, int xbinsize, int ybinsize)
     }
   }
 }
+
+void GetClosurePulls(TH2 *hvals, TH2 *hpull, TH1 *h1)
+{
+for (int i = 1; i < hvals->GetNbinsX() + 1; i++)
+{
+    for (int j = 1; j < hvals->GetNbinsY() + 1; j++)
+    {
+    double err = hvals->GetBinError(i, j);
+    double content = hvals->GetBinContent(i, j);
+    if (content == 0)
+        continue;
+    //double pull = (content - 1) / err;
+    double pull = content / err;
+    hpull->SetBinContent(i, j, pull);
+    h1->Fill(pull);
+    }
+}
+}
+
 void GetMSE(TH2 *hunfold, TH2 *htrue, TH2 *hmse)
 {
   for (int i = 1; i < hunfold->GetNbinsX() + 1; i++)

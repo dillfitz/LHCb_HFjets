@@ -847,6 +847,8 @@ void SimpleUnfold(int NumEvts = -1,
     
     h2_purity_ptz->Write("purity_ptz");
     h2_purity_ptjt->Write("purity_ptjt");
+    h2_num_purity_ptjt->Write("num_purity_ptjt");
+    h2_denom_purity_ptjt->Write("denom_purity_ptjt");
     h2_purity_ptr->Write("purity_ptr");
     
     h3_efficiency_ptzjt->Write("efficiency_ptzjt");

@@ -1,3 +1,6 @@
+#include "Settings.h"
+#include "../Helpers.h"
+
 void analyzeStatClosure()
 {
     TH1D *z3_pt4 = new TH1D("z3_pt4", "0.2 < z < 0.3, 20 < p_{T} < 30;ratio;occurances", 20, 0.5, 1.5);
@@ -24,5 +27,41 @@ void analyzeStatClosure()
     z10_pt4->Draw();
     c0->SaveAs("../../plots/BjetsMC/stat_closure_analysis/z10_pt4.png");
     z10_pt4->Write();
+
+    TH2D *h2_zjt_closure_error[ptbinsize-1], *h2_zr_closure_error[ptbinsize-1], *h2_jtr_closure_error[ptbinsize-1];
+    TH2D *h2_zjt_closure_error_pulls[ptbinsize-1], *h2_zr_closure_error_pulls[ptbinsize-1], *h2_jtr_closure_error_pulls[ptbinsize-1];
+    TH1D *h1_zjt_closure_error_pulldist[ptbinsize-1], *h1_zr_closure_error_pulldist[ptbinsize-1], *h1_jtr_closure_error_pulldist[ptbinsize-1];
+    for (int i=1; i<ptbinsize; i++)
+    {
+        h2_zjt_closure_error[i-1] = (TH2D*)infile->Get(Form("zjt_pt%d_closure_error",i));
+        h2_zr_closure_error[i-1] = (TH2D*)infile->Get(Form("zr_pt%d_closure_error",i));
+        h2_jtr_closure_error[i-1] = (TH2D*)infile->Get(Form("jtr_pt%d_closure_error",i));
+
+        h2_zjt_closure_error_pulls[i-1] = (TH2D*)h2_zjt_closure_error[i-1]->Clone(Form("zjt_pt%d_closure_error_pulls",i));
+        h2_zr_closure_error_pulls[i-1] = (TH2D*)h2_zr_closure_error[i-1]->Clone(Form("zr_pt%d_closure_error_pulls",i));
+        h2_jtr_closure_error_pulls[i-1] = (TH2D*)h2_jtr_closure_error[i-1]->Clone(Form("jtr_pt%d_closure_error_pulls",i));
+
+        h1_zjt_closure_error_pulldist[i-1] = new TH1D(Form("zjt_pt%d_closure_error_pulldist", i), ";pulls", 20, -4.5, 4.5);
+        h1_zr_closure_error_pulldist[i-1] = new TH1D(Form("zr_pt%d_closure_error_pulldist", i), ";pulls", 20, -4.5, 4.5);
+        h1_jtr_closure_error_pulldist[i-1] = new TH1D(Form("jtr_pt%d_closure_error_pulldist", i), ";pulls", 20, -4.5, 4.5);
+
+        GetClosurePulls(h2_zjt_closure_error[i-1], h2_zjt_closure_error_pulls[i-1], h1_zjt_closure_error_pulldist[i-1]);
+        GetClosurePulls(h2_zr_closure_error[i-1], h2_zr_closure_error_pulls[i-1], h1_zr_closure_error_pulldist[i-1]);
+        GetClosurePulls(h2_jtr_closure_error[i-1], h2_jtr_closure_error_pulls[i-1], h1_jtr_closure_error_pulldist[i-1]);
+
+        h2_zjt_closure_error[i-1]->Write();
+        h2_zr_closure_error[i-1]->Write();
+        h2_jtr_closure_error[i-1]->Write();
+
+        h2_zjt_closure_error_pulls[i-1]->Write();
+        h2_zr_closure_error_pulls[i-1]->Write();
+        h2_jtr_closure_error_pulls[i-1]->Write();
+
+        h1_zjt_closure_error_pulldist[i-1]->Write();
+        h1_zr_closure_error_pulldist[i-1]->Write();
+        h1_jtr_closure_error_pulldist[i-1]->Write();
+    }
+
     outfile->Close();
+
 }

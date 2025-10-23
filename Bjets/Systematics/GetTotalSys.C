@@ -574,6 +574,17 @@ void GetTotalSys(int NumEvts = -1,
 
 
   // Combine unfolding uncertainties
+  h1_z_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize-1, sqrt(pow(h1_z_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize-1),2) + pow(h1_z_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize),2)));
+  h1_z_ptbinned_sys_closure[i-1]->SetBinError(zbinsize-1, sqrt(pow(h1_z_ptbinned_sys_closure[i-1]->GetBinError(zbinsize-1),2) + pow(h1_z_ptbinned_sys_closure[i-1]->GetBinError(zbinsize),2)));
+  h1_z_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize, 0.);
+  h1_z_ptbinned_sys_closure[i-1]->SetBinError(zbinsize, 0.);
+
+
+  h1_z_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize-1, sqrt(pow(h1_z_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize-1),2) + pow(h1_z_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize),2)));
+  h1_z_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize-1, sqrt(pow(h1_z_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize-1),2) + pow(h1_z_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize),2)));
+  h1_z_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize, 0.);
+  h1_z_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize, 0.);
+
   h1_z_ptbinned_sys_closure_sq[i-1]->Multiply(h1_z_ptbinned_sys_closure[i-1], h1_z_ptbinned_sys_closure[i-1]);
   h1_z_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h1_z_ptbinned_sys_shapeclosure[i-1], h1_z_ptbinned_sys_shapeclosure[i-1]);
 
@@ -812,6 +823,24 @@ void GetTotalSys(int NumEvts = -1,
   GetSqrtHist(h2_zjt_ptbinned_sys_iter[i-1]);      
 
   // Combine unfolding uncertainties
+  /*
+  for (int iy = 1; iy <= h2_zjt_ptbinned_sys_closure[i-1]->GetNbinsY(); iy++)
+  {
+    h2_zjt_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize2D-1, iy, sqrt(pow(h2_zjt_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize2D-1, iy),2) + pow(h2_zjt_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize2D, iy),2)));
+    h2_zjt_ptbinned_sys_closure[i-1]->SetBinError(zbinsize2D-1, iy, sqrt(pow(h2_zjt_ptbinned_sys_closure[i-1]->GetBinError(zbinsize2D-1, iy),2) + pow(h2_zjt_ptbinned_sys_closure[i-1]->GetBinError(zbinsize2D, iy),2)));
+    h2_zjt_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize2D, iy, 0.);
+    h2_zjt_ptbinned_sys_closure[i-1]->SetBinError(zbinsize2D, iy, 0.);
+  }
+
+  for (int iy = 1; iy <= h2_zjt_ptbinned_sys_shapeclosure[i-1]->GetNbinsY(); iy++)
+  {
+    h2_zjt_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize2D-1, iy, sqrt(pow(h2_zjt_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize2D-1, iy),2) + pow(h2_zjt_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize2D, iy),2)));
+    h2_zjt_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize2D-1, iy, sqrt(pow(h2_zjt_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize2D-1, iy),2) + pow(h2_zjt_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize2D, iy),2)));
+    h2_zjt_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize2D, iy, 0.);
+    h2_zjt_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize2D, iy, 0.);
+  }  
+  */  
+
   h2_zjt_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_closure[i-1], h2_zjt_ptbinned_sys_closure[i-1]);
   h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h2_zjt_ptbinned_sys_shapeclosure[i-1], h2_zjt_ptbinned_sys_shapeclosure[i-1]);
   for (int xi = 0; xi < h2_zjt_ptbinned_sys_closure_sq[i-1]->GetNbinsX(); ++xi)
@@ -828,6 +857,8 @@ void GetTotalSys(int NumEvts = -1,
       h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]->SetBinContent(xi, yi, h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]->GetBinContent(xi, yi) - h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]->GetBinError(xi, yi));
     }
   }
+
+
   MakeHistPositive(h2_zjt_ptbinned_sys_closure_sq[i-1]);
   MakeHistPositive(h2_zjt_ptbinned_sys_shapeclosure_sq[i-1]);
 
@@ -897,6 +928,22 @@ void GetTotalSys(int NumEvts = -1,
   GetSqrtHist(h2_zr_ptbinned_sys_iter[i-1]);    
 
   // Combine unfolding uncertainties
+  for (int iy = 1; iy <= h2_zr_ptbinned_sys_closure[i-1]->GetNbinsY(); iy++)
+  {
+    h2_zr_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize2D-1, iy, sqrt(pow(h2_zr_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize2D-1, iy),2) + pow(h2_zr_ptbinned_sys_closure[i-1]->GetBinContent(zbinsize2D, iy),2)));
+    h2_zr_ptbinned_sys_closure[i-1]->SetBinError(zbinsize2D-1, iy, sqrt(pow(h2_zr_ptbinned_sys_closure[i-1]->GetBinError(zbinsize2D-1, iy),2) + pow(h2_zr_ptbinned_sys_closure[i-1]->GetBinError(zbinsize2D, iy),2)));
+    h2_zr_ptbinned_sys_closure[i-1]->SetBinContent(zbinsize2D, iy, 0.);
+    h2_zr_ptbinned_sys_closure[i-1]->SetBinError(zbinsize2D, iy, 0.);
+  }
+
+  for (int iy = 1; iy <= h2_zr_ptbinned_sys_shapeclosure[i-1]->GetNbinsY(); iy++)
+  {
+    h2_zr_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize2D-1, iy, sqrt(pow(h2_zr_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize2D-1, iy),2) + pow(h2_zr_ptbinned_sys_shapeclosure[i-1]->GetBinContent(zbinsize2D, iy),2)));
+    h2_zr_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize2D-1, iy, sqrt(pow(h2_zr_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize2D-1, iy),2) + pow(h2_zr_ptbinned_sys_shapeclosure[i-1]->GetBinError(zbinsize2D, iy),2)));
+    h2_zr_ptbinned_sys_shapeclosure[i-1]->SetBinContent(zbinsize2D, iy, 0.);
+    h2_zr_ptbinned_sys_shapeclosure[i-1]->SetBinError(zbinsize2D, iy, 0.);
+  }  
+    
   h2_zr_ptbinned_sys_closure_sq[i-1]->Multiply(h2_zr_ptbinned_sys_closure[i-1], h2_zr_ptbinned_sys_closure[i-1]);
   h2_zr_ptbinned_sys_shapeclosure_sq[i-1]->Multiply(h2_zr_ptbinned_sys_shapeclosure[i-1], h2_zr_ptbinned_sys_shapeclosure[i-1]);
   for (int xi = 0; xi < h2_zr_ptbinned_sys_closure_sq[i-1]->GetNbinsX(); ++xi)
