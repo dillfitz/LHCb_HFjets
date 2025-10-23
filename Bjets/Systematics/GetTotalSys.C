@@ -710,7 +710,7 @@ void GetTotalSys(int NumEvts = -1,
   h1_r_ptbinned_sys_tracking_sq[i-1]->Add(h1_r_ptbinned_sys_trackingup_sq[i-1], h1_r_ptbinned_sys_trackingdown_sq[i-1]);
   h1_r_ptbinned_sys_tracking_sq[i-1]->Scale(1./2.);   
   h1_r_ptbinned_sys_tracking[i-1] = (TH1D*)h1_r_ptbinned_sys_tracking_sq[i-1]->Clone(Form("r_pt%d_ratio",i));
-  GetSqrtHist(h1_r_ptbinned_sys_tracking[i-1]);  
+  GetSqrtHist(h1_r_ptbinned_sys_tracking[i-1]); 
   h1_r_ptbinned_sys_trigup_sq[i-1]->Multiply(h1_r_ptbinned_sys_trigup[i-1], h1_r_ptbinned_sys_trigup[i-1]);
   h1_r_ptbinned_sys_trigdown_sq[i-1]->Multiply(h1_r_ptbinned_sys_trigdown[i-1], h1_r_ptbinned_sys_trigdown[i-1]);
   h1_r_ptbinned_sys_trig_sq[i-1] = (TH1D *)h1_r_ptbinned_sys_trigup_sq[i-1]->Clone(Form("r_pt%d_sys_trig_sq",i));  
