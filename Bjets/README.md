@@ -1,6 +1,6 @@
 ## Description of important scripts
 **Note:** All scripts that are run to produce the final results are shown for informational purposes, but in practice, convenient scripts that streamline the analysis are used. See the **analysis workflow** section for details
-- **`MCMakeVarTree.C`**: Used to create slimmed down TTrees from the DaVinci output for truth MC. Each entry of the resulting tree corresponds to a B-jet candidate.
+- **`MCMakeVarTree.C`**: Used to create slimmed down TTrees from the DaVinci output for truth MC. Each entry of the resulting tree corresponds to a B-jet candidate
   ```bash
   # Create truth MC TTrees
   root -l -b -q "MCMakeVarTree.C(-1, 61590)"
@@ -14,11 +14,11 @@
   ```bash
   root -l -b -q "MCSimpleEff.C(-1, 91599)"
   ```
-- **`MCSimpleObservalbes.C`**: Processes output of `MCMakeVarTree.C` to obtain truth level distributions used for the (1) closure tests and (2) comparison to final results.
+- **`MCSimpleObservalbes.C`**: Processes output of `MCMakeVarTree.C` to obtain truth level distributions used for the (1) closure tests and (2) comparison to final results
   ```bash
-  root -l -b -q "MCSimpleObservables.C(-1, 91599)";
+  root -l -b -q "MCSimpleObservables.C(-1, 91599)"
   ```
-- **`MakeVarTree.C`**: Used to create slimmed down TTrees from the DaVinci output for data and reco MC. Each entry of the resulting tree corresponds to a B-jet candidate.
+- **`MakeVarTree.C`**: Used to create slimmed down TTrees from the DaVinci output for data and reco MC. Each entry of the resulting tree corresponds to a B-jet candidate
   ```bash
   # Create data TTrees
   root -l -b -q "MakeVarTree.C(-1, 61590, 1)"
@@ -38,20 +38,20 @@
   ```
 - **`MassFit.C`**: Processes output of `MakeVarTree.C` to fit the $B^{\pm}$ invariant mass. Requires running workflow in the `../BjetMisID` directory (see README(ADD LINK!!))
   ```bash
-  root -l -b -q "MassFit.C(-1, 91599, 0)"; # reco MC
-  root -l -b -q "MassFit.C(-1, 91599, 1)"; # data
+  root -l -b -q "MassFit.C(-1, 91599, 0)" # reco MC
+  root -l -b -q "MassFit.C(-1, 91599, 1)" # data
   ```
-- **`SimpleUnfold.C`**: Processes output of `MakeVarTree.C` and `MCSimpleEfficiency.C` for reco MC to obtain (1) purities (purity = # of matched B-jets / # of reco B-jets), (2) response matrices for the unfolding (from matched B-jets), and (3) efficincies (numerator of "# of matched B-jets" combined with denominator from `MCSimpleEfficiencies.C` output).
+- **`SimpleUnfold.C`**: Processes output of `MakeVarTree.C` and `MCSimpleEfficiency.C` for reco MC to obtain (1) purities (purity = # of matched B-jets / # of reco B-jets), (2) response matrices for the unfolding (from matched B-jets), and (3) efficincies (numerator of "# of matched B-jets" combined with denominator from `MCSimpleEfficiencies.C` output)
     - Reads in output of `MassFit.C` to make the relevant mass cut
   ```bash
-  root -l -b -q "SimpleUnfold.C(-1, 91599)";
+  root -l -b -q "SimpleUnfold.C(-1, 91599)"
   ```
-- **`SimpleObservables.C`**: Processes output of `MakeVarTree.C` to obtain observable distributions for data and reco MC.
+- **`SimpleObservables.C`**: Processes output of `MakeVarTree.C` to obtain observable distributions for data and reco MC
     - Reads in histograms for trigger / track / pid corrections
     - Reads in output of `MassFit.C` to make the relevant mass cut and perform the sideband subtraction
   ```bash
-  root -l -b -q "SimpleObservables.C(-1, 91599, 0)";
-  root -l -b -q "SimpleObservables.C(-1, 91599, 1)";
+  root -l -b -q "SimpleObservables.C(-1, 91599, 0)"
+  root -l -b -q "SimpleObservables.C(-1, 91599, 1)"
   ```
 - **`ClosureTest.C`**: Processes output of `SimpleObservables.C` for reco MC, `SimpleUnfold.C`, and `MCSimpleObservables.C` to perform both statistical and shape closure test depending on user arguments 
   ```bash
@@ -60,7 +60,7 @@
   # shape closure test
   root -l -b -q "ClosureTest.C(-1, 91599, 91599, 4, 1)"
   ```
-- **`MakeMCWeights.C`**: Creates ratios of $(z, j_{T}, p_{T,\text{jet}}$) distributions in data / reco MC. Used to reweight the response matrix for the prior and shape nonclosure systematic unceratinties
+- **`MakeMCWeights.C`**: Creates ratios of $(z, j_{T}, p_{T,\text{jet}})$ distributions in data / reco MC. Used to reweight the response matrix for the prior and shape nonclosure systematic unceratinties
   ```bash
   root -l -b -q MakeMCWeights.C
   ```
