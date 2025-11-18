@@ -1,6 +1,6 @@
 # Analysis Repo Documentation
 
-This is the analysis repository for the measurement of jet fragmentation functions for $B^{\pm} (\to J/\psi (\to \mu^{+} \mu^{-})K^{\pm})$ decays in jets using data from $pp$ collisions recorded at $\sqrt{s} = 13$ TeV between 2016-2018 at LHCb. See the [analysis wiki](https://gitlab.cern.ch/LHCb-QEE/hfjetfragmentation/-/wikis/Run2-BJetFragmentation) for more information.
+This is the analysis repository for the measurement of jet fragmentation functions for $B^{\pm} (\to J/\psi (\to \mu^{+} \mu^{-})K^{\pm})$ decays in jets using data from $pp$ collisions recorded at $\sqrt{s} = 13$ TeV between 2016-2018 at LHCb. See the [analysis wiki](https://gitlab.cern.ch/LHCb-QEE/hfjetfragmentation/-/wikis/Run2-BJetFragmentation) for more information and the [ALCM page](https://lbfence.cern.ch/alcm/analysis/details/5692) for review progress.
 
 ## System requirements
 - root (version used for results: **6.32.10**)
