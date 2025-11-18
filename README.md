@@ -20,12 +20,12 @@ working-dir/
         |-- results/
     |-- BjetsMC/
         |-- MisID/
-|-- data/
+|-- data/ (ntuples from eos)
 |-- Effs/
     |-- TrigEff/
     |-- TrackEff/
     |-- PIDEff/
-|-- LHCb_HFjets/ (git repo)
+|-- LHCb_HFjets/ (this git repo)
 ```
 
 ```mermaid
@@ -48,3 +48,5 @@ graph TD
     I --> Q[Systematics]
     J --> R[MisID]
 ```
+
+**Note:** The data and MC ntuples from `/eos/lhcb/wg/QEE/Jets_Run_2/BpmJpsiK/` must be copied to the `data` directory referenced above
