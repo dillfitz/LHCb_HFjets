@@ -1,5 +1,5 @@
 ## Description of important scripts
-- **`MakeVarTree.C`**: Creates TTrees for the $$B^{\pm} (\to J/\psi (\to \mu^{+} \mu^{-})\pi^{\pm})$ with the $\pi^{\pm}$ misidentified as a $K^{\pm}$
+- **`MakeVarTree.C`**: Creates TTrees for the $B^{\pm} (\to J/\psi (\to \mu^{+} \mu^{-})\pi^{\pm})$ with the $\pi^{\pm}$ misidentified as a $K^{\pm}$
   ```bash
   root -l -b -q "MakeVarTree.C(-1, 91599)"
   ```

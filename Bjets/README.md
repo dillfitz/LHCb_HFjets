@@ -36,7 +36,7 @@
   root -l -b -q "MakeVarTree.C(-1, 81590, 0)"
   root -l -b -q "MakeVarTree.C(-1, 81591, 0)"
   ```
-- **`MassFit.C`**: Processes output of `MakeVarTree.C` to fit the $B^{\pm}$ invariant mass. Requires running workflow in the `../BjetMisID` directory (see README(ADD LINK!!))
+- **`MassFit.C`**: Processes output of `MakeVarTree.C` to fit the $B^{\pm}$ invariant mass. Requires running workflow in the `../BjetMisID` directory (see [README](https://gitlab.cern.ch/LHCb-QEE/hfjetfragmentation/-/tree/main/BjetMisID))
   ```bash
   root -l -b -q "MassFit.C(-1, 91599, 0)" # reco MC
   root -l -b -q "MassFit.C(-1, 91599, 1)" # data
