@@ -277,6 +277,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     TH1D *h1_BkgScale = new TH1D("h1_BkgScale", "", ptHFbinsize, ptHF_binedges);
     TH1D *h1_BkgScale_forSysNear = new TH1D("h1_BkgScale_forSysNear", "", ptHFbinsize, ptHF_binedges);
     TH1D *h1_BkgScale_forSysFar = new TH1D("h1_BkgScale_forSysFar", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_BkgScale_forSysLower = new TH1D("h1_BkgScale_forSysLower", "", ptHFbinsize, ptHF_binedges);
+    TH1D *h1_BkgScale_forSysUpper = new TH1D("h1_BkgScale_forSysUpper", "", ptHFbinsize, ptHF_binedges);
     
 
     for (int ev = 0; ev < NumEvts; ev++)
@@ -795,9 +797,13 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         float Sideband2_Min_forSysFar = Sideband2_Min + MassSigma;
         float Sideband2_Max_forSysFar = Sideband2_Max;
         
-        cout << MassDown << ", " << MassUp << endl;
+        cout << "Signal: " << MassDown << ", " << MassUp << endl;
         cout << "Sideband1: " << Sideband1_Min << ", " << Sideband1_Max << endl;
         cout << "Sideband2: " << Sideband2_Min << ", " << Sideband2_Max << endl;
+        cout << "Sideband1_forSysNear: " << Sideband1_Min_forSysNear << ", " << Sideband1_Max_forSysNear << endl;
+        cout << "Sideband2_forSysNear: " << Sideband2_Min_forSysNear << ", " << Sideband2_Max_forSysNear << endl;
+        cout << "Sideband1_forSysFar: " << Sideband1_Min_forSysFar << ", " << Sideband1_Max_forSysFar << endl;
+        cout << "Sideband2_forSysFar: " << Sideband2_Min_forSysFar << ", " << Sideband2_Max_forSysFar << endl;
         
         HFMass.setRange("signal", MassDown, MassUp);
         HFMass.setRange("sideband1", Sideband1_Min, Sideband1_Max);
@@ -807,21 +813,25 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         HFMass.setRange("sideband2_forSysNear", Sideband2_Min_forSysNear, Sideband2_Max_forSysNear);
         HFMass.setRange("sideband1_forSysFar", Sideband1_Min_forSysFar, Sideband1_Max_forSysFar);
         HFMass.setRange("sideband2_forSysFar", Sideband2_Min_forSysFar, Sideband2_Max_forSysFar);
+        if (Sideband2_Min_forSysNear < Sideband1_Max_forSysNear)
+        {
+            std::cout << "Overlapping sideband ranges!!" << std::endl;
+        }
 
         RooAbsReal *intsigX;
         RooAbsReal *intbkgX, *intresX, *intbkgSide, *intbkgSideLeft, *intbkgSideRight;
         intsigX = sig.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
-        intbkgX = bkg.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
+        intbkgX = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
 
-        intbkgSide = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1", "sideband2"));
-        intbkgSideLeft = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1"));
-        intbkgSideRight = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2"));
-        RooAbsReal *intbkgSide_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear", "sideband2_forSysNear"));
-        RooAbsReal *intbkgSideLeft_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear"));
-        RooAbsReal *intbkgSideRight_forSysNear = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysNear"));
-        RooAbsReal *intbkgSide_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar", "sideband2_forSysFar"));
-        RooAbsReal *intbkgSideLeft_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar"));
-        RooAbsReal *intbkgSideRight_forSysFar = bkg.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysFar"));
+        //intbkgSide = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1,sideband2"));
+        intbkgSideLeft = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1"));
+        intbkgSideRight = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband2"));
+        //RooAbsReal *intbkgSide_forSysNear = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear, sideband2_forSysNear"));
+        RooAbsReal *intbkgSideLeft_forSysNear = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysNear"));
+        RooAbsReal *intbkgSideRight_forSysNear = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysNear"));
+        //RooAbsReal *intbkgSide_forSysFar = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar, sideband2_forSysFar"));
+        RooAbsReal *intbkgSideLeft_forSysFar = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband1_forSysFar"));
+        RooAbsReal *intbkgSideRight_forSysFar = bkg_cheb.createIntegral(HFMass, NormSet(HFMass), Range("sideband2_forSysFar"));
         
         intresX = dcbPdf.createIntegral(HFMass, NormSet(HFMass), Range("signal"));
         float sig_yield = intsigX->getVal() * nsig->getVal();
@@ -830,14 +840,14 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         float bkg_frac = (bkg_yield) / (sig_yield + bkg_yield + res_yield);
         float res_frac = (res_yield) / (sig_yield + bkg_yield + res_yield);
         float sig_frac = (sig_yield) / (sig_yield + bkg_yield + res_yield);        
-        float bkg_scale = intbkgX->getVal() / intbkgSide->getVal();
-        float bkg_scale_forSysNear = intbkgX->getVal() / intbkgSide_forSysNear->getVal();
-        float bkg_scale_forSysFar = intbkgX->getVal() / intbkgSide_forSysFar->getVal();        
+        float bkg_scale = intbkgX->getVal() / (intbkgSideLeft->getVal() + intbkgSideRight->getVal());
+        float bkg_scale_forSysNear = intbkgX->getVal() / (intbkgSideLeft_forSysNear->getVal() + intbkgSideRight_forSysNear->getVal());
+        float bkg_scale_forSysFar = intbkgX->getVal() / (intbkgSideLeft_forSysFar->getVal() + intbkgSideRight_forSysFar->getVal());
+        float bkg_scale_forSysLower = intbkgX->getVal() / intbkgSideLeft->getVal();      
+        float bkg_scale_forSysUpper = intbkgX->getVal() / intbkgSideRight->getVal();          
         cout << "Signal Yield = " << sig_yield << endl;
         cout << "Bkg Fraction = " << bkg_frac << endl;
         cout << "Bkg Fraction = " << res_frac << endl;
-        cout << "Area_Sig / Area_Sideband = " << bkg_scale << endl;
-        cout << "Area left side / Area right side = " << intbkgSideLeft->getVal() / intbkgSideRight->getVal() << endl;
 
         vec_bkg_frac.push_back(bkg_frac);
         vec_res_frac.push_back(res_frac);
@@ -866,6 +876,21 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
 
         h1_BkgScale_forSysNear->SetBinContent(i + 1, bkg_scale_forSysNear);
         h1_BkgScale_forSysFar->SetBinContent(i + 1, bkg_scale_forSysFar);
+
+        h1_BkgScale_forSysLower->SetBinContent(i+1, bkg_scale_forSysLower);
+        h1_BkgScale_forSysUpper->SetBinContent(i+1, bkg_scale_forSysUpper);
+
+        std::cout << " // // // // // // Upper vs Lower Sideband Crosscheck // // // // // // " << std::endl;
+        std::cout << " intbkgSideLeft : " << intbkgSideLeft->getVal() << std::endl;
+        std::cout << " intbkgSideRight : " << intbkgSideRight->getVal() << std::endl;
+        std::cout << " intbkgSide : " << intbkgSideLeft->getVal() + intbkgSideRight->getVal() << std::endl;
+        std::cout << " intbkgSig : " << intbkgX->getVal() << std::endl;
+        std::cout << " bkg_scale_forSysLower : " << bkg_scale_forSysLower << std::endl;
+        std::cout << " bkg_scale_forSysUpper : " << bkg_scale_forSysUpper << std::endl;
+        std::cout << "Area_Sig / Area_Sideband (bkg_scale) = " << bkg_scale << std::endl;
+        std::cout << "Area left side / Area right side = " << intbkgSideLeft->getVal() / intbkgSideRight->getVal() << std::endl;
+
+
 
         // Add a vertical dashed line at x = 2
 

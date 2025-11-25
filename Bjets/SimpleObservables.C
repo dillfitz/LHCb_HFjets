@@ -171,6 +171,10 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     extension_prefix = TString("massfitsysnear_");
   if (DoMassFit == 2)
     extension_prefix = TString("massfitsysfar_");
+  if (DoMassFit == 3)
+    extension_prefix = TString("massfitsyslower_");
+  if (DoMassFit == 4)
+    extension_prefix = TString("massfitsysupper_");
   
 
   extension = extension_prefix + extension;
@@ -207,6 +211,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
   TH1D *h1_BkgScale = (TH1D *)f_massfit.Get("h1_BkgScale");
   TH1D *h1_BkgScale_forSysNear = (TH1D *)f_massfit.Get("h1_BkgScale_forSysNear");
   TH1D *h1_BkgScale_forSysFar = (TH1D *)f_massfit.Get("h1_BkgScale_forSysFar");
+  TH1D *h1_BkgScale_forSysLower = (TH1D *)f_massfit.Get("h1_BkgScale_forSysLower");
+  TH1D *h1_BkgScale_forSysUpper = (TH1D *)f_massfit.Get("h1_BkgScale_forSysUpper");
 
   TTree *sWeightTree;
   if (sPlotFit)
@@ -725,10 +731,26 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       Sideband2Max = h1_Sideband2Max_forSysFar != NULL ? h1_Sideband2Max_forSysFar->GetBinContent(h1_Sideband2Max_forSysFar->FindBin(HFmeson.Pt())) : 5.31;
       bkg_weight = h1_BkgScale_forSysFar != NULL ? h1_BkgScale_forSysFar->GetBinContent(h1_BkgScale_forSysFar->FindBin(HFmeson.Pt())) : 1.0;
     }
+    if (DoMassFit == 3)
+    {
+      bkg_weight = h1_BkgScale_forSysLower != NULL ? h1_BkgScale_forSysLower->GetBinContent(h1_BkgScale_forSysLower->FindBin(HFmeson.Pt())) : 1.0;
+    }    
+    if (DoMassFit == 4)
+    {
+      bkg_weight = h1_BkgScale_forSysUpper != NULL ? h1_BkgScale_forSysUpper->GetBinContent(h1_BkgScale_forSysUpper->FindBin(HFmeson.Pt())) : 1.0;
+    }    
 
     bool PID_cond = (K_PIDK > 0);
     bool mass_cond = (bmass_dtf > MassLow && bmass_dtf < MassHigh);
     bool bkg_cond = (bmass_dtf > Sideband1Min && bmass_dtf < Sideband1Max) || (bmass_dtf > Sideband2Min && bmass_dtf < Sideband2Max);
+    if (DoMassFit == 3)
+    {
+      bkg_cond = (bmass_dtf > Sideband1Min && bmass_dtf < Sideband1Max);
+    }
+    else if (DoMassFit == 4)
+    {
+      bkg_cond = (bmass_dtf > Sideband2Min && bmass_dtf < Sideband2Max);
+    }
     bool gluon_cond = mass_cond && Hasbbbar;
     bool SV_cond = (nSV > 0) && mass_cond && sv_mass > 0.4;
     bool signal_cond = mass_cond;

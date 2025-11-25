@@ -84,6 +84,10 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     string_systype = "massfitsysnear_";
   if (DoMassFit == 2)
     string_systype = "massfitsysfar_";
+  if (DoMassFit == 3)
+    string_systype = "massfitsyslower_";
+  if (DoMassFit == 4)
+    string_systype = "massfitsysupper_";
   if (DoRecSelEff)
     string_systype = "recselsys_";
   if (DoSignalSys)
