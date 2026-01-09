@@ -10,6 +10,7 @@ void PublicationFigures(int NumEvts = -1,
                         int dataset = 91599,
                         bool onlysim9 = true)
 { 
+  gROOT->ForceStyle(1);
   const int sigfigs = 3;
   TString string_final, string_truth, string_eff, string_unfold, string_sys, extension;
   TString str_followHard, str_ghost, str_charged, str_Mag, str_flavor, str_PID(""), str_simversion("");
@@ -836,6 +837,10 @@ void PublicationFigures(int NumEvts = -1,
   left = 0.2;
   for (int i = 1; i < ptbinsize; i++)
   {
+
+    //gStyle->cd();
+    //gROOT->SetStyle(gStyle->GetName());
+
     ccan[ican]->cd(i);
     
     h3_ptzjt_data->GetZaxis()->SetRange(i+1, i+1);
@@ -849,20 +854,24 @@ void PublicationFigures(int NumEvts = -1,
     NormalizeHist(h2_zjt_data[i-1]);
     //NormalizeHist(h2_zjt_truth[i-1]); 
 
+    gPad->SetTopMargin(0.075);
+    gPad->SetBottomMargin(0.125);
+    gPad->SetRightMargin(0.15);
     gPad->SetLogz();
     h2_zjt_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zjt_data[i-1]->GetXaxis()->SetTitle("#it{z}");
-    h2_zjt_data[i-1]->GetXaxis()->SetTitleSize(0.05);
-    h2_zjt_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
-    h2_zjt_data[i-1]->GetXaxis()->SetLabelSize(0.04);
+    //h2_zjt_data[i-1]->GetXaxis()->SetTitleSize(0.05);
+    //h2_zjt_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
+    //h2_zjt_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_zjt_data[i-1]->GetYaxis()->SetTitle("#it{j}_{T} [GeV/c]");
-    h2_zjt_data[i-1]->GetYaxis()->SetTitleSize(0.05);
-    h2_zjt_data[i-1]->GetYaxis()->SetTitleOffset(0.85);
-    h2_zjt_data[i-1]->GetYaxis()->SetLabelSize(0.04);
-    h2_zjt_data[i-1]->GetZaxis()->SetLabelSize(0.04);
+    //h2_zjt_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    //h2_zjt_data[i-1]->GetYaxis()->SetTitleOffset(0.85);
+    //h2_zjt_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    //h2_zjt_data[i-1]->GetZaxis()->SetLabelSize(0.04);
     h2_zjt_data[i-1]->SetMinimum(0.00001);  
     h2_zjt_data[i-1]->SetMaximum(10.);      
     //h2_zjt_data[i-1]->GetYaxis()->SetLimits(0.0, 20.0);
+    h2_zjt_data[i-1]->UseCurrentStyle();
     h2_zjt_data[i-1]->Draw("COLZ");
 
 
@@ -925,20 +934,25 @@ void PublicationFigures(int NumEvts = -1,
     //NormalizeHist(h2_zr_truth[i-1]); 
     
 
+    gPad->SetTopMargin(0.075);
+    gPad->SetBottomMargin(0.125);
+    gPad->SetRightMargin(0.15);
     gPad->SetLogz();
     h2_zr_data[i-1]->SetMinimum(0.00001);  
     h2_zr_data[i-1]->SetMaximum(200.);      
     h2_zr_data[i-1]->GetXaxis()->SetRangeUser(0.1, 1.0);
     h2_zr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_zr_data[i-1]->GetXaxis()->SetTitle("#it{z}");
-    h2_zr_data[i-1]->GetXaxis()->SetTitleSize(0.05);
-    h2_zr_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
-    h2_zr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
+    //h2_zr_data[i-1]->GetXaxis()->SetTitleSize(0.05);
+    //h2_zr_data[i-1]->GetXaxis()->SetTitleOffset(0.65);
+    //h2_zr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_zr_data[i-1]->GetYaxis()->SetTitle("#it{r}");
-    h2_zr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
-    h2_zr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
-    h2_zr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
-    h2_zr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
+    //h2_zr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    //h2_zr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
+    //h2_zr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    //h2_zr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
+    h2_zr_data[i-1]->UseCurrentStyle();
+
     h2_zr_data[i-1]->Draw("COLZ");
 
 
@@ -1008,18 +1022,27 @@ void PublicationFigures(int NumEvts = -1,
     
         
     h2_jtr_data[i-1]->SetMinimum(0.00001);  
-    h2_jtr_data[i-1]->SetMaximum(50.);        
+    h2_jtr_data[i-1]->SetMaximum(50.);    
+
+    gPad->SetTopMargin(0.075);
+    gPad->SetBottomMargin(0.125);
+    gPad->SetRightMargin(0.15);   
     gPad->SetLogz();
-    h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
+
+    //h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
     h2_jtr_data[i-1]->GetXaxis()->SetTitle("#it{j}_{T} [GeV/c]");
-    h2_jtr_data[i-1]->GetXaxis()->SetTitleSize(0.05);
-    h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(1.0);
-    h2_jtr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
+    //h2_jtr_data[i-1]->GetXaxis()->SetTitleSize(0.01);
+    //h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(0.1);
+    //h2_jtr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
     h2_jtr_data[i-1]->GetYaxis()->SetTitle("#it{r}");
-    h2_jtr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
-    h2_jtr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
-    h2_jtr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
-    h2_jtr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
+    //h2_jtr_data[i-1]->GetYaxis()->SetTitleSize(0.05);
+    //h2_jtr_data[i-1]->GetYaxis()->SetTitleOffset(1.0);
+    //h2_jtr_data[i-1]->GetYaxis()->SetLabelSize(0.04);
+    //h2_jtr_data[i-1]->GetZaxis()->SetLabelSize(0.04);
+    h2_jtr_data[i-1]->UseCurrentStyle();
+    h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(0.9);
+
+
     h2_jtr_data[i-1]->Draw("COLZ");
 
     Tl.DrawLatex(left, top, "#scale[0.75]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
