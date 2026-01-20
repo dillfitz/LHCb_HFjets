@@ -13,7 +13,7 @@
 using namespace std;
 void SimpleObservables(int NumEvts = -1, int dataset = 91599,
                 bool isData = true,
-                int DoTrackEff = 0,
+                int DoTrackEff = 2,
                 int DoTrigEff = 0,
                 int DoPIDEff = 0,
                 bool DoRecSelEff = false,
@@ -22,7 +22,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
                 bool DoJetID = false,                                
                 bool SubtractGS = false,
                 bool sPlotFit = false,
-                bool L0MuonDiMuon = false)
+                bool L0MuonDiMuon = false,
+                bool DoTrackEff_SysCrossCheck = false)
 {
 
   bool MCflag = !isData;
@@ -159,6 +160,8 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     extension = TString("trackingsysup_") + extension;
   if (DoTrackEff == 2)
     extension = TString("trackingsysdown_") + extension;
+  if (DoTrackEff_SysCrossCheck && DoTrackEff != 0) 
+    extension = TString("crosscheck_") + extension;
   if (DoPIDEff == 1)
     extension = TString("pidsysup_") + extension;
   if (DoPIDEff == 2)
@@ -175,6 +178,7 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     extension_prefix = TString("massfitsyslower_");
   if (DoMassFit == 4)
     extension_prefix = TString("massfitsysupper_");
+
   
 
   extension = extension_prefix + extension;
@@ -764,9 +768,18 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
     if (DoTrackEff == 1)
     {
       trkeff_ratio_K = trkeff_ratio_K + trkeff_ratio_K_errhi;
-      trkeff_ratio_K = (1 + 0.0127) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
       trkeff_ratio_mum = trkeff_ratio_mum + trkeff_ratio_mum_errhi;
       trkeff_ratio_mup = trkeff_ratio_mup + trkeff_ratio_mup_errhi;
+      if (DoTrackEff_SysCrossCheck) // Standard Run 2 track eff systematic uncertainty is 0.8%
+      {
+        trkeff_ratio_K = (1 + sqrt(0.0127*0.0127 + 0.008*0.008)) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
+        trkeff_ratio_mum = (1 + 0.008) * trkeff_ratio_mum; 
+        trkeff_ratio_mup = (1 + 0.008) * trkeff_ratio_mup; 
+      }
+      else
+      {
+        trkeff_ratio_K = (1 + 0.0127) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
+      }
     }
     else if (DoTrackEff == 2)
     {
@@ -774,6 +787,17 @@ void SimpleObservables(int NumEvts = -1, int dataset = 91599,
       trkeff_ratio_K = (1 - 0.0127) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
       trkeff_ratio_mum = trkeff_ratio_mum - trkeff_ratio_mum_errlo;
       trkeff_ratio_mup = trkeff_ratio_mup - trkeff_ratio_mup_errlo;
+
+      if (DoTrackEff_SysCrossCheck) // Standard Run 2 track eff systematic uncertainty is 0.8%
+      {
+        trkeff_ratio_K = (1 - sqrt(0.0127*0.0127 + 0.008*0.008)) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
+        trkeff_ratio_mum = (1 - 0.008) * trkeff_ratio_mum; 
+        trkeff_ratio_mup = (1 - 0.008) * trkeff_ratio_mup; 
+      }
+      else
+      {
+        trkeff_ratio_K = (1 - 0.0127) * trkeff_ratio_K; // Material Budget of 1.27% on Kaons
+      }
 
       if (trkeff_ratio_K_errlo > 0.1 || trkeff_ratio_mup_errlo > 0.1 || trkeff_ratio_mum_errlo > 0.1)
       {

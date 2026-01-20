@@ -27,7 +27,8 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
                    bool DoSignalSys = false,
                    int DoMassFit = 0,
                    int DoIterSys = 0,
-                   bool DoUnfoldPrior = false)
+                   bool DoUnfoldPrior = false,
+                   bool DoTrackEff_SysCrossCheck = false)
 {
 
   gStyle->SetPaintTextFormat("3.3f");
@@ -72,6 +73,8 @@ void GetSystematic(int NumEvts = -1, int dataset1 = 91599, int dataset2 = 91599,
     string_systype = "trackingsysup_";
   if (DoTrackEff == 2)
     string_systype = "trackingsysdown_";
+  if (DoTrackEff_SysCrossCheck && DoTrackEff !=0)
+    string_systype = "crosscheck_" + string_systype;
   if (DoPIDEff == 1)
     string_systype = "pidsysup_";
   if (DoPIDEff == 2)
