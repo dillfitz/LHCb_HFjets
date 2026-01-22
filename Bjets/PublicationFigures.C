@@ -832,9 +832,9 @@ void PublicationFigures(int NumEvts = -1,
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   // zjt histos // 
-  top = 0.85;
+  top = 0.96;
   step = 0.06;
-  left = 0.2;
+  left = 0.175;
   for (int i = 1; i < ptbinsize; i++)
   {
 
@@ -854,7 +854,7 @@ void PublicationFigures(int NumEvts = -1,
     NormalizeHist(h2_zjt_data[i-1]);
     //NormalizeHist(h2_zjt_truth[i-1]); 
 
-    gPad->SetTopMargin(0.075);
+    gPad->SetTopMargin(0.2);
     gPad->SetBottomMargin(0.125);
     gPad->SetRightMargin(0.15);
     gPad->SetLogz();
@@ -875,10 +875,10 @@ void PublicationFigures(int NumEvts = -1,
     h2_zjt_data[i-1]->Draw("COLZ");
 
 
-    Tl.DrawLatex(left, top, "#scale[0.75]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
-    Tl.DrawLatex(left, top - step, "#scale[0.75]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[0.75]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
-    Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
+    Tl.DrawLatex(left, top, "#scale[1.0]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
+    Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
     Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
@@ -915,9 +915,9 @@ void PublicationFigures(int NumEvts = -1,
   ccan[ican]->cd();
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
   // zr plots //
-  top = 0.85;
-  step = 0.075;
-  left = 0.5;
+  top = 0.96;
+  step = 0.06;
+  left = 0.175;
   for (int i = 1; i < ptbinsize; i++)
   {
     ccan[ican]->cd(i);
@@ -934,7 +934,7 @@ void PublicationFigures(int NumEvts = -1,
     //NormalizeHist(h2_zr_truth[i-1]); 
     
 
-    gPad->SetTopMargin(0.075);
+    gPad->SetTopMargin(0.2);
     gPad->SetBottomMargin(0.125);
     gPad->SetRightMargin(0.15);
     gPad->SetLogz();
@@ -956,10 +956,10 @@ void PublicationFigures(int NumEvts = -1,
     h2_zr_data[i-1]->Draw("COLZ");
 
 
-    Tl.DrawLatex(left, top, "#scale[0.75]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
-    Tl.DrawLatex(left, top - step, "#scale[0.75]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[0.75]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
-    Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
+    Tl.DrawLatex(left, top, "#scale[1.0]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
+    Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
     Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
@@ -1000,9 +1000,9 @@ void PublicationFigures(int NumEvts = -1,
   ccan[ican]->Divide(2, 3, 0.0001, 0.0001);
 
   // jtr plots //
-  top = 0.85;
-  step = 0.075;
-  left = 0.525;
+  top = 0.96;
+  step = 0.06;
+  left = 0.175;
   for (int i = 1; i < ptbinsize; i++)
   {
     ccan[ican]->cd(i);
@@ -1024,7 +1024,7 @@ void PublicationFigures(int NumEvts = -1,
     h2_jtr_data[i-1]->SetMinimum(0.00001);  
     h2_jtr_data[i-1]->SetMaximum(50.);    
 
-    gPad->SetTopMargin(0.075);
+    gPad->SetTopMargin(0.2);
     gPad->SetBottomMargin(0.125);
     gPad->SetRightMargin(0.15);   
     gPad->SetLogz();
@@ -1045,10 +1045,10 @@ void PublicationFigures(int NumEvts = -1,
 
     h2_jtr_data[i-1]->Draw("COLZ");
 
-    Tl.DrawLatex(left, top, "#scale[0.75]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
-    Tl.DrawLatex(left, top - step, "#scale[0.75]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[0.75]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
-    Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
+    Tl.DrawLatex(left, top, "#scale[1.0]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
+    Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
     Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
