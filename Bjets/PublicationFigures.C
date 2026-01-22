@@ -307,7 +307,7 @@ void PublicationFigures(int NumEvts = -1,
   auto legend_stack_jt = new TLegend(0.2, 0.65, 0.4, 0.85);
   legend_stack_jt->SetTextSize(0.08);
   
-  auto legend_stack_r = new TLegend(0.6, 0.2, 0.8, 0.5);
+  auto legend_stack_r = new TLegend(0.6, 0.6, 0.8, 0.8);
   legend_stack_r->SetTextSize(0.08);  
   
   double left = 0.2;
@@ -411,7 +411,7 @@ void PublicationFigures(int NumEvts = -1,
  
     Tl.DrawLatex(left, top, "#scale[1.5]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
     if (i==1)
     {
@@ -586,7 +586,7 @@ void PublicationFigures(int NumEvts = -1,
     h1_jt_data_w_sys->Draw("PE2 SAME");    
     h1_jt_data[i-1]->Draw("PE SAME");
       
-    //Tl.DrawLatex(left, top, Form("#scale[1.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top, Form("#scale[1.5]{%.0f<p_{T,jet}<%.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     //if (i == 1)
     //{
       //lhcbName->Draw("SAME");
@@ -596,7 +596,7 @@ void PublicationFigures(int NumEvts = -1,
     //}
     Tl.DrawLatex(left, top, "#scale[1.5]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i != 6 )
     { 
       Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
@@ -667,8 +667,11 @@ void PublicationFigures(int NumEvts = -1,
   ccan[ican]->cd();
 
   // r histograms //
-  top = 0.55;
-  step = 0.125;
+  //top = 0.96;
+  //step = 0.06;
+  //left = 0.175;
+  top = 0.35;
+  step = 0.12;
   left = 0.2;
   for (int i = 1; i < ptbinsize; i++)
   {     
@@ -744,17 +747,17 @@ void PublicationFigures(int NumEvts = -1,
     h1_r_truth[i-1]->GetYaxis()->SetLabelFont(lhcbFont);
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(1, -1, 0);
     h1_r_truth[i-1]->GetYaxis()->ChangeLabel(-1, -1, 0);
-    h1_r_truth[i-1]->SetMinimum(0.00001);
+    h1_r_truth[i-1]->SetMinimum(0.01);
     h1_r_truth[i-1]->GetXaxis()->SetRangeUser(0.0, 0.4);
     h1_r_truth[i-1]->Draw("HIST SAME");
     h1_r_truth[i-1]->Draw("PE SAME");
-    h1_r_data_w_sys->SetMinimum(0.00001);
-    h1_r_data[i-1]->SetMinimum(0.00001);
+    h1_r_data_w_sys->SetMinimum(0.01);
+    h1_r_data[i-1]->SetMinimum(0.01);
     h1_r_data_w_sys->Draw("PE2 SAME");    
     h1_r_data[i-1]->Draw("PE SAME");
 
     /*
-    Tl.DrawLatex(left, top, Form("#scale[1.5]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.5]{%.0f<p_{T,jet}<%.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
@@ -763,10 +766,10 @@ void PublicationFigures(int NumEvts = -1,
       Tl.DrawLatex(0.525, top - step, "#scale[1.5]{pp #sqrt{s} = 13 TeV}");
     }
     */
-    Tl.DrawLatex(left, top, "#scale[1.5]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
+    Tl.DrawLatex(left , top, "#scale[1.5]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.1f < #it{p}_{T,jet} < %.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
-    Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
     if (i == 1)
     {
       legend_stack_r->SetBorderSize(0);
@@ -881,7 +884,7 @@ void PublicationFigures(int NumEvts = -1,
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
-    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.0f<p_{T,jet}<%.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
@@ -962,7 +965,7 @@ void PublicationFigures(int NumEvts = -1,
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
-    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.0f<p_{T,jet}<%.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
@@ -974,7 +977,7 @@ void PublicationFigures(int NumEvts = -1,
     */
     //Tl.DrawLatex(left, top2d + step2d, "#scale[0.8]{AK5 B^{#pm}-tagged jets              pp #sqrt{s} = 13 TeV}");    
     //Tl.DrawLatex(left, top2d, "#scale[0.8]{}");
-    //Tl.DrawLatex(left, top2d, Form("#scale[0.8]{%.1f<p_{T,jet}<%.1f GeV/c        2.5 < y_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    //Tl.DrawLatex(left, top2d, Form("#scale[0.8]{%.0f<p_{T,jet}<%.0f GeV/c        2.5 < y_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top2d - 2 * step2d, "#scale[0.8]{}");  
     
     ccan[ican]->cd();
@@ -1051,7 +1054,7 @@ void PublicationFigures(int NumEvts = -1,
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
-    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.1f<p_{T,jet}<%.1f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top, Form("#scale[1.0]{%.0f<p_{T,jet}<%.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
     if (i==1)
     {
       //lhcbName->Draw("SAME");
