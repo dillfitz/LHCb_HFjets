@@ -1,4 +1,6 @@
 #include <TCanvas.h>
+#include <TImage.h>
+#include <TPad.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -329,6 +331,7 @@ void PublicationFigures(int NumEvts = -1,
   // z histograms // 
   top = 0.8;
   step = 0.12;
+  ofstream hepdata;
   for (int i = 1; i < ptbinsize; i++)
   {
     sprintf(buf, "ccan%d", ican);
@@ -467,7 +470,36 @@ void PublicationFigures(int NumEvts = -1,
 
     ccan[ican]->cd(i);
     ccan[ican]->Update();
-        
+
+    //pad = (TPad*)ccan[ican]->cd(i);
+    //pad->Draw();
+    //pad->SaveAs(Form("hepdata/Figure1.%d.png", i));
+
+    hepdata.open(Form("hepdata/fig1-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$z$'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_z_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (ibin == 0 || ibin == h1_z_data[i-1]->GetNbinsX()-1)
+        continue;
+      hepdata << "  - { low: " << z_binedges[ibin] << ", high: " << z_binedges[ibin+1]<< "}\n";
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dz}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_z_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (ibin == 0 || ibin == h1_z_data[i-1]->GetNbinsX()-1)
+        continue;
+      hepdata << "  - value: " << h1_z_data[i-1]->GetBinContent(ibin+1) << "\n";
+      hepdata << "    errors:\n";
+      hepdata << "    - {symerror: " << h1_z_data[i-1]->GetBinError(ibin+1) << ", label: 'Statistical'}\n"; 
+      hepdata << "    - {symerror: " << h1_z_data_w_sys->GetBinError(ibin+1) << ", label: 'Systematic'}\n"; 
+    }
+    hepdata.close();
   }     
 
   if (ican == 0)
@@ -479,7 +511,33 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "z_final_w_sys.png"));
+  for (int i = 1; i < ptbinsize; ++i) {
+      TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+      if (!pad) continue;
 
+      TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+      tmp->cd();
+
+      // Copy all primitives from the pad
+      TIter next(pad->GetListOfPrimitives());
+      TObject *obj;
+      while ((obj = next())) {
+          // Draw a clone of the object
+          obj->DrawClone();
+      }
+
+      // Optional: copy margins
+      tmp->SetLeftMargin(pad->GetLeftMargin());
+      tmp->SetRightMargin(pad->GetRightMargin());
+      tmp->SetTopMargin(pad->GetTopMargin());
+      tmp->SetBottomMargin(pad->GetBottomMargin());
+
+      tmp->Update();
+      tmp->SaveAs(Form("hepdata/fig1-%d.png", i));
+
+      delete tmp;
+  }
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
@@ -647,6 +705,34 @@ void PublicationFigures(int NumEvts = -1,
 
     ccan[ican]->cd(i);
     ccan[ican]->Update(); 
+
+    hepdata.open(Form("hepdata/fig2-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$j_{T}$ [GeV/c]'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_jt_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (h1_jt_data[i-1]->GetBinContent(ibin+1) !=0 )
+      {
+        hepdata << "  - { low: " << jt_binedges[ibin] << ", high: " << jt_binedges[ibin+1]<< "}\n";
+      }
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dj_{T}}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_jt_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (h1_jt_data[i-1]->GetBinContent(ibin+1) !=0 )
+      {
+        hepdata << "  - value: " << h1_jt_data[i-1]->GetBinContent(ibin+1) << "\n";
+        hepdata << "    errors:\n";
+        hepdata << "    - {symerror: " << h1_jt_data[i-1]->GetBinError(ibin+1) << ", label: 'Statistical'}\n"; 
+        hepdata << "    - {symerror: " << h1_jt_data_w_sys->GetBinError(ibin+1) << ", label: 'Systematic'}\n"; 
+      }
+    }
+    hepdata.close();
   }
 
   if (ican == 0)
@@ -658,6 +744,33 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }      
   ccan[ican]->SaveAs(TString(loc_plots + "jt_final_w_sys.png"));  
+  for (int i = 1; i < ptbinsize; ++i) {
+    TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+    if (!pad) continue;
+
+    TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+    tmp->cd();
+
+    // Copy all primitives from the pad
+    TIter next(pad->GetListOfPrimitives());
+    TObject *obj;
+    while ((obj = next())) {
+        // Draw a clone of the object
+        obj->DrawClone();
+    }
+
+    // Optional: copy margins
+    tmp->SetLeftMargin(pad->GetLeftMargin());
+    tmp->SetRightMargin(pad->GetRightMargin());
+    tmp->SetTopMargin(pad->GetTopMargin());
+    tmp->SetBottomMargin(pad->GetBottomMargin());
+
+    tmp->Update();
+    tmp->SaveAs(Form("hepdata/fig2-%d.png", i));
+
+    delete tmp;
+}
 
 
   ++ican;
@@ -813,6 +926,32 @@ void PublicationFigures(int NumEvts = -1,
 
     ccan[ican]->cd(i);
     ccan[ican]->Update();
+
+    hepdata.open(Form("hepdata/fig3-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$r$'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_r_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (ibin == h1_r_data[i-1]->GetNbinsX()-1)
+        continue;
+      hepdata << "  - { low: " << r_binedges[ibin] << ", high: " << r_binedges[ibin+1]<< "}\n";
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dr}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int ibin=0; ibin<h1_r_data[i-1]->GetNbinsX(); ++ibin)
+    { 
+      if (ibin == h1_r_data[i-1]->GetNbinsX()-1)
+        continue;
+      hepdata << "  - value: " << h1_r_data[i-1]->GetBinContent(ibin+1) << "\n";
+      hepdata << "    errors:\n";
+      hepdata << "    - {symerror: " << h1_r_data[i-1]->GetBinError(ibin+1) << ", label: 'Statistical'}\n"; 
+      hepdata << "    - {symerror: " << h1_r_data_w_sys->GetBinError(ibin+1) << ", label: 'Systematic'}\n"; 
+    }
+    hepdata.close();
   
   }  
 
@@ -825,6 +964,33 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "r_final_w_sys.png"));   
+  for (int i = 1; i < ptbinsize; ++i) {
+    TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+    if (!pad) continue;
+
+    TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+    tmp->cd();
+
+    // Copy all primitives from the pad
+    TIter next(pad->GetListOfPrimitives());
+    TObject *obj;
+    while ((obj = next())) {
+        // Draw a clone of the object
+        obj->DrawClone();
+    }
+
+    // Optional: copy margins
+    tmp->SetLeftMargin(pad->GetLeftMargin());
+    tmp->SetRightMargin(pad->GetRightMargin());
+    tmp->SetTopMargin(pad->GetTopMargin());
+    tmp->SetBottomMargin(pad->GetBottomMargin());
+
+    tmp->Update();
+    tmp->SaveAs(Form("hepdata/fig3-%d.png", i));
+
+    delete tmp;
+}
 
 
   ++ican;
@@ -897,6 +1063,74 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->cd();
     //gPad->SetLogz();
     ccan[ican]->Update(); 
+
+    h2_zjt_sys[i-1] = (TH2D*)file_sys->Get(Form("zjt_sys_total_pt%d",i));   
+    TH2D *h2_zjt_data_w_sys = (TH2D*)h2_zjt_data[i-1]->Clone("h2_zjt_data_w_sys");
+    h2_zjt_sys[i-1]->Multiply(h2_zjt_sys[i-1], h2_zjt_data[i-1]);
+    for (int xbin=0; xbin<h2_zjt_data_w_sys->GetNbinsX(); ++xbin)
+    { 
+      for (int ybin=0; ybin<h2_zjt_data_w_sys->GetNbinsY(); ++ybin)
+      { 
+        h2_zjt_data_w_sys->SetBinError(xbin+1, ybin+1, h2_zjt_sys[i-1]->GetBinContent(xbin+1, ybin+1));
+        if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+        {
+          continue;
+        }   
+      }    
+    } 
+
+    hepdata.open(Form("hepdata/fig4-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$z$'}\n";
+    //hepdata << "- header: {name: '$j_{T} [GeV/c]$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        continue;
+      for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << z_binedges2D[xbin] << ", high: " << z_binedges2D[xbin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "- header: {name: '$j_{T}$ [GeV/c]'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        continue;
+      for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << jt_binedges2D[ybin] << ", high: " << jt_binedges2D[ybin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dzdj_{T}}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
+        continue; 
+      for (int ybin=0; ybin<h2_zjt_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - value: " << h2_zjt_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\n";
+          hepdata << "    errors:\n";
+          hepdata << "    - {symerror: " << h2_zjt_data[i-1]->GetBinError(xbin+1, ybin+1) << ", label: 'Statistical'}\n"; 
+          hepdata << "    - {symerror: " << h2_zjt_data_w_sys->GetBinError(xbin+1, ybin+1) << ", label: 'Systematic'}\n"; 
+        }
+      }
+    }
+    hepdata.close();
   }    
 
   if (ican == 0)
@@ -908,6 +1142,66 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "zjt_final_w_sys.png"));  
+  for (int i = 1; i < ptbinsize; ++i) {
+    TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+    if (!pad) continue;
+    TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+    // ---- copy pad state ----
+    tmp->SetLogx(pad->GetLogx());
+    tmp->SetLogy(pad->GetLogy());
+    tmp->SetLogz(pad->GetLogz());
+
+    tmp->SetLeftMargin(pad->GetLeftMargin());
+    tmp->SetRightMargin(pad->GetRightMargin());
+    tmp->SetTopMargin(pad->GetTopMargin());
+    tmp->SetBottomMargin(pad->GetBottomMargin());
+
+    tmp->cd();
+
+    // ---- find the main TH2 ----
+    TH2 *h2 = nullptr;
+    TIter it(pad->GetListOfPrimitives());
+    TObject *obj;
+
+    while ((obj = it())) {
+        if ((h2 = dynamic_cast<TH2*>(obj))) break;
+    }
+
+    // ---- redraw TH2 properly ----
+    if (h2) {
+        TH2 *h2c = (TH2*)h2->Clone();
+        h2c->Draw("COLZ");   // force palette regeneration
+    }
+
+    // ---- redraw everything else on top ----
+    it.Reset();
+    while ((obj = it())) {
+      if (obj == h2) continue;
+      if (obj->InheritsFrom("TPaletteAxis")) continue;
+      if (obj->InheritsFrom("TH1")) continue;    // includes TH2
+      if (obj->InheritsFrom("TFrame")) continue; // very important
+
+      // Draw annotations without "same"
+      if (obj->InheritsFrom("TLatex") ||
+          obj->InheritsFrom("TText")  ||
+          obj->InheritsFrom("TLegend")||
+          obj->InheritsFrom("TLine")  ||
+          obj->InheritsFrom("TArrow") ||
+          obj->InheritsFrom("TBox")) {
+
+            obj->DrawClone();
+      }
+      // Graph-like overlays
+      else if (obj->InheritsFrom("TGraph")) {
+        obj->DrawClone("same");
+      }
+    }
+
+    tmp->SaveAs(Form("hepdata/fig4-%d.png", i));
+
+    delete tmp; 
+  }
  
 
   ++ican;
@@ -982,6 +1276,74 @@ void PublicationFigures(int NumEvts = -1,
     
     ccan[ican]->cd();
     //gPad->SetLogz();
+
+    h2_zr_sys[i-1] = (TH2D*)file_sys->Get(Form("zr_sys_total_pt%d",i));   
+    TH2D *h2_zr_data_w_sys = (TH2D*)h2_zr_data[i-1]->Clone("h2_zr_data_w_sys");
+    h2_zr_sys[i-1]->Multiply(h2_zr_sys[i-1], h2_zr_data[i-1]);
+    for (int xbin=0; xbin<h2_zr_data_w_sys->GetNbinsX(); ++xbin)
+    { 
+      for (int ybin=0; ybin<h2_zr_data_w_sys->GetNbinsY(); ++ybin)
+      { 
+        h2_zr_data_w_sys->SetBinError(xbin+1, ybin+1, h2_zr_sys[i-1]->GetBinContent(xbin+1, ybin+1));
+        if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+        {
+          continue;
+        }   
+      }    
+    } 
+
+    hepdata.open(Form("hepdata/fig5-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$z$'}\n";
+    //hepdata << "- header: {name: '$j_{T} [GeV/c]$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        continue;
+      for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << z_binedges2D[xbin] << ", high: " << z_binedges2D[xbin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "- header: {name: '$r$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        continue;
+      for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << r_binedges2D[ybin] << ", high: " << r_binedges2D[ybin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dzdr}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
+        continue; 
+      for (int ybin=0; ybin<h2_zr_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - value: " << h2_zr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\n";
+          hepdata << "    errors:\n";
+          hepdata << "    - {symerror: " << h2_zr_data[i-1]->GetBinError(xbin+1, ybin+1) << ", label: 'Statistical'}\n"; 
+          hepdata << "    - {symerror: " << h2_zr_data_w_sys->GetBinError(xbin+1, ybin+1) << ", label: 'Systematic'}\n"; 
+        }
+      }
+    }
+    hepdata.close();
   }       
   ccan[ican]->Update();
   if (ican == 0)
@@ -993,6 +1355,66 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "zr_final_w_sys.png"));
+  for (int i = 1; i < ptbinsize; ++i) {
+    TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+    if (!pad) continue;
+    TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+    // ---- copy pad state ----
+    tmp->SetLogx(pad->GetLogx());
+    tmp->SetLogy(pad->GetLogy());
+    tmp->SetLogz(pad->GetLogz());
+
+    tmp->SetLeftMargin(pad->GetLeftMargin());
+    tmp->SetRightMargin(pad->GetRightMargin());
+    tmp->SetTopMargin(pad->GetTopMargin());
+    tmp->SetBottomMargin(pad->GetBottomMargin());
+
+    tmp->cd();
+
+    // ---- find the main TH2 ----
+    TH2 *h2 = nullptr;
+    TIter it(pad->GetListOfPrimitives());
+    TObject *obj;
+
+    while ((obj = it())) {
+        if ((h2 = dynamic_cast<TH2*>(obj))) break;
+    }
+
+    // ---- redraw TH2 properly ----
+    if (h2) {
+        TH2 *h2c = (TH2*)h2->Clone();
+        h2c->Draw("COLZ");   // force palette regeneration
+    }
+
+    // ---- redraw everything else on top ----
+    it.Reset();
+    while ((obj = it())) {
+      if (obj == h2) continue;
+      if (obj->InheritsFrom("TPaletteAxis")) continue;
+      if (obj->InheritsFrom("TH1")) continue;    // includes TH2
+      if (obj->InheritsFrom("TFrame")) continue; // very important
+
+      // Draw annotations without "same"
+      if (obj->InheritsFrom("TLatex") ||
+          obj->InheritsFrom("TText")  ||
+          obj->InheritsFrom("TLegend")||
+          obj->InheritsFrom("TLine")  ||
+          obj->InheritsFrom("TArrow") ||
+          obj->InheritsFrom("TBox")) {
+
+            obj->DrawClone();
+      }
+      // Graph-like overlays
+      else if (obj->InheritsFrom("TGraph")) {
+        obj->DrawClone("same");
+      }
+    }
+
+    tmp->SaveAs(Form("hepdata/fig5-%d.png", i));
+
+    delete tmp; 
+  }
 
   ++ican;
   sprintf(buf, "ccan%d", ican);
@@ -1025,7 +1447,9 @@ void PublicationFigures(int NumEvts = -1,
     
         
     h2_jtr_data[i-1]->SetMinimum(0.00001);  
-    h2_jtr_data[i-1]->SetMaximum(50.);    
+    h2_jtr_data[i-1]->SetMaximum(50.);
+    h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
+    
 
     gPad->SetTopMargin(0.2);
     gPad->SetBottomMargin(0.125);
@@ -1068,6 +1492,73 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->cd();
     //gPad->SetLogz();
     ccan[ican]->Update();
+
+    h2_jtr_sys[i-1] = (TH2D*)file_sys->Get(Form("jtr_sys_total_pt%d",i));   
+    TH2D *h2_jtr_data_w_sys = (TH2D*)h2_jtr_data[i-1]->Clone("h2_jtr_data_w_sys");
+    h2_jtr_sys[i-1]->Multiply(h2_jtr_sys[i-1], h2_jtr_data[i-1]);
+    for (int xbin=0; xbin<h2_jtr_data_w_sys->GetNbinsX(); ++xbin)
+    { 
+      for (int ybin=0; ybin<h2_jtr_data_w_sys->GetNbinsY(); ++ybin)
+      { 
+        h2_jtr_data_w_sys->SetBinError(xbin+1, ybin+1, h2_jtr_sys[i-1]->GetBinContent(xbin+1, ybin+1));
+        if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) == 0)
+        {
+          continue;
+        }   
+      }    
+    } 
+
+    hepdata.open(Form("hepdata/fig6-%d.yaml",i));
+    hepdata << "independent_variables:\n";
+    hepdata << "- header: {name: '$j_{T}$ [GeV/c]'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    { 
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+          continue;
+        if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << jt_binedges2D[xbin] << ", high: " << jt_binedges2D[xbin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "- header: {name: '$r$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      {
+        if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+          continue; 
+        if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - { low: " << r_binedges2D[ybin] << ", high: " << r_binedges2D[ybin+1]<< "}\n";
+        }
+      }
+    }
+    hepdata << "dependent_variables:\n";
+    hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dj_{T}dr}$'}\n";
+    hepdata << "  qualifiers:\n";
+    hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
+    hepdata << "  values:\n";
+    for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
+    {
+      for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
+      { 
+        if (ybin == h2_jtr_data[i-1]->GetNbinsY()-1)
+          continue;
+        if (h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) !=0 )
+        {
+          hepdata << "  - value: " << h2_jtr_data[i-1]->GetBinContent(xbin+1, ybin+1) << "\n";
+          hepdata << "    errors:\n";
+          hepdata << "    - {symerror: " << h2_jtr_data[i-1]->GetBinError(xbin+1, ybin+1) << ", label: 'Statistical'}\n"; 
+          hepdata << "    - {symerror: " << h2_jtr_data_w_sys->GetBinError(xbin+1, ybin+1) << ", label: 'Systematic'}\n"; 
+        }
+      }
+    }
+    hepdata.close();
   }    
   
   if (ican == 0)
@@ -1078,7 +1569,67 @@ void PublicationFigures(int NumEvts = -1,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }
-  ccan[ican]->SaveAs(TString(loc_plots + "jtr_final_w_sys.png"));    
+  ccan[ican]->SaveAs(TString(loc_plots + "jtr_final_w_sys.png"));
+  for (int i = 1; i < ptbinsize; ++i) {
+    TPad *pad = (TPad*)ccan[ican]->GetPad(i);
+    if (!pad) continue;
+    TCanvas *tmp = new TCanvas(Form("pad_canvas_%d", i), "", 800, 600);
+
+    // ---- copy pad state ----
+    tmp->SetLogx(pad->GetLogx());
+    tmp->SetLogy(pad->GetLogy());
+    tmp->SetLogz(pad->GetLogz());
+
+    tmp->SetLeftMargin(pad->GetLeftMargin());
+    tmp->SetRightMargin(pad->GetRightMargin());
+    tmp->SetTopMargin(pad->GetTopMargin());
+    tmp->SetBottomMargin(pad->GetBottomMargin());
+
+    tmp->cd();
+
+    // ---- find the main TH2 ----
+    TH2 *h2 = nullptr;
+    TIter it(pad->GetListOfPrimitives());
+    TObject *obj;
+
+    while ((obj = it())) {
+        if ((h2 = dynamic_cast<TH2*>(obj))) break;
+    }
+
+    // ---- redraw TH2 properly ----
+    if (h2) {
+        TH2 *h2c = (TH2*)h2->Clone();
+        h2c->Draw("COLZ");   // force palette regeneration
+    }
+
+    // ---- redraw everything else on top ----
+    it.Reset();
+    while ((obj = it())) {
+      if (obj == h2) continue;
+      if (obj->InheritsFrom("TPaletteAxis")) continue;
+      if (obj->InheritsFrom("TH1")) continue;    // includes TH2
+      if (obj->InheritsFrom("TFrame")) continue; // very important
+
+      // Draw annotations without "same"
+      if (obj->InheritsFrom("TLatex") ||
+          obj->InheritsFrom("TText")  ||
+          obj->InheritsFrom("TLegend")||
+          obj->InheritsFrom("TLine")  ||
+          obj->InheritsFrom("TArrow") ||
+          obj->InheritsFrom("TBox")) {
+
+            obj->DrawClone();
+      }
+      // Graph-like overlays
+      else if (obj->InheritsFrom("TGraph")) {
+        obj->DrawClone("same");
+      }
+    }
+
+    tmp->SaveAs(Form("hepdata/fig6-%d.png", i));
+
+    delete tmp; 
+  }  
 
   if (ican > -1)
   {
