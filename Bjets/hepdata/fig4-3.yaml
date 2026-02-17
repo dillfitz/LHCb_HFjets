@@ -1,298 +1,78 @@
 independent_variables:
-- header: {name: '$z$'}
-  values:
-  - { low: 0, high: 0.2}
-  - { low: 0, high: 0.2}
-  - { low: 0, high: 0.2}
-  - { low: 0, high: 0.2}
-  - { low: 0, high: 0.2}
-  - { low: 0, high: 0.2}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.2, high: 0.4}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.4, high: 0.5}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.5, high: 0.6}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.6, high: 0.7}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.7, high: 0.8}
-  - { low: 0.8, high: 0.9}
-  - { low: 0.8, high: 0.9}
-  - { low: 0.8, high: 0.9}
-  - { low: 0.8, high: 0.9}
-  - { low: 0.8, high: 0.9}
-  - { low: 0.9, high: 1}
-  - { low: 0.9, high: 1}
-  - { low: 0.9, high: 1}
 - header: {name: '$j_{T}$ [GeV/c]'}
   values:
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 4, high: 5}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 4, high: 5}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 4, high: 5}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 4, high: 5}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 3, high: 4}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
-  - { low: 1.5, high: 2}
-  - { low: 2, high: 3}
-  - { low: 0, high: 0.5}
-  - { low: 0.5, high: 1}
-  - { low: 1, high: 1.5}
+  - { low: 0, high: 0.25}
+  - { low: 0.25, high: 0.5}
+  - { low: 0.5, high: 0.75}
+  - { low: 0.75, high: 1}
+  - { low: 1, high: 1.2}
+  - { low: 1.2, high: 1.5}
+  - { low: 1.5, high: 1.8}
+  - { low: 1.8, high: 2}
+  - { low: 2, high: 2.5}
+  - { low: 2.5, high: 3}
+  - { low: 3, high: 3.5}
+  - { low: 3.5, high: 4}
+  - { low: 4, high: 4.5}
+  - { low: 4.5, high: 5}
 dependent_variables:
-- header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dzdj_{T}}$'}
+- header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dj_{T}}$'}
   qualifiers:
-  - {name: 'region', value: '$15 < p_{T,\rm{jet}} < 20$, $2.5 < y_{jet} < 4.0$'}
+  - {name: 'region', value: '$1.50e+01 < p_{T,\rm{jet}} < 2.00e+01$, $2.5 < y_{jet} < 4.0$'}
   values:
-  - value: 7.29244e-05
+  - value: 7.41e-01
     errors:
-    - {symerror: 5.03782e-05, label: 'Statistical'}
-    - {symerror: 0.00105605, label: 'Systematic'}
-  - value: 0.00550096
+    - {symerror: 8.82e-03, label: 'Statistical'}
+    - {symerror: 6.30e-02, label: 'Systematic'}
+  - value: 9.31e-01
     errors:
-    - {symerror: 0.0024119, label: 'Statistical'}
-    - {symerror: 0.00260553, label: 'Systematic'}
-  - value: 0.00288919
+    - {symerror: 8.63e-03, label: 'Statistical'}
+    - {symerror: 2.49e-02, label: 'Systematic'}
+  - value: 7.79e-01
     errors:
-    - {symerror: 0.00168659, label: 'Statistical'}
-    - {symerror: 0.00607003, label: 'Systematic'}
-  - value: 0.00555799
+    - {symerror: 7.81e-03, label: 'Statistical'}
+    - {symerror: 1.83e-02, label: 'Systematic'}
+  - value: 5.48e-01
     errors:
-    - {symerror: 0.00263132, label: 'Statistical'}
-    - {symerror: 0.00487923, label: 'Systematic'}
-  - value: 0.00137833
+    - {symerror: 6.48e-03, label: 'Statistical'}
+    - {symerror: 2.11e-02, label: 'Systematic'}
+  - value: 3.59e-01
     errors:
-    - {symerror: 0.00115909, label: 'Statistical'}
-    - {symerror: 0.00129249, label: 'Systematic'}
-  - value: 0.000280375
+    - {symerror: 5.43e-03, label: 'Statistical'}
+    - {symerror: 1.62e-02, label: 'Systematic'}
+  - value: 2.27e-01
     errors:
-    - {symerror: 0.000294641, label: 'Statistical'}
-    - {symerror: 0.000102059, label: 'Systematic'}
-  - value: 0.0864878
+    - {symerror: 4.45e-03, label: 'Statistical'}
+    - {symerror: 1.17e-02, label: 'Systematic'}
+  - value: 1.40e-01
     errors:
-    - {symerror: 0.00711021, label: 'Statistical'}
-    - {symerror: 0.00939595, label: 'Systematic'}
-  - value: 0.201218
+    - {symerror: 3.58e-03, label: 'Statistical'}
+    - {symerror: 9.41e-03, label: 'Systematic'}
+  - value: 8.66e-02
     errors:
-    - {symerror: 0.0109434, label: 'Statistical'}
-    - {symerror: 0.0109417, label: 'Systematic'}
-  - value: 0.196644
+    - {symerror: 3.00e-03, label: 'Statistical'}
+    - {symerror: 6.95e-03, label: 'Systematic'}
+  - value: 4.90e-02
     errors:
-    - {symerror: 0.0105264, label: 'Statistical'}
-    - {symerror: 0.0179863, label: 'Systematic'}
-  - value: 0.14987
+    - {symerror: 2.20e-03, label: 'Statistical'}
+    - {symerror: 5.40e-03, label: 'Systematic'}
+  - value: 2.54e-02
     errors:
-    - {symerror: 0.00983076, label: 'Statistical'}
-    - {symerror: 0.0146761, label: 'Systematic'}
-  - value: 0.0897751
+    - {symerror: 1.87e-03, label: 'Statistical'}
+    - {symerror: 5.36e-03, label: 'Systematic'}
+  - value: 1.42e-02
     errors:
-    - {symerror: 0.00729341, label: 'Statistical'}
-    - {symerror: 0.0252241, label: 'Systematic'}
-  - value: 0.0366946
+    - {symerror: 1.89e-03, label: 'Statistical'}
+    - {symerror: 4.37e-03, label: 'Systematic'}
+  - value: 4.76e-03
     errors:
-    - {symerror: 0.00567273, label: 'Statistical'}
-    - {symerror: 0.0105855, label: 'Systematic'}
-  - value: 0.0029428
+    - {symerror: 1.08e-03, label: 'Statistical'}
+    - {symerror: 1.80e-03, label: 'Systematic'}
+  - value: 7.48e-04
     errors:
-    - {symerror: 0.00188219, label: 'Statistical'}
-    - {symerror: 0.00298607, label: 'Systematic'}
-  - value: 0.165859
+    - {symerror: 4.71e-04, label: 'Statistical'}
+    - {symerror: 6.59e-04, label: 'Systematic'}
+  - value: 1.96e-04
     errors:
-    - {symerror: 0.0104538, label: 'Statistical'}
-    - {symerror: 0.00660025, label: 'Systematic'}
-  - value: 0.404353
-    errors:
-    - {symerror: 0.0170001, label: 'Statistical'}
-    - {symerror: 0.0146488, label: 'Systematic'}
-  - value: 0.402709
-    errors:
-    - {symerror: 0.015215, label: 'Statistical'}
-    - {symerror: 0.0167101, label: 'Systematic'}
-  - value: 0.242045
-    errors:
-    - {symerror: 0.0117928, label: 'Statistical'}
-    - {symerror: 0.0206984, label: 'Systematic'}
-  - value: 0.0906422
-    errors:
-    - {symerror: 0.00623656, label: 'Statistical'}
-    - {symerror: 0.0054202, label: 'Systematic'}
-  - value: 0.0129045
-    errors:
-    - {symerror: 0.00360123, label: 'Statistical'}
-    - {symerror: 0.00410347, label: 'Systematic'}
-  - value: 2.7688e-05
-    errors:
-    - {symerror: 1.80417e-06, label: 'Statistical'}
-    - {symerror: 3.74223e-06, label: 'Systematic'}
-  - value: 0.340328
-    errors:
-    - {symerror: 0.0139223, label: 'Statistical'}
-    - {symerror: 0.0290699, label: 'Systematic'}
-  - value: 0.691115
-    errors:
-    - {symerror: 0.0189408, label: 'Statistical'}
-    - {symerror: 0.036157, label: 'Systematic'}
-  - value: 0.541434
-    errors:
-    - {symerror: 0.015817, label: 'Statistical'}
-    - {symerror: 0.0188081, label: 'Systematic'}
-  - value: 0.253534
-    errors:
-    - {symerror: 0.0100204, label: 'Statistical'}
-    - {symerror: 0.016491, label: 'Systematic'}
-  - value: 0.0497421
-    errors:
-    - {symerror: 0.00312957, label: 'Statistical'}
-    - {symerror: 0.00448301, label: 'Systematic'}
-  - value: 0.00258965
-    errors:
-    - {symerror: 0.000531193, label: 'Statistical'}
-    - {symerror: 0.000168037, label: 'Systematic'}
-  - value: 0.000159125
-    errors:
-    - {symerror: 0.000102827, label: 'Statistical'}
-    - {symerror: 9.18501e-06, label: 'Systematic'}
-  - value: 0.701123
-    errors:
-    - {symerror: 0.0182629, label: 'Statistical'}
-    - {symerror: 0.0748374, label: 'Systematic'}
-  - value: 1.21212
-    errors:
-    - {symerror: 0.0228682, label: 'Statistical'}
-    - {symerror: 0.0882354, label: 'Systematic'}
-  - value: 0.693914
-    errors:
-    - {symerror: 0.0164075, label: 'Statistical'}
-    - {symerror: 0.0315843, label: 'Systematic'}
-  - value: 0.194515
-    errors:
-    - {symerror: 0.00769519, label: 'Statistical'}
-    - {symerror: 0.00800406, label: 'Systematic'}
-  - value: 0.019644
-    errors:
-    - {symerror: 0.00147309, label: 'Statistical'}
-    - {symerror: 0.000361, label: 'Systematic'}
-  - value: 0.0019698
-    errors:
-    - {symerror: 0.000434643, label: 'Statistical'}
-    - {symerror: 0.000162107, label: 'Systematic'}
-  - value: 0.000109114
-    errors:
-    - {symerror: 8.18273e-05, label: 'Statistical'}
-    - {symerror: 4.40074e-05, label: 'Systematic'}
-  - value: 1.50377
-    errors:
-    - {symerror: 0.0257561, label: 'Statistical'}
-    - {symerror: 0.114301, label: 'Systematic'}
-  - value: 1.93879
-    errors:
-    - {symerror: 0.0277654, label: 'Statistical'}
-    - {symerror: 0.128868, label: 'Systematic'}
-  - value: 0.612082
-    errors:
-    - {symerror: 0.0137024, label: 'Statistical'}
-    - {symerror: 0.0196739, label: 'Systematic'}
-  - value: 0.0811648
-    errors:
-    - {symerror: 0.00435741, label: 'Statistical'}
-    - {symerror: 0.00100302, label: 'Systematic'}
-  - value: 0.00366413
-    errors:
-    - {symerror: 0.000481327, label: 'Statistical'}
-    - {symerror: 0.000188983, label: 'Systematic'}
-  - value: 0.000234231
-    errors:
-    - {symerror: 0.000158113, label: 'Statistical'}
-    - {symerror: 6.20162e-05, label: 'Systematic'}
-  - value: 2.7129
-    errors:
-    - {symerror: 0.035425, label: 'Statistical'}
-    - {symerror: 0.0844017, label: 'Systematic'}
-  - value: 1.81191
-    errors:
-    - {symerror: 0.0256152, label: 'Statistical'}
-    - {symerror: 0.0384087, label: 'Systematic'}
-  - value: 0.194675
-    errors:
-    - {symerror: 0.00610976, label: 'Statistical'}
-    - {symerror: 0.00683647, label: 'Systematic'}
-  - value: 0.0097222
-    errors:
-    - {symerror: 0.000884945, label: 'Statistical'}
-    - {symerror: 0.000726651, label: 'Systematic'}
-  - value: 0.000255886
-    errors:
-    - {symerror: 6.91139e-05, label: 'Statistical'}
-    - {symerror: 2.70168e-05, label: 'Systematic'}
-  - value: 2.86976
-    errors:
-    - {symerror: 0.0377325, label: 'Statistical'}
-    - {symerror: 0.366776, label: 'Systematic'}
-  - value: 0.230762
-    errors:
-    - {symerror: 0.00640617, label: 'Statistical'}
-    - {symerror: 0.0232375, label: 'Systematic'}
-  - value: 0.00676635
-    errors:
-    - {symerror: 0.000716724, label: 'Statistical'}
-    - {symerror: 0.00106187, label: 'Systematic'}
+    - {symerror: 1.94e-04, label: 'Statistical'}
+    - {symerror: 8.34e-05, label: 'Systematic'}

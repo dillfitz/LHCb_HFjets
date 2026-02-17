@@ -361,9 +361,10 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
     TLatex Tl;
     Tl.SetNDC(kTRUE);
     Tl.SetTextSize(0.03);
+    Tl.SetTextFont(1);
     //
-    gStyle->SetCanvasDefH(2000);
-    gStyle->SetCanvasDefW(3508);
+    //gStyle->SetCanvasDefH(2000);
+    //gStyle->SetCanvasDefW(3508);
     //
     gStyle->SetOptStat(0);
     // gStyle->SetPaperSize(TStyle::kUSLetter);
@@ -671,7 +672,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         xframe->SetTitleOffset(0.7, "Y");
         xframe->SetTitleOffset(0.9, "X");
 
-        B_mass.plotOn(xframe, Name("B_mass"));
+        B_mass.plotOn(xframe, Name("B_mass"), MarkerStyle(kFullCircle), MarkerSize(0.5), LineWidth(2));
         // model->plotOn(xframe);
 
         // Overlay the background component of model with a dashed line
@@ -716,7 +717,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
         RooPlot *xframe2 = HFMass.frame(Title(Form(";M_{#mu#muK} [GeV];Events/(%.1f MeV) ", binsize * 1000.)));
         xframe2->SetTitleOffset(0.7, "Y");
         xframe2->SetTitleOffset(0.9, "X");
-        B_mass.plotOn(xframe2, Name("B_mass"));
+
+        B_mass.plotOn(xframe2, Name("B_mass"), MarkerStyle(kFullCircle), MarkerSize(0.5), LineWidth(2));
         // model->plotOn(xframe2);
 
         // Overlay the background component of model with a dashed line
@@ -994,13 +996,13 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             xframe_pub->SetTitleOffset(0.8, "Y");
  
 
-            B_mass.plotOn(xframe_pub, Name("B_mass"), MarkerStyle(kFullCircle), MarkerSize(4.), LineWidth(2));
+            B_mass.plotOn(xframe_pub, Name("B_mass"), MarkerStyle(kFullCircle), MarkerSize(1.0), LineWidth(2.));
             // model->plotOn(xframe2);
     
             // Overlay the background component of model with a dashed line
-            model->plotOn(xframe_pub, Name("sig"), Components(sig), LineStyle(5), LineColor(kGreen + 2), LineWidth(2.));
-            model->plotOn(xframe_pub, Name("bkg_cheb"), Components(bkg_cheb), LineStyle(kDashed), LineColor(kBlue), LineWidth(2.));
-            model->plotOn(xframe_pub, Name("dcbPdf"), Components(dcbPdf), FillColor(TColor::GetColorTransparent(kMagenta, 0.7)), FillStyle(3165), LineWidth(0), DrawOption("F"));
+            //model->plotOn(xframe_pub, Name("sig"), Components(sig), LineStyle(5), LineColor(kGreen + 2), LineWidth(2.));
+            model->plotOn(xframe_pub, Name("bkg_cheb"), Components(bkg_cheb), LineStyle(kDashed), LineColor(kBlue), LineWidth(3.));
+            //model->plotOn(xframe_pub, Name("dcbPdf"), Components(dcbPdf), FillColor(TColor::GetColorTransparent(kMagenta, 0.7)), FillStyle(3165), LineWidth(0), DrawOption("F"));
             model->plotOn(xframe_pub, Name("model"), LineStyle(kSolid), LineColor(kRed), LineWidth(2.));
 
             xframe_pub->Draw("SAME");
@@ -1009,22 +1011,24 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             Tl.SetNDC(kTRUE); // Use normalized coordinates (0-1)
           
             Tl.SetTextFont(lhcbFont);
+            //Tl.SetTextFont(133);
+
             Tl.SetTextColor(1);
             Tl.SetTextSize(lhcbTSize);
-            Tl.SetTextAlign(12);
-            Tl.DrawLatex(0.575, 0.85, "#scale[1.0]{LHCb pp #sqrt{#it{s}} = 13 TeV}");
-            Tl.DrawLatex(0.575, 0.75, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
-            Tl.DrawLatex(0.575, 0.65, Form("#scale[1.0]{%.1f < #it{p}_{T,B^{#pm}} < %.1f GeV/c}", ptHF_binedges[i], ptHF_binedges[i+1]));
-            Tl.DrawLatex(0.575, 0.55, Form("#scale[1.0]{#it{p}_{T,jet} > 5 GeV/c}"));
-            Tl.DrawLatex(0.575, 0.45, "#scale[1.0]{2.5 < #it{y}_{jet} < 4}");
+            //Tl.SetTextAlign(12);
+            Tl.DrawLatex(0.575, 0.85, "#scale[0.8]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
+            Tl.DrawLatex(0.575, 0.75, "#scale[0.8]{AK5 #it{B}^{#pm}-tagged jets}");
+            Tl.DrawLatex(0.575, 0.65, Form("#scale[0.8]{%.1f < #it{p}_{T,B^{#pm}} < %.1f GeV/c}", ptHF_binedges[i], ptHF_binedges[i+1]));
+            Tl.DrawLatex(0.575, 0.55, Form("#scale[0.8]{#it{p}_{T,jet} > 5 GeV/c}"));
+            Tl.DrawLatex(0.575, 0.45, "#scale[0.8]{2.5 < #it{y}_{jet} < 4}");
 
             TLegend *leg_pub = new TLegend(0.2, 0.5, 0.3, 0.85);
-            leg_pub->SetTextSize(0.05);
+            leg_pub->SetTextSize(0.035);
             leg_pub->SetBorderSize(0);
             leg_pub->AddEntry("B_mass", "Data", "PE");
-            leg_pub->AddEntry("model", "Fit model", "L");
-            leg_pub->AddEntry("sig", "Signal", "L");
-            leg_pub->AddEntry("bkg_cheb", "Comb. bkg.", "L");
+            leg_pub->AddEntry("model", "Total fit model", "L");
+            //leg_pub->AddEntry("sig", "Signal", "L");
+            leg_pub->AddEntry("bkg_cheb", "Background", "L");
 
             linelow->SetY2(5000);
             linehigh->SetY2(5000);
@@ -1032,7 +1036,19 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             sideline1high->SetY2(5000);
             sideline2low->SetY2(5000);
             sideline2high->SetY2(5000);
-    
+
+            sideline1low->SetLineColor(kViolet-3);
+            sideline1high->SetLineColor(kViolet-3);
+            sideline2low->SetLineColor(kViolet-3);
+            sideline2high->SetLineColor(kViolet-3);
+
+            linelow->SetLineWidth(3);
+            linehigh->SetLineWidth(3);
+            sideline1low->SetLineWidth(3);
+            sideline1high->SetLineWidth(3);
+            sideline2high->SetLineWidth(3);
+
+
             linelow->Draw("SAME");
             linehigh->Draw("SAME");
             sideline1low->Draw("SAME");

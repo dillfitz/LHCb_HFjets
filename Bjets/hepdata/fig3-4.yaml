@@ -1,58 +1,78 @@
 independent_variables:
-- header: {name: '$r$'}
+- header: {name: '$z$'}
   values:
-  - { low: 0, high: 0.025}
-  - { low: 0.025, high: 0.05}
-  - { low: 0.05, high: 0.075}
-  - { low: 0.075, high: 0.1}
-  - { low: 0.1, high: 0.15}
-  - { low: 0.15, high: 0.2}
-  - { low: 0.2, high: 0.25}
-  - { low: 0.25, high: 0.3}
-  - { low: 0.3, high: 0.35}
-  - { low: 0.35, high: 0.4}
+  - { low: 1.00e-01, high: 2.00e-01}
+  - { low: 2.00e-01, high: 3.00e-01}
+  - { low: 3.00e-01, high: 4.00e-01}
+  - { low: 4.00e-01, high: 5.00e-01}
+  - { low: 5.00e-01, high: 5.50e-01}
+  - { low: 5.50e-01, high: 6.00e-01}
+  - { low: 6.00e-01, high: 6.50e-01}
+  - { low: 6.50e-01, high: 7.00e-01}
+  - { low: 7.00e-01, high: 7.50e-01}
+  - { low: 7.50e-01, high: 8.00e-01}
+  - { low: 8.00e-01, high: 8.50e-01}
+  - { low: 8.50e-01, high: 9.00e-01}
+  - { low: 9.00e-01, high: 9.50e-01}
+  - { low: 9.50e-01, high: 1.00e+00}
 dependent_variables:
-- header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dr}$'}
+- header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dz}$'}
   qualifiers:
-  - {name: 'region', value: '$20 < p_{T,\rm{jet}} < 30$, $2.5 < y_{jet} < 4.0$'}
+  - {name: 'region', value: '$2.00e+01 < p_{T,\rm{jet}} < 3.00e+01$, $2.5 < y_{jet} < 4.0$'}
   values:
-  - value: 12.2868
+  - value: 2.07e-01
     errors:
-    - {symerror: 0.170401, label: 'Statistical'}
-    - {symerror: 0.798454, label: 'Systematic'}
-  - value: 9.94181
+    - {symerror: 2.81e-02, label: 'Statistical'}
+    - {symerror: 3.50e-02, label: 'Systematic'}
+  - value: 5.69e-01
     errors:
-    - {symerror: 0.143371, label: 'Statistical'}
-    - {symerror: 0.227243, label: 'Systematic'}
-  - value: 4.93581
+    - {symerror: 3.70e-02, label: 'Statistical'}
+    - {symerror: 1.17e-01, label: 'Systematic'}
+  - value: 6.56e-01
     errors:
-    - {symerror: 0.100052, label: 'Statistical'}
-    - {symerror: 0.283171, label: 'Systematic'}
-  - value: 2.89411
+    - {symerror: 2.98e-02, label: 'Statistical'}
+    - {symerror: 2.78e-02, label: 'Systematic'}
+  - value: 7.42e-01
     errors:
-    - {symerror: 0.0754217, label: 'Statistical'}
-    - {symerror: 0.145972, label: 'Systematic'}
-  - value: 1.76113
+    - {symerror: 2.55e-02, label: 'Statistical'}
+    - {symerror: 1.43e-02, label: 'Systematic'}
+  - value: 8.59e-01
     errors:
-    - {symerror: 0.0514179, label: 'Statistical'}
-    - {symerror: 0.064832, label: 'Systematic'}
-  - value: 1.21834
+    - {symerror: 2.91e-02, label: 'Statistical'}
+    - {symerror: 2.43e-02, label: 'Systematic'}
+  - value: 1.00e+00
     errors:
-    - {symerror: 0.0468022, label: 'Statistical'}
-    - {symerror: 0.0478386, label: 'Systematic'}
-  - value: 0.819628
+    - {symerror: 3.09e-02, label: 'Statistical'}
+    - {symerror: 4.27e-02, label: 'Systematic'}
+  - value: 1.24e+00
     errors:
-    - {symerror: 0.0420451, label: 'Statistical'}
-    - {symerror: 0.0683358, label: 'Systematic'}
-  - value: 0.544505
+    - {symerror: 3.32e-02, label: 'Statistical'}
+    - {symerror: 9.17e-02, label: 'Systematic'}
+  - value: 1.55e+00
     errors:
-    - {symerror: 0.0381709, label: 'Statistical'}
-    - {symerror: 0.0388291, label: 'Systematic'}
-  - value: 0.374699
+    - {symerror: 3.59e-02, label: 'Statistical'}
+    - {symerror: 1.39e-01, label: 'Systematic'}
+  - value: 1.96e+00
     errors:
-    - {symerror: 0.0342981, label: 'Statistical'}
-    - {symerror: 0.0358529, label: 'Systematic'}
-  - value: 0.191414
+    - {symerror: 3.94e-02, label: 'Statistical'}
+    - {symerror: 1.74e-01, label: 'Systematic'}
+  - value: 2.30e+00
     errors:
-    - {symerror: 0.02648, label: 'Statistical'}
-    - {symerror: 0.0221381, label: 'Systematic'}
+    - {symerror: 4.20e-02, label: 'Statistical'}
+    - {symerror: 1.80e-01, label: 'Systematic'}
+  - value: 2.46e+00
+    errors:
+    - {symerror: 4.27e-02, label: 'Statistical'}
+    - {symerror: 7.88e-02, label: 'Systematic'}
+  - value: 2.14e+00
+    errors:
+    - {symerror: 3.98e-02, label: 'Statistical'}
+    - {symerror: 6.94e-02, label: 'Systematic'}
+  - value: 1.44e+00
+    errors:
+    - {symerror: 3.31e-02, label: 'Statistical'}
+    - {symerror: 2.13e-01, label: 'Systematic'}
+  - value: 7.03e-01
+    errors:
+    - {symerror: 2.43e-02, label: 'Statistical'}
+    - {symerror: 1.88e-01, label: 'Systematic'}
