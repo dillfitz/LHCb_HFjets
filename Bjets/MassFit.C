@@ -991,7 +991,7 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             c0->SetTopMargin(0.1);
             c0->SetLeftMargin(0.15);
             c0->SetRightMargin(0.1);
-            RooPlot *xframe_pub = HFMass.frame(Title(Form(";#it{m}_{#mu^{+}#mu^{-}K^{#pm}} [GeV/c^{2}];Candidates/(%.1f MeV/c^{2}) ", binsize * 1000.)));
+            RooPlot *xframe_pub = HFMass.frame(Title(Form(";#it{m}_{#mu^{+}#mu^{-}K^{#pm}} [GeV/#it{c}^{2}];Candidates/(%.1f MeV/#it{c}^{2}) ", binsize * 1000.)));
             xframe_pub->SetTitleOffset(1.1, "X");
             xframe_pub->SetTitleOffset(0.8, "Y");
  
@@ -1018,9 +1018,9 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             //Tl.SetTextAlign(12);
             Tl.DrawLatex(0.575, 0.85, "#scale[0.8]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
             Tl.DrawLatex(0.575, 0.75, "#scale[0.8]{AK5 #it{B}^{#pm}-tagged jets}");
-            Tl.DrawLatex(0.575, 0.65, Form("#scale[0.8]{%.1f < #it{p}_{T,B^{#pm}} < %.1f GeV/c}", ptHF_binedges[i], ptHF_binedges[i+1]));
-            Tl.DrawLatex(0.575, 0.55, Form("#scale[0.8]{#it{p}_{T,jet} > 5 GeV/c}"));
-            Tl.DrawLatex(0.575, 0.45, "#scale[0.8]{2.5 < #it{y}_{jet} < 4}");
+            Tl.DrawLatex(0.575, 0.65, Form("#scale[0.8]{%.1f < #it{p}_{T,B^{#pm}} < %.1f GeV/#it{c}}", ptHF_binedges[i], ptHF_binedges[i+1]));
+            Tl.DrawLatex(0.575, 0.55, Form("#scale[0.8]{#it{p}_{T,jet} > 5 GeV/#it{c}}"));
+            Tl.DrawLatex(0.575, 0.45, "#scale[0.8]{2.5 < #it{y}_{jet} < 4.0}");
 
             TLegend *leg_pub = new TLegend(0.2, 0.5, 0.3, 0.85);
             leg_pub->SetTextSize(0.035);
@@ -1040,14 +1040,19 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             sideline1low->SetLineColor(kViolet-3);
             sideline1high->SetLineColor(kViolet-3);
             sideline2low->SetLineColor(kViolet-3);
-            sideline2high->SetLineColor(kViolet-3);
+            sideline2high->SetLineColor(kViolet-3);            
 
             linelow->SetLineWidth(3);
             linehigh->SetLineWidth(3);
             sideline1low->SetLineWidth(3);
             sideline1high->SetLineWidth(3);
+            sideline2low->SetLineWidth(3);
             sideline2high->SetLineWidth(3);
 
+            sideline1low->SetLineStyle(4);
+            sideline1high->SetLineStyle(4);
+            sideline2low->SetLineStyle(4);
+            sideline2high->SetLineStyle(4);
 
             linelow->Draw("SAME");
             linehigh->Draw("SAME");
@@ -1058,6 +1063,8 @@ void MassFit(int NumEvts = -1, int dataset = 91599, bool isData = true,
             leg_pub->Draw("SAME");
 
             c0->SaveAs("BMass.pdf");
+            c0->SaveAs("BMass.png");
+            c0->SaveAs("BMass.eps");
         }
 
         }

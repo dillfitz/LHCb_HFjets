@@ -414,8 +414,8 @@ void PublicationFigures(int NumEvts = -1,
  
     Tl.DrawLatex(left, top, "#scale[1.5]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
-    Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c}}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4.0}");
     if (i==1)
     {
       //lhcbName->Draw("SAME");
@@ -475,6 +475,7 @@ void PublicationFigures(int NumEvts = -1,
     //pad->Draw();
     //pad->SaveAs(Form("hepdata/Figure1.%d.png", i));
 
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig3-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$z$'}\n";
@@ -487,12 +488,12 @@ void PublicationFigures(int NumEvts = -1,
     }
 
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dz}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int ibin=0; ibin<h1_z_data[i-1]->GetNbinsX(); ++ibin)
     { 
       if (ibin == 0 || ibin == h1_z_data[i-1]->GetNbinsX()-1)
@@ -514,6 +515,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "z_final_w_sys.png"));
+  ccan[ican]->SaveAs(TString(loc_plots + "z_final_w_sys.eps"));
   for (int i = 1; i < ptbinsize; ++i) {
       TPad *pad = (TPad*)ccan[ican]->GetPad(i);
       if (!pad) continue;
@@ -657,14 +659,14 @@ void PublicationFigures(int NumEvts = -1,
     //}
     Tl.DrawLatex(left, top, "#scale[1.5]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c}}", pt_binedges[i], pt_binedges[i+1]));
     if (i != 6 )
     { 
-      Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
+      Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4.0}");
     }
     else
     {
-      Tl.DrawLatex(0.725, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
+      Tl.DrawLatex(0.7, top - 2.75 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4.0}");
     }
     if (i == 1)
     {
@@ -684,7 +686,7 @@ void PublicationFigures(int NumEvts = -1,
     h1_jt_data_sys_ratio->GetYaxis()->SetTitleFont(lhcbFont);
     h1_jt_data_sys_ratio->GetYaxis()->SetLabelSize(0.1);
     h1_jt_data_sys_ratio->GetYaxis()->SetLabelFont(lhcbFont);
-    h1_jt_data_sys_ratio->GetXaxis()->SetTitle("#it{j}_{T} [GeV/c]");
+    h1_jt_data_sys_ratio->GetXaxis()->SetTitle("#it{j}_{T} [GeV/#it{c}]");
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleSize(0.12);
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleOffset(0.9);
     h1_jt_data_sys_ratio->GetXaxis()->SetTitleFont(lhcbFont);
@@ -709,7 +711,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->cd(i);
     ccan[ican]->Update(); 
 
-    hepdata << std::defaultfloat;
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig4-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$j_{T}$ [GeV/c]'}\n";
@@ -722,12 +724,12 @@ void PublicationFigures(int NumEvts = -1,
       }
     }
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dj_{T}}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int ibin=0; ibin<h1_jt_data[i-1]->GetNbinsX(); ++ibin)
     { 
       if (h1_jt_data[i-1]->GetBinContent(ibin+1) !=0 )
@@ -749,7 +751,8 @@ void PublicationFigures(int NumEvts = -1,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }      
-  ccan[ican]->SaveAs(TString(loc_plots + "jt_final_w_sys.png"));  
+  ccan[ican]->SaveAs(TString(loc_plots + "jt_final_w_sys.png")); 
+  ccan[ican]->SaveAs(TString(loc_plots + "jt_final_w_sys.eps"));   
   for (int i = 1; i < ptbinsize; ++i) {
     TPad *pad = (TPad*)ccan[ican]->GetPad(i);
     if (!pad) continue;
@@ -887,7 +890,7 @@ void PublicationFigures(int NumEvts = -1,
     */
     Tl.DrawLatex(left , top, "#scale[1.5]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.5]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2 * step, Form("#scale[1.5]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c},   2.5 < #it{y}_{jet} < 4.0}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top - 3 * step, "#scale[1.5]{2.5 < #it{y}_{jet} < 4}");
     if (i == 1)
     {
@@ -933,7 +936,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->cd(i);
     ccan[ican]->Update();
 
-    hepdata << std::defaultfloat;
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig5-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$r$'}\n";
@@ -945,12 +948,12 @@ void PublicationFigures(int NumEvts = -1,
       hepdata << "  - { low: " << r_binedges[ibin] << ", high: " << r_binedges[ibin+1]<< "}\n";
     }
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dr}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int ibin=0; ibin<h1_r_data[i-1]->GetNbinsX(); ++ibin)
     { 
       if (ibin == h1_r_data[i-1]->GetNbinsX()-1)
@@ -972,7 +975,8 @@ void PublicationFigures(int NumEvts = -1,
   {
     ccan[ican]->Print(plotfilePDF.Data());
   }
-  ccan[ican]->SaveAs(TString(loc_plots + "r_final_w_sys.png"));   
+  ccan[ican]->SaveAs(TString(loc_plots + "r_final_w_sys.png")); 
+  ccan[ican]->SaveAs(TString(loc_plots + "r_final_w_sys.eps"));     
   for (int i = 1; i < ptbinsize; ++i) {
     TPad *pad = (TPad*)ccan[ican]->GetPad(i);
     if (!pad) continue;
@@ -1041,7 +1045,7 @@ void PublicationFigures(int NumEvts = -1,
     //h2_zjt_data[i-1]->GetXaxis()->SetTitleSize(0.05);
     //h2_zjt_data[i-1]->GetXaxis()->SetTitleOffset(0.85);
     //h2_zjt_data[i-1]->GetXaxis()->SetLabelSize(0.04);
-    h2_zjt_data[i-1]->GetYaxis()->SetTitle("#it{j}_{T} [GeV/c]");
+    h2_zjt_data[i-1]->GetYaxis()->SetTitle("#it{j}_{T} [GeV/#it{c}]");
     //h2_zjt_data[i-1]->GetYaxis()->SetTitleSize(0.05);
     //h2_zjt_data[i-1]->GetYaxis()->SetTitleOffset(0.85);
     //h2_zjt_data[i-1]->GetYaxis()->SetLabelSize(0.04);
@@ -1058,7 +1062,7 @@ void PublicationFigures(int NumEvts = -1,
 
     Tl.DrawLatex(left, top, "#scale[1.0]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c},   2.5 < #it{y}_{jet} < 4.0}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
@@ -1091,7 +1095,7 @@ void PublicationFigures(int NumEvts = -1,
       }    
     } 
 
-    hepdata << std::defaultfloat;
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig6-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$z$'}\n";
@@ -1124,12 +1128,12 @@ void PublicationFigures(int NumEvts = -1,
       }
     }
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dzdj_{T}}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int xbin=0; xbin<h2_zjt_data[i-1]->GetNbinsX(); ++xbin)
     {
       if (xbin == h2_zjt_data[i-1]->GetNbinsX()-1)
@@ -1157,6 +1161,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "zjt_final_w_sys.png"));  
+  ccan[ican]->SaveAs(TString(loc_plots + "zjt_final_w_sys.eps"));
   for (int i = 1; i < ptbinsize; ++i) {
     TPad *pad = (TPad*)ccan[ican]->GetPad(i);
     if (!pad) continue;
@@ -1273,7 +1278,7 @@ void PublicationFigures(int NumEvts = -1,
 
     Tl.DrawLatex(left, top, "#scale[1.0]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c},   2.5 < #it{y}_{jet} < 4.0}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
@@ -1310,7 +1315,7 @@ void PublicationFigures(int NumEvts = -1,
       }    
     } 
 
-    hepdata << std::defaultfloat;
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig7-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$z$'}\n";
@@ -1347,12 +1352,12 @@ void PublicationFigures(int NumEvts = -1,
       }
     }
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dzdr}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int xbin=0; xbin<h2_zr_data[i-1]->GetNbinsX(); ++xbin)
     {
       if (xbin == h2_zr_data[i-1]->GetNbinsX()-1)
@@ -1382,6 +1387,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "zr_final_w_sys.png"));
+  ccan[ican]->SaveAs(TString(loc_plots + "zr_final_w_sys.eps"));
   for (int i = 1; i < ptbinsize; ++i) {
     TPad *pad = (TPad*)ccan[ican]->GetPad(i);
     if (!pad) continue;
@@ -1484,7 +1490,7 @@ void PublicationFigures(int NumEvts = -1,
     gPad->SetLogz();
 
     //h2_jtr_data[i-1]->GetYaxis()->SetRangeUser(0.0, 0.4);
-    h2_jtr_data[i-1]->GetXaxis()->SetTitle("#it{j}_{T} [GeV/c]");
+    h2_jtr_data[i-1]->GetXaxis()->SetTitle("#it{j}_{T} [GeV/#it{c}]");
     //h2_jtr_data[i-1]->GetXaxis()->SetTitleSize(0.01);
     //h2_jtr_data[i-1]->GetXaxis()->SetTitleOffset(0.1);
     //h2_jtr_data[i-1]->GetXaxis()->SetLabelSize(0.04);
@@ -1505,7 +1511,7 @@ void PublicationFigures(int NumEvts = -1,
 
     Tl.DrawLatex(left, top, "#scale[1.0]{LHCb #it{pp} #sqrt{#it{s}} = 13 TeV}");
     Tl.DrawLatex(left, top - step, "#scale[1.0]{AK5 #it{B}^{#pm}-tagged jets}");
-    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/c,   2.5 < #it{y}_{jet} < 4}", pt_binedges[i], pt_binedges[i+1]));
+    Tl.DrawLatex(left, top - 2.1 * step, Form("#scale[0.85]{%.0f < #it{p}_{T,jet} < %.0f GeV/#it{c},   2.5 < #it{y}_{jet} < 4.0}", pt_binedges[i], pt_binedges[i+1]));
     //Tl.DrawLatex(left, top - 3 * step, "#scale[0.75]{2.5 < #it{y}_{jet} < 4}");
     //lhcbName->Draw("SAME");
     /*
@@ -1539,7 +1545,7 @@ void PublicationFigures(int NumEvts = -1,
       }    
     } 
 
-    hepdata << std::defaultfloat;
+    hepdata << std::defaultfloat << setprecision(6);
     hepdata.open(Form("hepdata/fig8-%d.yaml",i));
     hepdata << "independent_variables:\n";
     hepdata << "- header: {name: '$j_{T}$ [GeV/c]'}\n";
@@ -1571,12 +1577,12 @@ void PublicationFigures(int NumEvts = -1,
       }
     }
     //hepdata << std::fixed << setprecision(4);
-    hepdata << std::scientific << setprecision(2);
     hepdata << "dependent_variables:\n";
     hepdata << "- header: {name: '$\\frac{1}{N_{\\rm{jets}}}\\frac{dN_{B}}{dj_{T}dr}$'}\n";
     hepdata << "  qualifiers:\n";
     hepdata << "  - {name: 'region', value: '$" << pt_binedges[i] << " < p_{T,\\rm{jet}} < " <<  pt_binedges[i+1] <<"$, $2.5 < y_{jet} < 4.0$'}\n";
     hepdata << "  values:\n";
+    hepdata << std::scientific << setprecision(2);
     for (int xbin=0; xbin<h2_jtr_data[i-1]->GetNbinsX(); ++xbin)
     {
       for (int ybin=0; ybin<h2_jtr_data[i-1]->GetNbinsY(); ++ybin)
@@ -1604,6 +1610,7 @@ void PublicationFigures(int NumEvts = -1,
     ccan[ican]->Print(plotfilePDF.Data());
   }
   ccan[ican]->SaveAs(TString(loc_plots + "jtr_final_w_sys.png"));
+  ccan[ican]->SaveAs(TString(loc_plots + "jtr_final_w_sys.eps"));
   for (int i = 1; i < ptbinsize; ++i) {
     TPad *pad = (TPad*)ccan[ican]->GetPad(i);
     if (!pad) continue;

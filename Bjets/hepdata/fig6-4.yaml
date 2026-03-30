@@ -106,7 +106,7 @@ independent_variables:
 dependent_variables:
 - header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dzdj_{T}}$'}
   qualifiers:
-  - {name: 'region', value: '$2.00e+01 < p_{T,\rm{jet}} < 3.00e+01$, $2.5 < y_{jet} < 4.0$'}
+  - {name: 'region', value: '$20 < p_{T,\rm{jet}} < 30$, $2.5 < y_{jet} < 4.0$'}
   values:
   - value: 1.64e-02
     errors:

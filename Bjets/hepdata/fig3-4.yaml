@@ -1,24 +1,24 @@
 independent_variables:
 - header: {name: '$z$'}
   values:
-  - { low: 1.00e-01, high: 2.00e-01}
-  - { low: 2.00e-01, high: 3.00e-01}
-  - { low: 3.00e-01, high: 4.00e-01}
-  - { low: 4.00e-01, high: 5.00e-01}
-  - { low: 5.00e-01, high: 5.50e-01}
-  - { low: 5.50e-01, high: 6.00e-01}
-  - { low: 6.00e-01, high: 6.50e-01}
-  - { low: 6.50e-01, high: 7.00e-01}
-  - { low: 7.00e-01, high: 7.50e-01}
-  - { low: 7.50e-01, high: 8.00e-01}
-  - { low: 8.00e-01, high: 8.50e-01}
-  - { low: 8.50e-01, high: 9.00e-01}
-  - { low: 9.00e-01, high: 9.50e-01}
-  - { low: 9.50e-01, high: 1.00e+00}
+  - { low: 0.1, high: 0.2}
+  - { low: 0.2, high: 0.3}
+  - { low: 0.3, high: 0.4}
+  - { low: 0.4, high: 0.5}
+  - { low: 0.5, high: 0.55}
+  - { low: 0.55, high: 0.6}
+  - { low: 0.6, high: 0.65}
+  - { low: 0.65, high: 0.7}
+  - { low: 0.7, high: 0.75}
+  - { low: 0.75, high: 0.8}
+  - { low: 0.8, high: 0.85}
+  - { low: 0.85, high: 0.9}
+  - { low: 0.9, high: 0.95}
+  - { low: 0.95, high: 1}
 dependent_variables:
 - header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dz}$'}
   qualifiers:
-  - {name: 'region', value: '$2.00e+01 < p_{T,\rm{jet}} < 3.00e+01$, $2.5 < y_{jet} < 4.0$'}
+  - {name: 'region', value: '$20 < p_{T,\rm{jet}} < 30$, $2.5 < y_{jet} < 4.0$'}
   values:
   - value: 2.07e-01
     errors:

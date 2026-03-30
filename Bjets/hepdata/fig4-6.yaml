@@ -5,10 +5,10 @@ independent_variables:
   - { low: 0.25, high: 0.5}
   - { low: 0.5, high: 0.75}
   - { low: 0.75, high: 1}
-  - { low: 1, high: 1.2}
-  - { low: 1.2, high: 1.5}
-  - { low: 1.5, high: 1.8}
-  - { low: 1.8, high: 2}
+  - { low: 1, high: 1.25}
+  - { low: 1.25, high: 1.5}
+  - { low: 1.5, high: 1.75}
+  - { low: 1.75, high: 2}
   - { low: 2, high: 2.5}
   - { low: 2.5, high: 3}
   - { low: 3, high: 3.5}
@@ -22,7 +22,7 @@ independent_variables:
 dependent_variables:
 - header: {name: '$\frac{1}{N_{\rm{jets}}}\frac{dN_{B}}{dj_{T}}$'}
   qualifiers:
-  - {name: 'region', value: '$5.00e+01 < p_{T,\rm{jet}} < 1.00e+02$, $2.5 < y_{jet} < 4.0$'}
+  - {name: 'region', value: '$50 < p_{T,\rm{jet}} < 100$, $2.5 < y_{jet} < 4.0$'}
   values:
   - value: 9.15e-02
     errors:
